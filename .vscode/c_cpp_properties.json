@@ -2,12 +2,11 @@
     "configurations": [
         {
             "name": "Linux",
-            "compileCommands": "build_vsc/compile_commands.json",
             "defines": [],
-            "compilerPath": "/usr/bin/clang++-3.6",
+            "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode": "gcc-x64",
             "configurationProvider": "vector-of-bool.cmake-tools"
         }
     ],
