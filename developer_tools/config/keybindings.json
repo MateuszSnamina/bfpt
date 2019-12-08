@@ -1,0 +1,22 @@
+[
+    {
+        "key": "f3",
+        "command": "workbench.action.tasks.runTask",
+        "args": "run cmake (debug)",
+    },
+    {
+        "key": "f4",
+        "command": "workbench.action.tasks.runTask",
+        "args": "run make"
+    },
+    {
+        "key": "f5",
+        "command": "workbench.action.tasks.runTask",
+        "args": "run bfpt"
+    },
+    {
+        "key": "f6",
+        "command": "workbench.action.tasks.runTask",
+        "args": "run ctest"
+    }
+]
