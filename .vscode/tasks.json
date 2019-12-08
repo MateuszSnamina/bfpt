@@ -1,0 +1,65 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "run cmake (debug)",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build_vsc"
+            },
+            "command": "cmake",
+            "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                ".."
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "run make",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build_vsc"
+            },
+            "command": "make",
+            "args": [
+                "-j",
+                "2"
+            ],
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": "absolute"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "run ctest",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build_vsc"
+            },
+            "command": "ctest",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "run bfpt",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build_vsc"
+            },
+            "command": "bfpt/bfpt",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        }
+    ]
+}
