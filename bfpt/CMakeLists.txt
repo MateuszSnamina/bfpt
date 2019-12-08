@@ -20,10 +20,11 @@ if(NOT inc)
   message("    <no files>")
 endif()
 
-add_library("${TARGET_NAME}" ${src} ${inc})
+add_executable("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
-  extensions
+  Boost::boost
+  Boost::program_options
 )
 
 message("CMake has processed: ${TARGET_NAME}")

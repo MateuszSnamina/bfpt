@@ -137,3 +137,6 @@ message("-----------------------------------")
 
 add_subdirectory(extensions)
 add_subdirectory(extensions_tests)
+# add_subdirectory(kstate)
+# add_subdirectory(kstate_test)
+add_subdirectory(bfpt)
