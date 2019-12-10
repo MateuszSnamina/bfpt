@@ -17,19 +17,24 @@ class RotateHolder {
   size_t n;
 };
 
+/*
+ * Args domain: h.n has to be a positive number, less than the range size.
+ * The performed rotation is a left rotation.
+ */
 template <typename SinglePassRange>
 inline ::boost::joined_range<
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<SinglePassRange>::type>,
+        typename ::boost::range_iterator<const SinglePassRange>::type>,
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<SinglePassRange>::type>>
-operator|(SinglePassRange &rng, const RotateHolder &f) {
+        typename ::boost::range_iterator<const SinglePassRange>::type>>
+operator|(const SinglePassRange &rng, const RotateHolder &h) {
   #ifndef NDEBUG
   const auto d = std::distance(std::begin(rng), std::end(rng));
   assert(d >= 0);
-  assert(::boost::numeric_cast<decltype(d)>(f.n) <= d);
+  assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
+  assert(h.n >= 0);
   #endif
-  const auto mid = std::next(std::begin(rng), f.n);
+  const auto mid = std::next(std::begin(rng), h.n);
   return ::boost::join(::boost::make_iterator_range(mid, std::end(rng)),
                        ::boost::make_iterator_range(std::begin(rng), mid));
 }
@@ -41,10 +46,10 @@ class Doubler {};
 template <typename SinglePassRange>
 inline ::boost::joined_range<
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<SinglePassRange>::type>,
+        typename ::boost::range_iterator<const SinglePassRange>::type>,
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<SinglePassRange>::type>>
-operator|(SinglePassRange &rng, const Doubler &) {
+        typename ::boost::range_iterator<const SinglePassRange>::type>>
+operator|(const SinglePassRange &rng, const Doubler &) {
   return ::boost::join(
       ::boost::make_iterator_range(std::begin(rng), std::end(rng)),
       ::boost::make_iterator_range(std::begin(rng), std::end(rng)));

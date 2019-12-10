@@ -50,3 +50,21 @@ TEST(Kstate, tranlational_compare) {
   ASSERT_EQ(*k1.tranlational_compare(k15), 5);
   ASSERT_TRUE(k1.tranlational_compare(k15));
 }
+
+TEST(Kstate, LeastReplicationShift) {
+  int v1[6] = {11, 12, 13, 14, 15, 16};
+  const auto k1 = kstate::SimpleKstate<int>(v1);
+  EXPECT_EQ(k1.n_least_replication_shift(), 6);
+
+  int v2[6] = {11, 12, 13, 11, 12, 13};
+  const auto k2 = kstate::SimpleKstate<int>(v2);
+  EXPECT_EQ(k2.n_least_replication_shift(), 3);
+
+  int v3[6] = {11, 12, 11, 12, 11, 12};
+  const auto k3 = kstate::SimpleKstate<int>(v3);
+  EXPECT_EQ(k3.n_least_replication_shift(), 2);
+
+  int v4[6] = {11, 11, 11, 11, 11, 11};
+  const auto k4 = kstate::SimpleKstate<int>(v4);
+  EXPECT_EQ(k4.n_least_replication_shift(), 1);
+}

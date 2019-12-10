@@ -3,8 +3,9 @@
 
 #include <extensions/adaptors.hpp>
 #include <optional>
+#include <sstream>
+#include <string>
 #include <vector>
-
 // #include<algorithm>
 #include <boost/range.hpp>
 #include <boost/range/algorithm/search.hpp>
@@ -12,6 +13,26 @@
 #include <boost/range/algorithm/copy.hpp>  //debug
 #include <iostream>                        //debug
 #include <iterator>                        //debug
+
+namespace {
+
+template <typename SinglePassRange>
+std::string range_to_str(const SinglePassRange& r) {
+  using ValueType = typename boost::range_value<const SinglePassRange>::type;
+  std::ostringstream oss;
+  std::ostream_iterator<ValueType> osi(oss, ",");
+  boost::copy(r, osi);
+  return oss.str();
+}
+
+template <typename SinglePassRange>
+void range_to_str(const SinglePassRange& r, std::ostream& os) {
+  using ValueType = typename boost::range_value<const SinglePassRange>::type;
+  std::ostream_iterator<ValueType> osi(os, ",");
+  boost::copy(r, osi);
+}
+
+}  // namespace
 
 namespace kstate {
 
@@ -29,10 +50,13 @@ class SimpleKstate {
   SimpleKstate(const SomeRangeType& v);
   ConstRangeType to_range() const;
   size_t n_sites() const;
-  bool is_prolific(int nk) const;
+  size_t n_least_replication_shift() const;
+  bool is_prolific(int n_k) const;
   bool compare(const SimpleKstate<SiteType>& other) const;
   std::optional<size_t> tranlational_compare(
       const SimpleKstate<SiteType>& other) const;
+  // std::string SimpleKstate<SiteType>::to_repr() const;
+  std::string to_str() const;
 
  private:
   const BufferType _v;
@@ -60,9 +84,20 @@ size_t SimpleKstate<SiteType>::n_sites() const {
 }
 
 template <typename SiteType>
-bool SimpleKstate<SiteType>::is_prolific(int nk) const {
-  size_t n_repeat = 1;  // TODO
-  return n_repeat % n_sites;
+size_t SimpleKstate<SiteType>::n_least_replication_shift() const {
+  assert(n_sites() > 0);
+  const auto r = to_range();
+  const auto rdr = r | extension::boost::adaptors::doubled |
+                   extension::boost::adaptors::rotated(1);
+  const auto it = boost::range::search(rdr, r);
+  const auto _ = std::distance(std::begin(rdr), it);
+  assert(_ >= 0);
+  return static_cast<size_t>(_ + 1);
+}
+
+template <typename SiteType>
+bool SimpleKstate<SiteType>::is_prolific(int n_k) const {
+  return (n_least_replication_shift() * n_k) % n_sites;
 }
 
 template <typename SiteType>
@@ -81,8 +116,18 @@ std::optional<size_t> SimpleKstate<SiteType>::tranlational_compare(
   const auto r2 = other.to_range();
   const auto r2d = r2 | extension::boost::adaptors::doubled;
   const auto it = boost::range::search(r2d, r1);
-  return it == std::end(r2d) ? std::optional<size_t>()
-                             : std::distance(std::begin(r2d), it);
+  return it == std::end(r2d)
+             ? std::optional<size_t>()
+             : static_cast<size_t>(std::distance(std::begin(r2d), it));
+}
+
+template <typename SiteType>
+std::string SimpleKstate<SiteType>::to_str() const {
+  std::ostringstream oss;
+  oss << "[";
+  range_to_str(to_range(), oss);
+  oss << "]";
+  return oss.str();
 }
 
 }  // namespace kstate
