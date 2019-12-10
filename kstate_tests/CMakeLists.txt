@@ -22,10 +22,16 @@ endif()
 
 add_executable("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
-target_link_libraries("${TARGET_NAME}"
-  extensions
-  Boost::boost
-  Boost::program_options
-)
+
+if ( TARGET_NAME MATCHES "_tests$" )
+  message("  Assumed the target is a test target (judged by the target name sufix).")
+  string(REGEX REPLACE "_tests" ""
+         TESTED_TARGET_NAME "${TARGET_NAME}")
+  message("  Tested target: ${TESTED_TARGET_NAME}")
+  target_link_libraries("${TARGET_NAME}" ${GTEST_LIBRARIES} pthread)
+  target_link_libraries("${TARGET_NAME}" "${TESTED_TARGET_NAME}")
+endif()
+
+add_test(NAME "${TARGET_NAME}" COMMAND "${TARGET_NAME}")
 
 message("CMake has processed: ${TARGET_NAME}")
