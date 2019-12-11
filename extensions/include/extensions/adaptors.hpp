@@ -52,13 +52,13 @@ RotateHolder rotated(size_t n) { return RotateHolder(n); }
 
 class Doubler {};
 
-template <typename SinglePassRange>
+template <typename ForwardRange>
 inline ::boost::joined_range<
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const SinglePassRange>::type>,
+        typename ::boost::range_iterator<const ForwardRange>::type>,
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const SinglePassRange>::type>>
-operator|(const SinglePassRange &rng, const Doubler &) {
+        typename ::boost::range_iterator<const ForwardRange>::type>>
+operator|(const ForwardRange &rng, const Doubler &) {
   return ::boost::join(
       ::boost::make_iterator_range(std::begin(rng), std::end(rng)),
       ::boost::make_iterator_range(std::begin(rng), std::end(rng)));
