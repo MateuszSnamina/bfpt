@@ -26,8 +26,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 add_compile_options(-Wall)
+add_compile_options(-Wno-unused-function)
 add_compile_options(-pedantic)
-#add_compile_options(-ffast-math) 
+#add_compile_options(-ffast-math)
 add_compile_options(-pthread)
 
 #################################################################
