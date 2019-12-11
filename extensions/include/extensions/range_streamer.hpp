@@ -70,15 +70,13 @@ inline RangeStreamer& RangeStreamer::set_stream_separer(
 
 template <typename SinglePassRange>
 RangeStreamer& RangeStreamer::stream(const SinglePassRange& rng) {
-  const auto d = std::distance(std::begin(rng), std::end(rng));
-  assert(d >= 0);
   _stream_preparer(_os);
   for (const auto& _ : rng | boost::adaptors::indexed(0)) {
-    _stream_sustainer(_os, _.index());
-    _os << _.value();
-    if (_.index() + 1 != d) {
+    if (_.index() != 0) {
       _stream_separer(_os);
     }
+    _stream_sustainer(_os, _.index());
+    _os << _.value();
   }
   _stream_finisher(_os);
   return *this;

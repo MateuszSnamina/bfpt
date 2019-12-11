@@ -11,6 +11,10 @@
 
 namespace extension_implementation::boost::adaptors {
 
+// ########################################################
+// ##  rotated                                           ##
+// ########################################################
+
 class RotateHolder {
  public:
   RotateHolder(size_t n) : n(n){};
@@ -20,26 +24,31 @@ class RotateHolder {
 /*
  * Args domain: h.n has to be a positive number, less than the range size.
  * The performed rotation is a left rotation.
+ *
  */
-template <typename SinglePassRange>
+template <typename ForwardRange>
 inline ::boost::joined_range<
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const SinglePassRange>::type>,
+        typename ::boost::range_iterator<const ForwardRange>::type>,
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const SinglePassRange>::type>>
-operator|(const SinglePassRange &rng, const RotateHolder &h) {
-  #ifndef NDEBUG
+        typename ::boost::range_iterator<const ForwardRange>::type>>
+operator|(const ForwardRange &rng, const RotateHolder &h) {
+#ifndef NDEBUG
   const auto d = std::distance(std::begin(rng), std::end(rng));
   assert(d >= 0);
   assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
   assert(h.n >= 0);
-  #endif
+#endif
   const auto mid = std::next(std::begin(rng), h.n);
   return ::boost::join(::boost::make_iterator_range(mid, std::end(rng)),
                        ::boost::make_iterator_range(std::begin(rng), mid));
 }
 
 RotateHolder rotated(size_t n) { return RotateHolder(n); }
+
+// ########################################################
+// ##  doubled                                           ##
+// ########################################################
 
 class Doubler {};
 
