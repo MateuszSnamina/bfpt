@@ -76,7 +76,7 @@ RangeStreamer& RangeStreamer::stream(const SinglePassRange& rng) {
   for (const auto& _ : rng | boost::adaptors::indexed(0)) {
     _stream_sustainer(_os, _.index());
     _os << _.value();
-    if (d > 1 && _.index() != d - 1) {
+    if (_.index() + 1 != d) {
       _stream_separer(_os);
     }
   }
