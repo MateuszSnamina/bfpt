@@ -1,7 +1,7 @@
 #include <kstate/kstate.hpp>
 
-#include <boost/range/algorithm.hpp>
 #include <array>
+#include <boost/range/algorithm.hpp>
 #include <list>
 #include <vector>
 
@@ -125,4 +125,28 @@ TEST(Kstate, ToStrTest1) {
   int v2[1] = {11};
   const auto k2 = kstate::SimpleKstate<int>(v2);
   EXPECT_EQ(k2.to_str(), "⦃11⦄");
+}
+
+TEST(UniqueKstate, CtrTest0) {
+  int v2[1] = {11};
+  const auto k2 = kstate::SimpleUniqueKstate<int>(v2);
+  EXPECT_EQ(k2.to_str(), "⦃11⦄");
+}
+
+TEST(UniqueKstate, CtrTest1) {
+  int v2[2] = {11, 12};
+  const auto k2 = kstate::SimpleUniqueKstate<int>(v2);
+  EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
+}
+
+TEST(UniqueKstate, CtrTest2) {
+  int v2[2] = {12, 11};
+  const auto k2 = kstate::SimpleUniqueKstate<int>(v2);
+  EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
+}
+
+TEST(UniqueKstate, CtrTest3) {
+  int v2[7] = {12, 11, 14, 13, 14, 14, 13};
+  const auto k2 = kstate::SimpleUniqueKstate<int>(v2);
+  EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
 }

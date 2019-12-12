@@ -1,41 +1,54 @@
 #ifndef KSTATE_KSTATE_HPP
 #define KSTATE_KSTATE_HPP
 
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/range.hpp>
+#include <boost/range/algorithm/search.hpp>
 #include <extensions/adaptors.hpp>
 #include <extensions/range_streamer.hpp>
 #include <optional>
 #include <sstream>
 #include <string>
 #include <vector>
-// #include<algorithm>
-#include <boost/range.hpp>
-#include <boost/range/algorithm/search.hpp>
 
-#include <boost/range/algorithm/copy.hpp>  //debug
-#include <iostream>                        //debug
-#include <iterator>                        //debug
+#include <iostream>  //debug
+#include <iterator>
 
-// namespace {
+namespace {
 
-// template <typename SinglePassRange>
-// std::string range_to_str(const SinglePassRange& r) {
-//   using ValueType = typename boost::range_value<const SinglePassRange>::type;
-//   std::ostringstream oss;
-//   std::ostream_iterator<ValueType> osi(oss, ",");
-//   boost::copy(r, osi);
-//   return oss.str();
-// }
+template <typename ForwardRange>
+size_t n_unique_shift(const ForwardRange& rng) {
+  const auto d = std::distance(std::begin(rng), std::end(rng));
+  size_t i = 0;
+  for (size_t _ = 1; _ < d; _++) {
+    // std::cout << extension::boost::RangeStreamStreamer()
+    //                  .stream(rng | extension::boost::adaptors::rotated(i))
+    //                  .str()
+    //           << " vs "
+    //           << extension::boost::RangeStreamStreamer()
+    //                  .stream(rng | extension::boost::adaptors::rotated(_))
+    //                  .str()
+    //           << std::endl;
+    // std::cout << std::boolalpha;
+    const bool result_cmp = boost::lexicographical_compare(
+        rng | extension::boost::adaptors::rotated(i),
+        rng | extension::boost::adaptors::rotated(_));
+    // std::cout << result_cmp << std::endl;
+    if (result_cmp) {
+      i = _;
+    }
+  }
+  //   std::cout << i << std::endl;
+  return i;
+}
 
-// template <typename SinglePassRange>
-// void range_to_str(const SinglePassRange& r, std::ostream& os) {
-//   using ValueType = typename boost::range_value<const SinglePassRange>::type;
-//   std::ostream_iterator<ValueType> osi(os, ",");
-//   boost::copy(r, osi);
-// }
-
-// }  // namespace
+}  // namespace
 
 namespace kstate {
+
+// #######################################################################
+// ## SimpleKstate                                                      ##
+// #######################################################################
 
 template <typename SiteType>
 class SimpleKstate {
@@ -56,13 +69,14 @@ class SimpleKstate {
   bool compare(const SimpleKstate<SiteType>& other) const;
   std::optional<size_t> tranlational_compare(
       const SimpleKstate<SiteType>& other) const;
-  // std::string SimpleKstate<SiteType>::to_repr() const;
   std::string to_str() const;
 
  private:
   const BufferType _v;
   const size_t _n_sites;
 };
+
+// #######################################################################
 
 template <typename SiteType>
 SimpleKstate<SiteType>::SimpleKstate(SimpleKstate<SiteType>::BufferType&& v)
@@ -98,7 +112,7 @@ size_t SimpleKstate<SiteType>::n_least_replication_shift() const {
 
 template <typename SiteType>
 bool SimpleKstate<SiteType>::is_prolific(int n_k) const {
-  return ! ((n_least_replication_shift() * n_k) % n_sites());
+  return !((n_least_replication_shift() * n_k) % n_sites());
 }
 
 template <typename SiteType>
@@ -132,6 +146,31 @@ std::string SimpleKstate<SiteType>::to_str() const {
       .stream(to_range())
       .str();
 }
+
+// #######################################################################
+// ## UniqueSimpleKstate                                                ##
+// #######################################################################
+
+template <typename SiteType>
+class SimpleUniqueKstate : public SimpleKstate<SiteType> {
+  using BufferType = typename std::vector<SiteType>;
+  using IteratorType = typename std::vector<SiteType>::iterator;
+  using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
+  using RangeType = typename boost::iterator_range<IteratorType>;
+  using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
+
+ public:
+  template <typename SomeRangeType>
+  SimpleUniqueKstate(const SomeRangeType& v);
+};
+
+// #######################################################################
+
+template <typename SiteType>
+template <typename SomeRangeType>
+SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r)
+    : SimpleKstate<SiteType>(
+          r | extension::boost::adaptors::rotated(n_unique_shift(r))) {}
 
 }  // namespace kstate
 
