@@ -3,7 +3,6 @@
 
 #include <boost/range.hpp>
 #include <boost/range/adaptor/indexed.hpp>
-// #include <boost/range/adaptor/sliced.hpp>
 
 #include <functional>
 #include <iostream>
@@ -14,6 +13,8 @@
 // ########################################################
 // ##  RangeStreamer                                     ##
 // ########################################################
+
+namespace extension::boost {
 
 class RangeStreamer {
  public:
@@ -71,7 +72,7 @@ inline RangeStreamer& RangeStreamer::set_stream_separer(
 template <typename SinglePassRange>
 RangeStreamer& RangeStreamer::stream(const SinglePassRange& rng) {
   _stream_preparer(_os);
-  for (const auto& _ : rng | boost::adaptors::indexed(0)) {
+  for (const auto& _ : rng | ::boost::adaptors::indexed(0)) {
     if (_.index() != 0) {
       _stream_separer(_os);
     }
@@ -138,5 +139,7 @@ RangeStreamStreamer& RangeStreamStreamer::stream(const SinglePassRange& rng) {
 }
 
 inline std::string RangeStreamStreamer::str() const { return _oss.str(); }
+
+}  // namespace extension::boost
 
 #endif

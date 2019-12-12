@@ -1,24 +1,22 @@
 #include <kstate/kstate.hpp>
 
+#include <boost/range/algorithm.hpp>
 #include <array>
 #include <list>
 #include <vector>
 
-#include <boost/range/algorithm.hpp>
-
 #include <gtest/gtest.h>
 
-TEST(Kstate, compare) {
+TEST(Kstate, CompareTest0) {
   int v1[6] = {11, 12, 13, 14, 15, 16};
   int v2[6] = {13, 14, 15, 16, 11, 12};
-
   const auto k1 = kstate::SimpleKstate<int>(v1);
   const auto k2 = kstate::SimpleKstate<int>(v2);
   EXPECT_TRUE(k1.compare(k1));
   EXPECT_FALSE(k1.compare(k2));
 }
 
-TEST(Kstate, tranlational_compare) {
+TEST(Kstate, TranlationalCompareTest0) {
   int v1[6] = {11, 12, 13, 14, 15, 16};
   int v2[6] = {13, 14, 15, 16, 11, 12};
   int v11[6] = {16, 11, 12, 13, 14, 15};
@@ -26,7 +24,6 @@ TEST(Kstate, tranlational_compare) {
   int v13[6] = {14, 15, 16, 11, 12, 13};
   int v14[6] = {13, 14, 15, 16, 11, 12};
   int v15[6] = {12, 13, 14, 15, 16, 11};
-
   const auto k1 = kstate::SimpleKstate<int>(v1);
   const auto k2 = kstate::SimpleKstate<int>(v2);
   const auto k11 = kstate::SimpleKstate<int>(v11);
@@ -34,7 +31,6 @@ TEST(Kstate, tranlational_compare) {
   const auto k13 = kstate::SimpleKstate<int>(v13);
   const auto k14 = kstate::SimpleKstate<int>(v14);
   const auto k15 = kstate::SimpleKstate<int>(v15);
-
   ASSERT_FALSE(k1.compare(k2));
   ASSERT_TRUE(k1.tranlational_compare(k1));
   ASSERT_EQ(*k1.tranlational_compare(k1), 0);
@@ -51,20 +47,82 @@ TEST(Kstate, tranlational_compare) {
   ASSERT_TRUE(k1.tranlational_compare(k15));
 }
 
-TEST(Kstate, LeastReplicationShift) {
+TEST(Kstate, LeastReplicationShiftTest0) {
   int v1[6] = {11, 12, 13, 14, 15, 16};
   const auto k1 = kstate::SimpleKstate<int>(v1);
   EXPECT_EQ(k1.n_least_replication_shift(), 6);
+}
 
+TEST(Kstate, LeastReplicationShiftTest1) {
   int v2[6] = {11, 12, 13, 11, 12, 13};
   const auto k2 = kstate::SimpleKstate<int>(v2);
   EXPECT_EQ(k2.n_least_replication_shift(), 3);
+}
 
+TEST(Kstate, LeastReplicationShiftTest2) {
   int v3[6] = {11, 12, 11, 12, 11, 12};
   const auto k3 = kstate::SimpleKstate<int>(v3);
   EXPECT_EQ(k3.n_least_replication_shift(), 2);
+}
 
+TEST(Kstate, LeastReplicationShiftTest3) {
   int v4[6] = {11, 11, 11, 11, 11, 11};
   const auto k4 = kstate::SimpleKstate<int>(v4);
   EXPECT_EQ(k4.n_least_replication_shift(), 1);
+}
+
+TEST(Kstate, IsProlificTest0) {
+  int v1[6] = {11, 12, 13, 14, 15, 16};
+  const auto k1 = kstate::SimpleKstate<int>(v1);
+  EXPECT_TRUE(k1.is_prolific(0));
+  EXPECT_TRUE(k1.is_prolific(1));
+  EXPECT_TRUE(k1.is_prolific(2));
+  EXPECT_TRUE(k1.is_prolific(3));
+  EXPECT_TRUE(k1.is_prolific(4));
+  EXPECT_TRUE(k1.is_prolific(5));
+}
+
+TEST(Kstate, IsProlificTest1) {
+  int v2[6] = {11, 11, 11, 11, 11, 11};
+  const auto k2 = kstate::SimpleKstate<int>(v2);
+  EXPECT_TRUE(k2.is_prolific(0));
+  EXPECT_FALSE(k2.is_prolific(1));
+  EXPECT_FALSE(k2.is_prolific(2));
+  EXPECT_FALSE(k2.is_prolific(3));
+  EXPECT_FALSE(k2.is_prolific(4));
+  EXPECT_FALSE(k2.is_prolific(5));
+}
+
+TEST(Kstate, IsProlificTest2) {
+  int v3[6] = {11, 12, 13, 11, 12, 13};
+  const auto k3 = kstate::SimpleKstate<int>(v3);
+  EXPECT_TRUE(k3.is_prolific(0));
+  EXPECT_FALSE(k3.is_prolific(1));
+  EXPECT_TRUE(k3.is_prolific(2));
+  EXPECT_FALSE(k3.is_prolific(3));
+  EXPECT_TRUE(k3.is_prolific(4));
+  EXPECT_FALSE(k3.is_prolific(5));
+}
+
+TEST(Kstate, IsProlificTest3) {
+  int v4[6] = {11, 12, 11, 12, 11, 12};
+  const auto k4 = kstate::SimpleKstate<int>(v4);
+  EXPECT_TRUE(k4.is_prolific(0));
+  EXPECT_FALSE(k4.is_prolific(1));
+  EXPECT_FALSE(k4.is_prolific(2));
+  EXPECT_TRUE(k4.is_prolific(3));
+  EXPECT_FALSE(k4.is_prolific(4));
+  EXPECT_FALSE(k4.is_prolific(5));
+}
+
+TEST(Kstate, ToStrTest0) {
+  int v1[6] = {11, 12, 13, 14, 15, 16};
+  const auto k1 = kstate::SimpleKstate<int>(v1);
+  EXPECT_EQ(k1.to_str(), "⦃11∙12∙13∙14∙15∙16⦄");
+}
+
+TEST(Kstate, ToStrTest1) {
+  int v2[1] = {11};
+  const auto k2 = kstate::SimpleKstate<int>(v2);
+  EXPECT_EQ(k2.to_str(), "⦃11⦄");
 }

@@ -2,6 +2,7 @@
 #define KSTATE_KSTATE_HPP
 
 #include <extensions/adaptors.hpp>
+#include <extensions/range_streamer.hpp>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -14,25 +15,25 @@
 #include <iostream>                        //debug
 #include <iterator>                        //debug
 
-namespace {
+// namespace {
 
-template <typename SinglePassRange>
-std::string range_to_str(const SinglePassRange& r) {
-  using ValueType = typename boost::range_value<const SinglePassRange>::type;
-  std::ostringstream oss;
-  std::ostream_iterator<ValueType> osi(oss, ",");
-  boost::copy(r, osi);
-  return oss.str();
-}
+// template <typename SinglePassRange>
+// std::string range_to_str(const SinglePassRange& r) {
+//   using ValueType = typename boost::range_value<const SinglePassRange>::type;
+//   std::ostringstream oss;
+//   std::ostream_iterator<ValueType> osi(oss, ",");
+//   boost::copy(r, osi);
+//   return oss.str();
+// }
 
-template <typename SinglePassRange>
-void range_to_str(const SinglePassRange& r, std::ostream& os) {
-  using ValueType = typename boost::range_value<const SinglePassRange>::type;
-  std::ostream_iterator<ValueType> osi(os, ",");
-  boost::copy(r, osi);
-}
+// template <typename SinglePassRange>
+// void range_to_str(const SinglePassRange& r, std::ostream& os) {
+//   using ValueType = typename boost::range_value<const SinglePassRange>::type;
+//   std::ostream_iterator<ValueType> osi(os, ",");
+//   boost::copy(r, osi);
+// }
 
-}  // namespace
+// }  // namespace
 
 namespace kstate {
 
@@ -97,7 +98,7 @@ size_t SimpleKstate<SiteType>::n_least_replication_shift() const {
 
 template <typename SiteType>
 bool SimpleKstate<SiteType>::is_prolific(int n_k) const {
-  return (n_least_replication_shift() * n_k) % n_sites;
+  return ! ((n_least_replication_shift() * n_k) % n_sites());
 }
 
 template <typename SiteType>
@@ -123,11 +124,13 @@ std::optional<size_t> SimpleKstate<SiteType>::tranlational_compare(
 
 template <typename SiteType>
 std::string SimpleKstate<SiteType>::to_str() const {
-  std::ostringstream oss;
-  oss << "[";
-  range_to_str(to_range(), oss);
-  oss << "]";
-  return oss.str();
+  return extension::boost::RangeStreamStreamer()
+      .set_stream_preparer([](std::ostream& s) { s << "⦃"; })
+      .set_stream_sustainer([](std::ostream& s, size_t i) {})
+      .set_stream_separer([](std::ostream& s) { s << "∙"; })
+      .set_stream_finisher([](std::ostream& s) { s << "⦄"; })
+      .stream(to_range())
+      .str();
 }
 
 }  // namespace kstate
