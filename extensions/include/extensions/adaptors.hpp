@@ -26,12 +26,16 @@ class RotateHolder {
  * The performed rotation is a left rotation.
  *
  */
+
 template <typename ForwardRange>
-inline ::boost::joined_range<
+using RotatedRangeType = ::boost::joined_range<
     const typename ::boost::iterator_range<
         typename ::boost::range_iterator<const ForwardRange>::type>,
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const ForwardRange>::type>>
+        typename ::boost::range_iterator<const ForwardRange>::type>>;
+
+template <typename ForwardRange>
+RotatedRangeType<ForwardRange>
 operator|(const ForwardRange &rng, const RotateHolder &h) {
 #ifndef NDEBUG
   const auto d = std::distance(std::begin(rng), std::end(rng));
@@ -74,6 +78,7 @@ static Doubler doubled{};
 namespace extension::boost::adaptors {
 using extension_implementation::boost::adaptors::doubled;
 using extension_implementation::boost::adaptors::rotated;
+using extension_implementation::boost::adaptors::RotatedRangeType;
 }  // namespace extension::boost::adaptors
 
 #endif
