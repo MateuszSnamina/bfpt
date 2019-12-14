@@ -20,24 +20,13 @@ size_t n_unique_shift(const ForwardRange& rng) {
   const auto d = std::distance(std::begin(rng), std::end(rng));
   size_t i = 0;
   for (size_t _ = 1; _ < d; _++) {
-    // std::cout << extension::boost::RangeStreamStreamer()
-    //                  .stream(rng | extension::boost::adaptors::rotated(i))
-    //                  .str()
-    //           << " vs "
-    //           << extension::boost::RangeStreamStreamer()
-    //                  .stream(rng | extension::boost::adaptors::rotated(_))
-    //                  .str()
-    //           << std::endl;
-    // std::cout << std::boolalpha;
     const bool result_cmp = boost::lexicographical_compare(
         rng | extension::boost::adaptors::rotated(i),
         rng | extension::boost::adaptors::rotated(_));
-    // std::cout << result_cmp << std::endl;
     if (result_cmp) {
       i = _;
     }
   }
-  //   std::cout << i << std::endl;
   return i;
 }
 
