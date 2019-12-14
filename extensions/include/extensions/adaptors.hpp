@@ -9,11 +9,11 @@
 #include <cassert>
 #endif
 
-namespace extension_implementation::boost::adaptors {
-
 // ########################################################
 // ##  rotated                                           ##
 // ########################################################
+
+namespace extension_implementation::boost::adaptors {
 
 class RotateHolder {
  public:
@@ -35,8 +35,8 @@ using RotatedRangeType = ::boost::joined_range<
         typename ::boost::range_iterator<const ForwardRange>::type>>;
 
 template <typename ForwardRange>
-RotatedRangeType<ForwardRange>
-operator|(const ForwardRange &rng, const RotateHolder &h) {
+RotatedRangeType<ForwardRange> operator|(const ForwardRange &rng,
+                                         const RotateHolder &h) {
 #ifndef NDEBUG
   const auto d = std::distance(std::begin(rng), std::end(rng));
   assert(d >= 0);
@@ -48,20 +48,27 @@ operator|(const ForwardRange &rng, const RotateHolder &h) {
                        ::boost::make_iterator_range(std::begin(rng), mid));
 }
 
-RotateHolder rotated(size_t n) { return RotateHolder(n); }
+inline RotateHolder rotated(size_t n) { return RotateHolder(n); }
+
+}  // namespace extension_implementation::boost::adaptors
 
 // ########################################################
 // ##  doubled                                           ##
 // ########################################################
 
+namespace extension_implementation::boost::adaptors {
+
 class Doubler {};
 
 template <typename ForwardRange>
-inline ::boost::joined_range<
+using DoubledRangeType = ::boost::joined_range<
     const typename ::boost::iterator_range<
         typename ::boost::range_iterator<const ForwardRange>::type>,
     const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const ForwardRange>::type>>
+        typename ::boost::range_iterator<const ForwardRange>::type>>;
+
+template <typename ForwardRange>
+DoubledRangeType<ForwardRange>
 operator|(const ForwardRange &rng, const Doubler &) {
   return ::boost::join(
       ::boost::make_iterator_range(std::begin(rng), std::end(rng)),
@@ -75,10 +82,17 @@ static Doubler doubled{};
 
 }  // namespace extension_implementation::boost::adaptors
 
+// ########################################################
+// ##  export API to extension::boost::adaptors          ##
+// ########################################################
+
 namespace extension::boost::adaptors {
-using extension_implementation::boost::adaptors::doubled;
-using extension_implementation::boost::adaptors::rotated;
+
 using extension_implementation::boost::adaptors::RotatedRangeType;
+using extension_implementation::boost::adaptors::rotated;
+using extension_implementation::boost::adaptors::DoubledRangeType;
+using extension_implementation::boost::adaptors::doubled;
+
 }  // namespace extension::boost::adaptors
 
 #endif

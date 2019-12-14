@@ -52,6 +52,7 @@ namespace kstate {
 
 template <typename ConstRangeType>
 class Kstate {
+ public:  // helper types:
   using SiteType = typename ::boost::range_value<ConstRangeType>::type;
 
  public:  // base on the two functions:
@@ -154,9 +155,13 @@ class SimpleKstate
   using ConstRangeType = typename SimpleKstateTypes<SiteType>::ConstRangeType;
 
  public:
+  using KeyT =
+      ConstRangeType;  // to make it possible to store it in VecMap container.
+ public:
   SimpleKstate(BufferType&&);
+  SimpleKstate(const SimpleKstate<SiteType>&);  // needed????? TODO check
   template <typename OtherRangeType>
-  SimpleKstate(const OtherRangeType&);
+  SimpleKstate(const OtherRangeType&, long);
 
  public:
   ConstRangeType to_range() const override;
@@ -175,8 +180,12 @@ SimpleKstate<SiteType>::SimpleKstate(SimpleKstate<SiteType>::BufferType&& v)
 
 template <typename SiteType>
 template <typename OtherRangeType>
-SimpleKstate<SiteType>::SimpleKstate(const OtherRangeType& r)
+SimpleKstate<SiteType>::SimpleKstate(const OtherRangeType& r, long)
     : _v(std::begin(r), std::end(r)), _n_sites(_v.size()) {}
+
+template <typename SiteType>
+SimpleKstate<SiteType>::SimpleKstate(const SimpleKstate<SiteType>& s)
+    : _v(s._v), _n_sites(s.n_sites()) {}
 
 // ***********************************************************************
 
@@ -243,26 +252,26 @@ size_t KstateUniqueView<ViewedRangeType>::n_sites() const {
 // ## UniqueSimpleKstate                                                ##
 // #######################################################################
 
-template <typename SiteType>
-class SimpleUniqueKstate : public SimpleKstate<SiteType> {
-  using BufferType = typename std::vector<SiteType>;
-  using IteratorType = typename std::vector<SiteType>::iterator;
-  using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
-  using RangeType = typename boost::iterator_range<IteratorType>;
-  using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
+// template <typename SiteType>
+// class SimpleUniqueKstate : public SimpleKstate<SiteType> {
+//   using BufferType = typename std::vector<SiteType>;
+//   using IteratorType = typename std::vector<SiteType>::iterator;
+//   using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
+//   using RangeType = typename boost::iterator_range<IteratorType>;
+//   using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
 
- public:
-  template <typename SomeRangeType>
-  SimpleUniqueKstate(const SomeRangeType& v);
-};
+//  public:
+//   template <typename SomeRangeType>
+//   SimpleUniqueKstate(const SomeRangeType& v);
+// };
 
-// #######################################################################
+// // #######################################################################
 
-template <typename SiteType>
-template <typename SomeRangeType>
-SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r)
-    : SimpleKstate<SiteType>(
-          r | extension::boost::adaptors::rotated(n_unique_shift(r))) {}
+// template <typename SiteType>
+// template <typename SomeRangeType>
+// SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r)
+//     : SimpleKstate<SiteType>(
+//           r | extension::boost::adaptors::rotated(n_unique_shift(r))) {}
 
 }  // namespace kstate
 
