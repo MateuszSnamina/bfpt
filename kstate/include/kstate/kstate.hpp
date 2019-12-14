@@ -47,6 +47,19 @@ size_t n_unique_shift(const ForwardRange& rng) {
 namespace kstate {
 
 // #######################################################################
+// ## TagClasses                                                        ##
+// #######################################################################
+
+struct FromRange {};
+struct FromBuffer {};
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+static FromRange from_range{};
+static FromBuffer from_buffer{};
+#pragma GCC diagnostic pop
+
+// #######################################################################
 // ## Kstate                                                            ##
 // #######################################################################
 
@@ -154,14 +167,14 @@ class SimpleKstate
   using RangeType = typename SimpleKstateTypes<SiteType>::RangeType;
   using ConstRangeType = typename SimpleKstateTypes<SiteType>::ConstRangeType;
 
- public:
-  using KeyT =
-      ConstRangeType;  // to make it possible to store it in VecMap container.
+ public:  // to make it possible to store it in VecMap container.
+  using KeyT = ConstRangeType;
+
  public:
   SimpleKstate(BufferType&&);
-  SimpleKstate(const SimpleKstate<SiteType>&);  // needed????? TODO check
+  // SimpleKstate(const SimpleKstate<SiteType>&);  // needed????? TODO check
   template <typename OtherRangeType>
-  SimpleKstate(const OtherRangeType&, long);
+  SimpleKstate(const OtherRangeType&, FromRange);
 
  public:
   ConstRangeType to_range() const override;
@@ -180,12 +193,12 @@ SimpleKstate<SiteType>::SimpleKstate(SimpleKstate<SiteType>::BufferType&& v)
 
 template <typename SiteType>
 template <typename OtherRangeType>
-SimpleKstate<SiteType>::SimpleKstate(const OtherRangeType& r, long)
+SimpleKstate<SiteType>::SimpleKstate(const OtherRangeType& r, FromRange)
     : _v(std::begin(r), std::end(r)), _n_sites(_v.size()) {}
 
-template <typename SiteType>
-SimpleKstate<SiteType>::SimpleKstate(const SimpleKstate<SiteType>& s)
-    : _v(s._v), _n_sites(s.n_sites()) {}
+// template <typename SiteType>
+// SimpleKstate<SiteType>::SimpleKstate(const SimpleKstate<SiteType>& s)
+//     : _v(s._v), _n_sites(s.n_sites()) {}
 
 // ***********************************************************************
 
@@ -252,26 +265,28 @@ size_t KstateUniqueView<ViewedRangeType>::n_sites() const {
 // ## UniqueSimpleKstate                                                ##
 // #######################################################################
 
-// template <typename SiteType>
-// class SimpleUniqueKstate : public SimpleKstate<SiteType> {
-//   using BufferType = typename std::vector<SiteType>;
-//   using IteratorType = typename std::vector<SiteType>::iterator;
-//   using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
-//   using RangeType = typename boost::iterator_range<IteratorType>;
-//   using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
+template <typename SiteType>
+class SimpleUniqueKstate : public SimpleKstate<SiteType> {
+  using BufferType = typename std::vector<SiteType>;
+  using IteratorType = typename std::vector<SiteType>::iterator;
+  using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
+  using RangeType = typename boost::iterator_range<IteratorType>;
+  using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
 
-//  public:
-//   template <typename SomeRangeType>
-//   SimpleUniqueKstate(const SomeRangeType& v);
-// };
+ public:
+  template <typename SomeRangeType>
+  SimpleUniqueKstate(const SomeRangeType& v, FromRange);
+};
 
-// // #######################################################################
+// ***********************************************************************
 
-// template <typename SiteType>
-// template <typename SomeRangeType>
-// SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r)
-//     : SimpleKstate<SiteType>(
-//           r | extension::boost::adaptors::rotated(n_unique_shift(r))) {}
+template <typename SiteType>
+template <typename SomeRangeType>
+SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r,
+                                                 FromRange)
+    : SimpleKstate<SiteType>(
+          r | extension::boost::adaptors::rotated(n_unique_shift(r)),
+          from_range) {}
 
 }  // namespace kstate
 
