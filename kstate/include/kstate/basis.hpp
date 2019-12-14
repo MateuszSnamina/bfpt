@@ -17,7 +17,8 @@ namespace kstate {
 
 struct RangeComparer {
   template <typename ConstRangeType1, typename ConstRangeType2>
-  bool operator()(const ConstRangeType1& lhs, const ConstRangeType2& rhs) const {
+  bool operator()(const ConstRangeType1& lhs,
+                  const ConstRangeType2& rhs) const {
     return boost::lexicographical_compare(lhs, rhs);
   }
 };
@@ -56,7 +57,8 @@ class VecMap {
       KayExtractorDef;
   // Container type definition -- index typedefs:
   typedef boost::multi_index::random_access<VecTagDef> VecIndexDef;
-  typedef boost::multi_index::ordered_unique<MapTagDef, KayExtractorDef/*, RangeComparer*/>
+  typedef boost::multi_index::ordered_unique<MapTagDef, KayExtractorDef,
+                                             RangeComparer>
       MapIndexDef;
   // Container type definition -- final container typedef:
   typedef boost::multi_index::multi_index_container<
@@ -76,7 +78,9 @@ class VecMap {
   const MapIndex& map_index() const;
   // Member functions:
   void add_element(ElementPtrT c);
-  boost::optional<unsigned> find_element_and_get_its_ra_index(KeyT v) const;
+  template <typename OtherRangeType>
+  boost::optional<unsigned> find_element_and_get_its_ra_index(
+      const OtherRangeType& v) const;
   unsigned size() const;
 };
 
@@ -116,8 +120,9 @@ void VecMap<Element>::add_element(ElementPtrT c) {
 }
 
 template <typename Element>
+template <typename OtherRangeType>
 boost::optional<unsigned> VecMap<Element>::find_element_and_get_its_ra_index(
-    KeyT v) const {
+    const OtherRangeType& v) const {
   auto search_iter = map_index().find(v);
   if (search_iter == map_index().end()) return boost::optional<unsigned>();
   auto ra_iter = container.template project<Vec>(search_iter);

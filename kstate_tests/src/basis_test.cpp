@@ -1,11 +1,8 @@
 #include <kstate/basis.hpp>
 #include <kstate/kstate.hpp>
 
-#include <array>
 #include <boost/range/algorithm.hpp>
-#include <list>
 #include <memory>
-#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -13,89 +10,158 @@ using kstate::from_range;
 
 TEST(Basis, Empty) {
   kstate::VecMap<kstate::SimpleKstate<int>> basis;
+  // test basis size:
   ASSERT_EQ(basis.size(), 0);
   ASSERT_TRUE(basis.vec_index().begin() == basis.vec_index().end());
   ASSERT_TRUE(basis.map_index().begin() == basis.map_index().end());
-  const int v10[3] = {11, 12, 113};
-  const auto k10 = std::make_shared<kstate::SimpleKstate<int>>(v10, from_range);
-  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k10->to_range()));
-  //EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v10)); //fix me!
+  // test not-finding a not existing element:
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::SimpleKstate<int>>(v100, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, OneElement) {
-  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   const int v1[3] = {11, 12, 13};
   const auto k1 = std::make_shared<kstate::SimpleKstate<int>>(v1, from_range);
+  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   basis.add_element(k1);
+  // test basis size:
   ASSERT_EQ(basis.size(), 1);
   ASSERT_TRUE(std::next(basis.vec_index().begin(), 1) ==
               basis.vec_index().end());
   ASSERT_TRUE(std::next(basis.map_index().begin(), 1) ==
               basis.map_index().end());
+  // test element access:
   EXPECT_TRUE(*basis.vec_index().begin() == k1);
   EXPECT_TRUE(*basis.map_index().begin() == k1);
+  // test finding the existing element:
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k1->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v1));
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k1->to_range()), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v1), 0);
+  const int v10[3] = {11, 12, 113};
+  const auto k10 = std::make_shared<kstate::SimpleKstate<int>>(v10, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k10->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v10));
+  // test not-finding a not existing element:
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::SimpleKstate<int>>(v100, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, TwoDifferentElementsTest0) {
-  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   const int v1[3] = {11, 12, 13};
   const int v2[3] = {13, 14, 15};
   const auto k1 = std::make_shared<kstate::SimpleKstate<int>>(v1, from_range);
   const auto k2 = std::make_shared<kstate::SimpleKstate<int>>(v2, from_range);
+  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   basis.add_element(k1);
   basis.add_element(k2);
+  // test basis size:
   ASSERT_EQ(basis.size(), 2);
   ASSERT_TRUE(std::next(basis.vec_index().begin(), 2) ==
               basis.vec_index().end());
   ASSERT_TRUE(std::next(basis.map_index().begin(), 2) ==
               basis.map_index().end());
+  // test element access:
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 0) == k1);
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 1) == k2);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 0) == k1);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 1) == k2);
+  // test finding the existing elements:
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k1->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v1));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k2->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v2));
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k1->to_range()), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v1), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k2->to_range()), 1);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 1);
+  // test not-finding a not existing element:
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::SimpleKstate<int>>(v100, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, TwoDifferentElementsTest1) {
-  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   const int v1[3] = {11, 12, 13};
   const int v2[3] = {13, 14, 15};
   const auto k1 = std::make_shared<kstate::SimpleKstate<int>>(v1, from_range);
   const auto k2 = std::make_shared<kstate::SimpleKstate<int>>(v2, from_range);
+  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   basis.add_element(k2);
   basis.add_element(k1);
+  // test basis size:
   ASSERT_EQ(basis.size(), 2);
   ASSERT_TRUE(std::next(basis.vec_index().begin(), 2) ==
               basis.vec_index().end());
   ASSERT_TRUE(std::next(basis.map_index().begin(), 2) ==
               basis.map_index().end());
+  // test element access:
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 0) == k2);
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 1) == k1);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 0) == k1);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 1) == k2);
+  // test finding the existing elements:
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k1->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v1));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k2->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v2));
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k1->to_range()), 1);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v1), 1);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k2->to_range()), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 0);
+  // test not-finding a not existing element:
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::SimpleKstate<int>>(v100, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, TwoSameElementsTest0) {
-  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   const int v1[3] = {11, 12, 13};
   const int v2[3] = {11, 12, 13};
   const auto k1 = std::make_shared<kstate::SimpleKstate<int>>(v1, from_range);
   const auto k2 = std::make_shared<kstate::SimpleKstate<int>>(v2, from_range);
+  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   basis.add_element(k1);
   basis.add_element(k2);
+  // test basis size:
   ASSERT_EQ(basis.size(), 1);
   ASSERT_TRUE(std::next(basis.vec_index().begin(), 1) ==
               basis.vec_index().end());
   ASSERT_TRUE(std::next(basis.map_index().begin(), 1) ==
               basis.map_index().end());
+  // test element access:
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 0) == k1);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 0) == k1);
   EXPECT_FALSE(*std::next(basis.vec_index().begin(), 0) == k2);
   EXPECT_FALSE(*std::next(basis.map_index().begin(), 0) == k2);
+  // test finding the existing elements:
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k1->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v1));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k2->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v2));
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k1->to_range()), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v1), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k2->to_range()), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 0);
+  // test not-finding a not existing element:
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::SimpleKstate<int>>(v100, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, BigTest) {
-  kstate::VecMap<kstate::SimpleKstate<int>> basis;
-
   const int v0[3] = {7, 12, 13};
   const int v1[3] = {11, 12, 13};
   const int v2[3] = {13, 14, 15};
@@ -120,7 +186,7 @@ TEST(Basis, BigTest) {
   const auto k9 = std::make_shared<kstate::SimpleKstate<int>>(v9, from_range);
   const auto k10 = std::make_shared<kstate::SimpleKstate<int>>(v10, from_range);
   const auto k11 = std::make_shared<kstate::SimpleKstate<int>>(v11, from_range);
-
+  kstate::VecMap<kstate::SimpleKstate<int>> basis;
   basis.add_element(k0);
   basis.add_element(k1);
   basis.add_element(k2);
@@ -133,13 +199,13 @@ TEST(Basis, BigTest) {
   basis.add_element(k9);
   basis.add_element(k10);
   basis.add_element(k11);
-
+  // test basis size:
   ASSERT_EQ(basis.size(), 9);
   ASSERT_TRUE(std::next(basis.vec_index().begin(), 9) ==
               basis.vec_index().end());
   ASSERT_TRUE(std::next(basis.map_index().begin(), 9) ==
               basis.map_index().end());
-
+  // test element access:
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 0) == k0);
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 1) == k1);
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 2) == k2);
@@ -149,7 +215,6 @@ TEST(Basis, BigTest) {
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 6) == k9);
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 7) == k10);
   EXPECT_TRUE(*std::next(basis.vec_index().begin(), 8) == k11);
-
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 0) == k6);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 1) == k5);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 2) == k8);
@@ -159,7 +224,63 @@ TEST(Basis, BigTest) {
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 6) == k0);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 7) == k1);
   EXPECT_TRUE(*std::next(basis.map_index().begin(), 8) == k2);
+  // test finding the existing elements:
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k0->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v0));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k1->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v1));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k2->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v2));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k3->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v3));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k4->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v4));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k5->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v5));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k6->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v6));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k7->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v7));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k8->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v8));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k9->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v9));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k10->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v10));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k11->to_range()));
+  ASSERT_TRUE(basis.find_element_and_get_its_ra_index(v11));
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k0->to_range()), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v0), 0);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k1->to_range()), 1);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v1), 1);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k2->to_range()), 2);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 2);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k3->to_range()), 2);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v3), 2);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k4->to_range()), 2);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v4), 2);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k5->to_range()), 3);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v5), 3);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k6->to_range()), 4);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v6), 4);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k7->to_range()), 3);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v7), 3);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k8->to_range()), 5);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v8), 5);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k9->to_range()), 6);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v9), 6);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k10->to_range()), 7);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v10), 7);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k11->to_range()), 8);
+  EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v11), 8);
+  // test not-finding a not existing element:
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::SimpleKstate<int>>(v100, from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 
+  // print:
   // std::cout << "size:" << basis.size() << std::endl;
   // for (const auto& _ : basis.vec_index()) {
   //   std::cout << "vec_index: " << _->to_str() << std::endl;
