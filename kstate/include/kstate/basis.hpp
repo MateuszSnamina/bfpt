@@ -31,11 +31,10 @@ struct RangeComparer {
  * VecMap<Element> is a map-like container and is a vec-like container
  * (simultaneously) for objects of class Element.
  *
- * The class Element requirements:
- * (1) Element must define the type Element::KeyT
- * (2) Element must define the Element::KeyT Element::to_range() const
- * member function. The VecMap containers uses above member function as a key
- * for the map.
+ * The class Element has to implament a member function:
+ * SomeRangeType Element::to_range() const.
+ * The VecMap containers uses above member function
+ * as a key extractor for the map.
  *
  * In the container objects are storred as shared_ptr to the objecs.
  */
@@ -43,34 +42,33 @@ struct RangeComparer {
 template <typename Element>
 class VecMap {
  public:
-  typedef typename Element::KeyT KeyT;
-  typedef std::shared_ptr<Element> ElementPtrT;
+  using KeyT = decltype(std::declval<Element>().to_range());
+  using ElementPtrT = std::shared_ptr<Element>;
 
  private:
   // Tags for random-access-index and search-index;
   struct Vec;
   struct Map;
   // Container type definition -- helper typedefs:
-  typedef boost::multi_index::tag<Vec> VecTagDef;
-  typedef boost::multi_index::tag<Map> MapTagDef;
-  typedef boost::multi_index::const_mem_fun<Element, KeyT, &Element::to_range>
-      KayExtractorDef;
+  using VecTagDef = boost::multi_index::tag<Vec>;
+  using MapTagDef = boost::multi_index::tag<Map>;
+  using KayExtractorDef =
+      boost::multi_index::const_mem_fun<Element, KeyT, &Element::to_range>;
   // Container type definition -- index typedefs:
-  typedef boost::multi_index::random_access<VecTagDef> VecIndexDef;
-  typedef boost::multi_index::ordered_unique<MapTagDef, KayExtractorDef,
-                                             RangeComparer>
-      MapIndexDef;
+  using VecIndexDef = boost::multi_index::random_access<VecTagDef>;
+  using MapIndexDef =
+      boost::multi_index::ordered_unique<MapTagDef, KayExtractorDef,
+                                         RangeComparer>;
   // Container type definition -- final container typedef:
-  typedef boost::multi_index::multi_index_container<
-      ElementPtrT, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>
-      Container;
+  using Container = boost::multi_index::multi_index_container<
+      ElementPtrT, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>;
   // The container:
   Container container;
 
  public:
   // Container type definition -- index typedefs:
-  typedef typename Container::template index<Vec>::type VecIndex;
-  typedef typename Container::template index<Map>::type MapIndex;
+  using VecIndex = typename Container::template index<Vec>::type;
+  using MapIndex = typename Container::template index<Map>::type;
   // Indices interfaces:
   VecIndex& vec_index();
   MapIndex& map_index();

@@ -167,9 +167,6 @@ class SimpleKstate
   using RangeType = typename SimpleKstateTypes<SiteType>::RangeType;
   using ConstRangeType = typename SimpleKstateTypes<SiteType>::ConstRangeType;
 
- public:  // to make it possible to store it in VecMap container.
-  using KeyT = ConstRangeType;
-
  public:
   SimpleKstate(BufferType&&);
   // SimpleKstate(const SimpleKstate<SiteType>&);  // needed????? TODO check
