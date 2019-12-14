@@ -264,31 +264,6 @@ SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r)
     : SimpleKstate<SiteType>(
           r | extension::boost::adaptors::rotated(n_unique_shift(r))) {}
 
-// #######################################################################
-// ## UniqueViewSimpleKstate                                            ##
-// #######################################################################
-
-// template <typename SiteType>
-// class UniqueViewSimpleKstate {
-//   using BufferType = typename std::vector<SiteType>;
-//   using IteratorType = typename std::vector<SiteType>::iterator;
-//   using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
-//   using RangeType = typename boost::iterator_range<IteratorType>;
-//   using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
-
-//  public:
-//   template <typename SomeRangeType>
-//   UniqueViewSimpleKstate(const SimpleKstate& v);
-// };
-
-// // #######################################################################
-
-// template <typename SiteType>
-// template <typename SomeRangeType>
-// SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r)
-//     : SimpleKstate<SiteType>(
-//           r | extension::boost::adaptors::rotated(n_unique_shift(r))) {}
-
 }  // namespace kstate
 
 #endif
