@@ -156,8 +156,7 @@ class SimpleKstate
   using ConstRangeType = typename SimpleKstateTypes<SiteType>::ConstRangeType;
 
  public:
-  SimpleKstate(BufferType&&);
-  // SimpleKstate(const SimpleKstate<SiteType>&);  // needed????? TODO check
+  SimpleKstate(BufferType&&, FromBuffer);
   template <typename OtherRangeType>
   SimpleKstate(const OtherRangeType&, FromRange);
 
@@ -173,17 +172,14 @@ class SimpleKstate
 // ***********************************************************************
 
 template <typename SiteType>
-SimpleKstate<SiteType>::SimpleKstate(SimpleKstate<SiteType>::BufferType&& v)
+SimpleKstate<SiteType>::SimpleKstate(SimpleKstate<SiteType>::BufferType&& v,
+                                     FromBuffer)
     : _v(std::move(v)), _n_sites(_v.size()) {}
 
 template <typename SiteType>
 template <typename OtherRangeType>
 SimpleKstate<SiteType>::SimpleKstate(const OtherRangeType& r, FromRange)
     : _v(std::begin(r), std::end(r)), _n_sites(_v.size()) {}
-
-// template <typename SiteType>
-// SimpleKstate<SiteType>::SimpleKstate(const SimpleKstate<SiteType>& s)
-//     : _v(s._v), _n_sites(s.n_sites()) {}
 
 // ***********************************************************************
 
