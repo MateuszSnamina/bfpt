@@ -2,6 +2,7 @@
 #define EXTENSIONS_BOOST_ADAPTORS_HPP
 
 #include <boost/range/join.hpp>
+
 #include <iterator>
 
 #ifndef NDEBUG
@@ -9,76 +10,73 @@
 #include <cassert>
 #endif
 
-// ########################################################
-// ##  rotated                                           ##
-// ########################################################
+// #######################################################################
+// ##  rotated                                                          ##
+// #######################################################################
 
 namespace extension_implementation::boost::adaptors {
 
 class RotateHolder {
- public:
-  RotateHolder(size_t n) : n(n){};
-  size_t n;
+   public:
+    RotateHolder(size_t n) : n(n){};
+    size_t n;
 };
+
+inline RotateHolder rotated(size_t n) {
+    return RotateHolder(n);
+}
 
 /*
  * Args domain: h.n has to be a positive number, less than the range size.
  * The performed rotation is a left rotation.
- *
  */
 
 template <typename ForwardRange>
 using RotatedRangeType = ::boost::joined_range<
-    const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const ForwardRange>::type>,
-    const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const ForwardRange>::type>>;
+    const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>,
+    const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>>;
 
 template <typename ForwardRange>
-RotatedRangeType<ForwardRange> operator|(const ForwardRange &rng,
-                                         const RotateHolder &h) {
+RotatedRangeType<ForwardRange>
+operator|(const ForwardRange &rng, const RotateHolder &h) {
 #ifndef NDEBUG
-  const auto d = std::distance(std::begin(rng), std::end(rng));
-  assert(d >= 0);
-  assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
-  assert(h.n >= 0);
+    const auto d = std::distance(std::begin(rng), std::end(rng));
+    assert(d >= 0);
+    assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
+    assert(h.n >= 0);
 #endif
-  const auto mid = std::next(std::begin(rng), h.n);
-  return ::boost::join(::boost::make_iterator_range(mid, std::end(rng)),
-                       ::boost::make_iterator_range(std::begin(rng), mid));
+    const auto mid = std::next(std::begin(rng), h.n);
+    return ::boost::join(::boost::make_iterator_range(mid, std::end(rng)),
+                         ::boost::make_iterator_range(std::begin(rng), mid));
 }
-
-inline RotateHolder rotated(size_t n) { return RotateHolder(n); }
 
 }  // namespace extension_implementation::boost::adaptors
 
-// ########################################################
-// ##  doubled                                           ##
-// ########################################################
+// #######################################################################
+// ##  doubled                                                          ##
+// #######################################################################
 
 namespace extension_implementation::boost::adaptors {
 
 class Doubler {};
 
-template <typename ForwardRange>
-using DoubledRangeType = ::boost::joined_range<
-    const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const ForwardRange>::type>,
-    const typename ::boost::iterator_range<
-        typename ::boost::range_iterator<const ForwardRange>::type>>;
-
-template <typename ForwardRange>
-DoubledRangeType<ForwardRange>
-operator|(const ForwardRange &rng, const Doubler &) {
-  return ::boost::join(
-      ::boost::make_iterator_range(std::begin(rng), std::end(rng)),
-      ::boost::make_iterator_range(std::begin(rng), std::end(rng)));
-}
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 static Doubler doubled{};
 #pragma GCC diagnostic pop
+
+template <typename ForwardRange>
+using DoubledRangeType = ::boost::joined_range<
+    const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>,
+    const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>>;
+
+template <typename ForwardRange>
+DoubledRangeType<ForwardRange>
+operator|(const ForwardRange &rng, const Doubler &) {
+    return ::boost::join(
+        ::boost::make_iterator_range(std::begin(rng), std::end(rng)),
+        ::boost::make_iterator_range(std::begin(rng), std::end(rng)));
+}
 
 }  // namespace extension_implementation::boost::adaptors
 
@@ -88,10 +86,10 @@ static Doubler doubled{};
 
 namespace extension::boost::adaptors {
 
-using extension_implementation::boost::adaptors::RotatedRangeType;
-using extension_implementation::boost::adaptors::rotated;
-using extension_implementation::boost::adaptors::DoubledRangeType;
 using extension_implementation::boost::adaptors::doubled;
+using extension_implementation::boost::adaptors::DoubledRangeType;
+using extension_implementation::boost::adaptors::rotated;
+using extension_implementation::boost::adaptors::RotatedRangeType;
 
 }  // namespace extension::boost::adaptors
 

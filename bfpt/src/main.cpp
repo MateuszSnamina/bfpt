@@ -1,4 +1,6 @@
+#include <extensions/adaptors.hpp>
+
 #include <iostream>
-#include<extensions/adaptors.hpp>
+
 int main() {
 }
