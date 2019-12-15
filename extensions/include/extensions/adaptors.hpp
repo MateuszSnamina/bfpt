@@ -19,7 +19,7 @@ namespace extension_implementation::boost::adaptors {
 class RotateHolder {
    public:
     RotateHolder(size_t n) : n(n){};
-    size_t n;
+    const size_t n;
 };
 
 inline RotateHolder rotated(size_t n) {
@@ -80,19 +80,21 @@ operator|(const ForwardRange &rng, const Doubler &) {
 // ##  refined                                                          ##
 // #######################################################################
 
-// namespace extension_implementation::boost::adaptors {
+namespace extension_implementation::boost::adaptors {
 
-// template<typename T>
-// class RefinedHolder {
-//    public:
-//     RefinedHolder(size_t n, T v) : n(n), v(v){};
-//     size_t n;
-//     T[1] v;
-// };
+template <typename T>
+struct RefinedHolder {
+    RefinedHolder(size_t n, T v)
+        : n(n),
+          v{v} {};
+    const size_t n;
+    const T v[1];
+};
 
-// inline RefinedHolder refined(size_t n) {
-//     return RefinedHolder(n);
-// }
+template <typename T>
+RefinedHolder<T> refined(size_t n, T v) {
+    return RefinedHolder<T>(n, v);
+}
 
 // /*
 //  * Args domain: h.n has to be a positive number, less than the range size.
@@ -100,27 +102,32 @@ operator|(const ForwardRange &rng, const Doubler &) {
 //  * and relies on the original value replacement with the new value h.v[0];
 //  */
 
-// template <typename ForwardRange>
-// using RefinedRangeType = ::boost::joined_range<
-//     const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>,
-//     const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>,
-//     const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>>;
+template <typename ForwardRange, typename T>
+using RefinedRangeType =
+    ::boost::joined_range<
+        const ::boost::joined_range<
+            const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>,
+            const typename ::boost::iterator_range<typename ::boost::range_iterator<const T[1]>::type>>,
+        const typename ::boost::iterator_range<typename ::boost::range_iterator<const ForwardRange>::type>>;
 
-// template <typename ForwardRange>
-// RefinedRangeType<ForwardRange>
-// operator|(const ForwardRange &rng, const RefinedHolder &h) {
-// #ifndef NDEBUG
-//     const auto d = std::distance(std::begin(rng), std::end(rng));
-//     assert(d >= 0);
-//     assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
-//     assert(h.n >= 0);
-// #endif
-//     const auto mid = std::next(std::begin(rng), h.n);
-//     return ::boost::join(::boost::make_iterator_range(mid, std::end(rng)),
-//                          ::boost::make_iterator_range(std::begin(rng), mid));
-// }
+template <typename ForwardRange, typename T>
+RefinedRangeType<ForwardRange, T>
+operator|(const ForwardRange &rng, const RefinedHolder<T> &h) {
+#ifndef NDEBUG
+    const auto d = std::distance(std::begin(rng), std::end(rng));
+    assert(d >= 0);
+    assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
+    assert(h.n >= 0);
+#endif
+    const auto &mid = std::next(std::begin(rng), h.n);
+    const auto &mid_1 = std::next(std::begin(rng), h.n + 1);
+    const auto &r1 = ::boost::make_iterator_range(std::begin(rng), mid);
+    const auto &r2 = ::boost::make_iterator_range(std::begin(h.v), std::end(h.v));
+    const auto &r3 = ::boost::make_iterator_range(mid_1, std::end(rng));
+    return ::boost::join(::boost::join(r1, r2), r3);
+}
 
-// }  // namespace extension_implementation::boost::adaptors
+}  // namespace extension_implementation::boost::adaptors
 
 // ########################################################
 // ##  export API to extension::boost::adaptors          ##
@@ -132,6 +139,8 @@ using extension_implementation::boost::adaptors::doubled;
 using extension_implementation::boost::adaptors::DoubledRangeType;
 using extension_implementation::boost::adaptors::rotated;
 using extension_implementation::boost::adaptors::RotatedRangeType;
+using extension_implementation::boost::adaptors::refined;
+using extension_implementation::boost::adaptors::RefinedRangeType;
 
 }  // namespace extension::boost::adaptors
 

@@ -60,3 +60,13 @@ TEST(ExtensionBoostAdaptorsDoubled, FilledRawArray) {
     ASSERT_EQ((v1 | extension::boost::adaptors::doubled).size(), 12);
     ASSERT_TRUE(boost::equal(v1 | extension::boost::adaptors::doubled, v2));
 }
+
+TEST(ExtensionBoostAdaptorsRefined, FilledRawArray) {
+    int v1[6] = {11, 12, 13, 14, 15, 16};
+    int v2[6] = {11, 12, 47, 14, 15, 16};
+    int v3[6] = {11, 12, 47, 14, 48, 16};
+    ASSERT_EQ((v1 | extension::boost::adaptors::refined(2, 47)).size(), 6);
+    ASSERT_TRUE(boost::equal(v1 | extension::boost::adaptors::refined(2, 47), v2));
+    ASSERT_EQ((v1 | extension::boost::adaptors::refined(2, 47) | extension::boost::adaptors::refined(4, 48)).size(), 6);
+    ASSERT_TRUE(boost::equal(v1 | extension::boost::adaptors::refined(2, 47) | extension::boost::adaptors::refined(4, 48), v3));
+}
