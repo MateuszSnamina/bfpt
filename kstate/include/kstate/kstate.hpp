@@ -35,19 +35,6 @@ size_t n_unique_shift(const ForwardRange& rng) {
 namespace kstate {
 
 // #######################################################################
-// ## TagClasses                                                        ##
-// #######################################################################
-
-struct FromRange {};
-struct FromBuffer {};
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-static FromRange from_range{};
-static FromBuffer from_buffer{};
-#pragma GCC diagnostic pop
-
-// #######################################################################
 // ## Kstate                                                            ##
 // #######################################################################
 
@@ -128,73 +115,6 @@ std::string Kstate<ConstRangeType>::to_str() const {
 }
 
 // #######################################################################
-// ## SimpleKstate                                                      ##
-// #######################################################################
-
-/*
- * SimpleKstate uses std::vect as a buffer.
- * This is to make the preliminary test of concept.
- */
-
-template <typename SiteType>
-struct SimpleKstateTypes {
-  using BufferType = typename std::vector<SiteType>;
-  using IteratorType = typename BufferType::iterator;
-  using ConstIteratorType = typename BufferType::const_iterator;
-  using RangeType = typename boost::iterator_range<IteratorType>;
-  using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
-};
-
-template <typename SiteType>
-class SimpleKstate
-    : public Kstate<typename SimpleKstateTypes<SiteType>::ConstRangeType> {
-  using BufferType = typename SimpleKstateTypes<SiteType>::BufferType;
-  using IteratorType = typename SimpleKstateTypes<SiteType>::IteratorType;
-  using ConstIteratorType =
-      typename SimpleKstateTypes<SiteType>::ConstIteratorType;
-  using RangeType = typename SimpleKstateTypes<SiteType>::RangeType;
-  using ConstRangeType = typename SimpleKstateTypes<SiteType>::ConstRangeType;
-
- public:
-  SimpleKstate(BufferType&&, FromBuffer);
-  template <typename OtherRangeType>
-  SimpleKstate(const OtherRangeType&, FromRange);
-
- public:
-  ConstRangeType to_range() const override;
-  size_t n_sites() const override;
-
- private:
-  const BufferType _v;
-  const size_t _n_sites;
-};
-
-// ***********************************************************************
-
-template <typename SiteType>
-SimpleKstate<SiteType>::SimpleKstate(SimpleKstate<SiteType>::BufferType&& v,
-                                     FromBuffer)
-    : _v(std::move(v)), _n_sites(_v.size()) {}
-
-template <typename SiteType>
-template <typename OtherRangeType>
-SimpleKstate<SiteType>::SimpleKstate(const OtherRangeType& r, FromRange)
-    : _v(std::begin(r), std::end(r)), _n_sites(_v.size()) {}
-
-// ***********************************************************************
-
-template <typename SiteType>
-typename SimpleKstate<SiteType>::ConstRangeType
-SimpleKstate<SiteType>::to_range() const {
-  return _v;
-}
-
-template <typename SiteType>
-size_t SimpleKstate<SiteType>::n_sites() const {
-  return _n_sites;
-}
-
-// #######################################################################
 // ## KstateUniqueView                                                  ##
 // #######################################################################
 
@@ -243,31 +163,142 @@ size_t KstateUniqueView<ViewedRangeType>::n_sites() const {
 }
 
 // #######################################################################
-// ## UniqueSimpleKstate                                                ##
+// ## DynamicKstate                                                     ##
+// #######################################################################
+
+// Helper tag classes:
+struct CtrFromRange {};
+struct CtrFromBuffer {};
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+static CtrFromRange ctr_from_range{};
+static CtrFromBuffer ctr_from_buffer{};
+#pragma GCC diagnostic pop
+
+// ***********************************************************************
+
+// Helper functions:
+template <typename Range>
+std::vector<typename boost::range_value<Range>::type> init_vector_from_range(
+    const Range& rng) {
+  using Element = typename boost::range_value<Range>::type;
+  using Vector = std::vector<Element>;
+  return Vector(std::begin(rng), std::end(rng));
+}
+
+// ***********************************************************************
+
+/*
+ * DynamicKstate uses std::vect as am internall buffer.
+ */
+
+template <typename SiteType>
+struct DynamicKstateTypes {
+  using BufferType = typename std::vector<SiteType>;
+  using IteratorType = typename BufferType::iterator;
+  using ConstIteratorType = typename BufferType::const_iterator;
+  using RangeType = typename boost::iterator_range<IteratorType>;
+  using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
+};
+
+template <typename SiteType>
+class DynamicKstate
+    : public Kstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
+  using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
+  using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
+  using ConstIteratorType =
+      typename DynamicKstateTypes<SiteType>::ConstIteratorType;
+  using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
+  using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
+
+ public:
+  DynamicKstate(BufferType&&, CtrFromBuffer);
+  template <typename OtherRangeType>
+  DynamicKstate(const OtherRangeType&, CtrFromRange);
+
+ public:
+  ConstRangeType to_range() const override;
+  size_t n_sites() const override;
+
+ protected:
+  const BufferType _v;
+};
+
+// ***********************************************************************
+
+template <typename SiteType>
+DynamicKstate<SiteType>::DynamicKstate(DynamicKstate<SiteType>::BufferType&& v,
+                                       CtrFromBuffer)
+    : _v(std::move(v)) {}
+
+template <typename SiteType>
+template <typename OtherRangeType>
+DynamicKstate<SiteType>::DynamicKstate(const OtherRangeType& r, CtrFromRange)
+    : _v(init_vector_from_range(r)) {}
+//    : _v(std::begin(r), std::end(r)) {}
+
+// ***********************************************************************
+
+template <typename SiteType>
+typename DynamicKstate<SiteType>::ConstRangeType
+DynamicKstate<SiteType>::to_range() const {
+  return _v;
+}
+
+template <typename SiteType>
+size_t DynamicKstate<SiteType>::n_sites() const {
+  return _v.size();
+}
+
+// #######################################################################
+// ## UniqueDynamicKstate                                               ##
 // #######################################################################
 
 template <typename SiteType>
-class SimpleUniqueKstate : public SimpleKstate<SiteType> {
-  using BufferType = typename std::vector<SiteType>;
-  using IteratorType = typename std::vector<SiteType>::iterator;
-  using ConstIteratorType = typename std::vector<SiteType>::const_iterator;
-  using RangeType = typename boost::iterator_range<IteratorType>;
-  using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
+class DynamicUniqueKstate
+    : public Kstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
+  // public DynamicKstate<SiteType> {
+  using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
+  using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
+  using ConstIteratorType =
+      typename DynamicKstateTypes<SiteType>::ConstIteratorType;
+  using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
+  using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
 
  public:
   template <typename SomeRangeType>
-  SimpleUniqueKstate(const SomeRangeType& v, FromRange);
+  DynamicUniqueKstate(const SomeRangeType& v, CtrFromRange);
+
+ public:
+  ConstRangeType to_range() const override;
+  size_t n_sites() const override;
+
+ protected:
+  const BufferType _v;
 };
 
 // ***********************************************************************
 
 template <typename SiteType>
 template <typename SomeRangeType>
-SimpleUniqueKstate<SiteType>::SimpleUniqueKstate(const SomeRangeType& r,
-                                                 FromRange)
-    : SimpleKstate<SiteType>(
-          r | extension::boost::adaptors::rotated(n_unique_shift(r)),
-          from_range) {}
+DynamicUniqueKstate<SiteType>::DynamicUniqueKstate(const SomeRangeType& r,
+                                                   CtrFromRange)
+    : _v(init_vector_from_range(
+          r | extension::boost::adaptors::rotated(n_unique_shift(r)))) {}
+
+// ***********************************************************************
+
+template <typename SiteType>
+typename DynamicUniqueKstate<SiteType>::ConstRangeType
+DynamicUniqueKstate<SiteType>::to_range() const {
+  return _v;
+}
+
+template <typename SiteType>
+size_t DynamicUniqueKstate<SiteType>::n_sites() const {
+  return _v.size();
+}
 
 }  // namespace kstate
 

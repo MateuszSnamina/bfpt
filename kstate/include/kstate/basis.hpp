@@ -42,8 +42,8 @@ struct RangeComparer {
 template <typename Element>
 class VecMap {
  public:
-  using KeyT = decltype(std::declval<Element>().to_range());
-  using ElementPtrT = std::shared_ptr<Element>;
+  using Key = decltype(std::declval<Element>().to_range());
+  using ElementPtr = std::shared_ptr<Element>;
 
  private:
   // Tags for random-access-index and search-index;
@@ -53,7 +53,7 @@ class VecMap {
   using VecTagDef = boost::multi_index::tag<Vec>;
   using MapTagDef = boost::multi_index::tag<Map>;
   using KayExtractorDef =
-      boost::multi_index::const_mem_fun<Element, KeyT, &Element::to_range>;
+      boost::multi_index::const_mem_fun<Element, Key, &Element::to_range>;
   // Container type definition -- index typedefs:
   using VecIndexDef = boost::multi_index::random_access<VecTagDef>;
   using MapIndexDef =
@@ -61,7 +61,7 @@ class VecMap {
                                          RangeComparer>;
   // Container type definition -- final container typedef:
   using Container = boost::multi_index::multi_index_container<
-      ElementPtrT, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>;
+      ElementPtr, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>;
   // The container:
   Container container;
 
@@ -69,13 +69,13 @@ class VecMap {
   // Container type definition -- index typedefs:
   using VecIndex = typename Container::template index<Vec>::type;
   using MapIndex = typename Container::template index<Map>::type;
-  // Indices interfaces:
+  // Index interfaces:
   VecIndex& vec_index();
   MapIndex& map_index();
   const VecIndex& vec_index() const;
   const MapIndex& map_index() const;
   // Member functions:
-  void add_element(ElementPtrT c);
+  void add_element(ElementPtr c);
   template <typename OtherRangeType>
   boost::optional<unsigned> find_element_and_get_its_ra_index(
       const OtherRangeType& v) const;
@@ -113,7 +113,7 @@ const typename VecMap<Element>::MapIndex& VecMap<Element>::map_index() const {
 }
 
 template <typename Element>
-void VecMap<Element>::add_element(ElementPtrT c) {
+void VecMap<Element>::add_element(ElementPtr c) {
   vec_index().push_back(c);
 }
 
