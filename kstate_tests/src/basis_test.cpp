@@ -353,7 +353,7 @@ TEST(Basis, BigTestWithUniqueStates) {
               basis.vec_index().end());
   ASSERT_TRUE(std::next(basis.map_index().begin(), 6) ==
               basis.map_index().end());
-  // test element access: // TODO
+  // test element access:
   EXPECT_TRUE(*(basis.vec_index().begin() + 0) == k0);
   EXPECT_TRUE(*(basis.vec_index().begin() + 1) == k1);
   EXPECT_TRUE(*(basis.vec_index().begin() + 2) == k2);
@@ -421,11 +421,11 @@ TEST(Basis, BigTestWithUniqueStates) {
   // EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k11->to_range()), 8);
   // EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v11), 8);
   // test not-finding a not existing element:
-  // const int v100[3] = {11, 12, 113};
-  // const auto k100 =
-  //     std::make_shared<kstate::DynamicUniqueKstate<int>>(v100, ctr_from_range);
-  // EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
-  // EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
+  const int v100[3] = {11, 12, 113};
+  const auto k100 =
+      std::make_shared<kstate::DynamicUniqueKstate<int>>(v100, ctr_from_range);
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 
   //print:
   // std::cout << "size:" << basis.size() << std::endl;
