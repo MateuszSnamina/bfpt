@@ -258,13 +258,13 @@ size_t DynamicKstate<SiteType>::n_sites() const {
 template <typename SiteType>
 class DynamicUniqueKstate
     : public Kstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
-  // public DynamicKstate<SiteType> {
   using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
   using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
   using ConstIteratorType =
       typename DynamicKstateTypes<SiteType>::ConstIteratorType;
   using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
-  using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
+  using ConstRangeType = typename
+  DynamicKstateTypes<SiteType>::ConstRangeType;
 
  public:
   template <typename SomeRangeType>
@@ -299,6 +299,39 @@ template <typename SiteType>
 size_t DynamicUniqueKstate<SiteType>::n_sites() const {
   return _v.size();
 }
+
+// #######################################################################
+// ## UniqueDynamicKstate                                               ##
+// #######################################################################
+
+// template <typename SiteType>
+// class DynamicUniqueKstate
+//     : public DynamicKstate<SiteType> {
+//   using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
+//   using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
+//   using ConstIteratorType =
+//       typename DynamicKstateTypes<SiteType>::ConstIteratorType;
+//   using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
+//   using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
+
+//  public:
+//   template <typename SomeRangeType>
+//   DynamicUniqueKstate(const SomeRangeType& v, CtrFromRange);
+
+//  public:
+//   using DynamicKstate<SiteType>::to_range;
+//   using DynamicKstate<SiteType>::n_sites;
+// };
+
+// // ***********************************************************************
+
+// template <typename SiteType>
+// template <typename SomeRangeType>
+// DynamicUniqueKstate<SiteType>::DynamicUniqueKstate(const SomeRangeType& r,
+//                                                    CtrFromRange)
+//     : DynamicKstate<SiteType>(
+//           r | extension::boost::adaptors::rotated(n_unique_shift(r)),
+//           ctr_from_range) {}
 
 }  // namespace kstate
 

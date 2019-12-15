@@ -313,15 +313,12 @@ TEST(Basis, BigTestWithUniqueStates) {
   const int v0[3] = {7, 12, 13};
   const int v1[3] = {11, 12, 13};
   const int v2[3] = {13, 14, 15};
-  const int v3[3] = {13, 14, 15};  // replica of v2
-  const int v4[3] = {13, 14, 15};  // replica of v2
+  const int v3[3] = {13, 14, 15};  // (equivalent) replica of v2
+  const int v4[3] = {15, 13, 14};  // (equivalent) replica of v2
   const int v5[3] = {1, 20, 15};
   const int v6[3] = {1, 14, 15};
-  const int v7[3] = {1, 20, 15};  // replica of v5
+  const int v7[3] = {20, 15, 1};  // (equivalent) replica of v5
   const int v8[3] = {3, 20, 15};
-  const int v9[3] = {3, 20, 18};
-  const int v10[3] = {3, 21, 15};
-  const int v11[3] = {3, 21, 10};
   const auto k0 =
       std::make_shared<kstate::DynamicUniqueKstate<int>>(v0, ctr_from_range);
   const auto k1 =
@@ -340,12 +337,6 @@ TEST(Basis, BigTestWithUniqueStates) {
       std::make_shared<kstate::DynamicUniqueKstate<int>>(v7, ctr_from_range);
   const auto k8 =
       std::make_shared<kstate::DynamicUniqueKstate<int>>(v8, ctr_from_range);
-  const auto k9 =
-      std::make_shared<kstate::DynamicUniqueKstate<int>>(v9, ctr_from_range);
-  const auto k10 =
-      std::make_shared<kstate::DynamicUniqueKstate<int>>(v10, ctr_from_range);
-  const auto k11 =
-      std::make_shared<kstate::DynamicUniqueKstate<int>>(v11, ctr_from_range);
   kstate::VecMap<kstate::DynamicUniqueKstate<int>> basis;
   basis.add_element(k0);
   basis.add_element(k1);
@@ -356,34 +347,25 @@ TEST(Basis, BigTestWithUniqueStates) {
   basis.add_element(k6);
   basis.add_element(k7);
   basis.add_element(k8);
-  basis.add_element(k9);
-  basis.add_element(k10);
-  basis.add_element(k11);
   // test basis size:
-  ASSERT_EQ(basis.size(), 9);
-  ASSERT_TRUE(std::next(basis.vec_index().begin(), 9) ==
+  ASSERT_EQ(basis.size(), 6);
+  ASSERT_TRUE(std::next(basis.vec_index().begin(), 6) ==
               basis.vec_index().end());
-  ASSERT_TRUE(std::next(basis.map_index().begin(), 9) ==
+  ASSERT_TRUE(std::next(basis.map_index().begin(), 6) ==
               basis.map_index().end());
   // test element access: // TODO
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 0) == k0);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 1) == k1);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 2) == k2);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 3) == k5);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 4) == k6);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 5) == k8);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 6) == k9);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 7) == k10);
-  // EXPECT_TRUE(*(basis.vec_index().begin() + 8) == k11);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 0) == k6);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 1) == k5);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 2) == k8);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 3) == k9);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 4) == k11);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 5) == k10);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 6) == k0);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 7) == k1);
-  // EXPECT_TRUE(*std::next(basis.map_index().begin(), 8) == k2);
+  EXPECT_TRUE(*(basis.vec_index().begin() + 0) == k0);
+  EXPECT_TRUE(*(basis.vec_index().begin() + 1) == k1);
+  EXPECT_TRUE(*(basis.vec_index().begin() + 2) == k2);
+  EXPECT_TRUE(*(basis.vec_index().begin() + 3) == k5);
+  EXPECT_TRUE(*(basis.vec_index().begin() + 4) == k6);
+  EXPECT_TRUE(*(basis.vec_index().begin() + 5) == k8);
+  EXPECT_TRUE(*std::next(basis.map_index().begin(), 0) == k0);
+  EXPECT_TRUE(*std::next(basis.map_index().begin(), 1) == k1);
+  EXPECT_TRUE(*std::next(basis.map_index().begin(), 2) == k6);
+  EXPECT_TRUE(*std::next(basis.map_index().begin(), 3) == k2);
+  EXPECT_TRUE(*std::next(basis.map_index().begin(), 4) == k5);
+  EXPECT_TRUE(*std::next(basis.map_index().begin(), 5) == k8);
   // test finding the existing elements:
   ASSERT_TRUE(basis.find_element_and_get_its_ra_index(k0->to_range()));
   ASSERT_FALSE(basis.find_element_and_get_its_ra_index(
@@ -439,13 +421,13 @@ TEST(Basis, BigTestWithUniqueStates) {
   // EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k11->to_range()), 8);
   // EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v11), 8);
   // test not-finding a not existing element:
-  const int v100[3] = {11, 12, 113};
-  const auto k100 =
-      std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
-  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
-  EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
+  // const int v100[3] = {11, 12, 113};
+  // const auto k100 =
+  //     std::make_shared<kstate::DynamicUniqueKstate<int>>(v100, ctr_from_range);
+  // EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
+  // EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 
-  // print:
+  //print:
   // std::cout << "size:" << basis.size() << std::endl;
   // for (const auto& _ : basis.vec_index()) {
   //   std::cout << "vec_index: " << _->to_str() << std::endl;
