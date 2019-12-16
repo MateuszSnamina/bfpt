@@ -106,7 +106,7 @@ Kstate<ConstRangeType>::tranlational_compare(
 template <typename ConstRangeType>
 std::string
 Kstate<ConstRangeType>::to_str() const {
-    return extension::boost::RangeStreamStreamer()
+    return extension::boost::RangeStringStreamer()
         .set_stream_preparer([](std::ostream& s) { s << "⦃"; })
         .set_stream_sustainer([](std::ostream& s, size_t i) {})
         .set_stream_separer([](std::ostream& s) { s << "∙"; })

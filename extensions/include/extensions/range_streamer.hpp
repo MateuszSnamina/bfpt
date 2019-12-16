@@ -93,18 +93,18 @@ inline const std::ostream& RangeStreamer::ostream() const {
 }
 
 // #######################################################################
-// ##  RangeStreamStreamer                                              ##
+// ##  RangeStringStreamer                                              ##
 // #######################################################################
 
-class RangeStreamStreamer {
+class RangeStringStreamer {
    public:
-    RangeStreamStreamer();
-    RangeStreamStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
-    RangeStreamStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
-    RangeStreamStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
-    RangeStreamStreamer& set_stream_separer(std::function<void(std::ostream&)>);
+    RangeStringStreamer();
+    RangeStringStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
+    RangeStringStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
+    RangeStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
+    RangeStringStreamer& set_stream_separer(std::function<void(std::ostream&)>);
     template <typename SinglePassRange>
-    RangeStreamStreamer& stream(const SinglePassRange& rng);
+    RangeStringStreamer& stream(const SinglePassRange& rng);
     std::string str() const;
 
    private:
@@ -114,39 +114,39 @@ class RangeStreamStreamer {
 
 // ***********************************************************************
 
-inline RangeStreamStreamer::RangeStreamStreamer()
+inline RangeStringStreamer::RangeStringStreamer()
     : _rs(_oss) {
 }
 
 // ***********************************************************************
 
-inline RangeStreamStreamer& RangeStreamStreamer::set_stream_preparer(std::function<void(std::ostream&)> _) {
+inline RangeStringStreamer& RangeStringStreamer::set_stream_preparer(std::function<void(std::ostream&)> _) {
     _rs.set_stream_preparer(_);
     return *this;
 }
 
-inline RangeStreamStreamer& RangeStreamStreamer::set_stream_sustainer(std::function<void(std::ostream&, size_t)> _) {
+inline RangeStringStreamer& RangeStringStreamer::set_stream_sustainer(std::function<void(std::ostream&, size_t)> _) {
     _rs.set_stream_sustainer(_);
     return *this;
 }
 
-inline RangeStreamStreamer& RangeStreamStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
+inline RangeStringStreamer& RangeStringStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
     _rs.set_stream_finisher(_);
     return *this;
 }
 
-inline RangeStreamStreamer& RangeStreamStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
+inline RangeStringStreamer& RangeStringStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
     _rs.set_stream_separer(_);
     return *this;
 }
 
 template <typename SinglePassRange>
-RangeStreamStreamer& RangeStreamStreamer::stream(const SinglePassRange& rng) {
+RangeStringStreamer& RangeStringStreamer::stream(const SinglePassRange& rng) {
     _rs.stream(rng);
     return *this;
 }
 
-inline std::string RangeStreamStreamer::str() const {
+inline std::string RangeStringStreamer::str() const {
     return _oss.str();
 }
 

@@ -5,25 +5,29 @@
 
 using kstate::ctr_from_range;
 
-TEST(KStateStreamer, SixElements) {
+// #######################################################################
+// ## KstateStringStreamer                                              ##
+// #######################################################################
+
+TEST(KstateStringStreamer, SixElements) {
     const int v1[6] = {11, 12, 13, 14, 15, 16};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
     ASSERT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕊⦃11∙12∙13∙14∙15∙16⦄");
 }
 
-TEST(KStateStreamer, OneElement) {
+TEST(KstateStringStreamer, OneElement) {
     const int v1[1] = {11};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
     EXPECT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕊⦃11⦄");
 }
 
-TEST(KStateStreamer, Empty) {
+TEST(KstateStringStreamer, Empty) {
     std::vector<int> v1;
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
     EXPECT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕊⦃⦄");
 }
 
-TEST(KStateStreamer, Fancy) {
+TEST(KstateStringStreamer, Fancy) {
     double v1[3] = {1.1, 1.2, 1.3};
     const kstate::DynamicKstate<double> k1(v1, ctr_from_range);
     const auto s = kstate::KstateStringStreamer()

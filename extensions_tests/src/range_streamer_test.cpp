@@ -7,24 +7,24 @@
 
 TEST(RangeStreamer, RawRangeStreamerSixElementRange) {
   int v1[6] = {13, 14, 15, 16, 11, 12};
-  ASSERT_EQ(extension::boost::RangeStreamStreamer().stream(v1).str(),
+  ASSERT_EQ(extension::boost::RangeStringStreamer().stream(v1).str(),
             "{0:13,1:14,2:15,3:16,4:11,5:12}");
 }
 
 TEST(RangeStreamer, RawRangeStreamerOneElementRange) {
   int v2[1] = {13};
-  ASSERT_EQ(extension::boost::RangeStreamStreamer().stream(v2).str(), "{0:13}");
+  ASSERT_EQ(extension::boost::RangeStringStreamer().stream(v2).str(), "{0:13}");
 }
 
 TEST(RangeStreamer, RawRangeStreamerEmptyRange) {
   std::vector<int> v3;
-  ASSERT_EQ(extension::boost::RangeStreamStreamer().stream(v3).str(), "{}");
+  ASSERT_EQ(extension::boost::RangeStringStreamer().stream(v3).str(), "{}");
 }
 
 TEST(RangeStreamer, Fancy) {
   double v1[3] = {1.1, 1.2, 1.3};
   const auto s =
-      extension::boost::RangeStreamStreamer()
+      extension::boost::RangeStringStreamer()
           .set_stream_preparer([](std::ostream& s) {
             s << "BEGIN***|" << std::fixed << std::setprecision(2)
               << std::showpos;

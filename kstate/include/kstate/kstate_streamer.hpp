@@ -14,7 +14,7 @@
 #include <string>
 
 // #######################################################################
-// ##  KstateStreamer                                                    ##
+// ##  KstateStreamer                                                   ##
 // #######################################################################
 
 namespace kstate {
@@ -94,7 +94,7 @@ inline const std::ostream& KstateStreamer::ostream() const {
 }
 
 // #######################################################################
-// ##  KstateStringStreamer                                              ##
+// ##  KstateStringStreamer                                             ##
 // #######################################################################
 
 class KstateStringStreamer {
