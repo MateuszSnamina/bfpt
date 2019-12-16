@@ -1,6 +1,7 @@
 #ifndef EXTENSIONS_BOOST_ADAPTORS_HPP
 #define EXTENSIONS_BOOST_ADAPTORS_HPP
 
+#include <boost/range.hpp>
 #include <boost/range/join.hpp>
 
 #include <iterator>
@@ -40,7 +41,7 @@ template <typename ForwardRange>
 RotatedRangeType<ForwardRange>
 operator|(const ForwardRange &rng, const RotateHolder &h) {
 #ifndef NDEBUG
-    const auto d = std::distance(std::begin(rng), std::end(rng));
+    const auto d = ::boost::size(rng);
     assert(d >= 0);
     assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
     assert(h.n >= 0);
@@ -114,7 +115,7 @@ template <typename ForwardRange, typename T>
 RefinedRangeType<ForwardRange, T>
 operator|(const ForwardRange &rng, const RefinedHolder<T> &h) {
 #ifndef NDEBUG
-    const auto d = std::distance(std::begin(rng), std::end(rng));
+    const auto d = ::boost::size(rng);
     assert(d >= 0);
     assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
     assert(h.n >= 0);
