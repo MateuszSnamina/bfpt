@@ -5,8 +5,10 @@
 #include <extensions/range_streamer.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <boost/range.hpp>
 #include <boost/range/algorithm/search.hpp>
+#include <boost/range/any_range.hpp>
 
 #include <iterator>
 #include <optional>
@@ -18,9 +20,10 @@ namespace {
 
 template <typename ForwardRange>
 size_t n_unique_shift(const ForwardRange& rng) {
-    const auto d = std::distance(std::begin(rng), std::end(rng));
+    using Difference = typename boost::range_difference<ForwardRange>::type;
+    const Difference d = std::distance(std::begin(rng), std::end(rng));
     size_t i = 0;
-    for (size_t _ = 1; _ < d; _++) {
+    for (size_t _ = 1; boost::numeric_cast<Difference>(_) < d; _++) {
         const bool result_cmp = boost::lexicographical_compare(
             rng | extension::boost::adaptors::rotated(i),
             rng | extension::boost::adaptors::rotated(_));
@@ -39,13 +42,14 @@ namespace kstate {
 // ## Kstate                                                            ##
 // #######################################################################
 
-template <typename ConstRangeType>
+template <typename SiteType, typename TraversalTag = boost::random_access_traversal_tag>
 class Kstate {
    public:  // helper types:
-    using SiteType = typename ::boost::range_value<ConstRangeType>::type;
+    using AnyRangeType = typename boost::any_range<SiteType, TraversalTag>;
+    using ConstAnyRangeType = typename boost::any_range<const SiteType, TraversalTag>;
 
    public:  // base on the two functions:
-    virtual ConstRangeType to_range() const = 0;
+    virtual ConstAnyRangeType to_range() const = 0;
     virtual size_t n_sites() const = 0;
 
    public:  // Kstate implements:
@@ -63,8 +67,8 @@ class Kstate {
 
 // ***********************************************************************
 
-template <typename ConstRangeType>
-size_t Kstate<ConstRangeType>::n_least_replication_shift() const {
+template <typename SiteType, typename TraversalTag>
+size_t Kstate<SiteType, TraversalTag>::n_least_replication_shift() const {
     assert(n_sites() > 0);
     const auto r = to_range();
     const auto rdr = r | extension::boost::adaptors::doubled | extension::boost::adaptors::rotated(1);
@@ -74,22 +78,22 @@ size_t Kstate<ConstRangeType>::n_least_replication_shift() const {
     return static_cast<size_t>(_ + 1);
 }
 
-template <typename ConstRangeType>
-bool Kstate<ConstRangeType>::is_prolific(int n_k) const {
+template <typename SiteType, typename TraversalTag>
+bool Kstate<SiteType, TraversalTag>::is_prolific(int n_k) const {
     return !((n_least_replication_shift() * n_k) % n_sites());
 }
 
-template <typename ConstRangeType>
+template <typename SiteType, typename TraversalTag>
 template <typename OtherConstRangeType>
-bool Kstate<ConstRangeType>::compare(
+bool Kstate<SiteType, TraversalTag>::compare(
     const Kstate<OtherConstRangeType>& other) const {
     return boost::range::equal(to_range(), other.to_range());
 }
 
-template <typename ConstRangeType>
+template <typename SiteType, typename TraversalTag>
 template <typename OtherConstRangeType>
 std::optional<size_t>
-Kstate<ConstRangeType>::tranlational_compare(
+Kstate<SiteType, TraversalTag>::tranlational_compare(
     const Kstate<OtherConstRangeType>& other) const {
     if (n_sites() != other.n_sites()) {
         return std::nullopt;
@@ -103,9 +107,9 @@ Kstate<ConstRangeType>::tranlational_compare(
                : static_cast<size_t>(std::distance(std::begin(r2d), it));
 }
 
-template <typename ConstRangeType>
+template <typename SiteType, typename TraversalTag>
 std::string
-Kstate<ConstRangeType>::to_str() const {
+Kstate<SiteType, TraversalTag>::to_str() const {
     return extension::boost::RangeStringStreamer()
         .set_stream_preparer([](std::ostream& s) { s << "⦃"; })
         .set_stream_sustainer([](std::ostream& s, size_t i) {})
@@ -119,46 +123,43 @@ Kstate<ConstRangeType>::to_str() const {
 // ## KstateUniqueView                                                  ##
 // #######################################################################
 
-template <typename ViewedRangeType>
-struct KstateUniqueViewTypes {
-    using RangeType = typename extension::boost::adaptors::RotatedRangeType<ViewedRangeType>;
-};
-
-template <typename ViewedRangeType>
-class KstateUniqueView : public Kstate<typename KstateUniqueViewTypes<ViewedRangeType>::RangeType> {
-    using RangeType = typename KstateUniqueViewTypes<ViewedRangeType>::RangeType;
+template <typename SiteType, typename TraversalTag = boost::random_access_traversal_tag>
+class KstateUniqueView : public Kstate<SiteType, TraversalTag> {
+   public:  // helper types:
+    using AnyRangeType = typename boost::any_range<SiteType, TraversalTag>;
+    using ConstAnyRangeType = typename boost::any_range<const SiteType, TraversalTag>;
 
    public:
-    KstateUniqueView(const Kstate<ViewedRangeType>&);
+    KstateUniqueView(const Kstate<SiteType, TraversalTag>&);
 
    public:
-    RangeType to_range() const override;
+    ConstAnyRangeType to_range() const override;
     size_t n_sites() const override;
 
    private:
-    const Kstate<ViewedRangeType>& _r;
+    const Kstate<SiteType, TraversalTag>& _r;
     const size_t _n_unique_shift;
 };
 
 // ***********************************************************************
 
-template <typename ViewedRangeType>
-KstateUniqueView<ViewedRangeType>::KstateUniqueView(const Kstate<ViewedRangeType>& r)
+template <typename SiteType, typename TraversalTag>
+KstateUniqueView<SiteType, TraversalTag>::KstateUniqueView(const Kstate<SiteType, TraversalTag>& r)
     : _r(r),
-      _n_unique_shift(n_unique_shift(r)) {
+      _n_unique_shift(n_unique_shift(r.to_range())) {
 }
 
 // ***********************************************************************
 
-template <typename ViewedRangeType>
-typename KstateUniqueView<ViewedRangeType>::RangeType
-KstateUniqueView<ViewedRangeType>::to_range() const {
-    return _r | _n_unique_shift;
+template <typename SiteType, typename TraversalTag>
+typename KstateUniqueView<SiteType, TraversalTag>::ConstAnyRangeType
+KstateUniqueView<SiteType, TraversalTag>::to_range() const {
+    return _r.to_range() | extension::boost::adaptors::rotated(_n_unique_shift);
 }
 
-template <typename ViewedRangeType>
+template <typename SiteType, typename TraversalTag>
 size_t
-KstateUniqueView<ViewedRangeType>::n_sites() const {
+KstateUniqueView<SiteType, TraversalTag>::n_sites() const {
     return _r.n_sites();
 }
 
@@ -201,15 +202,19 @@ struct DynamicKstateTypes {
     using ConstIteratorType = typename BufferType::const_iterator;
     using RangeType = typename boost::iterator_range<IteratorType>;
     using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
+    using AnyRangeType = typename boost::any_range<SiteType, boost::random_access_traversal_tag>;
+    using ConstAnyRangeType = typename boost::any_range<const SiteType, boost::random_access_traversal_tag>;
 };
 
 template <typename SiteType>
-class DynamicKstate : public Kstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
+class DynamicKstate : public Kstate<SiteType> {
     using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
     using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
     using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
     using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
     using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
+    using AnyRangeType = typename DynamicKstateTypes<SiteType>::AnyRangeType;
+    using ConstAnyRangeType = typename DynamicKstateTypes<SiteType>::ConstAnyRangeType;
 
    public:
     DynamicKstate(BufferType&&, CtrFromBuffer);
@@ -217,7 +222,7 @@ class DynamicKstate : public Kstate<typename DynamicKstateTypes<SiteType>::Const
     DynamicKstate(const OtherRangeType&, CtrFromRange);
 
    public:
-    ConstRangeType to_range() const override;
+    ConstAnyRangeType to_range() const override;
     size_t n_sites() const override;
 
    protected:
@@ -241,8 +246,9 @@ DynamicKstate<SiteType>::DynamicKstate(const OtherRangeType& r, CtrFromRange)
 // ***********************************************************************
 
 template <typename SiteType>
-typename DynamicKstate<SiteType>::ConstRangeType
+typename DynamicKstate<SiteType>::ConstAnyRangeType
 DynamicKstate<SiteType>::to_range() const {
+    boost::any_range<const SiteType, boost::random_access_traversal_tag> xxx(_v);
     return _v;
 }
 
@@ -257,19 +263,21 @@ DynamicKstate<SiteType>::n_sites() const {
 // #######################################################################
 
 template <typename SiteType>
-class DynamicUniqueKstate : public Kstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
+class DynamicUniqueKstate : public Kstate<SiteType> {
     using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
     using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
     using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
     using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
     using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
+    using AnyRangeType = typename DynamicKstateTypes<SiteType>::AnyRangeType;
+    using ConstAnyRangeType = typename DynamicKstateTypes<SiteType>::ConstAnyRangeType;
 
    public:
     template <typename SomeRangeType>
     DynamicUniqueKstate(const SomeRangeType& v, CtrFromRange);
 
    public:
-    ConstRangeType to_range() const override;
+    ConstAnyRangeType to_range() const override;
     size_t n_sites() const override;
 
    protected:
@@ -287,7 +295,7 @@ DynamicUniqueKstate<SiteType>::DynamicUniqueKstate(const SomeRangeType& r, CtrFr
 // ***********************************************************************
 
 template <typename SiteType>
-typename DynamicUniqueKstate<SiteType>::ConstRangeType
+typename DynamicUniqueKstate<SiteType>::ConstAnyRangeType
 DynamicUniqueKstate<SiteType>::to_range() const {
     return _v;
 }

@@ -164,3 +164,15 @@ TEST(DynamicUniqueKstate, CtrTest3) {
     const kstate::DynamicUniqueKstate<int> k2(v2, ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
 }
+
+// #######################################################################
+// ## KstateUniqueView                                                  ##
+// #######################################################################
+
+TEST(KstateUniqueView, OfFilledDynamicKstate) {
+    const int v1[7] = {14, 13, 14, 14, 13, 12, 11};
+    const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
+    const auto k2 = kstate::KstateUniqueView(k1);
+    EXPECT_EQ(k1.to_str(), "⦃14∙13∙14∙14∙13∙12∙11⦄");
+    EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
+}
