@@ -117,19 +117,16 @@ bool Kstate<SiteType, TraversalTag>::is_prolific(int n_k) const {
 
 template <typename SiteType, typename TraversalTag>
 template <typename OtherSiteType>
-bool Kstate<SiteType, TraversalTag>::compare_kstate(
-    const Kstate<OtherSiteType>& other) const {
+bool Kstate<SiteType, TraversalTag>::compare_kstate(const Kstate<OtherSiteType>& other) const {
+    assert(n_sites() == other.n_sites());
     return boost::range::equal(to_any_range(), other.to_any_range());
 }
 
 template <typename SiteType, typename TraversalTag>
 template <typename OtherSiteType>
 std::optional<size_t>
-Kstate<SiteType, TraversalTag>::translational_compare_kstate(
-    const Kstate<OtherSiteType>& other) const {
-    if (n_sites() != other.n_sites()) {
-        return std::nullopt;
-    }
+Kstate<SiteType, TraversalTag>::translational_compare_kstate(const Kstate<OtherSiteType>& other) const {
+    assert(n_sites() == other.n_sites());
     const auto r1 = to_any_range();
     const auto r2 = other.to_any_range();
     const auto r2d = r2 | extension::boost::adaptors::doubled;
@@ -300,24 +297,19 @@ bool SpeedyKstate<ConstRangeType>::is_prolific(int n_k) const {
 
 template <typename ConstRangeType>
 template <typename OtherConstRangeType>
-bool SpeedyKstate<ConstRangeType>::compare_range(
-    //TODO ASSERT EQUAL SIZE
-    const OtherConstRangeType& other) const {
+bool SpeedyKstate<ConstRangeType>::compare_range(const OtherConstRangeType& other) const {
+    assert(this->n_sites() == boost::size(other));
     return boost::range::equal(to_range(), other);
 }
 
 template <typename ConstRangeType>
 template <typename OtherConstRangeType>
 std::optional<size_t>
-SpeedyKstate<ConstRangeType>::translational_compare_range(
-    const OtherConstRangeType& other) const {
-    //TODO ASSERT EQUAL SIZE
-    if (this->n_sites() != boost::size(other)) {
-        return std::nullopt;
-    }
-    const auto r1 = to_range();                                 //TODO REF
-    const auto r2 = other;                                      //TODO REF
-    const auto r2d = r2 | extension::boost::adaptors::doubled;  //TODO REF
+SpeedyKstate<ConstRangeType>::translational_compare_range(const OtherConstRangeType& other) const {
+    assert(this->n_sites() == boost::size(other));
+    const auto r1 = to_range();
+    const auto r2 = other;
+    const auto r2d = r2 | extension::boost::adaptors::doubled;
     const auto it = boost::range::search(r2d, r1);
     return it == std::end(r2d)
                ? std::optional<size_t>()
