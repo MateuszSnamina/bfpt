@@ -81,7 +81,7 @@ KstateStreamer& KstateStreamer::stream(const Kstate<SinglePassRange>& kstate) {
         .set_stream_sustainer(_stream_sustainer)
         .set_stream_separer(_stream_separer)
         .set_stream_finisher(_stream_finisher)
-        .stream(kstate.to_range());
+        .stream(kstate.to_any_range());
     return *this;
 }
 
