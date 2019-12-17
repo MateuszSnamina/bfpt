@@ -42,26 +42,56 @@ namespace kstate {
 // ## Kstate                                                            ##
 // #######################################################################
 
+/*
+ * Kstate<SiteType> class provides an abstraction for 1D cyclic quantum
+ * state, such as the ground state of 1D Heisenberg spin chain (chain with
+ * the periodic boundary condition imposed). The corresponding site state
+ * is prescribed by SiteType class. (Following the example, SiteType
+ * provides an abstraction for the spin Hilber space)
+ * 
+ * A Kstate instance, together with $k$ value, define a Bloch quantum
+ * state. ($k$ value is not a part of the instance.)
+ * 
+ * The Kstate<SiteType> is an abstract base class.
+ * Basing on the implementations the following two member functions:
+ *   - to_any_range() const,
+ *   - n_sites() const
+ * the class provides an implementation of the
+ * following member functions being the state descriptors:
+ *   - n_least_replication_shift() const
+ *   - is_prolific(int n_k) const
+ *   - to_str() const
+ * as well the following member functions allowing the states comparison:
+ *   - compare_kstate(const Kstate<OtherSiteType>& other) const
+ *   - translational_compare_kstate(const Kstate<OtherSiteType>& other) const.
+ * 
+ * The class may be fancy-formatted using KstateStreamer helper class.
+ * 
+ * Kstate<SiteType> is the high-level API class, that relies on
+ * polymorphic boost::any_range class. For implementation within
+ * polymorphic-less framework check SpeedyKstate class.
+ */
+
 template <typename SiteType, typename TraversalTag = boost::random_access_traversal_tag>
 class Kstate {
    public:  // helper types:
     using AnyRangeType = typename boost::any_range<SiteType, TraversalTag>;
     using ConstAnyRangeType = typename boost::any_range<const SiteType, TraversalTag>;
 
-   public:  // base on the two functions:
+   public:
     virtual ConstAnyRangeType to_any_range() const = 0;
     virtual size_t n_sites() const = 0;
 
-   public:  // Kstate implements (not-speedy impementations):
+   public:  // Kstate descriptors:
     virtual size_t n_least_replication_shift() const;
     virtual bool is_prolific(int n_k) const;
     virtual std::string to_str() const;
 
-   public:  // Convenient abstraction:
-    template <typename OtherConstRangeType>
-    bool compare_kstate(const Kstate<OtherConstRangeType>& other) const;
-    template <typename OtherConstRangeType>
-    std::optional<size_t> tranlational_compare_kstate(const Kstate<OtherConstRangeType>& other) const;
+   public:  // Convenient binary functions:
+    template <typename OtherSiteType>
+    bool compare_kstate(const Kstate<OtherSiteType>& other) const;
+    template <typename OtherSiteType>
+    std::optional<size_t> translational_compare_kstate(const Kstate<OtherSiteType>& other) const;
 
    public:
     virtual ~Kstate() = default;
@@ -86,17 +116,17 @@ bool Kstate<SiteType, TraversalTag>::is_prolific(int n_k) const {
 }
 
 template <typename SiteType, typename TraversalTag>
-template <typename OtherConstRangeType>
+template <typename OtherSiteType>
 bool Kstate<SiteType, TraversalTag>::compare_kstate(
-    const Kstate<OtherConstRangeType>& other) const {
+    const Kstate<OtherSiteType>& other) const {
     return boost::range::equal(to_any_range(), other.to_any_range());
 }
 
 template <typename SiteType, typename TraversalTag>
-template <typename OtherConstRangeType>
+template <typename OtherSiteType>
 std::optional<size_t>
-Kstate<SiteType, TraversalTag>::tranlational_compare_kstate(
-    const Kstate<OtherConstRangeType>& other) const {
+Kstate<SiteType, TraversalTag>::translational_compare_kstate(
+    const Kstate<OtherSiteType>& other) const {
     if (n_sites() != other.n_sites()) {
         return std::nullopt;
     }
@@ -169,6 +199,53 @@ Kstate<SiteType, TraversalTag>::to_str() const {
 // ## SpeedyKstate                                                      ##
 // #######################################################################
 
+/*
+ * SpeedyKstate<ConstRangeType> class is to model the same physical
+ * abstraction as Kstate<SiteType> class does. The two classes provide
+ * alternative APIs and alternative implementations for a similar
+ * functionality.
+ * 
+ * The Kstate<SiteType> implementation relies a high level API, build
+ * on top of the polymorphic abstraction layer (served by boost::any_range
+ * class). The implementation may not be a desirable when execution speed
+ * is the top priority.
+ *
+ * SpeedyKstate<ConstRangeType> is to take advantage of a polymorphic-less
+ * API allowing high-speed implementations. The used approach relies
+ * on ranges being treated as instances of template parameter classes,
+ * rather than instances of boost::any_range class. Within the framework
+ * more efficient implementations are possible.
+ * 
+ * As the template-only approach used in SpeedyKstate<ConstRangeType>
+ * may be perceived as a tuned alternative for the polymorphic approach
+ * used in Kstate<SiteType> then the former is formally treated
+ * as subclass of the latter.
+ * 
+ * SpeedyKstate<ConstRangeType> overrides the following descriptor-type
+ * member functions:
+ *  - n_least_replication_shift() const.
+ *  - is_prolific(int n_k) const.
+ *  - to_str() const.
+ * And provides the following two member functions:
+ *  - compare_range(const OtherConstRangeType& other) const,
+ *  - translational_compare_range(const OtherConstRangeType& other) const,
+ * being alternatives to:
+ *   - compare_kstate(const Kstate<OtherSiteType>& other) const,
+ *   - translational_compare_kstate(const Kstate<OtherSiteType>& other) const.
+ * 
+ * Member function implementations defined in SpeedyKstate<ConstRangeType>
+ * are based on to_range() member function. This is the origin of differences
+ * between the implementations and their counterparts from Kstate<SiteType>,
+ * as the latter may use only to_any_range() member function.
+ * 
+ * The SpeedyKstate<ConstRangeType> is conceived to being the layer between
+ * Kstate<SiteType> abstract base class and its concrete sub-classes, like
+ *  - DynamicKstate<SiteType>, and
+ *  - StaticKstate<SiteType, N>
+ * classes.
+ * 
+ */
+
 template <typename ConstRangeType>
 class SpeedyKstate : public Kstate<typename boost::range_value<ConstRangeType>::type, typename boost::range_traversal<ConstRangeType>::type> {
    public:  // helper types:
@@ -190,7 +267,7 @@ class SpeedyKstate : public Kstate<typename boost::range_value<ConstRangeType>::
     template <typename OtherConstRangeType>
     bool compare_range(const OtherConstRangeType& other) const;
     template <typename OtherConstRangeType>
-    std::optional<size_t> tranlational_compare_range(const OtherConstRangeType& other) const;
+    std::optional<size_t> translational_compare_range(const OtherConstRangeType& other) const;
     std::string to_str() const override;
 
    public:
@@ -232,7 +309,7 @@ bool SpeedyKstate<ConstRangeType>::compare_range(
 template <typename ConstRangeType>
 template <typename OtherConstRangeType>
 std::optional<size_t>
-SpeedyKstate<ConstRangeType>::tranlational_compare_range(
+SpeedyKstate<ConstRangeType>::translational_compare_range(
     const OtherConstRangeType& other) const {
     //TODO ASSERT EQUAL SIZE
     if (this->n_sites() != boost::size(other)) {

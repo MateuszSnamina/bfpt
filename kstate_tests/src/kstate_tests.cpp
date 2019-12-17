@@ -42,19 +42,19 @@ TEST(DynamicKstate, TranlationalCompareTest0) {
     const kstate::DynamicKstate<int> k14(v14, ctr_from_range);
     const kstate::DynamicKstate<int> k15(v15, ctr_from_range);
     ASSERT_FALSE(k1.compare_range(v2));
-    ASSERT_TRUE(k1.tranlational_compare_range(v1));
-    ASSERT_EQ(*k1.tranlational_compare_range(v1), 0);
-    ASSERT_TRUE(k1.tranlational_compare_range(v11));
-    ASSERT_EQ(*k1.tranlational_compare_range(v11), 1);
-    ASSERT_TRUE(k1.tranlational_compare_range(v12));
-    ASSERT_EQ(*k1.tranlational_compare_range(v12), 2);
-    ASSERT_TRUE(k1.tranlational_compare_range(v13));
-    ASSERT_EQ(*k1.tranlational_compare_range(v13), 3);
-    ASSERT_TRUE(k1.tranlational_compare_range(v13));
-    ASSERT_EQ(*k1.tranlational_compare_range(v14), 4);
-    ASSERT_TRUE(k1.tranlational_compare_range(v14));
-    ASSERT_EQ(*k1.tranlational_compare_range(v15), 5);
-    ASSERT_TRUE(k1.tranlational_compare_range(v15));
+    ASSERT_TRUE(k1.translational_compare_range(v1));
+    ASSERT_EQ(*k1.translational_compare_range(v1), 0);
+    ASSERT_TRUE(k1.translational_compare_range(v11));
+    ASSERT_EQ(*k1.translational_compare_range(v11), 1);
+    ASSERT_TRUE(k1.translational_compare_range(v12));
+    ASSERT_EQ(*k1.translational_compare_range(v12), 2);
+    ASSERT_TRUE(k1.translational_compare_range(v13));
+    ASSERT_EQ(*k1.translational_compare_range(v13), 3);
+    ASSERT_TRUE(k1.translational_compare_range(v13));
+    ASSERT_EQ(*k1.translational_compare_range(v14), 4);
+    ASSERT_TRUE(k1.translational_compare_range(v14));
+    ASSERT_EQ(*k1.translational_compare_range(v15), 5);
+    ASSERT_TRUE(k1.translational_compare_range(v15));
 }
 
 TEST(DynamicKstate, LeastReplicationShiftTest0) {
