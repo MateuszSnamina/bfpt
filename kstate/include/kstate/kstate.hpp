@@ -62,8 +62,10 @@ namespace kstate {
  *   - is_prolific(int n_k) const
  *   - to_str() const
  * as well the following member functions allowing the states comparison:
- *   - compare_kstate(const Kstate<OtherSiteType>& other) const
- *   - translational_compare_kstate(const Kstate<OtherSiteType>& other) const.
+ *   - compare_kstate(const Kstate<SiteType>& other) const
+ *   - translational_compare_kstate(const Kstate<SiteType>& other) const.
+ *   - compare_any_range(const ConstAnyRangeType& other) const;
+ *   - translational_compare_any_range(const ConstAnyRangeType& other) const;
  * 
  * The class may be fancy-formatted using KstateStreamer helper class.
  * 
@@ -88,10 +90,10 @@ class Kstate {
     virtual std::string to_str() const;
 
    public:  // Convenient binary functions:
-    template <typename OtherSiteType>
-    bool compare_kstate(const Kstate<OtherSiteType>& other) const;
-    template <typename OtherSiteType>
-    std::optional<size_t> translational_compare_kstate(const Kstate<OtherSiteType>& other) const;
+    bool compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const;
+    std::optional<size_t> translational_compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const;
+    bool compare_any_range(const ConstAnyRangeType& other) const;
+    std::optional<size_t> translational_compare_any_range(const ConstAnyRangeType& other) const;
 
    public:
     virtual ~Kstate() = default;
@@ -116,19 +118,28 @@ bool Kstate<SiteType, TraversalTag>::is_prolific(int n_k) const {
 }
 
 template <typename SiteType, typename TraversalTag>
-template <typename OtherSiteType>
-bool Kstate<SiteType, TraversalTag>::compare_kstate(const Kstate<OtherSiteType>& other) const {
-    assert(n_sites() == other.n_sites());
-    return boost::range::equal(to_any_range(), other.to_any_range());
+bool Kstate<SiteType, TraversalTag>::compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const {
+    return compare_kstate(other.to_any_range());
 }
 
 template <typename SiteType, typename TraversalTag>
-template <typename OtherSiteType>
 std::optional<size_t>
-Kstate<SiteType, TraversalTag>::translational_compare_kstate(const Kstate<OtherSiteType>& other) const {
-    assert(n_sites() == other.n_sites());
-    const auto r1 = to_any_range();
-    const auto r2 = other.to_any_range();
+Kstate<SiteType, TraversalTag>::translational_compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const {
+    return translational_compare_range(other.to_any_range());
+}
+
+template <typename SiteType, typename TraversalTag>
+bool Kstate<SiteType, TraversalTag>::compare_any_range(const ConstAnyRangeType& other) const {
+    assert(n_sites() == boost::size(other));
+    return boost::range::equal(to_any_range(), other);
+}
+
+template <typename SiteType, typename TraversalTag>
+std::optional<size_t>
+Kstate<SiteType, TraversalTag>::translational_compare_any_range(const ConstAnyRangeType& other) const {
+    assert(n_sites() == boost::size(other));
+    const auto& r1 = to_any_range();
+    const auto& r2 = other;
     const auto r2d = r2 | extension::boost::adaptors::doubled;
     const auto it = boost::range::search(r2d, r1);
     return it == std::end(r2d)
