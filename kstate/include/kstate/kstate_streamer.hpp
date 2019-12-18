@@ -26,8 +26,8 @@ class KstateStreamer {
     KstateStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_separer(std::function<void(std::ostream&)>);
-    template <typename SinglePassRange>
-    KstateStreamer& stream(const Kstate<SinglePassRange>& rng);
+    template <typename SiteType>
+    KstateStreamer& stream(const Kstate<SiteType>& rng);
     std::ostream& ostream();
     const std::ostream& ostream() const;
 
@@ -74,8 +74,8 @@ inline KstateStreamer& KstateStreamer::set_stream_separer(std::function<void(std
     return *this;
 }
 
-template <typename SinglePassRange>
-KstateStreamer& KstateStreamer::stream(const Kstate<SinglePassRange>& kstate) {
+template <typename SiteType>
+KstateStreamer& KstateStreamer::stream(const Kstate<SiteType>& kstate) {
     extension::boost::RangeStreamer(_os)
         .set_stream_preparer(_stream_preparer)
         .set_stream_sustainer(_stream_sustainer)
