@@ -10,10 +10,12 @@
 #include <boost/range/algorithm/search.hpp>
 #include <boost/range/any_range.hpp>
 
+#include <cassert>
 #include <iterator>
 #include <optional>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace {
@@ -35,8 +37,6 @@ size_t n_unique_shift(const ForwardRange& rng) {
 }
 
 }  // namespace
-
-namespace kstate {
 
 // #######################################################################
 // ## Kstate                                                            ##
@@ -74,8 +74,16 @@ namespace kstate {
  * polymorphic-less framework check SpeedyKstate class.
  */
 
+namespace kstate {
+
 template <typename SiteType, typename TraversalTag = boost::random_access_traversal_tag>
 class Kstate {
+    static_assert(!std::is_const<SiteType>::value);
+    static_assert(!std::is_volatile<SiteType>::value);
+    static_assert(!std::is_reference<SiteType>::value);
+    static_assert(std::is_same<TraversalTag, boost::random_access_traversal_tag>::value ||
+                  std::is_same<TraversalTag, boost::forward_traversal_tag>::value);
+
    public:  // helper types:
     using AnyRangeType = typename boost::any_range<SiteType, TraversalTag>;
     using ConstAnyRangeType = typename boost::any_range<const SiteType, TraversalTag>;
@@ -90,8 +98,8 @@ class Kstate {
     virtual std::string to_str() const;
 
    public:  // Convenient binary functions:
-    bool compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const;
-    std::optional<size_t> translational_compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const;
+    bool compare_kstate(const Kstate<SiteType, TraversalTag>& other) const;
+    std::optional<size_t> translational_compare_kstate(const Kstate<SiteType, TraversalTag>& other) const;
     bool compare_any_range(const ConstAnyRangeType& other) const;
     std::optional<size_t> translational_compare_any_range(const ConstAnyRangeType& other) const;
 
@@ -118,14 +126,14 @@ bool Kstate<SiteType, TraversalTag>::is_prolific(int n_k) const {
 }
 
 template <typename SiteType, typename TraversalTag>
-bool Kstate<SiteType, TraversalTag>::compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const {
-    return compare_kstate(other.to_any_range());
+bool Kstate<SiteType, TraversalTag>::compare_kstate(const Kstate<SiteType, TraversalTag>& other) const {
+    return compare_any_range(other.to_any_range());
 }
 
 template <typename SiteType, typename TraversalTag>
 std::optional<size_t>
-Kstate<SiteType, TraversalTag>::translational_compare_kstate(const Kstate<const SiteType, TraversalTag>& other) const {
-    return translational_compare_range(other.to_any_range());
+Kstate<SiteType, TraversalTag>::translational_compare_kstate(const Kstate<SiteType, TraversalTag>& other) const {
+    return translational_compare_any_range(other.to_any_range());
 }
 
 template <typename SiteType, typename TraversalTag>
@@ -158,6 +166,8 @@ Kstate<SiteType, TraversalTag>::to_str() const {
         .stream(to_any_range())
         .str();
 }
+
+}  // namespace kstate
 
 // #######################################################################
 // ## KstateUniqueView                                                  ##
@@ -254,11 +264,18 @@ Kstate<SiteType, TraversalTag>::to_str() const {
  * 
  */
 
+namespace kstate {
+
 template <typename ConstRangeType>
 class SpeedyKstate : public Kstate<typename boost::range_value<ConstRangeType>::type, typename boost::range_traversal<ConstRangeType>::type> {
    public:  // helper types:
     using SiteType = typename boost::range_value<ConstRangeType>::type;
     using TraversalTag = typename boost::range_traversal<ConstRangeType>::type;
+    static_assert(!std::is_const<SiteType>::value);
+    static_assert(!std::is_volatile<SiteType>::value);
+    static_assert(!std::is_reference<SiteType>::value);
+    static_assert(std::is_same<TraversalTag, boost::random_access_traversal_tag>::value ||
+                  std::is_same<TraversalTag, boost::forward_traversal_tag>::value);
     using AnyRangeType = typename Kstate<SiteType, TraversalTag>::AnyRangeType;
     using ConstAnyRangeType = typename Kstate<SiteType, TraversalTag>::ConstAnyRangeType;
 
@@ -339,9 +356,19 @@ SpeedyKstate<ConstRangeType>::to_str() const {
         .str();
 }
 
+}  // namespace kstate
+
 // #######################################################################
 // ## DynamicKstate                                                     ##
 // #######################################################################
+
+/*
+ * DynamicKstate<SiteType> is a concrete subclass of 
+ * Kstate<SiteType, boost::random_access_traversal_tag>
+ * that uses std::vector as an internal buffer.
+ */
+
+namespace kstate {
 
 // Helper tag classes:
 struct CtrFromRange {};
@@ -367,12 +394,11 @@ init_vector_from_range(
 
 // ***********************************************************************
 
-/*
- * DynamicKstate uses std::vect as am internall buffer.
- */
-
 template <typename SiteType>
 struct DynamicKstateTypes {
+    static_assert(!std::is_const<SiteType>::value);
+    static_assert(!std::is_volatile<SiteType>::value);
+    static_assert(!std::is_reference<SiteType>::value);
     using BufferType = typename std::vector<SiteType>;
     using IteratorType = typename BufferType::iterator;
     using ConstIteratorType = typename BufferType::const_iterator;
@@ -384,6 +410,11 @@ struct DynamicKstateTypes {
 
 template <typename SiteType>
 class DynamicKstate : public SpeedyKstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
+    static_assert(!std::is_const<SiteType>::value);
+    static_assert(!std::is_volatile<SiteType>::value);
+    static_assert(!std::is_reference<SiteType>::value);
+
+   public:
     using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
     using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
     using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
@@ -434,9 +465,13 @@ DynamicKstate<SiteType>::n_sites() const {
     return _v.size();
 }
 
+}  // namespace kstate
+
 // #######################################################################
 // ## UniqueDynamicKstate                                               ##
 // #######################################################################
+
+namespace kstate {
 
 template <typename SiteType>
 class DynamicUniqueKstate : public SpeedyKstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
@@ -482,40 +517,20 @@ DynamicUniqueKstate<SiteType>::n_sites() const {
     return _v.size();
 }
 
-// #######################################################################
-// ## UniqueDynamicKstate                                               ##
-// #######################################################################
-
-// template <typename SiteType>
-// class DynamicUniqueKstate
-//     : public DynamicKstate<SiteType> {
-//   using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
-//   using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
-//   using ConstIteratorType =
-//       typename DynamicKstateTypes<SiteType>::ConstIteratorType;
-//   using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
-//   using ConstRangeType = typename
-//   DynamicKstateTypes<SiteType>::ConstRangeType;
-
-//  public:
-//   template <typename SomeRangeType>
-//   DynamicUniqueKstate(const SomeRangeType& v, CtrFromRange);
-
-//  public:
-//   using DynamicKstate<SiteType>::to_range;
-//   using DynamicKstate<SiteType>::n_sites;
-// };
-
-// // ***********************************************************************
-
-// template <typename SiteType>
-// template <typename SomeRangeType>
-// DynamicUniqueKstate<SiteType>::DynamicUniqueKstate(const SomeRangeType& r,
-//                                                    CtrFromRange)
-//     : DynamicKstate<SiteType>(
-//           r | extension::boost::adaptors::rotated(n_unique_shift(r)),
-//           ctr_from_range) {}
-
 }  // namespace kstate
+
+// #######################################################################
+// ## StaticKstate                                                      ##
+// #######################################################################
+
+/*
+ * DynamicKstate<SiteType, N> is a concrete subclass of 
+ * Kstate<SiteType, boost::random_access_traversal_tag>
+ * that uses std::array as an internal buffer.
+ */
+
+namespace kstate {
+    //TODO
+}
 
 #endif

@@ -104,8 +104,8 @@ class KstateStringStreamer {
     KstateStringStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_separer(std::function<void(std::ostream&)>);
-    template <typename SinglePassRange>
-    KstateStringStreamer& stream(const Kstate<SinglePassRange>& rng);
+    template <typename SiteType>
+    KstateStringStreamer& stream(const Kstate<SiteType>& rng);
     std::string str() const;
 
    private:
@@ -141,8 +141,8 @@ inline KstateStringStreamer& KstateStringStreamer::set_stream_separer(std::funct
     return *this;
 }
 
-template <typename SinglePassRange>
-KstateStringStreamer& KstateStringStreamer::stream(const Kstate<SinglePassRange>& kstate) {
+template <typename SiteType>
+KstateStringStreamer& KstateStringStreamer::stream(const Kstate<SiteType>& kstate) {
     _rs.stream(kstate);
     return *this;
 }
