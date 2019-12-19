@@ -76,6 +76,7 @@ Basis<Element>::find_element_and_get_its_ra_index(const OtherRangeType& v) const
 
 template <typename Element>
 void Basis<Element>::add_element(ElementPtr c) {
+    assert(c);
     assert(c->n_sites() == n_sites());
     _vec_map.vec_index().push_back(c);
 }

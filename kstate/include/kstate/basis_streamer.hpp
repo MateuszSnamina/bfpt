@@ -57,6 +57,7 @@ BasisStreamer& BasisStreamer::stream(const Basis<Element>& basis) {
     KstateStreamer kss(_os, _range_streamer_settings_for_kstate);
     _range_streamer_settings_for_basis._stream_preparer(_os);
     for (const auto& _ : basis.vec_index() | ::boost::adaptors::indexed(0)) {
+        assert(_.value());
         const auto& index = _.index();
         const auto& kstate = *_.value();
         if (index != 0) {
