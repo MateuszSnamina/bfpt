@@ -5,7 +5,7 @@
 using kstate::ctr_from_range;
 
 TEST(BasisStreamer, TESTTRY) {
-    // not jet a test...
+    // not yet a test...
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
