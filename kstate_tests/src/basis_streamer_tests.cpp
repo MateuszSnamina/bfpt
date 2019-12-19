@@ -4,8 +4,7 @@
 
 using kstate::ctr_from_range;
 
-TEST(BasisStreamer, TESTTRY) {
-    // not yet a test...
+kstate::Basis<kstate::DynamicKstate<int>> get_testet_filled_basis() {
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
@@ -43,6 +42,12 @@ TEST(BasisStreamer, TESTTRY) {
     basis.add_element(k9);
     basis.add_element(k10);
     basis.add_element(k11);
+    return basis;
+}
+
+TEST(BasisStreamer, TESTTRY) {
+    // not yet a test...
+    const auto& basis = get_testet_filled_basis();
     kstate::BasisStreamer bs(std::cout);
     bs.stream(basis);
 }

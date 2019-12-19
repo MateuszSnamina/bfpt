@@ -26,17 +26,24 @@ static RangeStreamerSettings kstate_default_range_streamer_settings{
     [](std::ostream& s) { s << "⦄"; }};
 
 class KstateStreamer {
-   public:
+   public: // Ctor:
     KstateStreamer(std::ostream& os, RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
+
+   public:  // Internal ostream assessor:
+    std::ostream& ostream();
+    const std::ostream& ostream() const;
+
+   public:  // Setters for fine streaming settings:
     KstateStreamer& set_range_streamer_settings(RangeStreamerSettings);
     KstateStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_separer(std::function<void(std::ostream&)>);
+    KstateStreamer& set_format_independence_flag(bool = true);
+
+   public:  // The streaming function:
     template <typename SiteType>
     KstateStreamer& stream(const Kstate<SiteType>& rng);
-    std::ostream& ostream();
-    const std::ostream& ostream() const;
 
    private:
     // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
@@ -76,6 +83,11 @@ inline KstateStreamer& KstateStreamer::set_stream_separer(std::function<void(std
     return *this;
 }
 
+inline KstateStreamer& KstateStreamer::set_format_independence_flag(bool _) {
+    _range_streamer_settings.set_format_independence_flag(_);
+    return *this;
+}
+
 template <typename SiteType>
 KstateStreamer& KstateStreamer::stream(const Kstate<SiteType>& kstate) {
     extension::boost::RangeStreamer(_os)
@@ -100,14 +112,21 @@ inline const std::ostream& KstateStreamer::ostream() const {
 // #######################################################################
 
 class KstateStringStreamer {
-   public:
+   public:  // Ctor:
     KstateStringStreamer(RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
+
+   public:  // Setters for fine streaming settings:
     KstateStringStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_separer(std::function<void(std::ostream&)>);
+    KstateStringStreamer& set_format_independence_flag(bool = true);
+
+   public:  // The streaming function:
     template <typename SiteType>
     KstateStringStreamer& stream(const Kstate<SiteType>& rng);
+
+   public:  // Function to retreive the streaming result
     std::string str() const;
 
    private:
@@ -140,6 +159,11 @@ inline KstateStringStreamer& KstateStringStreamer::set_stream_finisher(std::func
 
 inline KstateStringStreamer& KstateStringStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
     _rs.set_stream_separer(_);
+    return *this;
+}
+
+inline KstateStringStreamer& KstateStringStreamer::set_format_independence_flag(bool _) {
+    _rs.set_format_independence_flag(_);
     return *this;
 }
 
