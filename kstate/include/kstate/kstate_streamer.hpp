@@ -2,7 +2,7 @@
 #define KSTATE_KSTATE_STREAMER_HPP
 
 #include <extensions/range_streamer.hpp>
-#include <kstate/kstate.hpp>
+#include <kstate/kstate_abstract.hpp>
 
 #include <boost/range.hpp>
 #include <boost/range/adaptor/indexed.hpp>

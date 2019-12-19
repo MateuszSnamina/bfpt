@@ -1,7 +1,6 @@
 #ifndef KSTATE_BASIS_HPP
 #define KSTATE_BASIS_HPP
 
-#include <kstate/kstate.hpp>
 #include <kstate/vec_map.hpp>
 
 // #######################################################################

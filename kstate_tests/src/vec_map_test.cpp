@@ -1,5 +1,6 @@
-#include <kstate/kstate.hpp>
 #include <kstate/vec_map.hpp>
+
+#include <kstate/kstate_concrete.hpp>
 
 #include <boost/range/algorithm.hpp>
 

@@ -1,5 +1,7 @@
 #include <kstate/basis_streamer.hpp>
 
+#include <kstate/kstate_concrete.hpp>
+
 #include <gtest/gtest.h>
 
 using kstate::ctr_from_range;

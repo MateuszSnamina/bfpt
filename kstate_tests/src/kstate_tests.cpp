@@ -1,4 +1,4 @@
-#include <kstate/kstate.hpp>
+#include <kstate/kstate_concrete.hpp>
 
 #include <boost/range/algorithm.hpp>
 

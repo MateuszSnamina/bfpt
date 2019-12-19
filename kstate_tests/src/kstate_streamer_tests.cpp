@@ -1,5 +1,7 @@
-#include <kstate/kstate.hpp>
 #include <kstate/kstate_streamer.hpp>
+
+#include <kstate/kstate_concrete.hpp>
+
 
 #include <gtest/gtest.h>
 
