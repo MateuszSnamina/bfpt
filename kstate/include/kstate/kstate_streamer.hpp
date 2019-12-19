@@ -19,9 +19,16 @@
 
 namespace kstate {
 
+static RangeStreamerSettings kstate_default_range_streamer_settings{
+    [](std::ostream& s) { s << "𝕂𝕊⦃"; },
+    [](std::ostream& s, size_t i) {},
+    [](std::ostream& s) { s << "∙"; },
+    [](std::ostream& s) { s << "⦄"; }};
+
 class KstateStreamer {
    public:
-    KstateStreamer(std::ostream& os);
+    KstateStreamer(std::ostream& os, RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
+    KstateStreamer& set_range_streamer_settings(RangeStreamerSettings);
     KstateStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
@@ -34,53 +41,48 @@ class KstateStreamer {
    private:
     // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
     std::ostream& _os;
-    std::function<void(std::ostream&)> _stream_preparer = [](std::ostream& s) {
-        s << "𝕂𝕊⦃";
-    };
-    std::function<void(std::ostream&, size_t)> _stream_sustainer =
-        [](std::ostream& s, size_t i) {};
-    std::function<void(std::ostream&)> _stream_separer = [](std::ostream& s) {
-        s << "∙";
-    };
-    std::function<void(std::ostream&)> _stream_finisher = [](std::ostream& s) {
-        s << "⦄";
-    };
+    RangeStreamerSettings _range_streamer_settings = kstate_default_range_streamer_settings;
 };
 
 // ***********************************************************************
 
-inline KstateStreamer::KstateStreamer(std::ostream& os)
-    : _os(os) {}
+inline KstateStreamer::KstateStreamer(std::ostream& os, RangeStreamerSettings range_streamer_settings)
+    : _os(os), _range_streamer_settings(range_streamer_settings) {}
 
 // ***********************************************************************
 
+inline KstateStreamer& KstateStreamer::set_range_streamer_settings(RangeStreamerSettings _) {
+    _range_streamer_settings = _;
+    return *this;
+}
+
 inline KstateStreamer& KstateStreamer::set_stream_preparer(std::function<void(std::ostream&)> _) {
-    _stream_preparer = _;
+    _range_streamer_settings.set_stream_preparer(_);
     return *this;
 }
 
 inline KstateStreamer& KstateStreamer::set_stream_sustainer(std::function<void(std::ostream&, size_t)> _) {
-    _stream_sustainer = _;
+    _range_streamer_settings.set_stream_sustainer(_);
     return *this;
 }
 
 inline KstateStreamer& KstateStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
-    _stream_finisher = _;
+    _range_streamer_settings.set_stream_finisher(_);
     return *this;
 }
 
 inline KstateStreamer& KstateStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
-    _stream_separer = _;
+    _range_streamer_settings.set_stream_separer(_);
     return *this;
 }
 
 template <typename SiteType>
 KstateStreamer& KstateStreamer::stream(const Kstate<SiteType>& kstate) {
     extension::boost::RangeStreamer(_os)
-        .set_stream_preparer(_stream_preparer)
-        .set_stream_sustainer(_stream_sustainer)
-        .set_stream_separer(_stream_separer)
-        .set_stream_finisher(_stream_finisher)
+        .set_stream_preparer(_range_streamer_settings._stream_preparer)
+        .set_stream_sustainer(_range_streamer_settings._stream_sustainer)
+        .set_stream_separer(_range_streamer_settings._stream_separer)
+        .set_stream_finisher(_range_streamer_settings._stream_finisher)  //TODO make is a single set_range_streamer_settings call.
         .stream(kstate.to_any_range());
     return *this;
 }
@@ -99,7 +101,7 @@ inline const std::ostream& KstateStreamer::ostream() const {
 
 class KstateStringStreamer {
    public:
-    KstateStringStreamer();
+    KstateStringStreamer(RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
     KstateStringStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
@@ -115,8 +117,8 @@ class KstateStringStreamer {
 
 // ***********************************************************************
 
-inline KstateStringStreamer::KstateStringStreamer()
-    : _rs(_oss) {
+inline KstateStringStreamer::KstateStringStreamer(RangeStreamerSettings range_streamer_settings)
+    : _rs(_oss, range_streamer_settings) {
 }
 
 // ***********************************************************************
