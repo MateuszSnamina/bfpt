@@ -50,6 +50,18 @@ kstate::Basis<kstate::DynamicKstate<int>> get_testet_filled_basis() {
 TEST(BasisStreamer, TESTTRY) {
     // not yet a test...
     const auto& basis = get_testet_filled_basis();
-    kstate::BasisStreamer bs(std::cout);
-    bs.stream(basis);
+    kstate::BasisStringStreamer bs;
+    std::string expected_string =
+        "𝔹𝔸𝕊𝕀𝕊-BEGIN\n"
+        " -      0 : 𝕂𝕊⦃7∙12∙13⦄\n"
+        " -      1 : 𝕂𝕊⦃11∙12∙13⦄\n"
+        " -      2 : 𝕂𝕊⦃13∙14∙15⦄\n"
+        " -      3 : 𝕂𝕊⦃1∙20∙15⦄\n"
+        " -      4 : 𝕂𝕊⦃1∙14∙15⦄\n"
+        " -      5 : 𝕂𝕊⦃3∙20∙15⦄\n"
+        " -      6 : 𝕂𝕊⦃3∙20∙18⦄\n"
+        " -      7 : 𝕂𝕊⦃3∙21∙15⦄\n"
+        " -      8 : 𝕂𝕊⦃3∙21∙10⦄\n"
+        "𝔹𝔸𝕊𝕀𝕊-END\n";
+    EXPECT_EQ(bs.stream(basis).str(), expected_string);
 }

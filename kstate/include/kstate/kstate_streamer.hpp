@@ -19,6 +19,8 @@
 
 namespace kstate {
 
+// The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
+
 static RangeStreamerSettings kstate_default_range_streamer_settings{
     [](std::ostream& s) { s << "𝕂𝕊⦃"; },
     [](std::ostream& s, size_t i) {},
@@ -26,7 +28,7 @@ static RangeStreamerSettings kstate_default_range_streamer_settings{
     [](std::ostream& s) { s << "⦄"; }};
 
 class KstateStreamer {
-   public: // Ctor:
+   public:  // Ctor:
     KstateStreamer(std::ostream& os, RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
 
    public:  // Internal ostream assessor:
@@ -46,7 +48,6 @@ class KstateStreamer {
     KstateStreamer& stream(const Kstate<SiteType>& rng);
 
    private:
-    // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
     std::ostream& _os;
     RangeStreamerSettings _range_streamer_settings = kstate_default_range_streamer_settings;
 };

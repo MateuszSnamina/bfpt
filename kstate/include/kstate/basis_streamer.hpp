@@ -6,18 +6,25 @@
 
 #include <iomanip>
 
-// // #######################################################################
-// // ##  BasisStreamer                                                    ##
-// // #######################################################################
+// #######################################################################
+// ##  basis_default_range_streamer_settings                            ##
+// #######################################################################
 
 namespace kstate {
 
 static RangeStreamerSettings basis_default_range_streamer_settings{
-    [](std::ostream& s) { s << "BASIS-BEGIN" << std::endl; },
+    [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; },
     [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; },
     [](std::ostream& s) { s << std::endl; },
     [](std::ostream& s) { s << std::endl
-                            << "BASIS-END" << std::endl; }};
+                            << "𝔹𝔸𝕊𝕀𝕊-END" << std::endl; }};
+}  // namespace kstate
+
+// #######################################################################
+// ##  BasisStreamer                                                    ##
+// #######################################################################
+
+namespace kstate {
 
 class BasisStreamer {
    public:
@@ -26,8 +33,8 @@ class BasisStreamer {
     BasisStreamer& stream(const Basis<Element>&);
     std::ostream& ostream();
     const std::ostream& ostream() const;
-    BasisStreamer& set_range_streamer_settings_for_kstate(RangeStreamerSettings _);
-    BasisStreamer& set_range_streamer_settings_for_basis(RangeStreamerSettings _);
+    BasisStreamer& set_range_streamer_settings_for_kstate(RangeStreamerSettings);
+    BasisStreamer& set_range_streamer_settings_for_basis(RangeStreamerSettings);
 
    private:
     RangeStreamerSettings _range_streamer_settings_for_kstate = kstate_default_range_streamer_settings;
@@ -35,12 +42,12 @@ class BasisStreamer {
     std::ostream& _os;
 };
 
-// // ***********************************************************************
+// ***********************************************************************
 
 inline BasisStreamer::BasisStreamer(std::ostream& os)
     : _os(os) {}
 
-// // ***********************************************************************
+// ***********************************************************************
 
 inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_kstate(RangeStreamerSettings _) {
     _range_streamer_settings_for_kstate = _;
@@ -79,4 +86,56 @@ inline const std::ostream& BasisStreamer::ostream() const {
 }
 
 }  // namespace kstate
+
+// #######################################################################
+// ##  BasisStringStreamer                                              ##
+// #######################################################################
+
+namespace kstate {
+
+class BasisStringStreamer {
+   public:
+    BasisStringStreamer();
+    template <typename Element>
+    BasisStringStreamer& stream(const Basis<Element>&);
+    BasisStringStreamer& set_range_streamer_settings_for_kstate(RangeStreamerSettings);
+    BasisStringStreamer& set_range_streamer_settings_for_basis(RangeStreamerSettings);
+
+   public:  // Function to retreive the streaming result
+    std::string str() const;
+
+   private:
+    std::ostringstream _oss;
+    BasisStreamer _bs;
+};
+
+// ***********************************************************************
+
+inline BasisStringStreamer::BasisStringStreamer()
+    : _bs(_oss) {}
+
+// ***********************************************************************
+
+inline BasisStringStreamer& BasisStringStreamer::set_range_streamer_settings_for_kstate(RangeStreamerSettings _) {
+    _bs.set_range_streamer_settings_for_kstate(_);
+    return *this;
+}
+
+inline BasisStringStreamer& BasisStringStreamer::set_range_streamer_settings_for_basis(RangeStreamerSettings _) {
+    _bs.set_range_streamer_settings_for_basis(_);
+    return *this;
+}
+
+template <typename Element>
+BasisStringStreamer& BasisStringStreamer::stream(const Basis<Element>& basis) {
+    _bs.stream(basis);
+    return *this;
+}
+
+inline std::string BasisStringStreamer::str() const {
+    return _oss.str();
+}
+
+}  // namespace kstate
+
 #endif
