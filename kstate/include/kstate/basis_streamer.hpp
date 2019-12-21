@@ -12,7 +12,7 @@
 
 namespace kstate {
 
-static RangeStreamerSettings basis_default_range_streamer_settings{
+static extension::boost::RangeStreamerSettings basis_default_range_streamer_settings{
     [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; },
     [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; },
     [](std::ostream& s) { s << std::endl; },
@@ -33,12 +33,12 @@ class BasisStreamer {
     BasisStreamer& stream(const Basis<Element>&);
     std::ostream& ostream();
     const std::ostream& ostream() const;
-    BasisStreamer& set_range_streamer_settings_for_kstate(RangeStreamerSettings);
-    BasisStreamer& set_range_streamer_settings_for_basis(RangeStreamerSettings);
+    BasisStreamer& set_range_streamer_settings_for_kstate(extension::boost::RangeStreamerSettings);
+    BasisStreamer& set_range_streamer_settings_for_basis(extension::boost::RangeStreamerSettings);
 
    private:
-    RangeStreamerSettings _range_streamer_settings_for_kstate = kstate_default_range_streamer_settings;
-    RangeStreamerSettings _range_streamer_settings_for_basis = basis_default_range_streamer_settings;
+    extension::boost::RangeStreamerSettings _range_streamer_settings_for_kstate = kstate_default_range_streamer_settings;
+    extension::boost::RangeStreamerSettings _range_streamer_settings_for_basis = basis_default_range_streamer_settings;
     std::ostream& _os;
 };
 
@@ -49,12 +49,12 @@ inline BasisStreamer::BasisStreamer(std::ostream& os)
 
 // ***********************************************************************
 
-inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_kstate(RangeStreamerSettings _) {
+inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_kstate(extension::boost::RangeStreamerSettings _) {
     _range_streamer_settings_for_kstate = _;
     return *this;
 }
 
-inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_basis(RangeStreamerSettings _) {
+inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_basis(extension::boost::RangeStreamerSettings _) {
     _range_streamer_settings_for_basis = _;
     return *this;
 }
@@ -98,8 +98,8 @@ class BasisStringStreamer {
     BasisStringStreamer();
     template <typename Element>
     BasisStringStreamer& stream(const Basis<Element>&);
-    BasisStringStreamer& set_range_streamer_settings_for_kstate(RangeStreamerSettings);
-    BasisStringStreamer& set_range_streamer_settings_for_basis(RangeStreamerSettings);
+    BasisStringStreamer& set_range_streamer_settings_for_kstate(extension::boost::RangeStreamerSettings);
+    BasisStringStreamer& set_range_streamer_settings_for_basis(extension::boost::RangeStreamerSettings);
 
    public:  // Function to retreive the streaming result
     std::string str() const;
@@ -116,12 +116,12 @@ inline BasisStringStreamer::BasisStringStreamer()
 
 // ***********************************************************************
 
-inline BasisStringStreamer& BasisStringStreamer::set_range_streamer_settings_for_kstate(RangeStreamerSettings _) {
+inline BasisStringStreamer& BasisStringStreamer::set_range_streamer_settings_for_kstate(extension::boost::RangeStreamerSettings _) {
     _bs.set_range_streamer_settings_for_kstate(_);
     return *this;
 }
 
-inline BasisStringStreamer& BasisStringStreamer::set_range_streamer_settings_for_basis(RangeStreamerSettings _) {
+inline BasisStringStreamer& BasisStringStreamer::set_range_streamer_settings_for_basis(extension::boost::RangeStreamerSettings _) {
     _bs.set_range_streamer_settings_for_basis(_);
     return *this;
 }

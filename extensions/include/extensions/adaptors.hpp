@@ -46,9 +46,9 @@ operator|(const ForwardRange &rng, const RotateHolder &h) {
     assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
     assert(h.n >= 0);
 #endif
-    const auto mid = std::next(std::begin(rng), h.n);
-    return ::boost::join(::boost::make_iterator_range(mid, std::end(rng)),
-                         ::boost::make_iterator_range(std::begin(rng), mid));
+    const auto mid = ::std::next(::std::begin(rng), h.n);
+    return ::boost::join(::boost::make_iterator_range(mid, ::std::end(rng)),
+                         ::boost::make_iterator_range(::std::begin(rng), mid));
 }
 
 }  // namespace extension_implementation::boost::adaptors
@@ -120,11 +120,11 @@ operator|(const ForwardRange &rng, const RefinedHolder<T> &h) {
     assert(::boost::numeric_cast<decltype(d)>(h.n) <= d);
     assert(h.n >= 0);
 #endif
-    const auto &mid = std::next(std::begin(rng), h.n);
-    const auto &mid_1 = std::next(std::begin(rng), h.n + 1);
-    const auto &r1 = ::boost::make_iterator_range(std::begin(rng), mid);
-    const auto &r2 = ::boost::make_iterator_range(std::begin(h.v), std::end(h.v));
-    const auto &r3 = ::boost::make_iterator_range(mid_1, std::end(rng));
+    const auto &mid = ::std::next(::std::begin(rng), h.n);
+    const auto &mid_1 = ::std::next(::std::begin(rng), h.n + 1);
+    const auto &r1 = ::boost::make_iterator_range(::std::begin(rng), mid);
+    const auto &r2 = ::boost::make_iterator_range(::std::begin(h.v), ::std::end(h.v));
+    const auto &r3 = ::boost::make_iterator_range(mid_1, ::std::end(rng));
     return ::boost::join(::boost::join(r1, r2), r3);
 }
 

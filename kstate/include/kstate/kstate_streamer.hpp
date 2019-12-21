@@ -21,7 +21,7 @@ namespace kstate {
 
 // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
 
-static RangeStreamerSettings kstate_default_range_streamer_settings{
+static extension::boost::RangeStreamerSettings kstate_default_range_streamer_settings{
     [](std::ostream& s) { s << "𝕂𝕊⦃"; },
     [](std::ostream& s, size_t i) {},
     [](std::ostream& s) { s << "∙"; },
@@ -29,14 +29,14 @@ static RangeStreamerSettings kstate_default_range_streamer_settings{
 
 class KstateStreamer {
    public:  // Ctor:
-    KstateStreamer(std::ostream& os, RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
+    KstateStreamer(std::ostream& os, extension::boost::RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
 
    public:  // Internal ostream assessor:
     std::ostream& ostream();
     const std::ostream& ostream() const;
 
    public:  // Setters for fine streaming settings:
-    KstateStreamer& set_range_streamer_settings(RangeStreamerSettings);
+    KstateStreamer& set_range_streamer_settings(extension::boost::RangeStreamerSettings);
     KstateStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
@@ -49,17 +49,17 @@ class KstateStreamer {
 
    private:
     std::ostream& _os;
-    RangeStreamerSettings _range_streamer_settings = kstate_default_range_streamer_settings;
+    extension::boost::RangeStreamerSettings _range_streamer_settings = kstate_default_range_streamer_settings;
 };
 
 // ***********************************************************************
 
-inline KstateStreamer::KstateStreamer(std::ostream& os, RangeStreamerSettings range_streamer_settings)
+inline KstateStreamer::KstateStreamer(std::ostream& os, extension::boost::RangeStreamerSettings range_streamer_settings)
     : _os(os), _range_streamer_settings(range_streamer_settings) {}
 
 // ***********************************************************************
 
-inline KstateStreamer& KstateStreamer::set_range_streamer_settings(RangeStreamerSettings _) {
+inline KstateStreamer& KstateStreamer::set_range_streamer_settings(extension::boost::RangeStreamerSettings _) {
     _range_streamer_settings = _;
     return *this;
 }
@@ -114,7 +114,7 @@ inline const std::ostream& KstateStreamer::ostream() const {
 
 class KstateStringStreamer {
    public:  // Ctor:
-    KstateStringStreamer(RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
+    KstateStringStreamer(extension::boost::RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
 
    public:  // Setters for fine streaming settings:
     KstateStringStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
@@ -137,7 +137,7 @@ class KstateStringStreamer {
 
 // ***********************************************************************
 
-inline KstateStringStreamer::KstateStringStreamer(RangeStreamerSettings range_streamer_settings)
+inline KstateStringStreamer::KstateStringStreamer(extension::boost::RangeStreamerSettings range_streamer_settings)
     : _rs(_oss, range_streamer_settings) {
 }
 
