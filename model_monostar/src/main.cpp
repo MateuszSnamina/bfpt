@@ -61,30 +61,64 @@ inline void DynamicMonostarHamiltonian::push_back_conjugated_states_to_basis(
 // ## main...                                                           ##
 // #######################################################################
 
-void bfpt_gs(const size_t n_sites) {
+void populate_pt_basis(
+    const model_monostar::DynamicMonostarHamiltonian& hamiltonian,
+    const unsigned max_pt_order,
+    model_monostar::DynamicMonostarUniqueKstateBasis& basis) {
+    // assert();
+    unsigned last_chunk_size = basis.size();
+    for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
+        const unsigned old_size = basis.size();
+        assert(last_chunk_size <= old_size);
+        for (unsigned idx = old_size - last_chunk_size; idx < old_size; idx++) {
+            const auto el = basis.vec_index()[idx];
+            assert(el);
+            hamiltonian.push_back_conjugated_states_to_basis(*el, basis);
+        }
+        const unsigned new_size = basis.size();
+        last_chunk_size = new_size - old_size;
+    }
+}
+
+void bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
+    // Define hamiltonian and basis:
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
-    /// ----
+    // Define pt_orders subspace basis:
     std::vector<model_monostar::MonostarSiteState> generator_array(n_sites, model_monostar::gs);
-    /// ----
-    std::cout << basis;
-    /// ----
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(generator_array, kstate::ctr_from_range));
-    /// ----
+    // ----
     std::cout << basis;
-    /// ----
-    hamiltonian.push_back_conjugated_states_to_basis(*basis.vec_index()[0], basis);
-    /// ----
+    // ----
+    // Generate higher pt_orders subspace basis:
+    populate_pt_basis(hamiltonian, max_pt_order, basis);
+    // ----
     std::cout << basis;
-    /// ----
-    hamiltonian.push_back_conjugated_states_to_basis(*basis.vec_index()[1], basis);
-    /// ----
+    // ----
+}
+
+void bfpt_k0_es(const size_t n_sites, const unsigned max_pt_order) {
+    // Define hamiltonian and basis:
+    model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
+    model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    // Define pt_orders subspace basis:
+    std::vector<model_monostar::MonostarSiteState> generator_array(n_sites, model_monostar::gs);
+    generator_array[0] = model_monostar::es;
+    basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(generator_array, kstate::ctr_from_range));
+    // ----
     std::cout << basis;
-    /// ----
+    // ----
+    // Generate higher pt_orders subspace basis:
+    populate_pt_basis(hamiltonian, max_pt_order, basis);
+    // ----
+    std::cout << basis;
+    // ----
 }
 
 int main() {
-    const size_t n_sites = 6;
-    bfpt_gs(n_sites);
+    const unsigned max_pt_order = 8;
+    const size_t n_sites = 20;
+    //bfpt_gs(n_sites, max_pt_order);
+    bfpt_k0_es(n_sites, max_pt_order);
     return 0;
 }
