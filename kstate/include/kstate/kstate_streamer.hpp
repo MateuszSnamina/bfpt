@@ -22,7 +22,7 @@ namespace kstate {
 // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
 
 static extension::boost::RangeStreamerSettings kstate_default_range_streamer_settings{
-    [](std::ostream& s) { s << "𝕂𝕊⦃"; },
+    [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; },
     [](std::ostream& s, size_t i) {},
     [](std::ostream& s) { s << "∙"; },
     [](std::ostream& s) { s << "⦄"; }};
@@ -39,8 +39,8 @@ class KstateStreamer {
     KstateStreamer& set_range_streamer_settings(extension::boost::RangeStreamerSettings);
     KstateStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
-    KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_separer(std::function<void(std::ostream&)>);
+    KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStreamer& set_format_independence_flag(bool = true);
 
    public:  // The streaming function:
@@ -74,13 +74,13 @@ inline KstateStreamer& KstateStreamer::set_stream_sustainer(std::function<void(s
     return *this;
 }
 
-inline KstateStreamer& KstateStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
-    _range_streamer_settings.set_stream_finisher(_);
+inline KstateStreamer& KstateStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
+    _range_streamer_settings.set_stream_separer(_);
     return *this;
 }
 
-inline KstateStreamer& KstateStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
-    _range_streamer_settings.set_stream_separer(_);
+inline KstateStreamer& KstateStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
+    _range_streamer_settings.set_stream_finisher(_);
     return *this;
 }
 
@@ -119,8 +119,8 @@ class KstateStringStreamer {
    public:  // Setters for fine streaming settings:
     KstateStringStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
-    KstateStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_separer(std::function<void(std::ostream&)>);
+    KstateStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_format_independence_flag(bool = true);
 
    public:  // The streaming function:
@@ -153,13 +153,13 @@ inline KstateStringStreamer& KstateStringStreamer::set_stream_sustainer(std::fun
     return *this;
 }
 
-inline KstateStringStreamer& KstateStringStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
-    _rs.set_stream_finisher(_);
+inline KstateStringStreamer& KstateStringStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
+    _rs.set_stream_separer(_);
     return *this;
 }
 
-inline KstateStringStreamer& KstateStringStreamer::set_stream_separer(std::function<void(std::ostream&)> _) {
-    _rs.set_stream_separer(_);
+inline KstateStringStreamer& KstateStringStreamer::set_stream_finisher(std::function<void(std::ostream&)> _) {
+    _rs.set_stream_finisher(_);
     return *this;
 }
 

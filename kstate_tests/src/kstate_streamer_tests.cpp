@@ -2,7 +2,6 @@
 
 #include <kstate/kstate_concrete.hpp>
 
-
 #include <gtest/gtest.h>
 
 using kstate::ctr_from_range;
@@ -14,19 +13,19 @@ using kstate::ctr_from_range;
 TEST(KstateStringStreamer, SixElements) {
     const int v1[6] = {11, 12, 13, 14, 15, 16};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
-    ASSERT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕊⦃11∙12∙13∙14∙15∙16⦄");
+    ASSERT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃11∙12∙13∙14∙15∙16⦄");
 }
 
 TEST(KstateStringStreamer, OneElement) {
     const int v1[1] = {11};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
-    EXPECT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕊⦃11⦄");
+    EXPECT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃11⦄");
 }
 
 TEST(KstateStringStreamer, Empty) {
     std::vector<int> v1;
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
-    EXPECT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕊⦃⦄");
+    EXPECT_EQ(kstate::KstateStringStreamer().stream(k1).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃⦄");
 }
 
 TEST(KstateStringStreamer, Fancy) {

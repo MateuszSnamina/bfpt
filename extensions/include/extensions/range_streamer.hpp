@@ -22,8 +22,8 @@ struct RangeStreamerSettings {
     // Setters:
     RangeStreamerSettings& set_stream_preparer(::std::function<void(::std::ostream&)>);
     RangeStreamerSettings& set_stream_sustainer(::std::function<void(::std::ostream&, size_t)>);
-    RangeStreamerSettings& set_stream_finisher(::std::function<void(::std::ostream&)>);
     RangeStreamerSettings& set_stream_separer(::std::function<void(::std::ostream&)>);
+    RangeStreamerSettings& set_stream_finisher(::std::function<void(::std::ostream&)>);
     RangeStreamerSettings& set_format_independence_flag(bool = true);
     // Fields:
     ::std::function<void(::std::ostream&)> _stream_preparer =
@@ -49,11 +49,6 @@ inline RangeStreamerSettings& RangeStreamerSettings::set_stream_sustainer(::std:
     return *this;
 }
 
-inline RangeStreamerSettings& RangeStreamerSettings::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
-    _stream_finisher = _;
-    return *this;
-}
-
 inline RangeStreamerSettings& RangeStreamerSettings::set_stream_separer(::std::function<void(::std::ostream&)> _) {
     _stream_separer = _;
     return *this;
@@ -61,6 +56,11 @@ inline RangeStreamerSettings& RangeStreamerSettings::set_stream_separer(::std::f
 
 inline RangeStreamerSettings& RangeStreamerSettings::set_format_independence_flag(bool _) {
     _format_independence_flag = _;
+    return *this;
+}
+
+inline RangeStreamerSettings& RangeStreamerSettings::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
+    _stream_finisher = _;
     return *this;
 }
 
@@ -84,8 +84,8 @@ class RangeStreamer {
     RangeStreamer& set_range_streamer_settings(RangeStreamerSettings);
     RangeStreamer& set_stream_preparer(::std::function<void(::std::ostream&)>);
     RangeStreamer& set_stream_sustainer(::std::function<void(::std::ostream&, size_t)>);
-    RangeStreamer& set_stream_finisher(::std::function<void(::std::ostream&)>);
     RangeStreamer& set_stream_separer(::std::function<void(::std::ostream&)>);
+    RangeStreamer& set_stream_finisher(::std::function<void(::std::ostream&)>);
     RangeStreamer& set_format_independence_flag(bool = true);
 
    public:  // The streaming function:
@@ -119,13 +119,13 @@ inline RangeStreamer& RangeStreamer::set_stream_sustainer(::std::function<void(:
     return *this;
 }
 
-inline RangeStreamer& RangeStreamer::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
-    _range_streamer_settings.set_stream_finisher(_);
+inline RangeStreamer& RangeStreamer::set_stream_separer(::std::function<void(::std::ostream&)> _) {
+    _range_streamer_settings.set_stream_separer(_);
     return *this;
 }
 
-inline RangeStreamer& RangeStreamer::set_stream_separer(::std::function<void(::std::ostream&)> _) {
-    _range_streamer_settings.set_stream_separer(_);
+inline RangeStreamer& RangeStreamer::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
+    _range_streamer_settings.set_stream_finisher(_);
     return *this;
 }
 
@@ -169,8 +169,8 @@ class RangeStringStreamer {
     RangeStringStreamer& set_range_streamer_settings(RangeStreamerSettings);
     RangeStringStreamer& set_stream_preparer(::std::function<void(::std::ostream&)>);
     RangeStringStreamer& set_stream_sustainer(::std::function<void(::std::ostream&, size_t)>);
-    RangeStringStreamer& set_stream_finisher(::std::function<void(::std::ostream&)>);
     RangeStringStreamer& set_stream_separer(::std::function<void(::std::ostream&)>);
+    RangeStringStreamer& set_stream_finisher(::std::function<void(::std::ostream&)>);
     RangeStringStreamer& set_format_independence_flag(bool = true);
 
    public:  // The streaming function:
@@ -207,13 +207,13 @@ inline RangeStringStreamer& RangeStringStreamer::set_stream_sustainer(::std::fun
     return *this;
 }
 
-inline RangeStringStreamer& RangeStringStreamer::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
-    _rs.set_stream_finisher(_);
+inline RangeStringStreamer& RangeStringStreamer::set_stream_separer(::std::function<void(::std::ostream&)> _) {
+    _rs.set_stream_separer(_);
     return *this;
 }
 
-inline RangeStringStreamer& RangeStringStreamer::set_stream_separer(::std::function<void(::std::ostream&)> _) {
-    _rs.set_stream_separer(_);
+inline RangeStringStreamer& RangeStringStreamer::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
+    _rs.set_stream_finisher(_);
     return *this;
 }
 
