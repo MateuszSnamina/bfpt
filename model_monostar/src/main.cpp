@@ -77,9 +77,10 @@ inline void DynamicMonostarHamiltonian::fill_k0_hamiltonian_matrix_coll(
         if (*std::next(std::begin(ket_kstate), i) == gs &&
             *std::next(std::begin(ket_kstate), j) == gs) {
             const auto bra_kstate = ket_kstate | extension::boost::adaptors::refined(i, es) | extension::boost::adaptors::refined(j, es);
-            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate)) {
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(kstate::make_unique_shift(bra_kstate))) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
-                k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += 0.5;
+                double pre_norm = _n_sites * (_n_sites / basis.vec_index()[bra_kstate_idx]->n_least_replication_shift()) * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
+                k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) = k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) + pre_norm * 0.5;
             }
         }
     }
@@ -87,15 +88,17 @@ inline void DynamicMonostarHamiltonian::fill_k0_hamiltonian_matrix_coll(
         if (*std::next(std::begin(ket_kstate), i) == es &&
             *std::next(std::begin(ket_kstate), j) == es) {
             const auto bra_kstate = ket_kstate | extension::boost::adaptors::refined(i, gs) | extension::boost::adaptors::refined(j, gs);
-            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate)) {
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(kstate::make_unique_shift(bra_kstate))) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
-                k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += 0.5;
+                double pre_norm = _n_sites * (_n_sites / basis.vec_index()[bra_kstate_idx]->n_least_replication_shift()) * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
+                k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) = k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) + pre_norm * 0.5;
             }
         }
     }
     for (size_t i = 0, j = 1; i < _n_sites; i++, j = (i + 1) % _n_sites) {
         const bool is_the_same = *std::next(std::begin(ket_kstate), i) == *std::next(std::begin(ket_kstate), j);
-        k0_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += (is_the_same ? -1.0 / 4.0 : +1.0 / 4.0);
+        double pre_norm = _n_sites * (_n_sites / basis.vec_index()[ket_kstate_idx]->n_least_replication_shift()) * basis.vec_index()[ket_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
+        k0_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm * (is_the_same ? -1.0 / 4.0 : +1.0 / 4.0);
     }
 }
 
@@ -112,7 +115,7 @@ inline void DynamicMonostarHamiltonian::fill_k0_hamiltonian_matrix(
 inline arma::mat
 DynamicMonostarHamiltonian::make_k0_hamiltonian_matrix(
     const DynamicMonostarUniqueKstateBasis& basis) const {
-    arma::mat k0_hamiltonian_matrix(basis.size(), basis.size());
+    arma::mat k0_hamiltonian_matrix(basis.size(), basis.size(), arma::fill::zeros);
     fill_k0_hamiltonian_matrix(basis, k0_hamiltonian_matrix);
     return k0_hamiltonian_matrix;
 }
@@ -166,8 +169,8 @@ void bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     arma::eig_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix);
     // ----
     std::cout << eigen_values;
+    std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
     // ----
-
 }
 
 void bfpt_k0_es(const size_t n_sites, const unsigned max_pt_order) {
@@ -189,10 +192,9 @@ void bfpt_k0_es(const size_t n_sites, const unsigned max_pt_order) {
 }
 
 int main() {
-    const unsigned max_pt_order = 1;
-    const size_t n_sites = 8;
+    const unsigned max_pt_order = 3;
+    const size_t n_sites = 20;
     bfpt_gs(n_sites, max_pt_order);
     //bfpt_k0_es(n_sites, max_pt_order);
-
     return 0;
 }

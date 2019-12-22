@@ -122,6 +122,39 @@ TEST(DynamicKstate, LeastReplicationShiftTest3) {
     EXPECT_EQ((k4.template Kstate<int, boost::random_access_traversal_tag>::n_least_replication_shift()), 1);
 }
 
+//---
+TEST(DynamicKstate, NormFactor0) {
+    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
+    const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
+    double expected_norm = 1.0 / std::sqrt(6);
+    EXPECT_DOUBLE_EQ(k1.norm_factor(), expected_norm);
+    // EXPECT_DOUBLE_EQ((k1.template Kstate<int, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+}
+
+TEST(DynamicKstate, NormFactor1) {
+    const std::array<int, 6> v2 = {11, 12, 13, 11, 12, 13};
+    const kstate::DynamicKstate<int> k2(v2, ctr_from_range);
+    double expected_norm = 1.0 / std::sqrt(3) / 2;
+    EXPECT_DOUBLE_EQ(k2.norm_factor(), expected_norm);
+    // EXPECT_DOUBLE_EQ((k2.template Kstate<int, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+}
+
+TEST(DynamicKstate, NormFactor2) {
+    const std::array<int, 6> v3 = {11, 12, 11, 12, 11, 12};
+    const kstate::DynamicKstate<int> k3(v3, ctr_from_range);
+    double expected_norm = 1.0 / std::sqrt(2) / 3;
+    EXPECT_DOUBLE_EQ(k3.norm_factor(), expected_norm);
+    // EXPECT_DOUBLE_EQ((k3.template Kstate<int, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+}
+
+TEST(DynamicKstate, NormFactor3) {
+    const std::array<int, 6> v4 = {11, 11, 11, 11, 11, 11};
+    const kstate::DynamicKstate<int> k4(v4, ctr_from_range);
+    double expected_norm = 1.0 / 6.0;
+    EXPECT_DOUBLE_EQ(k4.norm_factor(), expected_norm);
+    // EXPECT_DOUBLE_EQ((k4.template Kstate<int, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+}
+//--
 TEST(DynamicKstate, IsProlificTest0) {
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);

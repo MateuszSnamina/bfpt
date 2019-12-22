@@ -1,6 +1,8 @@
 #ifndef KSTATE_KSTATE_ABSTRACT_HPP
 #define KSTATE_KSTATE_ABSTRACT_HPP
 
+#include <kstate/unique_shift.hpp>
+
 #include <extensions/adaptors.hpp>
 #include <extensions/range_streamer.hpp>
 
@@ -11,6 +13,7 @@
 #include <boost/range/any_range.hpp>
 
 #include <cassert>
+#include <cmath>
 #include <iterator>
 #include <optional>
 #include <sstream>
@@ -18,25 +21,42 @@
 #include <type_traits>
 #include <vector>
 
-namespace {
+// // #######################################################################
+// // ## n_unique_shift                                                    ##
+// // #######################################################################
 
-template <typename ForwardRange>
-size_t n_unique_shift(const ForwardRange& rng) {
-    using Difference = typename boost::range_difference<ForwardRange>::type;
-    const Difference d = std::distance(std::begin(rng), std::end(rng));
-    size_t i = 0;
-    for (size_t _ = 1; boost::numeric_cast<Difference>(_) < d; _++) {
-        const bool result_cmp = boost::lexicographical_compare(
-            rng | extension::boost::adaptors::rotated(i),
-            rng | extension::boost::adaptors::rotated(_));
-        if (result_cmp) {
-            i = _;
-        }
-    }
-    return i;
-}
+// namespace kstate {
 
-}  // namespace
+// template <typename ForwardRange>
+// size_t n_unique_shift(const ForwardRange& rng) {
+//     using Difference = typename boost::range_difference<ForwardRange>::type;
+//     const Difference d = std::distance(std::begin(rng), std::end(rng));
+//     size_t i = 0;
+//     for (size_t _ = 1; boost::numeric_cast<Difference>(_) < d; _++) {
+//         const bool result_cmp = boost::lexicographical_compare(
+//             rng | extension::boost::adaptors::rotated(i),
+//             rng | extension::boost::adaptors::rotated(_));
+//         if (result_cmp) {
+//             i = _;
+//         }
+//     }
+//     return i;
+// }
+
+// }  // namespace
+
+// // #######################################################################
+// // ## make_unique_shift                                                 ##
+// // #######################################################################
+
+// namespace kstate {
+
+// template <typename ForwardRange>
+// extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) {
+//     return rng | extension::boost::adaptors::rotated(n_unique_shift(rng));
+// }
+
+// }  // namespace
 
 // #######################################################################
 // ## Kstate                                                            ##
@@ -59,6 +79,7 @@ size_t n_unique_shift(const ForwardRange& rng) {
  * the class provides an implementation of the
  * following member functions being the state descriptors:
  *   - n_least_replication_shift() const
+ *   - norm_factor() const
  *   - is_prolific(int n_k) const
  *   - to_str() const
  * as well the following member functions allowing the states comparison:
@@ -94,6 +115,7 @@ class Kstate {
 
    public:  // Kstate descriptors:
     virtual size_t n_least_replication_shift() const;
+    virtual double norm_factor() const;
     virtual bool is_prolific(int n_k) const;
     virtual std::string to_str() const;
 
@@ -118,6 +140,13 @@ size_t Kstate<SiteType, TraversalTag>::n_least_replication_shift() const {
     const auto _ = std::distance(std::begin(rdr), it);
     assert(_ >= 0);
     return static_cast<size_t>(_ + 1);
+}
+
+template <typename SiteType, typename TraversalTag>
+double Kstate<SiteType, TraversalTag>::norm_factor() const {
+    return std::sqrt(n_least_replication_shift()) / n_sites();
+    // The result is equal to 1 / std::sqrt(n_least_replication_shift) / n_replicas;
+    // where n_replicas = n_sites / n_least_replication_shift
 }
 
 template <typename SiteType, typename TraversalTag>
@@ -242,6 +271,7 @@ Kstate<SiteType, TraversalTag>::to_str() const {
  * SpeedyKstate<ConstRangeType> overrides the following descriptor-type
  * member functions:
  *  - n_least_replication_shift() const.
+ *  - norm_factor() const       // TODO
  *  - is_prolific(int n_k) const.
  *  - to_str() const.
  * And provides the following two member functions:
@@ -288,6 +318,7 @@ class SpeedyKstate : public Kstate<typename boost::range_value<ConstRangeType>::
 
    public:  // Fast implementations:
     size_t n_least_replication_shift() const override;
+    double norm_factor() const override;
     bool is_prolific(int n_k) const override;
     template <typename OtherConstRangeType>
     bool compare_range(const OtherConstRangeType& other) const;
@@ -316,6 +347,11 @@ size_t SpeedyKstate<ConstRangeType>::n_least_replication_shift() const {
     const auto _ = std::distance(std::begin(rdr), it);
     assert(_ >= 0);
     return static_cast<size_t>(_ + 1);
+}
+
+template <typename ConstRangeType>
+double SpeedyKstate<ConstRangeType>::norm_factor() const {
+    return std::sqrt(n_least_replication_shift()) / n_sites();
 }
 
 template <typename ConstRangeType>
