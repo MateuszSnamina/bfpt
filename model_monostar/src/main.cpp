@@ -5,10 +5,12 @@
 
 #include <extensions/adaptors.hpp>
 
-// #include <armadillo>
-#include <cassert>  // TODO:  move to hamiltonian sourcefile
+#include <armadillo>
+
 #include <iostream>
 #include <iterator>
+
+#include <cassert>  // TODO:  move to hamiltonian sourcefile
 
 // #######################################################################
 // ## DynamicMonostarHamiltonian                                        ##
@@ -22,9 +24,16 @@ class DynamicMonostarHamiltonian {
     void push_back_conjugated_states_to_basis(
         const DynamicMonostarUniqueKstate& generator,
         DynamicMonostarUniqueKstateBasis& basis) const;
-    // void fill_k0_hamiltonian_matrix_coll(
-    //   size_t n_col,
-    //   arma::mat& k0_hamiltonian_matrix) const;
+    void fill_k0_hamiltonian_matrix_coll(
+        const DynamicMonostarUniqueKstateBasis& basis,
+        size_t n_col,
+        arma::mat& k0_hamiltonian_matrix) const;
+    void fill_k0_hamiltonian_matrix(
+        const DynamicMonostarUniqueKstateBasis& basis,
+        arma::mat& k0_hamiltonian_matrix) const;
+    arma::mat make_k0_hamiltonian_matrix(
+        const DynamicMonostarUniqueKstateBasis& basis) const;
+
    private:
     const size_t _n_sites;
 };
@@ -53,6 +62,59 @@ inline void DynamicMonostarHamiltonian::push_back_conjugated_states_to_basis(
             basis.add_element(conjugated_kstate_ptr);
         }
     }
+}
+
+inline void DynamicMonostarHamiltonian::fill_k0_hamiltonian_matrix_coll(
+    const DynamicMonostarUniqueKstateBasis& basis,
+    const size_t ket_kstate_idx,
+    arma::mat& k0_hamiltonian_matrix) const {
+    assert(k0_hamiltonian_matrix.n_cols == basis.size());
+    assert(k0_hamiltonian_matrix.n_rows == basis.size());
+    const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
+    assert(ket_kstate_ptr);
+    const auto& ket_kstate = (*ket_kstate_ptr).to_range();
+    for (size_t i = 0, j = 1; i < _n_sites; i++, j = (i + 1) % _n_sites) {
+        if (*std::next(std::begin(ket_kstate), i) == gs &&
+            *std::next(std::begin(ket_kstate), j) == gs) {
+            const auto bra_kstate = ket_kstate | extension::boost::adaptors::refined(i, es) | extension::boost::adaptors::refined(j, es);
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate)) {
+                const auto bra_kstate_idx = *bra_kstate_optional_idx;
+                k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += 0.5;
+            }
+        }
+    }
+    for (size_t i = 0, j = 1; i < _n_sites; i++, j = (i + 1) % _n_sites) {
+        if (*std::next(std::begin(ket_kstate), i) == es &&
+            *std::next(std::begin(ket_kstate), j) == es) {
+            const auto bra_kstate = ket_kstate | extension::boost::adaptors::refined(i, gs) | extension::boost::adaptors::refined(j, gs);
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate)) {
+                const auto bra_kstate_idx = *bra_kstate_optional_idx;
+                k0_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += 0.5;
+            }
+        }
+    }
+    for (size_t i = 0, j = 1; i < _n_sites; i++, j = (i + 1) % _n_sites) {
+        const bool is_the_same = *std::next(std::begin(ket_kstate), i) == *std::next(std::begin(ket_kstate), j);
+        k0_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += (is_the_same ? -1.0 / 4.0 : +1.0 / 4.0);
+    }
+}
+
+inline void DynamicMonostarHamiltonian::fill_k0_hamiltonian_matrix(
+    const DynamicMonostarUniqueKstateBasis& basis,
+    arma::mat& k0_hamiltonian_matrix) const {
+    assert(k0_hamiltonian_matrix.n_cols == basis.size());
+    assert(k0_hamiltonian_matrix.n_rows == basis.size());
+    for (arma::uword ket_kstate_idx = 0; ket_kstate_idx < basis.size(); ket_kstate_idx++) {
+        fill_k0_hamiltonian_matrix_coll(basis, ket_kstate_idx, k0_hamiltonian_matrix);
+    }
+}
+
+inline arma::mat
+DynamicMonostarHamiltonian::make_k0_hamiltonian_matrix(
+    const DynamicMonostarUniqueKstateBasis& basis) const {
+    arma::mat k0_hamiltonian_matrix(basis.size(), basis.size());
+    fill_k0_hamiltonian_matrix(basis, k0_hamiltonian_matrix);
+    return k0_hamiltonian_matrix;
 }
 
 }  // namespace model_monostar
@@ -95,6 +157,17 @@ void bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     // ----
     std::cout << basis;
     // ----
+    const auto k0_hamiltonian_matrix = hamiltonian.make_k0_hamiltonian_matrix(basis);
+    // ----
+    std::cout << k0_hamiltonian_matrix;
+    // ----
+    arma::vec eigen_values;
+    arma::mat eigen_vectors;
+    arma::eig_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix);
+    // ----
+    std::cout << eigen_values;
+    // ----
+
 }
 
 void bfpt_k0_es(const size_t n_sites, const unsigned max_pt_order) {
@@ -116,9 +189,10 @@ void bfpt_k0_es(const size_t n_sites, const unsigned max_pt_order) {
 }
 
 int main() {
-    const unsigned max_pt_order = 8;
-    const size_t n_sites = 20;
-    //bfpt_gs(n_sites, max_pt_order);
-    bfpt_k0_es(n_sites, max_pt_order);
+    const unsigned max_pt_order = 1;
+    const size_t n_sites = 8;
+    bfpt_gs(n_sites, max_pt_order);
+    //bfpt_k0_es(n_sites, max_pt_order);
+
     return 0;
 }
