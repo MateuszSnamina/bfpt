@@ -6,6 +6,7 @@
 #include <kstate/kstate_concrete.hpp>
 #include <kstate/kstate_streamer.hpp>
 
+#include <vector>
 // #######################################################################
 // ## monostar_kstate_range_streamer_settings                           ##
 // #######################################################################
@@ -24,6 +25,25 @@ namespace model_monostar {
 
 using DynamicMonostarKstate = kstate::DynamicKstate<MonostarSiteState>;
 using DynamicMonostarUniqueKstate = kstate::DynamicUniqueKstate<MonostarSiteState>;
+
+}  // namespace model_monostar
+
+// #######################################################################
+// ## classical_gs_kstate, classical_es_kstate                          ##
+// #######################################################################
+
+namespace model_monostar {
+
+inline DynamicMonostarUniqueKstate classical_gs_kstate(const unsigned n_sites) {
+    std::vector<MonostarSiteState> generator_array(n_sites, model_monostar::gs);
+    return DynamicMonostarUniqueKstate(generator_array, kstate::ctr_from_range);
+}
+
+inline DynamicMonostarUniqueKstate classical_es_kstate(const unsigned n_sites) {
+    std::vector<MonostarSiteState> generator_array(n_sites, model_monostar::gs);
+    generator_array[0] = es;
+    return DynamicMonostarUniqueKstate(generator_array, kstate::ctr_from_range);
+}
 
 }  // namespace model_monostar
 
