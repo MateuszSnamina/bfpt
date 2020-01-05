@@ -124,6 +124,10 @@ arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double 
     assert(eigen_values_not_reduced.n_rows % 2 == 0);
     arma::vec eigen_values = arma::vec(eigen_values_not_reduced.n_rows / 2);
     for (arma::uword i = 0; i < eigen_values_not_reduced.n_rows; i += 2) {
+        if (std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) >= eps) {
+            std::cerr << "[info-debug] i, eigen_values_not_reduced(i), and eigen_values_not_reduced(i+1): "
+                      << i << ", " << eigen_values_not_reduced(i) << ", " << eigen_values_not_reduced(i + 1) << "." << std::endl;
+        }
         assert(std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) < eps);
         eigen_values(i / 2) = eigen_values_not_reduced(i);
     }
@@ -254,7 +258,7 @@ bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
         return false;
     }
     // --------------------------------------------------------------
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, tol);
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 100 * tol);
     return true;
 }
 
@@ -286,7 +290,7 @@ bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
     // --------------------------------------------------------------
     // Reduction - eigen_values:
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 10 * tol);
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 1000 * tol);
     // --------------------------------------------------------------
     // Reduction - eigen_vectors:
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, tol);
@@ -297,7 +301,7 @@ bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::
         const arma::uword span_size = span.second - span.first;
         const arma::span not_reduced_span(2 * span.first, 2 * span.second - 1);
         const arma::span reduced_span(span.first, span.second - 1);
-        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span), 10 * tol);
+        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span), 100 * tol);
         if (basis.n_cols != span_size) {
             std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << " (out of " << spans.size() << ")." << std::endl;
             std::cerr << "[warning] Number of eigen-vectors was not reduced by factor of two." << std::endl;

@@ -120,12 +120,6 @@ inline void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
                 for (unsigned n_contribution = 0; n_contribution < bra_n_replicas; n_contribution++) {
                     const double exponent = 2 * arma::datum::pi * k_n / _n_sites * (-(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift);
                     sum_phase_factors += std::exp(1.0i * exponent);
-                    std::cout << "IDXs " << bra_kstate_idx << " x " << ket_kstate_idx << std::endl;
-                    std::cout << bra_kstate << " x " << ket_kstate << std::endl;
-                    std::cout << "n_contribution " << n_contribution << ", "
-                              << "bra_n_unique_shift " << bra_n_unique_shift << ", "
-                              << "exponent/pi " << 2.0 * k_n / _n_sites * (-(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift) << ", "
-                              << std::endl;
                 }
                 kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm * sum_phase_factors * 0.5;
             }
@@ -189,12 +183,12 @@ double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     // Define pt_orders subspace basis:
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
     // ----
-    std::cout << basis;
+    // std::cout << basis;
     // ----
     // Generate higher pt_orders subspace basis:
     populate_pt_basis(hamiltonian, max_pt_order, basis);
     // ----
-    std::cout << basis;
+    // std::cout << basis;
     // ----
     const auto k0_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, 0);
     // ----
@@ -217,12 +211,12 @@ double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
     // Define pt_orders subspace basis:
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
     // ----
-    std::cout << basis;
+    // std::cout << basis;
     // ----
     // Generate higher pt_orders subspace basis:
     populate_pt_basis(hamiltonian, max_pt_order, basis);
     // ----
-    std::cout << basis;
+    // std::cout << basis;
     // ----
     const auto k0_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, 0);
     // ----
@@ -245,30 +239,26 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     // Define pt_orders subspace basis:
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
     // ----
-    std::cout << basis;
+    // std::cout << basis;
     // ----
     // Generate higher pt_orders subspace basis:
     populate_pt_basis(hamiltonian, max_pt_order, basis);
     // ----
-    std::cout << basis;
+    // std::cout << basis;
     // ----
     const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n);
     // ----
     // std::cout << kn_hamiltonian_matrix;
     // ----
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-    arma::eig_sym(eigen_values, eigen_vectors, arma::cx_mat(kn_hamiltonian_matrix));
-    // ----
-    std::cout << "**** arma lin_alg:" << std::endl;
-    std::cout << eigen_values;
-    std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
-    std::cout << "eigen_vectors.col(0): " << std::endl
-              << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
-    // std::cout << "eigen_vectors.col(1): " << std::endl
-    //           << eigen_vectors.col(1) / eigen_vectors(0, 1) << std::endl;
-    // std::cout << "eigen_vectors.col(5): " << std::endl
-    //           << eigen_vectors.col(5) / eigen_vectors(0, 5) << std::endl;
+    // arma::vec eigen_values;
+    // arma::cx_mat eigen_vectors;
+    // arma::eig_sym(eigen_values, eigen_vectors, arma::cx_mat(kn_hamiltonian_matrix));
+    // // ----
+    // std::cout << "**** arma lin_alg:" << std::endl;
+    // std::cout << eigen_values;
+    // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
+    // std::cout << "eigen_vectors.col(0): " << std::endl
+    //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     // ----
     std::cout << "**** my lin_alg spike:" << std::endl;
     arma::vec eigen_values_2;
@@ -276,12 +266,8 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     lin_alg::eigs_sym(eigen_values_2, eigen_vectors_2, kn_hamiltonian_matrix, 1, "sa", 1e-6);
     std::cout << eigen_values_2;
     std::cout << "min eigen_value: " << eigen_values_2(0) << std::endl;
-    std::cout << "eigen_vectors.col(0): " << std::endl
-              << eigen_vectors_2.col(0) / eigen_vectors_2(0, 0) << std::endl;
-    // std::cout << "eigen_vectors.col(1): " << std::endl
-    //           << eigen_vectors_2.col(1) / eigen_vectors_2(0, 1) << std::endl;
-    // std::cout << "eigen_vectors.col(5): " << std::endl
-    //           << eigen_vectors_2.col(5) / eigen_vectors_2(0, 5) << std::endl;
+    // std::cout << "eigen_vectors.col(0): " << std::endl
+    //           << eigen_vectors_2.col(0) / eigen_vectors_2(0, 0) << std::endl;
     // ----
     return eigen_values_2(0);
 }
@@ -297,6 +283,7 @@ int main() {
     std::cout << "------------------------------------------" << std::endl;
     double es_energy = bfpt_kn_es(n_sites, max_pt_order, k_n);
     std::cout << "------------------------------------------" << std::endl;
+    std::cout << " max_pt_order = " << max_pt_order << std::endl;
     std::cout << " gs enery = " << gs_energy << std::endl;
     std::cout << " es goldston = " << es_gold_energy << std::endl;
     std::cout << "    excitation enery goldston = " << es_gold_energy - gs_energy << std::endl;
