@@ -453,8 +453,6 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
               << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     std::cout << "eigen_vectors.col(1): " << std::endl
               << eigen_vectors.col(1) / eigen_vectors(0, 1) << std::endl;
-    // std::cout << "eigen_vectors.col(4): " << std::endl
-    //           << eigen_vectors.col(4) << std::endl;//debug!
     std::cout << "eigen_vectors.col(5): " << std::endl
               << eigen_vectors.col(5) / eigen_vectors(0, 5) << std::endl;
     // ----
@@ -468,8 +466,6 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
               << eigen_vectors_2.col(0) / eigen_vectors_2(0, 0) << std::endl;
     std::cout << "eigen_vectors.col(1): " << std::endl
               << eigen_vectors_2.col(1) / eigen_vectors_2(0, 1) << std::endl;
-    // std::cout << "eigen_vectors.col(4): " << std::endl
-    //           << eigen_vectors_2.col(4) << std::endl;
     std::cout << "eigen_vectors.col(5): " << std::endl
               << eigen_vectors_2.col(5) / eigen_vectors_2(0, 5) << std::endl;
     // ----
