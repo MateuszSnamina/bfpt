@@ -90,6 +90,28 @@ arma::mat main_matrix_cx_to_re(const arma::cx_mat& m_cx) {
     return m_re;
 }
 
+arma::sp_mat main_matrix_cx_to_re(const arma::sp_cx_mat& m_cx) {
+    assert(m_cx.n_rows == m_cx.n_cols);
+    assert(m_cx.n_rows > 0);
+    const auto size = m_cx.n_rows;
+    arma::sp_mat m_re(size * 2, size * 2);
+    // const arma::span span_re(0, size - 1);
+    // const arma::span span_im(size, 2 * size - 1);
+    using IterT = arma::sp_cx_mat::const_iterator;
+    for (IterT it = m_cx.begin(); it != m_cx.end(); ++it) {
+        const auto& col = it.col();
+        const auto& row = it.row();
+        const auto& val = *it;
+        const auto& val_real = val.real();
+        const auto& val_imag = val.imag();
+        m_re(row, col) = +val_real;
+        m_re(row + size, col) = +val_imag;
+        m_re(row, col + size) = -val_imag;
+        m_re(row + size, col + size) = +val_real;
+    }
+    return m_re;
+}
+
 }  // namespace lin_alg
 
 // #######################################################################
@@ -143,20 +165,49 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 
 namespace lin_alg {
 
-bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::cx_mat& matrix) {
+bool eig_sym(arma::vec& eigen_values, const arma::cx_mat& matrix) {
+    // --------------------------------------------------------------
+    assert(matrix.n_cols == matrix.n_rows);
+    const double eps = 1e-6;
     const arma::mat re_matrix = main_matrix_cx_to_re(matrix);
+    // --------------------------------------------------------------
+    arma::vec eigen_values_not_reduced;
+    const bool res = arma::eig_sym(eigen_values_not_reduced, re_matrix);
+    if (!res) {
+        std::cerr << "[warning] arma::eig_sym claims it failed." << std::endl;
+        return false;
+    }
+    // --------------------------------------------------------------
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps);
+    return true;
+}
+
+bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::cx_mat& matrix) {
+    // --------------------------------------------------------------
+    assert(matrix.n_cols == matrix.n_rows);
+    const auto size = matrix.n_cols;
+    const double eps = 1e-6;
+    const arma::mat re_matrix = main_matrix_cx_to_re(matrix);
+    // --------------------------------------------------------------
     arma::vec eigen_values_not_reduced;
     arma::mat re_eigen_vectors_not_reduced;
     const bool res = arma::eig_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix);
+    if (!res) {
+        std::cerr << "[warning] arma::eig_sym claims it failed." << std::endl;
+        return false;
+    }
+    assert(eigen_values_not_reduced.n_rows == 2 * size);
+    assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
+    assert(re_eigen_vectors_not_reduced.n_cols == 2 * size);
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
-    // Poor threshold hardcoding:
-    const double eps = 1e-6;
-    // Reduction --  eigen_values
+    // --------------------------------------------------------------
+    // Reduction -- eigen_values:
     eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps);
+    // --------------------------------------------------------------
     // Analyse degeneracy subspaces:
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, eps);
-    // Reduction --  eigen_vectors
-    eigen_vectors = arma::cx_mat(matrix.n_cols, eigen_values.n_rows);
+    // Reduction - eigen_vectors:
+    eigen_vectors = arma::cx_mat(size, eigen_values.n_rows);
     for (unsigned span_idx = 0; span_idx < spans.size(); span_idx++) {
         const auto& span = spans[span_idx];
         assert(span.first < span.second);  // span cannot be empty.
@@ -165,19 +216,102 @@ bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::c
         const arma::span reduced_span(span.first, span.second - 1);
         arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span));
         if (basis.n_cols != span_size) {
-            std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << "(out of " << spans.size() << ")." << std::endl;
+            std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << " (out of " << spans.size() << ")." << std::endl;
+            std::cerr << "[warning] Number of eigen-vectors was not reduced by factor of two." << std::endl;
+            std::cerr << "[warning] Number of eigen-vectors before reduction: " << 2 * (span.second - span.first) << "." << std::endl;
+            std::cerr << "[warning] Number of eigen-vectors after reduction: " << basis.n_cols << "." << std::endl;
+            std::cerr << "[warning] This indicates an error." << std::endl;
+            return false;
+        }
+        eigen_vectors.cols(reduced_span) = basis;
+    }
+    return true;
+}
+
+}  // namespace lin_alg
+
+// #######################################################################
+// ## eigs_sym                                                          ##
+// #######################################################################
+
+namespace lin_alg {
+
+bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
+              unsigned n_vectors, const char* form, double tol) {
+    // --------------------------------------------------------------
+    assert(matrix.n_cols == matrix.n_rows);
+    const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
+    // --------------------------------------------------------------
+    arma::vec eigen_values_not_reduced;
+    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_matrix, 2 * n_vectors, form, tol);
+    if (!res) {
+        std::cerr << "[warning] arma::eigs_sym claims it failed." << std::endl;
+        return false;
+    }
+    if (eigen_values_not_reduced.n_rows != 2 * n_vectors) {
+        std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
+        std::cerr << "[warning] but the number of found eigen_values is too small." << std::endl;
+        return false;
+    }
+    // --------------------------------------------------------------
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, tol);
+    return true;
+}
+
+bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix,
+              unsigned n_vectors, const char* form, double tol) {
+    // --------------------------------------------------------------
+    assert(matrix.n_cols == matrix.n_rows);
+    const auto size = matrix.n_cols;
+    const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
+    // --------------------------------------------------------------
+    arma::vec eigen_values_not_reduced;
+    arma::mat re_eigen_vectors_not_reduced;
+    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix, 2 * n_vectors, form, tol);
+    if (!res) {
+        std::cerr << "[warning] arma::eigs_sym claims it failed." << std::endl;
+        return false;
+    }
+    if (eigen_values_not_reduced.n_rows != 2 * n_vectors) {
+        std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
+        std::cerr << "[warning] but the number of found eigen_values is too small." << std::endl;
+        return false;
+    }
+    assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
+    if (re_eigen_vectors_not_reduced.n_cols != 2 * n_vectors) {
+        std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
+        std::cerr << "[warning] but the number of found eigen_vectors is too small." << std::endl;
+        return false;
+    }
+    const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
+    // --------------------------------------------------------------
+    // Reduction - eigen_values:
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 10 * tol);
+    // --------------------------------------------------------------
+    // Reduction - eigen_vectors:
+    const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, tol);
+    eigen_vectors = arma::cx_mat(matrix.n_cols, eigen_values.n_rows);
+    for (unsigned span_idx = 0; span_idx < spans.size(); span_idx++) {
+        const auto& span = spans[span_idx];
+        assert(span.first < span.second);  // span cannot be empty.
+        const arma::uword span_size = span.second - span.first;
+        const arma::span not_reduced_span(2 * span.first, 2 * span.second - 1);
+        const arma::span reduced_span(span.first, span.second - 1);
+        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span), 10 * tol);
+        if (basis.n_cols != span_size) {
+            std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << " (out of " << spans.size() << ")." << std::endl;
             std::cerr << "[warning] Number of eigen-vectors was not reduced by factor of two." << std::endl;
             std::cerr << "[warning] Number of eigen-vectors before reduction: " << 2 * (span.second - span.first) << "." << std::endl;
             std::cerr << "[warning] Number of eigen-vectors after reduction: " << basis.n_cols << "." << std::endl;
             std::cerr << "[warning] This indicates an error, expect one specific case:" << std::endl;
             std::cerr << "[warning] the subsapce is the last subspace, and" << std::endl;
-            std::cerr << "[warning] the reduction gives rise to more than (Number of eigen-vectors before reduction)/2 vectors" << std::endl;
+            std::cerr << "[warning] the reduction gives rise to more than (number of eigen-vectors before reduction)/2 vectors" << std::endl;
             std::cerr << "[warning] In the latter case it means the subspace is not determined completely" << std::endl;
+            // TODO handle the error.
         }
-        //TODO handle the error.
         eigen_vectors.cols(reduced_span) = basis;
     }
-    return res;
+    return true;
 }
 
 }  // namespace lin_alg

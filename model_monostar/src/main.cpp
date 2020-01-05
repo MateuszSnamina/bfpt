@@ -1,5 +1,5 @@
-#include <model_monostar/lin_alg.hpp>
 #include <model_monostar/hardcoded_example.hpp>
+#include <model_monostar/lin_alg.hpp>
 #include <model_monostar/monostar_basis.hpp>
 #include <model_monostar/monostar_hamiltonian_k0.hpp>
 #include <model_monostar/monostar_kstate.hpp>
@@ -320,39 +320,38 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     // ----
     std::cout << basis;
     // ----
-    // const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n);
-    const arma::cx_mat kn_hamiltonian_matrix(hamiltonian.make_kn_hamiltonian_matrix(basis, k_n)); // temporary casting to dense matrix!
+    const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n);
     // ----
     // std::cout << kn_hamiltonian_matrix;
     // ----
     arma::vec eigen_values;
     arma::cx_mat eigen_vectors;
-    arma::eig_sym(eigen_values, eigen_vectors, kn_hamiltonian_matrix);
+    arma::eig_sym(eigen_values, eigen_vectors, arma::cx_mat(kn_hamiltonian_matrix));
     // ----
     std::cout << "**** arma lin_alg:" << std::endl;
     std::cout << eigen_values;
     std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
     std::cout << "eigen_vectors.col(0): " << std::endl
               << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
-    std::cout << "eigen_vectors.col(1): " << std::endl
-              << eigen_vectors.col(1) / eigen_vectors(0, 1) << std::endl;
-    std::cout << "eigen_vectors.col(5): " << std::endl
-              << eigen_vectors.col(5) / eigen_vectors(0, 5) << std::endl;
+    // std::cout << "eigen_vectors.col(1): " << std::endl
+    //           << eigen_vectors.col(1) / eigen_vectors(0, 1) << std::endl;
+    // std::cout << "eigen_vectors.col(5): " << std::endl
+    //           << eigen_vectors.col(5) / eigen_vectors(0, 5) << std::endl;
     // ----
     std::cout << "**** my lin_alg spike:" << std::endl;
     arma::vec eigen_values_2;
     arma::cx_mat eigen_vectors_2;
-    lin_alg::eig_sym(eigen_values_2, eigen_vectors_2, kn_hamiltonian_matrix);
+    lin_alg::eigs_sym(eigen_values_2, eigen_vectors_2, kn_hamiltonian_matrix, 1, "sa", 1e-6);
     std::cout << eigen_values_2;
     std::cout << "min eigen_value: " << eigen_values_2(0) << std::endl;
     std::cout << "eigen_vectors.col(0): " << std::endl
               << eigen_vectors_2.col(0) / eigen_vectors_2(0, 0) << std::endl;
-    std::cout << "eigen_vectors.col(1): " << std::endl
-              << eigen_vectors_2.col(1) / eigen_vectors_2(0, 1) << std::endl;
-    std::cout << "eigen_vectors.col(5): " << std::endl
-              << eigen_vectors_2.col(5) / eigen_vectors_2(0, 5) << std::endl;
+    // std::cout << "eigen_vectors.col(1): " << std::endl
+    //           << eigen_vectors_2.col(1) / eigen_vectors_2(0, 1) << std::endl;
+    // std::cout << "eigen_vectors.col(5): " << std::endl
+    //           << eigen_vectors_2.col(5) / eigen_vectors_2(0, 5) << std::endl;
     // ----
-    return eigen_values(0);
+    return eigen_values_2(0);
 }
 
 int main() {
