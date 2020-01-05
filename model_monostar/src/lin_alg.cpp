@@ -9,8 +9,8 @@
 namespace lin_alg {
 
 // arma::vec cx_to_re(const arma::cx_vec& v_cx) {
+//     assert(v_cx.n_rows > 0);
 //     const auto size = v_cx.n_rows;
-//     assert(size > 0);
 //     arma::vec v_re(size * 2);
 //     const arma::span span_re(0, size - 1);
 //     const arma::span span_im(size, 2 * size - 1);
@@ -21,8 +21,8 @@ namespace lin_alg {
 
 arma::cx_vec re_to_cx(const arma::vec& v_re) {
     assert(v_re.n_rows % 2 == 0);
+    assert(v_re.n_rows > 0);
     const auto size = v_re.n_rows / 2;
-    assert(size > 0);
     arma::cx_vec v_cx(size);
     const arma::span span_re(0, size - 1);
     const arma::span span_im(size, 2 * size - 1);
@@ -31,15 +31,48 @@ arma::cx_vec re_to_cx(const arma::vec& v_re) {
     return v_cx;
 }
 
+arma::sp_cx_vec re_to_cx(const arma::sp_vec& v_re) {
+    assert(v_re.n_rows % 2 == 0);
+    assert(v_re.n_rows > 0);
+    const auto size = v_re.n_rows / 2;
+    arma::cx_vec v_cx(size);
+    using IterT = arma::sp_mat::const_iterator;
+    for (IterT it = v_re.begin(); it != v_re.end(); ++it) {
+        const auto& row = it.row();
+        const auto& val = *it;
+        const auto where_to_put = row < size ? row : row - size;
+        const auto what_to_put = row < size ? std::complex<double>(val, 0) : std::complex<double>(0, val);
+        v_cx(where_to_put) += what_to_put;
+    }
+    return v_cx;
+}
+
 arma::cx_mat re_to_cx(const arma::mat& m_re) {
     assert(m_re.n_rows % 2 == 0);
+    assert(m_re.n_rows > 0);
     const auto size = m_re.n_rows / 2;
-    assert(size > 0);
     arma::cx_mat m_cx(size, m_re.n_cols);
     const arma::span span_re(0, size - 1);
     const arma::span span_im(size, 2 * size - 1);
     m_cx.set_real(m_re.rows(span_re));
     m_cx.set_imag(m_re.rows(span_im));
+    return m_cx;
+}
+
+arma::sp_cx_mat re_to_cx(const arma::sp_mat& m_re) {
+    assert(m_re.n_rows % 2 == 0);
+    assert(m_re.n_rows > 0);
+    const auto size = m_re.n_rows / 2;
+    arma::sp_cx_mat m_cx(size, m_re.n_cols);
+    using IterT = arma::sp_mat::const_iterator;
+    for (IterT it = m_re.begin(); it != m_re.end(); ++it) {
+        const auto& col = it.col();
+        const auto& row = it.row();
+        const auto& val = *it;
+        const auto where_to_put = row < size ? row : row - size;
+        const auto what_to_put = row < size ? std::complex<double>(val, 0) : std::complex<double>(0, val);
+        m_cx(where_to_put, col) += what_to_put;
+    }
     return m_cx;
 }
 
@@ -123,7 +156,6 @@ bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::c
     // Analyse degeneracy subspaces:
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, eps);
     // Reduction --  eigen_vectors
-    //eigen_vectors = cx_eigen_vectors_not_reduced;
     eigen_vectors = arma::cx_mat(matrix.n_cols, eigen_values.n_rows);
     for (unsigned span_idx = 0; span_idx < spans.size(); span_idx++) {
         const auto& span = spans[span_idx];
@@ -134,8 +166,12 @@ bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::c
         arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span));
         if (basis.n_cols != span_size) {
             std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << "(out of " << spans.size() << ")." << std::endl;
-            std::cerr << "[warning] number of eigen_vectors was not reduced by factor of two." << std::endl;
-            std::cerr << "[warning] this indicates the error, expect the subsapce is the last subspace" << std::endl;
+            std::cerr << "[warning] Number of eigen-vectors was not reduced by factor of two." << std::endl;
+            std::cerr << "[warning] Number of eigen-vectors before reduction: " << 2 * (span.second - span.first) << "." << std::endl;
+            std::cerr << "[warning] Number of eigen-vectors after reduction: " << basis.n_cols << "." << std::endl;
+            std::cerr << "[warning] This indicates an error, expect one specific case:" << std::endl;
+            std::cerr << "[warning] the subsapce is the last subspace, and" << std::endl;
+            std::cerr << "[warning] the reduction gives rise to more than (Number of eigen-vectors before reduction)/2 vectors" << std::endl;
             std::cerr << "[warning] In the latter case it means the subspace is not determined completely" << std::endl;
         }
         //TODO handle the error.

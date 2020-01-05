@@ -53,7 +53,9 @@ using MySpan = std::pair<arma::uword, arma::uword>;
  */
 // arma::vec cx_to_re(const arma::cx_vec& v_cx);
 arma::cx_vec re_to_cx(const arma::vec& v_re);
+arma::sp_cx_vec re_to_cx(const arma::sp_vec& v_re);
 arma::cx_mat re_to_cx(const arma::mat& m_re);
+arma::sp_cx_mat re_to_cx(const arma::sp_mat& m_re);
 
 /*
  * Function making mat from cx_mat,
