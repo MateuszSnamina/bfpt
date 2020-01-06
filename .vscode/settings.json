@@ -55,7 +55,9 @@
         "complex": "cpp",
         "condition_variable": "cpp",
         "mutex": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "variant": "cpp",
+        "any": "cpp"
     },
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, TabWidth: 4, ColumnLimit: 0, UseTab: Never}",
     "cmake.buildDirectory": "${workspaceRoot}/build_vsc",

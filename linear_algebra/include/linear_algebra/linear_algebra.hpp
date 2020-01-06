@@ -1,23 +1,32 @@
 
-#ifndef MODEL_MONOSTAR_LIN_ALG_HPP
-#define MODEL_MONOSTAR_LIN_ALG_HPP
+#ifndef LINEAR_ALGEBRA_LINEAR_ALGEBRA_HPP
+#define LINEAR_ALGEBRA_LINEAR_ALGEBRA_HPP
+
+#include <linear_algebra/result.hpp>
 
 #include <armadillo>
 
+#include <stdexcept>
 #include <utility>
 #include <vector>
-
-namespace lin_alg {
 
 // #######################################################################
 // ## Types:                                                            ##
 // #######################################################################
+
+namespace lin_alg {
 
 /*
  * The type for inclusive-exclusive span definition.
  * (as opossed to arma::span being inclusive-inclusive).
  */
 using MySpan = std::pair<arma::uword, arma::uword>;
+
+/*
+ * Typical return type wrapper.
+ */
+template <typename OutT>
+using LinearAlgebraResult = Result<OutT, LinearAlgebraRuntimeException>;
 
 // #######################################################################
 // ## Functions:                                                        ##
@@ -85,7 +94,17 @@ arma::mat main_matrix_cx_to_re(const arma::cx_mat& m_cx);
  * (do not differ more than eps).
  * The function asserts the confition is fulfilled.
  */
-arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps);
+
+
+struct ReduceEigenValuesError {
+    arma::uword i; // index for eigen_values_not_reduced
+    double value_at_i; // value at eigen_values_not_reduced(i)
+    double value_at_ip1; // value at eigen_values_not_reduced(i+1)
+    double assumed_threshold;
+};
+
+LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps);
+// arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps);
 
 /*
  * Function making description of degeneracy_subspaces.

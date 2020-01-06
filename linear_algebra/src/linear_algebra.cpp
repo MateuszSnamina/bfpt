@@ -120,19 +120,36 @@ arma::sp_mat main_matrix_cx_to_re(const arma::sp_cx_mat& m_cx) {
 
 namespace lin_alg {
 
-arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps) {
+LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps) {
     assert(eigen_values_not_reduced.n_rows % 2 == 0);
     arma::vec eigen_values = arma::vec(eigen_values_not_reduced.n_rows / 2);
     for (arma::uword i = 0; i < eigen_values_not_reduced.n_rows; i += 2) {
         if (std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) >= eps) {
-            std::cerr << "[info-debug] i, eigen_values_not_reduced(i), and eigen_values_not_reduced(i+1): "
-                      << i << ", " << eigen_values_not_reduced(i) << ", " << eigen_values_not_reduced(i + 1) << "." << std::endl;
+            const std::string message = "i, eigen_values_not_reduced(i), and eigen_values_not_reduced(i+1): " + std::to_string(i) + ", " + std::to_string(eigen_values_not_reduced(i)) + ", " + std::to_string(eigen_values_not_reduced(i + 1)) + ".";
+            std::cerr << "[debug-info] " << message << std::endl;
+            ReduceEigenValuesError details{i, eigen_values_not_reduced(i), eigen_values_not_reduced(i + 1), eps};
+            LinearAlgebraRuntimeException error(message, details);
+            LinearAlgebraResult<arma::vec>::Err(error);
         }
         assert(std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) < eps);
         eigen_values(i / 2) = eigen_values_not_reduced(i);
     }
-    return eigen_values;
+    return LinearAlgebraResult<arma::vec>::Ok(eigen_values);
 }
+
+// arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps) {
+//     assert(eigen_values_not_reduced.n_rows % 2 == 0);
+//     arma::vec eigen_values = arma::vec(eigen_values_not_reduced.n_rows / 2);
+//     for (arma::uword i = 0; i < eigen_values_not_reduced.n_rows; i += 2) {
+//         if (std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) >= eps) {
+//             std::cerr << "[info-debug] i, eigen_values_not_reduced(i), and eigen_values_not_reduced(i+1): "
+//                       << i << ", " << eigen_values_not_reduced(i) << ", " << eigen_values_not_reduced(i + 1) << "." << std::endl;
+//         }
+//         assert(std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) < eps);
+//         eigen_values(i / 2) = eigen_values_not_reduced(i);
+//     }
+//     return eigen_values;
+// }
 
 }  // namespace lin_alg
 
@@ -182,7 +199,7 @@ bool eig_sym(arma::vec& eigen_values, const arma::cx_mat& matrix) {
         return false;
     }
     // --------------------------------------------------------------
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps);
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps).unwrap();
     return true;
 }
 
@@ -206,7 +223,7 @@ bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::c
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
     // --------------------------------------------------------------
     // Reduction -- eigen_values:
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps);
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps).unwrap();
     // --------------------------------------------------------------
     // Analyse degeneracy subspaces:
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, eps);
@@ -265,7 +282,7 @@ bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
     }
     eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
     // --------------------------------------------------------------
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 100 * tol);
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 100 * tol).unwrap();
     return true;
 }
 
@@ -304,7 +321,7 @@ bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
     // --------------------------------------------------------------
     // Reduction - eigen_values:
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 1000 * tol);
+    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 1000 * tol).unwrap();
     // --------------------------------------------------------------
     // Reduction - eigen_vectors:
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, tol);
