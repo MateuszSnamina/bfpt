@@ -5,6 +5,8 @@
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
 
+#include <kstate/basis_populate.hpp>
+
 #include <extensions/adaptors.hpp>
 
 #include <armadillo>
@@ -23,13 +25,13 @@ using namespace std::complex_literals;
 
 namespace model_monostar {
 
-class DynamicMonostarHamiltonian {
+class DynamicMonostarHamiltonian : public kstate::IDynamicUniqueKstatePopulator<MonostarSiteState> {
    public:
     DynamicMonostarHamiltonian(const size_t n_sites);
     // Generates all conjugated states:
     void push_back_coupled_states_to_basis(
         const DynamicMonostarUniqueKstate& generator,
-        DynamicMonostarUniqueKstateBasis& basis) const;
+        DynamicMonostarUniqueKstateBasis& basis) const override;
     // Generates hamiltonian matrix:
     void fill_kn_hamiltonian_matrix_coll(
         const DynamicMonostarUniqueKstateBasis& basis,
@@ -158,24 +160,6 @@ DynamicMonostarHamiltonian::make_kn_hamiltonian_matrix(
 // ## main...                                                           ##
 // #######################################################################
 
-void populate_pt_basis(
-    const model_monostar::DynamicMonostarHamiltonian& hamiltonian,
-    const unsigned max_pt_order,
-    model_monostar::DynamicMonostarUniqueKstateBasis& basis) {
-    unsigned last_chunk_size = basis.size();
-    for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
-        const unsigned old_size = basis.size();
-        assert(last_chunk_size <= old_size);
-        for (unsigned idx = old_size - last_chunk_size; idx < old_size; idx++) {
-            const auto el = basis.vec_index()[idx];
-            assert(el);
-            hamiltonian.push_back_coupled_states_to_basis(*el, basis);
-        }
-        const unsigned new_size = basis.size();
-        last_chunk_size = new_size - old_size;
-    }
-}
-
 double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     // Define hamiltonian and basis:
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
@@ -186,7 +170,7 @@ double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     // std::cout << basis;
     // ----
     // Generate higher pt_orders subspace basis:
-    populate_pt_basis(hamiltonian, max_pt_order, basis);
+    kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
     // ----
     // std::cout << basis;
     // ----
@@ -214,7 +198,7 @@ double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
     // std::cout << basis;
     // ----
     // Generate higher pt_orders subspace basis:
-    populate_pt_basis(hamiltonian, max_pt_order, basis);
+    kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
     // ----
     // std::cout << basis;
     // ----
@@ -242,7 +226,7 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     // std::cout << basis;
     // ----
     // Generate higher pt_orders subspace basis:
-    populate_pt_basis(hamiltonian, max_pt_order, basis);
+    kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
     // ----
     // std::cout << basis;
     // ----
