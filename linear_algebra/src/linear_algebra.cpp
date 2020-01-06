@@ -157,10 +157,10 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
         }
     }
     spans.emplace_back(current_span_begin, eigen_values.n_rows);
-    for (const auto& span : spans) {
-        std::cout << "     Degenracy subspace: "
-                  << "[" << span.first << ", " << span.second << ")" << std::endl;
-    }
+    // for (const auto& span : spans) {
+    //     std::cout << "     Degenracy subspace: "
+    //               << "[" << span.first << ", " << span.second << ")" << std::endl;
+    // }
     return spans;
 }
 
