@@ -147,100 +147,122 @@ DynamicMonostarHamiltonian::make_kn_hamiltonian_matrix(
 // ## main...                                                           ##
 // #######################################################################
 
-double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
-    // Define hamiltonian and basis:
-    model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
-    model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
-    // Define pt_orders subspace basis:
-    basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
-    // ----
-    // std::cout << basis;
-    // ----
-    // Generate higher pt_orders subspace basis:
-    kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
-    // ----
-    // std::cout << basis;
-    // ----
-    const auto k0_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, 0);
-    // ----
-    // std::cout << k0_hamiltonian_matrix;
-    // ----
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-    lin_alg::eigs_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix, 1, 3, "sa", 1e-6);
-    // ----
-    std::cout << eigen_values;
-    std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
-    // ----
-    return eigen_values(0);
-}
+struct CommonRecipePrintFlags {
+    bool print_unpopulated_basis_flag = false;
+    bool print_unpopulated_basis_size_flag = true;
+    bool print_populated_basis_flag = false;
+    bool print_populated_basis_size_flag = true;
+    bool print_sp_hamiltonian_flag = false;
+    bool print_hamiltonian_flag = false;
+    bool print_eigen_values_flag = false;
+    bool print_eigen_vectors_flag = false;
+};
 
-double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
+double
+do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const unsigned max_pt_order, const unsigned k_n,
+                 CommonRecipePrintFlags print_flags) {
+    arma::wall_clock timer;
+    const size_t n_sites = basis.n_sites();
+    const std::string message_prefix = "[common-recipe] ";
+    const std::string progress_tag = "[progress] ";
+    const std::string data_tag = "[data    ] ";
+    const std::string time_tag = "[time    ] ";
+    assert(k_n < n_sites);
+    // --------------------------------------------------
+    if (print_flags.print_unpopulated_basis_flag) {
+        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):";
+        std::cout << basis;
+    }
+    if (print_flags.print_unpopulated_basis_size_flag) {
+        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis) size: "
+                  << basis.size() << "." << std::endl;
+    }
+    // --------------------------------------------------
     // Define hamiltonian and basis:
-    model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
+    std::cout << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
-    // Define pt_orders subspace basis:
-    basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
-    // ----
-    // std::cout << basis;
-    // ----
-    // Generate higher pt_orders subspace basis:
+    // Generate higher pt-orders subspace basis:
+    timer.tic();
     kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
-    // ----
-    // std::cout << basis;
-    // ----
-    const auto k0_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, 0);
-    // ----
-    // std::cout << k0_hamiltonian_matrix;
-    // ----
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-    lin_alg::eigs_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix, 1, 2, "sa", 1e-6);
-    // ----
-    std::cout << eigen_values;
-    std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
-    // ----
-    return eigen_values(0);
-}
-
-double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsigned k_n) {
-    // Define hamiltonian and basis:
-    model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
-    model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
-    // Define pt_orders subspace basis:
-    basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
-    // ----
-    // std::cout << basis;
-    // ----
-    // Generate higher pt_orders subspace basis:
-    kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
-    // ----
-    // std::cout << basis;
-    // ----
+    const double time_populating_pt_basis = timer.toc();
+    std::cout << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
+    std::cout << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
+    // --------------------------------------------------
+    if (print_flags.print_populated_basis_flag) {
+        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):";
+        std::cout << basis;
+    }
+    if (print_flags.print_populated_basis_size_flag) {
+        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis) size: "
+                  << basis.size() << "." << std::endl;
+    }
+    // --------------------------------------------------
+    // Generate hamiltoniam matrix:
+    std::cout << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
+    timer.tic();
     const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n);
+    const double time_generating_kn_hamiltonian_matrix = timer.toc();
+    std::cout << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
+    std::cout << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
+    // --------------------------------------------------
+    if (print_flags.print_sp_hamiltonian_flag) {
+        std::cout << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << kn_hamiltonian_matrix;
+    }
+    if (print_flags.print_hamiltonian_flag) {
+        std::cout << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << arma::cx_mat(kn_hamiltonian_matrix);
+    }
+    // --------------------------------------------------
+    // arma::vec eigen_values_debug;
+    // arma::cx_mat eigen_vectors_debug;
+    // arma::eig_sym(eigen_values_debug, eigen_vectors_debug, arma::cx_mat(kn_hamiltonian_matrix));
+    // std::cout << eigen_values_debug;
+    // std::cout << "min eigen_value: " << eigen_values_debug(0) << std::endl;
+    // std::cout << "eigen_vectors_debug.col(0): " << std::endl
+    //           << eigen_vectors_debug.col(0) / eigen_vectors_debug(0, 0) << std::endl;
     // ----
-    // std::cout << kn_hamiltonian_matrix;
-    // ----
-    // arma::vec eigen_values;
-    // arma::cx_mat eigen_vectors;
-    // arma::eig_sym(eigen_values, eigen_vectors, arma::cx_mat(kn_hamiltonian_matrix));
-    // // ----
-    // std::cout << "**** arma lin_alg:" << std::endl;
-    // std::cout << eigen_values;
+    // --------------------------------------------------
+    std::cout << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
+    timer.tic();
+    arma::vec eigen_values;
+    arma::cx_mat eigen_vectors;
+    lin_alg::eigs_sym(eigen_values, eigen_vectors, kn_hamiltonian_matrix, 1, 3, "sa", 1e-6);
+    const double time_solving_eigen_problem = timer.toc();
+    std::cout << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+    std::cout << message_prefix << progress_tag << "Has solved eigen problem." << std::endl;
+    // --------------------------------------------------
+    if (print_flags.print_eigen_values_flag) {
+        std::cout << data_tag << "eigen_values:" << std::endl;
+        std::cout << eigen_values;
+    }
+    if (print_flags.print_eigen_vectors_flag) {
+        std::cout << data_tag << "eigen_vectors:" << std::endl;
+        std::cout << eigen_vectors;
+    }
     // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
     // std::cout << "eigen_vectors.col(0): " << std::endl
     //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
-    // ----
-    std::cout << "**** my lin_alg spike:" << std::endl;
-    arma::vec eigen_values_2;
-    arma::cx_mat eigen_vectors_2;
-    lin_alg::eigs_sym(eigen_values_2, eigen_vectors_2, kn_hamiltonian_matrix, 1, 2, "sa", 1e-6);
-    std::cout << eigen_values_2;
-    std::cout << "min eigen_value: " << eigen_values_2(0) << std::endl;
-    // std::cout << "eigen_vectors.col(0): " << std::endl
-    //           << eigen_vectors_2.col(0) / eigen_vectors_2(0, 0) << std::endl;
-    // ----
-    return eigen_values_2(0);
+    // --------------------------------------------------
+    return eigen_values(0);
+}
+
+double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
+    CommonRecipePrintFlags print_flags;
+    model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
+    basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
+    return do_common_recipe(basis, max_pt_order, 0, print_flags);
+}
+
+double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsigned k_n) {
+    CommonRecipePrintFlags print_flags;
+    model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
+    basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
+    return do_common_recipe(basis, max_pt_order, 0, print_flags);
+}
+
+double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
+    return bfpt_kn_es(n_sites, max_pt_order, 0);
 }
 
 int main() {
