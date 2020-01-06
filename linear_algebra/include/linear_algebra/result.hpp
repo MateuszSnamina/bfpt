@@ -49,6 +49,8 @@ class Result {
     static_assert(std::is_base_of<std::exception, ExceptionT>::value);
 
    public:
+    Result(OutT);
+    Result(ExceptionT);
     static Result<OutT, ExceptionT> Ok(OutT);
     static Result<OutT, ExceptionT> Err(ExceptionT);
     bool is_ok() const;
@@ -56,6 +58,7 @@ class Result {
     OutT unwrap() const;
     OutT unwrap_or(OutT optb) const;
     OutT unwrap_or_else(std::function<OutT(ExceptionT)> op) const;
+    ExceptionT unwrap_err() const;
 
    private:
     Result(std::variant<OutT, ExceptionT>);
@@ -70,15 +73,23 @@ class Result {
 
 namespace lin_alg {
 
-// ------------------------------------------------------
+// -----------------------------------------------------------------------
+template <typename OutT, typename ExceptionT>
+Result<OutT, ExceptionT>::Result(OutT value)
+    : _variant(std::in_place_type<OutT>, value) {
+}
+
+template <typename OutT, typename ExceptionT>
+Result<OutT, ExceptionT>::Result(ExceptionT exceptrion)
+    : _variant(std::in_place_type<ExceptionT>, exceptrion) {
+}
 
 template <typename OutT, typename ExceptionT>
 Result<OutT, ExceptionT>::Result(std::variant<OutT, ExceptionT> variant)
     : _variant(variant) {
 }
 
-// ------------------------------------------------------
-
+// -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 Result<OutT, ExceptionT> Result<OutT, ExceptionT>::Ok(OutT val) {
     const std::variant<OutT, ExceptionT> variant(std::in_place_type<OutT>, val);
@@ -91,8 +102,7 @@ Result<OutT, ExceptionT> Result<OutT, ExceptionT>::Err(ExceptionT val) {
     return Result(variant);
 }
 
-// ------------------------------------------------------
-
+// -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 bool Result<OutT, ExceptionT>::is_ok() const {
     return std::holds_alternative<OutT>(_variant);
@@ -103,8 +113,7 @@ bool Result<OutT, ExceptionT>::is_err() const {
     return std::holds_alternative<ExceptionT>(_variant);
 }
 
-// ------------------------------------------------------
-
+// -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 struct UnwrapVisitor {
     OutT operator()(const OutT& value) const {
@@ -121,7 +130,7 @@ OutT Result<OutT, ExceptionT>::unwrap() const {
     return std::visit(visitor, _variant);
 }
 
-// ------------------------------------------------------
+// -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 class UnwrapOrVisitor {
    public:
@@ -144,8 +153,7 @@ OutT Result<OutT, ExceptionT>::unwrap_or(OutT optb) const {
     return std::visit(visitor, _variant);
 }
 
-// ------------------------------------------------------
-
+// -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 class UnwrapOrElseVisitor {
    public:
@@ -168,7 +176,24 @@ OutT Result<OutT, ExceptionT>::unwrap_or_else(std::function<OutT(ExceptionT)> op
     return std::visit(visitor, _variant);
 }
 
-// ------------------------------------------------------
+// -----------------------------------------------------------------------
+template <typename OutT, typename ExceptionT>
+struct UnwrapErrVisitor {
+    ExceptionT operator()(const OutT& value) const {
+        throw value;
+    }
+    ExceptionT operator()(const ExceptionT& exception) const {
+        return exception;
+    }
+};
+
+template <typename OutT, typename ExceptionT>
+ExceptionT Result<OutT, ExceptionT>::unwrap_err() const {
+    UnwrapErrVisitor<OutT, ExceptionT> visitor;
+    return std::visit(visitor, _variant);
+}
+
+// -----------------------------------------------------------------------
 
 }  // namespace lin_alg
 

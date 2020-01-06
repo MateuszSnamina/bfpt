@@ -129,27 +129,13 @@ LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values
             std::cerr << "[debug-info] " << message << std::endl;
             ReduceEigenValuesError details{i, eigen_values_not_reduced(i), eigen_values_not_reduced(i + 1), eps};
             LinearAlgebraRuntimeException error(message, details);
-            LinearAlgebraResult<arma::vec>::Err(error);
+            return error;
         }
         assert(std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) < eps);
         eigen_values(i / 2) = eigen_values_not_reduced(i);
     }
-    return LinearAlgebraResult<arma::vec>::Ok(eigen_values);
+    return eigen_values;
 }
-
-// arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps) {
-//     assert(eigen_values_not_reduced.n_rows % 2 == 0);
-//     arma::vec eigen_values = arma::vec(eigen_values_not_reduced.n_rows / 2);
-//     for (arma::uword i = 0; i < eigen_values_not_reduced.n_rows; i += 2) {
-//         if (std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) >= eps) {
-//             std::cerr << "[info-debug] i, eigen_values_not_reduced(i), and eigen_values_not_reduced(i+1): "
-//                       << i << ", " << eigen_values_not_reduced(i) << ", " << eigen_values_not_reduced(i + 1) << "." << std::endl;
-//         }
-//         assert(std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) < eps);
-//         eigen_values(i / 2) = eigen_values_not_reduced(i);
-//     }
-//     return eigen_values;
-// }
 
 }  // namespace lin_alg
 
@@ -223,7 +209,14 @@ bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::c
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
     // --------------------------------------------------------------
     // Reduction -- eigen_values:
+    // //Future error handling:
+    // const auto reduce_eigen_values_result = reduce_eigen_values(eigen_values_not_reduced, eps);
+    // if (reduce_eigen_values_result.is_err()) {
+    //   return TheFunctionResultType::Err(reduce_eigen_values_result.unwrap_err());
+    // }
+    // eigen_values = reduce_eigen_values_result.unwrap();
     eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps).unwrap();
+
     // --------------------------------------------------------------
     // Analyse degeneracy subspaces:
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, eps);

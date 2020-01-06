@@ -104,7 +104,6 @@ struct ReduceEigenValuesError {
 };
 
 LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps);
-// arma::vec reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps);
 
 /*
  * Function making description of degeneracy_subspaces.
