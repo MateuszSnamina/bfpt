@@ -154,7 +154,7 @@ struct CommonRecipePrintFlags {
     bool print_populated_basis_size_flag = true;
     bool print_sp_hamiltonian_flag = false;
     bool print_hamiltonian_flag = false;
-    bool print_eigen_values_flag = false;
+    bool print_eigen_values_flag = true;
     bool print_eigen_vectors_flag = false;
 };
 
@@ -206,11 +206,11 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
     std::cout << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
     // --------------------------------------------------
     if (print_flags.print_sp_hamiltonian_flag) {
-        std::cout << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << message_prefix << data_tag << "kn_hamiltonian_matrix:";
         std::cout << kn_hamiltonian_matrix;
     }
     if (print_flags.print_hamiltonian_flag) {
-        std::cout << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << message_prefix << data_tag << "kn_hamiltonian_matrix:";
         std::cout << arma::cx_mat(kn_hamiltonian_matrix);
     }
     // --------------------------------------------------
@@ -235,14 +235,14 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
     if (print_flags.print_eigen_values_flag) {
         std::cout << data_tag << "eigen_values:" << std::endl;
         std::cout << eigen_values;
+        // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
     }
     if (print_flags.print_eigen_vectors_flag) {
         std::cout << data_tag << "eigen_vectors:" << std::endl;
         std::cout << eigen_vectors;
+        // std::cout << "eigen_vectors.col(0): " << std::endl
+        //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     }
-    // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
-    // std::cout << "eigen_vectors.col(0): " << std::endl
-    //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     // --------------------------------------------------
     return eigen_values(0);
 }
@@ -258,7 +258,7 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     CommonRecipePrintFlags print_flags;
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
-    return do_common_recipe(basis, max_pt_order, 0, print_flags);
+    return do_common_recipe(basis, max_pt_order, k_n, print_flags);
 }
 
 double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
