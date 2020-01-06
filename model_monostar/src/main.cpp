@@ -58,18 +58,20 @@ inline void DynamicMonostarHamiltonian::push_back_coupled_states_to_basis(
     DynamicMonostarUniqueKstateBasis& basis) const {
     assert(generator.n_sites() == _n_sites);
     const auto generator_range = generator.to_range();
-    for (size_t i = 0, j = 1; i < _n_sites; i++, j = (i + 1) % _n_sites) {
-        if (*std::next(std::begin(generator_range), i) == gs &&
-            *std::next(std::begin(generator_range), j) == gs) {
-            const auto conjugated_range = generator_range | extension::boost::adaptors::refined(i, es) | extension::boost::adaptors::refined(j, es);
+    for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
+        if (*std::next(std::begin(generator_range), n_delta) == gs &&
+            *std::next(std::begin(generator_range), n_delta_p1) == gs) {
+            const auto conjugated_range =
+                generator_range | extension::boost::adaptors::refined(n_delta, es) | extension::boost::adaptors::refined(n_delta_p1, es);
             const auto conjugated_kstate_ptr = std::make_shared<DynamicMonostarUniqueKstate>(conjugated_range, kstate::ctr_from_range);
             basis.add_element(conjugated_kstate_ptr);
         }
     }
-    for (size_t i = 0, j = 1; i < _n_sites; i++, j = (i + 1) % _n_sites) {
-        if (*std::next(std::begin(generator_range), i) == es &&
-            *std::next(std::begin(generator_range), j) == es) {
-            const auto conjugated_range = generator_range | extension::boost::adaptors::refined(i, gs) | extension::boost::adaptors::refined(j, gs);
+    for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
+        if (*std::next(std::begin(generator_range), n_delta) == es &&
+            *std::next(std::begin(generator_range), n_delta_p1) == es) {
+            const auto conjugated_range =
+                generator_range | extension::boost::adaptors::refined(n_delta, gs) | extension::boost::adaptors::refined(n_delta_p1, gs);
             const auto conjugated_kstate_ptr = std::make_shared<DynamicMonostarUniqueKstate>(conjugated_range, kstate::ctr_from_range);
             basis.add_element(conjugated_kstate_ptr);
         }
@@ -83,7 +85,7 @@ inline void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
     const size_t ket_kstate_idx,
     arma::sp_cx_mat& kn_hamiltonian_matrix,
     const unsigned k_n) const {
-    assert(kn_hamiltonian_matrix.n_cols == basis.size());
+    assert(kn_hamiltonian_matrix.n_cols == kn_hamiltonian_matrix.n_rows);
     assert(kn_hamiltonian_matrix.n_rows == basis.size());
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
@@ -91,7 +93,8 @@ inline void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         if (*std::next(std::begin(ket_kstate), n_delta) == gs &&
             *std::next(std::begin(ket_kstate), n_delta_p1) == gs) {
-            const auto bra_kstate = ket_kstate | extension::boost::adaptors::refined(n_delta, es) | extension::boost::adaptors::refined(n_delta_p1, es);
+            const auto bra_kstate =
+                ket_kstate | extension::boost::adaptors::refined(n_delta, es) | extension::boost::adaptors::refined(n_delta_p1, es);
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(kstate::make_unique_shift(bra_kstate))) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm = _n_sites * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
@@ -101,29 +104,12 @@ inline void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 for (unsigned n_contribution = 0; n_contribution < bra_n_replicas; n_contribution++) {
                     // sign in front of bra_n_unique_shift in the below formula has to be check!
-                    const double exponent = 2 * arma::datum::pi * k_n / _n_sites * (-(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift);
+                    const double exponent =
+                        2 * arma::datum::pi * k_n / _n_sites * (-(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift);
                     sum_phase_factors += std::exp(1.0i * exponent);
                 }
                 kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm * sum_phase_factors * 0.5;
-            }
-        }
-    }
-    for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        if (*std::next(std::begin(ket_kstate), n_delta) == es &&
-            *std::next(std::begin(ket_kstate), n_delta_p1) == es) {
-            const auto bra_kstate = ket_kstate | extension::boost::adaptors::refined(n_delta, gs) | extension::boost::adaptors::refined(n_delta_p1, gs);
-            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(kstate::make_unique_shift(bra_kstate))) {
-                const auto bra_kstate_idx = *bra_kstate_optional_idx;
-                double pre_norm = _n_sites * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
-                std::complex<double> sum_phase_factors = 0;
-                const size_t bra_n_unique_shift = kstate::n_unique_shift(bra_kstate);
-                const size_t bra_n_least_replication_shift = basis.vec_index()[bra_kstate_idx]->n_least_replication_shift();
-                const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
-                for (unsigned n_contribution = 0; n_contribution < bra_n_replicas; n_contribution++) {
-                    const double exponent = 2 * arma::datum::pi * k_n / _n_sites * (-(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift);
-                    sum_phase_factors += std::exp(1.0i * exponent);
-                }
-                kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm * sum_phase_factors * 0.5;
+                kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm * sum_phase_factors * 0.5);
             }
         }
     }
