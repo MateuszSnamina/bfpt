@@ -10,13 +10,10 @@ file(GLOB inc "include/${TARGET_NAME}/*.hpp")
 message("  Auto detected hpp files for target ${TARGET_NAME}: ")
 message_fancy_list("${inc}")
 
-# add_library("${TARGET_NAME}" ${src} ${inc})
-add_executable("${TARGET_NAME}" ${src} ${inc})
+add_library("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
-  kstate
   armadillo
-  linear_algebra
 )
 
 message("CMake has processed: ${TARGET_NAME}")

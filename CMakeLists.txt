@@ -140,6 +140,7 @@ add_subdirectory(extensions)
 add_subdirectory(extensions_tests)
 add_subdirectory(kstate)
 add_subdirectory(kstate_tests)
+add_subdirectory(linear_algebra)
 add_subdirectory(model_monostar)
 add_subdirectory(bfpt)
 

@@ -1,4 +1,4 @@
-#include <model_monostar/lin_alg.hpp>
+#include <linear_algebra/linear_algebra.hpp>
 
 #include <cassert>
 

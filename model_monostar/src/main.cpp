@@ -1,9 +1,10 @@
 #include <model_monostar/hardcoded_example.hpp>
-#include <model_monostar/lin_alg.hpp>
 #include <model_monostar/monostar_basis.hpp>
 #include <model_monostar/monostar_hamiltonian_k0.hpp>
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
+
+#include <linear_algebra/linear_algebra.hpp>
 
 #include <kstate/basis_populate.hpp>
 
@@ -104,9 +105,9 @@ inline void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 for (unsigned n_contribution = 0; n_contribution < bra_n_replicas; n_contribution++) {
                     // sign in front of bra_n_unique_shift in the below formula has to be check!
-                    const double exponent =
-                        2 * arma::datum::pi * k_n / _n_sites * (-(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift);
-                    sum_phase_factors += std::exp(1.0i * exponent);
+                    const int exponent_n = -(int)bra_n_unique_shift + (int)n_contribution * (int)bra_n_least_replication_shift;
+                    const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
+                    sum_phase_factors += std::exp(1.0i * exponent_r);
                 }
                 kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm * sum_phase_factors * 0.5;
                 kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm * sum_phase_factors * 0.5);
