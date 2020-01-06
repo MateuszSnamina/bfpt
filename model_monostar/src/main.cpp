@@ -196,7 +196,7 @@ double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     // ----
     arma::vec eigen_values;
     arma::cx_mat eigen_vectors;
-    lin_alg::eigs_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix, 1, "sa", 1e-6);
+    lin_alg::eigs_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix, 1, 3, "sa", 1e-6);
     // ----
     std::cout << eigen_values;
     std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
@@ -224,7 +224,7 @@ double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
     // ----
     arma::vec eigen_values;
     arma::cx_mat eigen_vectors;
-    lin_alg::eigs_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix, 1, "sa", 1e-6);
+    lin_alg::eigs_sym(eigen_values, eigen_vectors, k0_hamiltonian_matrix, 1, 2, "sa", 1e-6);
     // ----
     std::cout << eigen_values;
     std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
@@ -263,7 +263,7 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     std::cout << "**** my lin_alg spike:" << std::endl;
     arma::vec eigen_values_2;
     arma::cx_mat eigen_vectors_2;
-    lin_alg::eigs_sym(eigen_values_2, eigen_vectors_2, kn_hamiltonian_matrix, 1, "sa", 1e-6);
+    lin_alg::eigs_sym(eigen_values_2, eigen_vectors_2, kn_hamiltonian_matrix, 1, 2, "sa", 1e-6);
     std::cout << eigen_values_2;
     std::cout << "min eigen_value: " << eigen_values_2(0) << std::endl;
     // std::cout << "eigen_vectors.col(0): " << std::endl
@@ -273,8 +273,11 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
 }
 
 int main() {
-    const unsigned max_pt_order = 1;
-    const size_t n_sites = 8;
+    // const unsigned max_pt_order = 1;
+    // const size_t n_sites = 8;
+    // const unsigned k_n = 1;
+    const unsigned max_pt_order = 6;
+    const size_t n_sites = 20;
     const unsigned k_n = 1;
     std::cout << "------------------------------------------" << std::endl;
     double gs_energy = bfpt_gs(n_sites, max_pt_order);

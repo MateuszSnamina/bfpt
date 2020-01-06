@@ -241,52 +241,66 @@ bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::c
 namespace lin_alg {
 
 bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
-              unsigned n_vectors, const char* form, double tol) {
+              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol) {
     // --------------------------------------------------------------
+    assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
+    const auto size = matrix.n_cols;
     const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
+    assert(re_matrix.n_cols == re_matrix.n_rows);
+    assert(re_matrix.n_cols == 2 * size);
     // --------------------------------------------------------------
     arma::vec eigen_values_not_reduced;
-    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_matrix, 2 * n_vectors, form, tol);
+    assert(2 * n_vectors + n_extra_vectors < 2 * size);
+    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_matrix,
+                                    2 * n_vectors + n_extra_vectors, form, tol);
     if (!res) {
         std::cerr << "[warning] arma::eigs_sym claims it failed." << std::endl;
         return false;
     }
-    if (eigen_values_not_reduced.n_rows != 2 * n_vectors) {
+    if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
         std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
         std::cerr << "[warning] but the number of found eigen_values is too small." << std::endl;
         return false;
     }
+    eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
     // --------------------------------------------------------------
     eigen_values = reduce_eigen_values(eigen_values_not_reduced, 100 * tol);
     return true;
 }
 
 bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix,
-              unsigned n_vectors, const char* form, double tol) {
+              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol) {
     // --------------------------------------------------------------
+    assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
     const auto size = matrix.n_cols;
     const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
+    assert(re_matrix.n_cols == re_matrix.n_rows);
+    assert(re_matrix.n_cols == 2 * size);
     // --------------------------------------------------------------
     arma::vec eigen_values_not_reduced;
     arma::mat re_eigen_vectors_not_reduced;
-    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix, 2 * n_vectors, form, tol);
+    assert(2 * n_vectors + n_extra_vectors < 2 * size);
+    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
+                                    2 * n_vectors + n_extra_vectors, form, tol);
     if (!res) {
         std::cerr << "[warning] arma::eigs_sym claims it failed." << std::endl;
         return false;
     }
-    if (eigen_values_not_reduced.n_rows != 2 * n_vectors) {
+    if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
         std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
         std::cerr << "[warning] but the number of found eigen_values is too small." << std::endl;
         return false;
     }
     assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
-    if (re_eigen_vectors_not_reduced.n_cols != 2 * n_vectors) {
+    if (re_eigen_vectors_not_reduced.n_cols < 2 * n_vectors) {
         std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
         std::cerr << "[warning] but the number of found eigen_vectors is too small." << std::endl;
         return false;
     }
+    eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
+    re_eigen_vectors_not_reduced = re_eigen_vectors_not_reduced.cols(arma::span(0, 2 * n_vectors - 1));
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
     // --------------------------------------------------------------
     // Reduction - eigen_values:

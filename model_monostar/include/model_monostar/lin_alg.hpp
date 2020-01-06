@@ -113,8 +113,10 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 
 bool eig_sym(arma::vec& eigen_values, const arma::cx_mat& matrix);
 bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::cx_mat& matrix);
-bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix, unsigned n_vectors, const char* form, double tol);
-bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix, unsigned n_vectors, const char* form, double tol); //TODO
+bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
+              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol);
+bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix,
+              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol);
 
 }  // namespace lin_alg
 
