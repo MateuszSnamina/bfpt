@@ -95,11 +95,10 @@ arma::mat main_matrix_cx_to_re(const arma::cx_mat& m_cx);
  * The function asserts the confition is fulfilled.
  */
 
-
 struct ReduceEigenValuesError {
-    arma::uword i; // index for eigen_values_not_reduced
-    double value_at_i; // value at eigen_values_not_reduced(i)
-    double value_at_ip1; // value at eigen_values_not_reduced(i+1)
+    arma::uword i;        // index for eigen_values_not_reduced
+    double value_at_i;    // value at eigen_values_not_reduced(i)
+    double value_at_ip1;  // value at eigen_values_not_reduced(i+1)
     double assumed_threshold;
 };
 
@@ -135,6 +134,31 @@ bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
               unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol);
 bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix,
               unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol);
+
+struct HermitianEigenInfo {
+    arma::vec eigen_values;
+    arma::cx_mat eigen_vectors;
+};
+
+struct ArmaEigsSymClaimsFailed {
+};
+
+struct ArmaEigsSymFailedToFoundEnoughEigenvectors {
+    arma::uword n_expected_number_of_eigenvectors;
+    arma::uword n_got_number_of_eigenvectors;
+    arma::uword n_needed_eigenvectors;
+};
+
+struct FailedToReproduceComplexDegeneracySubspace {
+    MySpan span;
+    arma::uword n_expected_degeneracy_subspace_dimension;
+    arma::uword n_got_degeneracy_subspace_dimension;
+
+};
+
+LinearAlgebraResult<HermitianEigenInfo>
+eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
+              unsigned n_extra_vectors, const char* form, double tol);
 
 }  // namespace lin_alg
 

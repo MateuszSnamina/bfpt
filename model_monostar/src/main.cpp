@@ -221,25 +221,31 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
     // std::cout << "min eigen_value: " << eigen_values_debug(0) << std::endl;
     // std::cout << "eigen_vectors_debug.col(0): " << std::endl
     //           << eigen_vectors_debug.col(0) / eigen_vectors_debug(0, 0) << std::endl;
-    // ----
     // --------------------------------------------------
     std::cout << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
     timer.tic();
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-    lin_alg::eigs_sym(eigen_values, eigen_vectors, kn_hamiltonian_matrix, 1, 3, "sa", 1e-6);
+    const auto& eigs_sym_result = lin_alg::eigs_sym(kn_hamiltonian_matrix, 1, 3, "sa", 1e-6);
     const double time_solving_eigen_problem = timer.toc();
+    if (eigs_sym_result.is_err()) {
+        std::cout << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+        std::cout << message_prefix << progress_tag << "Failed to solve eigen problem." << std::endl;
+        return arma::datum::nan;
+    }
+    const auto eigen_info = eigs_sym_result.unwrap();
+    // const auto eigen_info = lin_alg::eigs_sym(kn_hamiltonian_matrix, 1, 3, "sa", 1e-6).unwrap();
+    const arma::vec& eigen_values = eigen_info.eigen_values;
+    const arma::cx_mat& eigen_vectors = eigen_info.eigen_vectors;
     std::cout << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
     std::cout << message_prefix << progress_tag << "Has solved eigen problem." << std::endl;
     // --------------------------------------------------
     if (print_flags.print_eigen_values_flag) {
-        std::cout << data_tag << "eigen_values:" << std::endl;
-        std::cout << eigen_values;
+        std::cout << message_prefix << data_tag << "eigen_values:" << std::endl;
+        std::cout << message_prefix << eigen_values;
         // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
     }
     if (print_flags.print_eigen_vectors_flag) {
-        std::cout << data_tag << "eigen_vectors:" << std::endl;
-        std::cout << eigen_vectors;
+        std::cout << message_prefix << data_tag << "eigen_vectors:" << std::endl;
+        std::cout << message_prefix << eigen_vectors;
         // std::cout << "eigen_vectors.col(0): " << std::endl
         //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     }
