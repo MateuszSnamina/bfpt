@@ -237,7 +237,7 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
     const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
     // --------------------------------------------------------------
     // Reduction - eigen_values:
-    const auto reduce_eigen_values_result = reduce_eigen_values(eigen_values_not_reduced, 1000 * tol);
+    const auto reduce_eigen_values_result = reduce_eigen_values(eigen_values_not_reduced, 10 * tol);
     if (reduce_eigen_values_result.is_err()) {
         return reduce_eigen_values_result.unwrap_err();
     }
@@ -252,7 +252,7 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
         const arma::uword span_size = span.second - span.first;
         const arma::span not_reduced_span(2 * span.first, 2 * span.second - 1);
         const arma::span reduced_span(span.first, span.second - 1);
-        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span), 100 * tol);
+        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span), 10 * tol);
         const bool got_less_than_expected = basis.n_cols < span_size;
         const bool got_more_than_expected = basis.n_cols > span_size;
         const bool is_the_last_subspace = span_idx + 1 == spans.size();
