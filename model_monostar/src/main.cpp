@@ -229,6 +229,8 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
     if (eigs_sym_result.is_err()) {
         std::cout << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
         std::cout << message_prefix << progress_tag << "Failed to solve eigen problem." << std::endl;
+        std::cout << message_prefix << progress_tag << "The reported error message:" << std::endl;
+        std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
         return arma::datum::nan;
     }
     const auto eigen_info = eigs_sym_result.unwrap();

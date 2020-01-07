@@ -76,6 +76,14 @@ arma::sp_cx_mat re_to_cx(const arma::sp_mat& m_re) {
     return m_cx;
 }
 
+}  // namespace lin_alg
+
+// #######################################################################
+// ## main_matrix_cx_to_re                                              ##
+// #######################################################################
+
+namespace lin_alg {
+
 arma::mat main_matrix_cx_to_re(const arma::cx_mat& m_cx) {
     assert(m_cx.n_rows == m_cx.n_cols);
     assert(m_cx.n_rows > 0);
@@ -125,8 +133,13 @@ LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values
     arma::vec eigen_values = arma::vec(eigen_values_not_reduced.n_rows / 2);
     for (arma::uword i = 0; i < eigen_values_not_reduced.n_rows; i += 2) {
         if (std::abs(eigen_values_not_reduced(i) - eigen_values_not_reduced(i + 1)) >= eps) {
-            const std::string message = "i, eigen_values_not_reduced(i), and eigen_values_not_reduced(i+1): " + std::to_string(i) + ", " + std::to_string(eigen_values_not_reduced(i)) + ", " + std::to_string(eigen_values_not_reduced(i + 1)) + ".";
-            std::cerr << "[debug-info] " << message << std::endl;
+            const std::string message1 = "The eigenvalues of the corresponding real eigen-problem do not follow the expected pattern.";
+            const std::string message2 = "The following values are not 'near': eigen_values_not_reduced(i), eigen_values_not_reduced(i+1): " + std::to_string(eigen_values_not_reduced(i)) + ", " + std::to_string(eigen_values_not_reduced(i + 1)) + " (for i: " + std::to_string(i) + ").";
+            const std::string message3 = "The 'near' relationship is consider with eps: " + std::to_string(eps) + ".";
+            const std::string message = message1 + " " + message2 + " " + message3;
+            std::cerr << "[debug-info] [line 1/3] " << message1 << std::endl;
+            std::cerr << "[debug-info] [line 2/3] " << message2 << std::endl;
+            std::cerr << "[debug-info] [line 3/3] " << message3 << std::endl;
             ReduceEigenValuesError details{i, eigen_values_not_reduced(i), eigen_values_not_reduced(i + 1), eps};
             return LinearAlgebraRuntimeException{message, details};
         }
@@ -166,188 +179,14 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 }  // namespace lin_alg
 
 // #######################################################################
-// ## eig_sym                                                           ##
-// #######################################################################
-
-namespace lin_alg {
-
-bool eig_sym(arma::vec& eigen_values, const arma::cx_mat& matrix) {
-    // --------------------------------------------------------------
-    assert(matrix.n_cols == matrix.n_rows);
-    const double eps = 1e-6;
-    const arma::mat re_matrix = main_matrix_cx_to_re(matrix);
-    // --------------------------------------------------------------
-    arma::vec eigen_values_not_reduced;
-    const bool res = arma::eig_sym(eigen_values_not_reduced, re_matrix);
-    if (!res) {
-        std::cerr << "[warning] arma::eig_sym claims it failed." << std::endl;
-        return false;
-    }
-    // --------------------------------------------------------------
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps).unwrap();
-    return true;
-}
-
-bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::cx_mat& matrix) {
-    // --------------------------------------------------------------
-    assert(matrix.n_cols == matrix.n_rows);
-    const auto size = matrix.n_cols;
-    const double eps = 1e-6;
-    const arma::mat re_matrix = main_matrix_cx_to_re(matrix);
-    // --------------------------------------------------------------
-    arma::vec eigen_values_not_reduced;
-    arma::mat re_eigen_vectors_not_reduced;
-    const bool res = arma::eig_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix);
-    if (!res) {
-        std::cerr << "[warning] arma::eig_sym claims it failed." << std::endl;
-        return false;
-    }
-    assert(eigen_values_not_reduced.n_rows == 2 * size);
-    assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
-    assert(re_eigen_vectors_not_reduced.n_cols == 2 * size);
-    const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
-    // --------------------------------------------------------------
-    // Reduction -- eigen_values:
-    // //Future error handling:
-    // const auto reduce_eigen_values_result = reduce_eigen_values(eigen_values_not_reduced, eps);
-    // if (reduce_eigen_values_result.is_err()) {
-    //   return TheFunctionResultType::Err(reduce_eigen_values_result.unwrap_err());
-    // }
-    // eigen_values = reduce_eigen_values_result.unwrap();
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, eps).unwrap();
-
-    // --------------------------------------------------------------
-    // Analyse degeneracy subspaces:
-    const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, eps);
-    // Reduction - eigen_vectors:
-    eigen_vectors = arma::cx_mat(size, eigen_values.n_rows);
-    for (unsigned span_idx = 0; span_idx < spans.size(); span_idx++) {
-        const auto& span = spans[span_idx];
-        assert(span.first < span.second);  // span cannot be empty.
-        const arma::uword span_size = span.second - span.first;
-        const arma::span not_reduced_span(2 * span.first, 2 * span.second - 1);
-        const arma::span reduced_span(span.first, span.second - 1);
-        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span));
-        if (basis.n_cols != span_size) {
-            std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << " (out of " << spans.size() << ")." << std::endl;
-            std::cerr << "[warning] Number of eigen-vectors was not reduced by factor of two." << std::endl;
-            std::cerr << "[warning] Number of eigen-vectors before reduction: " << 2 * (span.second - span.first) << "." << std::endl;
-            std::cerr << "[warning] Number of eigen-vectors after reduction: " << basis.n_cols << "." << std::endl;
-            std::cerr << "[warning] This indicates an error." << std::endl;
-            return false;
-        }
-        eigen_vectors.cols(reduced_span) = basis;
-    }
-    return true;
-}
-
-}  // namespace lin_alg
-
-// #######################################################################
 // ## eigs_sym                                                          ##
 // #######################################################################
 
 namespace lin_alg {
 
-bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
-              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol) {
-    // --------------------------------------------------------------
-    assert(n_vectors > 0);
-    assert(matrix.n_cols == matrix.n_rows);
-    const auto size = matrix.n_cols;
-    const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
-    assert(re_matrix.n_cols == re_matrix.n_rows);
-    assert(re_matrix.n_cols == 2 * size);
-    // --------------------------------------------------------------
-    arma::vec eigen_values_not_reduced;
-    assert(2 * n_vectors + n_extra_vectors < 2 * size);
-    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_matrix,
-                                    2 * n_vectors + n_extra_vectors, form, tol);
-    if (!res) {
-        std::cerr << "[warning] arma::eigs_sym claims it failed." << std::endl;
-        return false;
-    }
-    if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
-        std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
-        std::cerr << "[warning] but the number of found eigen_values is too small." << std::endl;
-        return false;
-    }
-    eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
-    // --------------------------------------------------------------
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 100 * tol).unwrap();
-    return true;
-}
-
-bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix,
-              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol) {
-    // --------------------------------------------------------------
-    assert(n_vectors > 0);
-    assert(matrix.n_cols == matrix.n_rows);
-    const auto size = matrix.n_cols;
-    const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
-    assert(re_matrix.n_cols == re_matrix.n_rows);
-    assert(re_matrix.n_cols == 2 * size);
-    // --------------------------------------------------------------
-    arma::vec eigen_values_not_reduced;
-    arma::mat re_eigen_vectors_not_reduced;
-    assert(2 * n_vectors + n_extra_vectors < 2 * size);
-    const bool res = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
-                                    2 * n_vectors + n_extra_vectors, form, tol);
-    if (!res) {
-        std::cerr << "[warning] arma::eigs_sym claims it failed." << std::endl;
-        return false;
-    }
-    if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
-        std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
-        std::cerr << "[warning] but the number of found eigen_values is too small." << std::endl;
-        return false;
-    }
-    assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
-    if (re_eigen_vectors_not_reduced.n_cols < 2 * n_vectors) {
-        std::cerr << "[warning] arma::eigs_sym does not claim it failed," << std::endl;
-        std::cerr << "[warning] but the number of found eigen_vectors is too small." << std::endl;
-        return false;
-    }
-    eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
-    re_eigen_vectors_not_reduced = re_eigen_vectors_not_reduced.cols(arma::span(0, 2 * n_vectors - 1));
-    const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
-    // --------------------------------------------------------------
-    // Reduction - eigen_values:
-    eigen_values = reduce_eigen_values(eigen_values_not_reduced, 1000 * tol).unwrap();
-    // --------------------------------------------------------------
-    // Reduction - eigen_vectors:
-    const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, tol);
-    eigen_vectors = arma::cx_mat(matrix.n_cols, eigen_values.n_rows);
-    for (unsigned span_idx = 0; span_idx < spans.size(); span_idx++) {
-        const auto& span = spans[span_idx];
-        assert(span.first < span.second);  // span cannot be empty.
-        const arma::uword span_size = span.second - span.first;
-        const arma::span not_reduced_span(2 * span.first, 2 * span.second - 1);
-        const arma::span reduced_span(span.first, span.second - 1);
-        arma::cx_mat basis = arma::orth(cx_eigen_vectors_not_reduced.cols(not_reduced_span), 100 * tol);
-        if (basis.n_cols != span_size) {
-            std::cerr << "[warning] Warning for degeneracy subspace no " << span_idx << " (out of " << spans.size() << ")." << std::endl;
-            std::cerr << "[warning] Number of eigen-vectors was not reduced by factor of two." << std::endl;
-            std::cerr << "[warning] Number of eigen-vectors before reduction: " << 2 * (span.second - span.first) << "." << std::endl;
-            std::cerr << "[warning] Number of eigen-vectors after reduction: " << basis.n_cols << "." << std::endl;
-            std::cerr << "[warning] This indicates an error, expect one specific case:" << std::endl;
-            std::cerr << "[warning] the subsapce is the last subspace, and" << std::endl;
-            std::cerr << "[warning] the reduction gives rise to more than (number of eigen-vectors before reduction)/2 vectors" << std::endl;
-            std::cerr << "[warning] In the latter case it means the subspace is not determined completely" << std::endl;
-            // TODO handle the error.
-        }
-        eigen_vectors.cols(reduced_span) = basis;
-    }
-    return true;
-}
-
-// #######################################################################
-// ## eigs_sym   --new api!!!!!!!!                                              ##
-// #######################################################################
-
 LinearAlgebraResult<HermitianEigenInfo>
 eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
-              unsigned n_extra_vectors, const char* form, double tol) {
+         unsigned n_extra_vectors, const char* form, double tol) {
     // --------------------------------------------------------------
     assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
@@ -363,8 +202,8 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
     const bool res = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
                                     n_vectors_not_reduced_to_calculate, form, tol);
     if (!res) {
-        std::string message = "arma::eigs_sym claims it failed";
-        std::cerr << "[warning] " << message << "." << std::endl;
+        std::string message = "arma::eigs_sym claims it failed.";
+        std::cerr << "[debug-info] " << message << "." << std::endl;
         return LinearAlgebraRuntimeException{message, ArmaEigsSymClaimsFailed{}};
     }
     if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
@@ -374,8 +213,8 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
         const std::string message2c = "while needed " + std::to_string(2 * n_vectors) + " eigenvalues.)";
         const std::string message2 = message2a + message2b + message2c;
         const std::string message = message1 + message2;
-        std::cerr << "[warning] " << message1 << std::endl;
-        std::cerr << "[warning] " << message2 << std::endl;
+        std::cerr << "[debug-info] [line 1/2] " << message1 << std::endl;
+        std::cerr << "[debug-info] [line 2/2] " << message2 << std::endl;
         ArmaEigsSymFailedToFoundEnoughEigenvectors error_detail{n_vectors_not_reduced_to_calculate, eigen_values_not_reduced.n_rows, 2 * n_vectors};
         return LinearAlgebraRuntimeException{message, error_detail};
     }
@@ -387,8 +226,8 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
         const std::string message2c = "while needed: " + std::to_string(2 * n_vectors) + " eigenvectors.)";
         const std::string message2 = message2a + message2b + message2c;
         const std::string message = message1 + " " + message2;
-        std::cerr << "[warning] " << message1 << std::endl;
-        std::cerr << "[warning] " << message2 << std::endl;
+        std::cerr << "[debug-info] [line 1/2] " << message1 << std::endl;
+        std::cerr << "[debug-info] [line 2/2] " << message2 << std::endl;
         ArmaEigsSymFailedToFoundEnoughEigenvectors error_detail{n_vectors_not_reduced_to_calculate, eigen_values_not_reduced.n_rows, 2 * n_vectors};
         return LinearAlgebraRuntimeException{message, error_detail};
         // return false;
@@ -424,10 +263,10 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
             const std::string message3 = "The error occured for degeneracy subspace no " + std::to_string(span_idx) + " (out of " + std::to_string(spans.size()) + ").";
             const std::string message2 = message2a + message2b;
             const std::string message = message1 + " " + message2 + " " + message3;
-            std::cerr << "[warning] " << message1 << std::endl;
-            std::cerr << "[warning] " << message2a << std::endl;
-            std::cerr << "[warning] " << message2b << std::endl;
-            std::cerr << "[warning] " << message3 << std::endl;
+            std::cerr << "[debug-info] [line 1/4] " << message1 << std::endl;
+            std::cerr << "[debug-info] [line 2/4] " << message2a << std::endl;
+            std::cerr << "[debug-info] [line 3/4] " << message2b << std::endl;
+            std::cerr << "[debug-info] [line 4/4] " << message3 << std::endl;
             FailedToReproduceComplexDegeneracySubspace error_detail{span, span_size, basis.n_cols};
             return LinearAlgebraRuntimeException{message, error_detail};
         }

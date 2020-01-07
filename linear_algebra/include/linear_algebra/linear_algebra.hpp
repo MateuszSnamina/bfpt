@@ -28,8 +28,10 @@ using MySpan = std::pair<arma::uword, arma::uword>;
 template <typename OutT>
 using LinearAlgebraResult = Result<OutT, LinearAlgebraRuntimeException>;
 
+}  // namespace lin_alg
+
 // #######################################################################
-// ## Functions:                                                        ##
+// ## re_to_cx and re_to_cx                                             ##
 // #######################################################################
 
 /*
@@ -60,11 +62,19 @@ using LinearAlgebraResult = Result<OutT, LinearAlgebraRuntimeException>;
  *                                │ 4, 14 │
  *                                ╰       ╯
  */
+
+namespace lin_alg {
+
 // arma::vec cx_to_re(const arma::cx_vec& v_cx);
 arma::cx_vec re_to_cx(const arma::vec& v_re);
 arma::sp_cx_vec re_to_cx(const arma::sp_vec& v_re);
 arma::cx_mat re_to_cx(const arma::mat& m_re);
 arma::sp_cx_mat re_to_cx(const arma::sp_mat& m_re);
+}  // namespace lin_alg
+
+// #######################################################################
+// ## main_matrix_cx_to_re                                              ##
+// #######################################################################
 
 /*
  * Function making mat from cx_mat,
@@ -78,7 +88,15 @@ arma::sp_cx_mat re_to_cx(const arma::sp_mat& m_re);
  * Note: If the input is a hermitian matrix,
  *       then the result matrix is symmetric.
  */
+
+namespace lin_alg {
 arma::mat main_matrix_cx_to_re(const arma::cx_mat& m_cx);
+arma::sp_mat main_matrix_cx_to_re(const arma::sp_cx_mat& m_cx);
+}  // namespace lin_alg
+
+// #######################################################################
+// ## reduce_eigen_values                                               ##
+// #######################################################################
 
 /*
  * Function eliminating every second element in a vec.
@@ -92,8 +110,10 @@ arma::mat main_matrix_cx_to_re(const arma::cx_mat& m_cx);
  * The input vector is assumed to be filled in a way that:
  * the n-th and the (n+1)-th have the save value
  * (do not differ more than eps).
- * The function asserts the confition is fulfilled.
+ * The function returns an error asserts the confition is fulfilled.
  */
+
+namespace lin_alg {
 
 struct ReduceEigenValuesError {
     arma::uword i;        // index for eigen_values_not_reduced
@@ -103,6 +123,12 @@ struct ReduceEigenValuesError {
 };
 
 LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values_not_reduced, double eps);
+
+}  // namespace lin_alg
+
+// #######################################################################
+// ## make_degeneracy_subspaces_analyse                                 ##
+// #######################################################################
 
 /*
  * Function making description of degeneracy_subspaces.
@@ -119,21 +145,22 @@ LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values
  * The two eigen_vectors are treated as from the same degeneracy subspaces
  * if their eigen values differ no more than eps.
  */
+namespace lin_alg {
 std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_values, double eps);
+}
+
+// #######################################################################
+// ## eigs_sym                                                          ##
+// #######################################################################
 
 /*
  * My version of arma::eig_sym(...) function.
  * 
  * My version solves eingen problem for cx_mat
- * by translating it into eingen problem for mat. 
+ * by translating it into eingen problem for mat.
  */
 
-bool eig_sym(arma::vec& eigen_values, const arma::cx_mat& matrix);
-bool eig_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::cx_mat& matrix);
-bool eigs_sym(arma::vec& eigen_values, const arma::sp_cx_mat& matrix,
-              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol);
-bool eigs_sym(arma::vec& eigen_values, arma::cx_mat& eigen_vectors, const arma::sp_cx_mat& matrix,
-              unsigned n_vectors, unsigned n_extra_vectors, const char* form, double tol);
+namespace lin_alg {
 
 struct HermitianEigenInfo {
     arma::vec eigen_values;
@@ -153,12 +180,11 @@ struct FailedToReproduceComplexDegeneracySubspace {
     MySpan span;
     arma::uword n_expected_degeneracy_subspace_dimension;
     arma::uword n_got_degeneracy_subspace_dimension;
-
 };
 
 LinearAlgebraResult<HermitianEigenInfo>
 eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
-              unsigned n_extra_vectors, const char* form, double tol);
+         unsigned n_extra_vectors, const char* form, double tol);
 
 }  // namespace lin_alg
 
