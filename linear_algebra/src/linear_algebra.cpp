@@ -185,8 +185,32 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 namespace lin_alg {
 
 LinearAlgebraResult<HermitianEigenInfo>
-eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
-         unsigned n_extra_vectors, const char* form, double tol) {
+eig_sym(const arma::cx_mat& matrix) {
+    // --------------------------------------------------------------
+    assert(matrix.n_cols == matrix.n_rows);
+    // --------------------------------------------------------------
+    arma::vec eigen_values;
+    arma::cx_mat eigen_vectors;
+    const bool eig_sym_success = arma::eig_sym(eigen_values, eigen_vectors, matrix);
+    if (!eig_sym_success) {
+        std::string message = "arma::eigs_sym claims it failed.";
+        std::cerr << "[debug-info] " << message << "." << std::endl;
+        return LinearAlgebraRuntimeException{message, ArmaEigSymClaimsFailed{}};
+    }
+    return HermitianEigenInfo{eigen_values, eigen_vectors};
+}
+
+}  // namespace lin_alg
+
+// #######################################################################
+// ## eigs_sym                                                          ##
+// #######################################################################
+
+namespace lin_alg {
+
+LinearAlgebraResult<HermitianEigenInfo>
+eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
+         const unsigned n_extra_vectors, const char* form, const double tol) {
     // --------------------------------------------------------------
     assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
@@ -281,24 +305,17 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
     return HermitianEigenInfo{eigen_values, eigen_vectors};
 }
 
-LinearAlgebraResult<HermitianEigenInfo>
-eig_sym(const arma::cx_mat& matrix) {
-    // --------------------------------------------------------------
-    assert(matrix.n_cols == matrix.n_rows);
-    // --------------------------------------------------------------
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-    const bool eig_sym_success = arma::eig_sym(eigen_values, eigen_vectors, matrix);
-    if (!eig_sym_success) {
-        std::string message = "arma::eigs_sym claims it failed.";
-        std::cerr << "[debug-info] " << message << "." << std::endl;
-        return LinearAlgebraRuntimeException{message, ArmaEigSymClaimsFailed{}};
-    }
-    return HermitianEigenInfo{eigen_values, eigen_vectors};
-}
+}  // namespace lin_alg
+
+// #######################################################################
+// ## fallbacked_eigs_sym                                               ##
+// #######################################################################
+
+namespace lin_alg {
 
 LinearAlgebraResult<HermitianEigenInfo>
-fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors, double tol) {
+fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
+                    const double tol, const unsigned max_n_tries) {
     // --------------------------------------------------------------
     assert(matrix.n_cols == matrix.n_rows);
     assert(n_vectors > 0);
@@ -316,11 +333,14 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors, double to
         return HermitianEigenInfo{eigen_info.eigen_values(requested_span), eigen_info.eigen_vectors.cols(requested_span)};
     }
     // --------------------------------------------------------------
-    const unsigned max_n_tries = 7;
     for (unsigned n_try = 0; n_try < max_n_tries; n_try++) {
         std::cerr << "[debug-info] [fallbacked_eigs_sym] try no: " << std::to_string(n_try) << "." << std::endl;
-        //TODO chceck (2*n_vectors + n_try) against 2*size   !!!!!!!
-        const auto eigs_sym_result = lin_alg::eigs_sym(matrix, n_vectors, n_try, "sa", tol);
+        const unsigned n_extra_vectors = n_try;
+        if (2 * n_vectors + n_extra_vectors >= 2 * size) {
+            std::cerr << "[debug-info] [fallbacked_eigs_sym] The try is impossible to run as the number of vectros to calculate would exceed the space dimension." << std::endl;
+            break;
+        }
+        const auto eigs_sym_result = lin_alg::eigs_sym(matrix, n_vectors, n_extra_vectors, "sa", tol);
         if (eigs_sym_result.is_ok()) {
             std::cerr << "[debug-info] [fallbacked_eigs_sym] The try succeded." << std::endl;
             return eigs_sym_result.unwrap();

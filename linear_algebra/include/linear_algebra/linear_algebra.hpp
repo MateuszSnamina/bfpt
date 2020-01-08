@@ -150,6 +150,37 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 }
 
 // #######################################################################
+// ## HermitianEigenInfo                                                ##
+// #######################################################################
+
+namespace lin_alg {
+
+struct HermitianEigenInfo {
+    arma::vec eigen_values;
+    arma::cx_mat eigen_vectors;
+};
+
+}  // namespace lin_alg
+
+// #######################################################################
+// ## eig_sym                                                          ##
+// #######################################################################
+
+/*
+ * The function is a simple wrapper for arma::eig_sym.
+ */
+
+namespace lin_alg {
+
+struct ArmaEigSymClaimsFailed {
+};
+
+LinearAlgebraResult<HermitianEigenInfo>
+eig_sym(const arma::cx_mat& matrix);
+
+}  // namespace lin_alg
+
+// #######################################################################
 // ## eigs_sym                                                          ##
 // #######################################################################
 
@@ -161,19 +192,6 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
  */
 
 namespace lin_alg {
-
-//TODO:
-
-struct HermitianEigenInfo {
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-};
-
-struct ArmaEigSymClaimsFailed {
-};
-
-LinearAlgebraResult<HermitianEigenInfo>
-eig_sym(const arma::cx_mat& matrix, unsigned n_vectors);
 
 struct ArmaEigsSymClaimsFailed {
 };
@@ -195,14 +213,23 @@ struct FailedToReproduceComplexDegeneracySubspace {
 
 LinearAlgebraResult<HermitianEigenInfo>
 eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
-         unsigned n_extra_vectors, const char* form, double tol);
+         const unsigned n_extra_vectors, const char* form, const double tol);
+
+}  // namespace lin_alg
+
+// #######################################################################
+// ## fallbacked_eigs_sym                                               ##
+// #######################################################################
 
 /*
  * Fallbacked version is avaliable ony for `form == "sa"`.
- * 
  */
+
+namespace lin_alg {
+
 LinearAlgebraResult<HermitianEigenInfo>
-fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors, double tol);
+fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
+                    const double tol, const unsigned max_n_tries = 7);
 
 struct AllTriesFailed {
     //std::vector<atd::any> details_for_tries;
