@@ -214,17 +214,8 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
         std::cout << arma::cx_mat(kn_hamiltonian_matrix);
     }
     // --------------------------------------------------
-    // arma::vec eigen_values_debug;
-    // arma::cx_mat eigen_vectors_debug;
-    // arma::eig_sym(eigen_values_debug, eigen_vectors_debug, arma::cx_mat(kn_hamiltonian_matrix));
-    // std::cout << eigen_values_debug;
-    // std::cout << "min eigen_value: " << eigen_values_debug(0) << std::endl;
-    // std::cout << "eigen_vectors_debug.col(0): " << std::endl
-    //           << eigen_vectors_debug.col(0) / eigen_vectors_debug(0, 0) << std::endl;
-    // --------------------------------------------------
     std::cout << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
     timer.tic();
-    //const auto& eigs_sym_result = lin_alg::eigs_sym(kn_hamiltonian_matrix, 1, 3, "sa", 1e-6);
     const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(kn_hamiltonian_matrix, 1, 1e-6);
     const double time_solving_eigen_problem = timer.toc();
     if (eigs_sym_result.is_err()) {
