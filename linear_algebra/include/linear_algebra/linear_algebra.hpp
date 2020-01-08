@@ -162,12 +162,23 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 
 namespace lin_alg {
 
+//TODO:
+
 struct HermitianEigenInfo {
     arma::vec eigen_values;
     arma::cx_mat eigen_vectors;
 };
 
+struct ArmaEigSymClaimsFailed {
+};
+
+LinearAlgebraResult<HermitianEigenInfo>
+eig_sym(const arma::cx_mat& matrix, unsigned n_vectors);
+
 struct ArmaEigsSymClaimsFailed {
+};
+
+struct ArmaOrthClaimsFailed {
 };
 
 struct ArmaEigsSymFailedToFoundEnoughEigenvectors {
@@ -185,6 +196,17 @@ struct FailedToReproduceComplexDegeneracySubspace {
 LinearAlgebraResult<HermitianEigenInfo>
 eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
          unsigned n_extra_vectors, const char* form, double tol);
+
+/*
+ * Fallbacked version is avaliable ony for `form == "sa"`.
+ * 
+ */
+LinearAlgebraResult<HermitianEigenInfo>
+fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors, double tol);
+
+struct AllTriesFailed {
+    //std::vector<atd::any> details_for_tries;
+};
 
 }  // namespace lin_alg
 
