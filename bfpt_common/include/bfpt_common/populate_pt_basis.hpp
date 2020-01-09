@@ -1,26 +1,12 @@
 #ifndef BFPT_COMMON_POPULATE_PT_BASIS_HPP
 #define BFPT_COMMON_POPULATE_PT_BASIS_HPP
 
+#include <bfpt_common/i_dynamic_unique_kstate_populator.hpp>
+
 #include <kstate/basis.hpp>
 #include <kstate/kstate_concrete.hpp>
 
 #include <cassert>
-
-// #######################################################################
-// ##  IDynamicUniqueKstatePopulator                                    ##
-// #######################################################################
-
-namespace bfpt_common {
-
-template <typename Element>
-class IDynamicUniqueKstatePopulator {
-   public:
-    virtual void push_back_coupled_states_to_basis(
-        const kstate::DynamicUniqueKstate<Element>& generator,
-        kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis) const = 0;
-};
-
-}  // namespace bfpt_common
 
 // #######################################################################
 // ##  populate_pt_basis                                                ##

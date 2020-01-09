@@ -1,7 +1,9 @@
 #ifndef BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 #define BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 
+#include <bfpt_common/i_dynamic_unique_kstate_hamiltonian.hpp>
 #include <bfpt_common/populate_pt_basis.hpp>
+#include <bfpt_common/common_recipe_print_flags.hpp>
 
 #include <linear_algebra/linear_algebra.hpp>
 
@@ -16,37 +18,10 @@
 #include <cassert>
 
 // #######################################################################
-// ## IDynamicUniqueKstateHamiltonian                                   ##
-// #######################################################################
-
-namespace bfpt_common {
-
-template <typename Element>
-class IDynamicUniqueKstateHamiltonian {
-   public:
-    virtual arma::sp_cx_mat make_kn_hamiltonian_matrix(
-        const kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis,
-        const unsigned k_n) const = 0;
-};
-
-}  // namespace bfpt_common
-
-// #######################################################################
 // ## do_common_recipe                                                  ##
 // #######################################################################
 
 namespace bfpt_common {
-
-struct CommonRecipePrintFlags {
-    bool print_unpopulated_basis_flag = false;
-    bool print_unpopulated_basis_size_flag = true;
-    bool print_populated_basis_flag = false;
-    bool print_populated_basis_size_flag = true;
-    bool print_sp_hamiltonian_flag = false;
-    bool print_hamiltonian_flag = false;
-    bool print_eigen_values_flag = true;
-    bool print_eigen_vectors_flag = false;
-};
 
 template <typename Element>
 inline double do_common_recipe(const IDynamicUniqueKstatePopulator<Element>& bais_populator,
