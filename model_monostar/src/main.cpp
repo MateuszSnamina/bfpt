@@ -21,12 +21,29 @@
 using namespace std::complex_literals;
 
 // #######################################################################
+// ## IDynamicUniqueKstateHamiltonian                                   ##
+// #######################################################################
+
+namespace bfpt_common {
+
+template <typename Element>
+class IDynamicUniqueKstateHamiltonian {
+   public:
+    virtual arma::sp_cx_mat make_kn_hamiltonian_matrix(
+        const kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis,
+        const unsigned k_n) const = 0;
+};
+
+}  // namespace bfpt_common
+
+// #######################################################################
 // ## DynamicMonostarHamiltonian                                        ##
 // #######################################################################
 
 namespace model_monostar {
 
-class DynamicMonostarHamiltonian : public kstate::IDynamicUniqueKstatePopulator<MonostarSiteState> {
+class DynamicMonostarHamiltonian : public kstate::IDynamicUniqueKstatePopulator<MonostarSiteState>,
+                                   public bfpt_common::IDynamicUniqueKstateHamiltonian<MonostarSiteState> {
    public:
     DynamicMonostarHamiltonian(const size_t n_sites);
     // Generates all conjugated states:
@@ -144,8 +161,10 @@ DynamicMonostarHamiltonian::make_kn_hamiltonian_matrix(
 }  // namespace model_monostar
 
 // #######################################################################
-// ## main...                                                           ##
+// ## do_common_recipe                                                  ##
 // #######################################################################
+
+namespace bfpt_common {
 
 struct CommonRecipePrintFlags {
     bool print_unpopulated_basis_flag = false;
@@ -159,7 +178,10 @@ struct CommonRecipePrintFlags {
 };
 
 double
-do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const unsigned max_pt_order, const unsigned k_n,
+do_common_recipe(const kstate::IDynamicUniqueKstatePopulator<model_monostar::MonostarSiteState>& bais_populator,
+                 const bfpt_common::IDynamicUniqueKstateHamiltonian<model_monostar::MonostarSiteState>& hamiltonian,
+                 model_monostar::DynamicMonostarUniqueKstateBasis& basis,
+                 const unsigned max_pt_order, const unsigned k_n,
                  CommonRecipePrintFlags print_flags) {
     arma::wall_clock timer;
     const size_t n_sites = basis.n_sites();
@@ -180,10 +202,9 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
     // --------------------------------------------------
     // Define hamiltonian and basis:
     std::cout << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
-    model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    kstate::populate_pt_basis(hamiltonian, max_pt_order, basis);
+    kstate::populate_pt_basis(bais_populator, max_pt_order, basis);
     const double time_populating_pt_basis = timer.toc();
     std::cout << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
@@ -246,18 +267,28 @@ do_common_recipe(model_monostar::DynamicMonostarUniqueKstateBasis& basis, const 
     return eigen_values(0);
 }
 
+}  // namespace bfpt_common
+
+// #######################################################################
+// ## main...                                                           ##
+// #######################################################################
+
 double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
-    CommonRecipePrintFlags print_flags;
+    bfpt_common::CommonRecipePrintFlags print_flags;
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
-    return do_common_recipe(basis, max_pt_order, 0, print_flags);
+    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
+                                         max_pt_order, 0, print_flags);
 }
 
 double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsigned k_n) {
-    CommonRecipePrintFlags print_flags;
+    bfpt_common::CommonRecipePrintFlags print_flags;
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
-    return do_common_recipe(basis, max_pt_order, k_n, print_flags);
+    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
+                                         max_pt_order, k_n, print_flags);
 }
 
 double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
