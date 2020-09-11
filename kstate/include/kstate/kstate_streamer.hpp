@@ -28,14 +28,14 @@ static extension::boost::RangeStreamerSettings kstate_default_range_streamer_set
     [](std::ostream& s) { s << "⦄"; }};
 
 class KstateStreamer {
-   public:  // Ctor:
+public:  // Ctor:
     KstateStreamer(std::ostream& os, extension::boost::RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
 
-   public:  // Internal ostream assessor:
+public:  // Internal ostream assessor:
     std::ostream& ostream();
     const std::ostream& ostream() const;
 
-   public:  // Setters for fine streaming settings:
+public:  // Setters for fine streaming settings:
     KstateStreamer& set_range_streamer_settings(extension::boost::RangeStreamerSettings);
     KstateStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
@@ -43,11 +43,11 @@ class KstateStreamer {
     KstateStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStreamer& set_format_independence_flag(bool = true);
 
-   public:  // The streaming function:
+public:  // The streaming function:
     template <typename SiteType>
     KstateStreamer& stream(const Kstate<SiteType>& rng);
 
-   private:
+private:
     std::ostream& _os;
     extension::boost::RangeStreamerSettings _range_streamer_settings = kstate_default_range_streamer_settings;
 };
@@ -114,24 +114,24 @@ inline const std::ostream& KstateStreamer::ostream() const {
 // #######################################################################
 
 class KstateStringStreamer {
-   public:  // Ctor:
+public:  // Ctor:
     KstateStringStreamer(extension::boost::RangeStreamerSettings range_streamer_settings = kstate_default_range_streamer_settings);
 
-   public:  // Setters for fine streaming settings:
+public:  // Setters for fine streaming settings:
     KstateStringStreamer& set_stream_preparer(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_sustainer(std::function<void(std::ostream&, size_t)>);
     KstateStringStreamer& set_stream_separer(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_stream_finisher(std::function<void(std::ostream&)>);
     KstateStringStreamer& set_format_independence_flag(bool = true);
 
-   public:  // The streaming function:
+public:  // The streaming function:
     template <typename SiteType>
     KstateStringStreamer& stream(const Kstate<SiteType>& rng);
 
-   public:  // Function to retreive the streaming result
+public:  // Function to retreive the streaming result
     std::string str() const;
 
-   private:
+private:
     std::ostringstream _oss;
     KstateStreamer _rs;
 };
@@ -180,5 +180,44 @@ inline std::string KstateStringStreamer::str() const {
 }
 
 }  // namespace kstate
+
+// #######################################################################
+// ##  RangeStreamer                                                    ##
+// #######################################################################
+
+namespace kstate {
+
+template <typename SiteType>
+extension::boost::RangeStreamer<typename Kstate<SiteType>::ConstAnyRangeType>
+make_range_streamer_for_kstate(
+        const Kstate<SiteType>& kstate,
+        const extension::boost::RangeStreamerSettings& range_streamer_settings) {
+    return extension::boost::make_range_streamer(kstate.to_any_range(), range_streamer_settings);
+}
+
+}  // namespace kstate
+
+namespace kstate::pramga {
+
+inline
+extension::boost::RangeStreamerSettings
+KSSS() {
+    return extension::boost::RangeStreamerSettings{
+        [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; },
+        [](std::ostream& s, size_t i) {},
+        [](std::ostream& s) { s << "∙"; },
+        [](std::ostream& s) { s << "⦄"; }
+    };
+}
+
+template <typename SiteType>
+extension::boost::RangeStreamer<typename Kstate<SiteType>::ConstAnyRangeType>
+operator|(
+        const Kstate<SiteType>& kstate,
+        const extension::boost::RangeStreamerSettings& range_streamer_settings) {
+    return make_range_streamer_for_kstate(kstate, range_streamer_settings);
+}
+
+}  // namespace kstate::pramga
 
 #endif

@@ -10,6 +10,7 @@
 #include <iterator>
 #include <sstream>
 #include <string>
+#include <type_traits>
 
 // #######################################################################
 // ##  RangeStreamerSettings                                            ##
@@ -173,7 +174,6 @@ inline RangeStreamerSettings& RangeStreamerSettings::in_quotation_back() {
     return *this;
 }
 
-
 }  // namespace extension::boost
 
 // #######################################################################
@@ -183,12 +183,24 @@ inline RangeStreamerSettings& RangeStreamerSettings::in_quotation_back() {
 namespace extension::boost {
 
 template<class R>
+class RangeStreamer;
+
+template<class R>
+RangeStreamer<R> make_range_streamer(R&& range, const RangeStreamerSettings& range_streamer_settings);
+
+// Template param `R` should be `const T&`, `T&` or `T`.
+// creating objects by means of `make_range_streamer` factory function ensure this.
+template<class R>
 class RangeStreamer {
-public:
-    RangeStreamer(const R& range, const RangeStreamerSettings& range_streamer_settings) :
-        _range(range),
+    static_assert(! ::std::is_rvalue_reference<R>::value, "R must not be a rvalue reference.");
+private:
+    RangeStreamer(::std::add_rvalue_reference_t<R> range, const RangeStreamerSettings& range_streamer_settings) :
+        _range(::std::forward<R>(range)),
         _range_streamer_settings(range_streamer_settings) {
     }
+public:
+
+    friend RangeStreamer<R> make_range_streamer<R>(R&& range, const RangeStreamerSettings& range_streamer_settings);
 
     ::std::ostream& stream(::std::ostream& os) const {
         const extension::std::StreamFromatStacker stream_format_stacker(
@@ -211,15 +223,24 @@ public:
         return oss.str();
     }
 
-    const R& _range;
+    R _range;
     const RangeStreamerSettings& _range_streamer_settings;
 };
+
+template<class R>
+RangeStreamer<R> make_range_streamer(R&& range, const RangeStreamerSettings& range_streamer_settings) {
+    return RangeStreamer<R>(::std::forward<R>(range), range_streamer_settings);
+}
+
+// #######################################################################
+// ##  operator|, Stringifier                                           ##
+// #######################################################################
 
 namespace stream_pragma {
 
 template<class R>
-RangeStreamer<R> operator|(const R& range, const RangeStreamerSettings& range_streamer_settings){
-    return RangeStreamer<R>(range, range_streamer_settings);
+RangeStreamer<R> operator|(R&& range, const RangeStreamerSettings& range_streamer_settings){
+    return make_range_streamer(::std::forward<R>(range), range_streamer_settings);
 }
 
 template<class R>
