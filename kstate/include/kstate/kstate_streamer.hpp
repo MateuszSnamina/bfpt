@@ -91,12 +91,13 @@ inline KstateStreamer& KstateStreamer::set_format_independence_flag(bool _) {
 
 template <typename SiteType>
 KstateStreamer& KstateStreamer::stream(const Kstate<SiteType>& kstate) {
-    extension::boost::RangeStreamer(_os)
-        .set_stream_preparer(_range_streamer_settings._stream_preparer)
-        .set_stream_sustainer(_range_streamer_settings._stream_sustainer)
-        .set_stream_separer(_range_streamer_settings._stream_separer)
-        .set_stream_finisher(_range_streamer_settings._stream_finisher)  //TODO make is a single set_range_streamer_settings call.
-        .stream(kstate.to_any_range());
+    using namespace extension::boost::stream_pragma;
+    const auto range_stream_settings = RSS()
+            .set_stream_preparer(_range_streamer_settings._stream_preparer)
+            .set_stream_sustainer(_range_streamer_settings._stream_sustainer)
+            .set_stream_separer(_range_streamer_settings._stream_separer)
+            .set_stream_finisher(_range_streamer_settings._stream_finisher);
+    _os << (kstate.to_any_range() | range_stream_settings);
     return *this;
 }
 

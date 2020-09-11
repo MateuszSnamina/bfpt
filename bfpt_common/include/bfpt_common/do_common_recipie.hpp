@@ -30,7 +30,7 @@ inline double do_common_recipe(const IDynamicUniqueKstatePopulator<Element>& bai
                                const unsigned max_pt_order, const unsigned k_n,
                                CommonRecipePrintFlags print_flags) {
     arma::wall_clock timer;
-    const size_t n_sites = basis.n_sites();
+    __attribute__((unused)) const size_t n_sites = basis.n_sites();
     const std::string message_prefix = "[common-recipe] ";
     const std::string progress_tag = "[progress] ";
     const std::string data_tag = "[data    ] ";

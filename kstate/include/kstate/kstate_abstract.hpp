@@ -187,13 +187,13 @@ Kstate<SiteType, TraversalTag>::translational_compare_any_range(const ConstAnyRa
 template <typename SiteType, typename TraversalTag>
 std::string
 Kstate<SiteType, TraversalTag>::to_str() const {
-    return extension::boost::RangeStringStreamer()
-        .set_stream_preparer([](std::ostream& s) { s << "⦃"; })
-        .set_stream_sustainer([](std::ostream& s, size_t i) {})
-        .set_stream_separer([](std::ostream& s) { s << "∙"; })
-        .set_stream_finisher([](std::ostream& s) { s << "⦄"; })
-        .stream(to_any_range())
-        .str();
+    using namespace extension::boost::stream_pragma;
+    const auto range_stream_settings = RSS()
+            .set_string_preparer("⦃")
+            .set_null_sustainer()
+            .set_string_separer("∙")
+            .set_string_finisher("⦄");
+    return (to_any_range() | range_stream_settings).str();
 }
 
 }  // namespace kstate
@@ -247,50 +247,50 @@ Kstate<SiteType, TraversalTag>::to_str() const {
 // #######################################################################
 
 /*
- * SpeedyKstate<ConstRangeType> class is to model the same physical
- * abstraction as Kstate<SiteType> class does. The two classes provide
- * alternative APIs and alternative implementations for a similar
+ * SpeedyKstate<ConstRangeType> class is to model the same physical
+ * abstraction as Kstate<SiteType> class does. The two classes provide
+ * alternative APIs and alternative implementations for a similar
  * functionality.
- * 
- * The Kstate<SiteType> implementation relies a high level API, build
- * on top of the polymorphic abstraction layer (served by boost::any_range
- * class). The implementation may not be a desirable when execution speed
- * is the top priority.
- *
+ * 
+ * The Kstate<SiteType> implementation relies a high level API, build
+ * on top of the polymorphic abstraction layer (served by boost::any_range
+ * class). The implementation may not be a desirable when execution speed
+ * is the top priority.
+ *
  * SpeedyKstate<ConstRangeType> is to take advantage of a polymorphic-less
  * API allowing high-speed implementations. The used approach relies
- * on ranges being treated as instances of template parameter classes,
- * rather than instances of boost::any_range class. Within the framework
+ * on ranges being treated as instances of template parameter classes,
+ * rather than instances of boost::any_range class. Within the framework
  * more efficient implementations are possible.
- * 
- * As the template-only approach used in SpeedyKstate<ConstRangeType>
- * may be perceived as a tuned alternative for the polymorphic approach
- * used in Kstate<SiteType> then the former is formally treated
- * as subclass of the latter.
- * 
- * SpeedyKstate<ConstRangeType> overrides the following descriptor-type
- * member functions:
- *  - n_least_replication_shift() const.
+ * 
+ * As the template-only approach used in SpeedyKstate<ConstRangeType>
+ * may be perceived as a tuned alternative for the polymorphic approach
+ * used in Kstate<SiteType> then the former is formally treated
+ * as subclass of the latter.
+ * 
+ * SpeedyKstate<ConstRangeType> overrides the following descriptor-type
+ * member functions:
+ *  - n_least_replication_shift() const.
  *  - norm_factor() const       // TODO
- *  - is_prolific(int n_k) const.
- *  - to_str() const.
- * And provides the following two member functions:
- *  - compare_range(const OtherConstRangeType& other) const,
- *  - translational_compare_range(const OtherConstRangeType& other) const,
- * being alternatives to:
- *   - compare_kstate(const Kstate<OtherSiteType>& other) const,
- *   - translational_compare_kstate(const Kstate<OtherSiteType>& other) const.
- * 
- * Member function implementations defined in SpeedyKstate<ConstRangeType>
- * are based on to_range() member function. This is the origin of differences
- * between the implementations and their counterparts from Kstate<SiteType>,
- * as the latter may use only to_any_range() member function.
- * 
- * The SpeedyKstate<ConstRangeType> is conceived to being the layer between
- * Kstate<SiteType> abstract base class and its concrete sub-classes, like
- *  - DynamicKstate<SiteType>, and
- *  - StaticKstate<SiteType, N>
- * classes.
+ *  - is_prolific(int n_k) const.
+ *  - to_str() const.
+ * And provides the following two member functions:
+ *  - compare_range(const OtherConstRangeType& other) const,
+ *  - translational_compare_range(const OtherConstRangeType& other) const,
+ * being alternatives to:
+ *   - compare_kstate(const Kstate<OtherSiteType>& other) const,
+ *   - translational_compare_kstate(const Kstate<OtherSiteType>& other) const.
+ * 
+ * Member function implementations defined in SpeedyKstate<ConstRangeType>
+ * are based on to_range() member function. This is the origin of differences
+ * between the implementations and their counterparts from Kstate<SiteType>,
+ * as the latter may use only to_any_range() member function.
+ * 
+ * The SpeedyKstate<ConstRangeType> is conceived to being the layer between
+ * Kstate<SiteType> abstract base class and its concrete sub-classes, like
+ *  - DynamicKstate<SiteType>, and
+ *  - StaticKstate<SiteType, N>
+ * classes.
  * 
  */
 
@@ -383,13 +383,13 @@ SpeedyKstate<ConstRangeType>::translational_compare_range(const OtherConstRangeT
 template <typename ConstRangeType>
 std::string
 SpeedyKstate<ConstRangeType>::to_str() const {
-    return extension::boost::RangeStringStreamer()
-        .set_stream_preparer([](std::ostream& s) { s << "⦃"; })
-        .set_stream_sustainer([](std::ostream& s, size_t i) {})
-        .set_stream_separer([](std::ostream& s) { s << "∙"; })
-        .set_stream_finisher([](std::ostream& s) { s << "⦄"; })
-        .stream(to_range())
-        .str();
+    using namespace extension::boost::stream_pragma;
+    const auto range_stream_settings = RSS()
+            .set_string_preparer("⦃")
+            .set_null_sustainer()
+            .set_string_separer("∙")
+            .set_string_finisher("⦄");
+    return (to_range() | range_stream_settings).str();
 }
 
 }  // namespace kstate

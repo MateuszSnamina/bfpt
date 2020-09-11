@@ -43,27 +43,32 @@ double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
 }
 
 int main() {
-    // const unsigned max_pt_order = 1;
-    // const size_t n_sites = 8;
-    // const unsigned k_n = 1;
     const unsigned max_pt_order = 6;
     const size_t n_sites = 20;
-    const unsigned k_n = 1;
     std::cout << "------------------------------------------" << std::endl;
-    double gs_energy = bfpt_gs(n_sites, max_pt_order);
+    const double gs_energy = bfpt_gs(n_sites, max_pt_order);
     std::cout << "------------------------------------------" << std::endl;
-    double es_gold_energy = bfpt_goldston(n_sites, max_pt_order);
+    const double es_gold_energy = bfpt_goldston(n_sites, max_pt_order);
     std::cout << "------------------------------------------" << std::endl;
-    double es_energy = bfpt_kn_es(n_sites, max_pt_order, k_n);
+    std::vector<double> es_energies;
+    for (unsigned k_n = 0; k_n < n_sites; k_n++) {
+        double es_energy = bfpt_kn_es(n_sites, max_pt_order, k_n);
+        es_energies.push_back(es_energy);
+        std::cout << "------------------------------------------" << std::endl;
+    }
     std::cout << "------------------------------------------" << std::endl;
-    std::cout << " max_pt_order = " << max_pt_order << std::endl;
-    std::cout << " gs enery = " << gs_energy << std::endl;
-    std::cout << " es goldston = " << es_gold_energy << std::endl;
-    std::cout << "    excitation enery goldston = " << es_gold_energy - gs_energy << std::endl;
-    std::cout << " k_n = " << k_n << std::endl;
-    std::cout << " es enery (k_n) = " << es_energy << std::endl;
-    std::cout << "    excitation enery (k_n) = " << es_energy - gs_energy << std::endl;
-    std::cout << "------------------------------------------" << std::endl;
+    std::cout << " ├max_pt_order = " << max_pt_order << std::endl;
+    std::cout << " ├state: gs " << max_pt_order << std::endl;
+    std::cout << " ││enery = " << gs_energy << std::endl;
+    std::cout << " ├state: es [goldston]" << es_gold_energy << std::endl;
+    std::cout << " ││enery = " << es_gold_energy << std::endl;
+    std::cout << " ││excitation enery = " << es_gold_energy - gs_energy << std::endl;
+    for (unsigned k_n = 0; k_n < n_sites; k_n++) {
+        const auto es_energy = es_energies[k_n];
+        std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
+        std::cout << " ││enery = " << es_energy << std::endl;
+        std::cout << " ││excitation enery = " << es_energy - gs_energy << std::endl;
+    }
     std::cout << "------------------------------------------" << std::endl;
     //model_monostar::do_hardcoded_example_analyse();
     return 0;

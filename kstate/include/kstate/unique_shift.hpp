@@ -4,6 +4,7 @@
 #include <extensions/adaptors.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include <iterator>
 
