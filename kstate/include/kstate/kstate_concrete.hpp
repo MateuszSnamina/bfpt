@@ -118,7 +118,6 @@ DynamicKstate<SiteType>::DynamicKstate(const OtherRangeType& r, CtrFromRange)
 template <typename SiteType>
 typename DynamicKstate<SiteType>::ConstRangeType
 DynamicKstate<SiteType>::to_range() const {
-    //boost::any_range<const SiteType, boost::random_access_traversal_tag> xxx(_v); // TODO ???
     return _v;
 }
 

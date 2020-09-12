@@ -37,7 +37,6 @@ BasisStreamer<KstateT>::BasisStreamer(
 
 // ***********************************************************************
 
-//// TODO refactor the whole funciton!!!
 template<typename KstateT>
 ::std::ostream&
 BasisStreamer<KstateT>::stream(std::ostream& os) const {
@@ -47,7 +46,7 @@ BasisStreamer<KstateT>::stream(std::ostream& os) const {
     const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
             [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; };
     const ::std::function<void(::std::ostream&, KstateT)> default_stream_value_putter =
-            [](::std::ostream& s, KstateT ks) { s << "[PLACE-FOR-KSTATE]"; };
+            [](::std::ostream& s, KstateT) { s << "[PLACE-FOR-KSTATE]"; };
     const ::std::function<void(::std::ostream&)> default_stream_separer =
             [](std::ostream& s) { s << std::endl; };
     const ::std::function<void(::std::ostream&)> default_stream_finisher =

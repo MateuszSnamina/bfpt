@@ -14,7 +14,7 @@
 // ## Helper                                                            ##
 // #######################################################################
 
-namespace {
+namespace kstate {
 
 struct RangeComparer {
     template <typename ConstRangeType1, typename ConstRangeType2>
