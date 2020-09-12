@@ -44,17 +44,12 @@ struct RangeStreamerSettings {
     RangeStreamerSettings& in_quotation_single();
     RangeStreamerSettings& in_quotation_double();
     RangeStreamerSettings& in_quotation_back();
-
     // Fields:
-    ::std::optional<::std::function<void(::std::ostream&)>> _stream_preparer;// =
-            //[](::std::ostream& s) { s << "{"; };
-    ::std::optional<::std::function<void(::std::ostream&, size_t)>> _stream_sustainer;// =
-            //[](::std::ostream& s, size_t i) { s << i << ":"; };
-    ::std::optional<::std::function<void(::std::ostream&)>> _stream_separer;// =
-            //[](::std::ostream& s) { s << ","; };
-    ::std::optional<::std::function<void(::std::ostream&)>> _stream_finisher;// =
-            //[](::std::ostream& s) { s << "}"; };
-    ::std::optional<bool> _format_independence_flag;// = true;
+    ::std::optional<::std::function<void(::std::ostream&)>> _stream_preparer;
+    ::std::optional<::std::function<void(::std::ostream&, size_t)>> _stream_sustainer;
+    ::std::optional<::std::function<void(::std::ostream&)>> _stream_separer;
+    ::std::optional<::std::function<void(::std::ostream&)>> _stream_finisher;
+    ::std::optional<bool> _format_independence_flag;
 };
 
 // ***********************************************************************
@@ -179,6 +174,35 @@ inline RangeStreamerSettings& RangeStreamerSettings::in_quotation_back() {
 }  // namespace extension::boost
 
 // #######################################################################
+// ##  stream_range_impl                                                ##
+// #######################################################################
+
+namespace extension::boost {
+
+template<typename R>
+void stream_range_impl(
+        const ::std::remove_reference_t<R>& range,
+        ::std::ostream& os,
+        ::std::function<void(::std::ostream&)> stream_preparer,
+        ::std::function<void(::std::ostream&, size_t)> stream_sustainer,
+        ::std::function<void(::std::ostream&)> stream_separer,
+        ::std::function<void(::std::ostream&)> stream_finisher,
+        bool format_independence_flag) {
+    const extension::std::StreamFromatStacker stream_format_stacker(os, format_independence_flag);
+    stream_preparer(os);
+    for (const auto& _ : range | ::boost::adaptors::indexed(0)) {
+        if (_.index() != 0) {
+            stream_separer(os);
+        }
+        stream_sustainer(os, _.index());
+        os << _.value();
+    }
+    stream_finisher(os);
+}
+
+} // namespace extension::boost
+
+// #######################################################################
 // ##  RangeStreamer                                                    ##
 // #######################################################################
 
@@ -237,17 +261,15 @@ public:
                     *_range_streamer_settings._format_independence_flag :
                     default_format_independence_flag);
         // Stream:
-        const extension::std::StreamFromatStacker stream_format_stacker(
-                    os, format_independence_flag);
-        stream_preparer(os);
-        for (const auto& _ : _range | ::boost::adaptors::indexed(0)) {
-            if (_.index() != 0) {
-                stream_separer(os);
-            }
-            stream_sustainer(os, _.index());
-            os << _.value();
-        }
-        stream_finisher(os);
+        stream_range_impl<R>(
+               _range,
+               os,
+               stream_preparer,
+               stream_sustainer,
+               stream_separer,
+               stream_finisher,
+               format_independence_flag);
+        // Return:
         return os;
     }
 
@@ -266,10 +288,13 @@ RangeStreamer<R> make_range_streamer(R&& range, const RangeStreamerSettings rang
     return RangeStreamer<R>(::std::forward<R>(range), range_streamer_settings);
 }
 
+}  // namespace extension::boost
+
 // #######################################################################
 // ##  operator|, Stringifier                                           ##
 // #######################################################################
 
+namespace extension::boost {
 namespace stream_pragma {
 
 template<class R>

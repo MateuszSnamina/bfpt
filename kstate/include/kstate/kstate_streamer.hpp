@@ -15,6 +15,22 @@
 
 // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
 
+// #######################################################################
+// ##  remove_cvref (C++20)                                             ##
+// #######################################################################
+
+namespace {
+
+template< class T >
+struct remove_cvref {
+    typedef std::remove_cv_t<std::remove_reference_t<T>> type;
+};
+
+template< class T >
+using remove_cvref_t = typename remove_cvref<T>::type;
+
+}
+
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@  VARIANT 1  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -40,13 +56,19 @@ struct KstateRangeStreamerSettings {
 
 namespace kstate {
 
+// ***********************************************************************
+
 template <typename KstateT>
 class KstateRangeStreamer;
+
+// ***********************************************************************
 
 template <typename KstateT>
 KstateRangeStreamer<KstateT> make_kstate_range_streamer(
         KstateT&& kstate,
         const KstateRangeStreamerSettings kstate_range_streamer_settings);
+
+// ***********************************************************************
 
 // Template param `KstateT` should be `const T&`, `T&` or `T`.
 // creating objects by means of `make_range_streamer` factory function ensure this.
@@ -60,9 +82,7 @@ private:
         _kstate_range_streamer_settings(kstate_range_streamer_settings) {
     }
 public:
-
     friend KstateRangeStreamer<KstateT> make_kstate_range_streamer<KstateT>(KstateT&& kstate, const KstateRangeStreamerSettings kstate_range_streamer_settings);
-
     ::std::ostream& stream(::std::ostream& os) const {
         // Defaults:
         const ::std::function<void(::std::ostream&)> default_stream_preparer =
@@ -95,29 +115,28 @@ public:
                     _kstate_range_streamer_settings._range_streamer_settings._format_independence_flag ?
                     *_kstate_range_streamer_settings._range_streamer_settings._format_independence_flag :
                     default_format_independence_flag);
-        // Build helper range_streamer_settings:
-        const auto range_streamer_settings = extension::boost::RangeStreamerSettings()
-                .set_stream_preparer(stream_preparer)
-                .set_stream_sustainer(stream_sustainer)
-                .set_stream_separer(stream_separer)
-                .set_stream_finisher(stream_finisher)
-                .set_format_independence_flag(format_independence_flag);
         // Stream:
-        const auto range_streamer = make_range_streamer(_kstate.to_any_range(), range_streamer_settings);
-        range_streamer.stream(os);
+        extension::boost::stream_range_impl<typename remove_cvref_t<KstateT>::ConstAnyRangeType>(
+               _kstate.to_any_range(),
+               os,
+               stream_preparer,
+               stream_sustainer,
+               stream_separer,
+               stream_finisher,
+               format_independence_flag);
+        // Return:
         return os;
     }
-
     ::std::string str() const {
         ::std::ostringstream oss;
         stream(oss);
         return oss.str();
     }
-
     const KstateT _kstate;
     const KstateRangeStreamerSettings _kstate_range_streamer_settings;
 };
 
+// ***********************************************************************
 template <typename KstateT>
 KstateRangeStreamer<KstateT> make_kstate_range_streamer(
     KstateT&& kstate,
