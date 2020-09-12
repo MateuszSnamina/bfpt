@@ -58,19 +58,19 @@ namespace model_monostar {
 
 inline std::ostream&
 operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
-    using namespace kstate::pramga;
-    using namespace extension::boost::stream_pragma;
-    kstate::pramga::operator<<(stream, state || RSS());
-    //stream << (state || RSS()); //TODO refactor
+    using kstate::pramga::operator||;
+    using  ::extension::boost::stream_pragma::operator<<;
+    using  ::extension::boost::stream_pragma::RSS;
+    stream << (state || RSS());
     return stream;
 }
 
 inline std::ostream&
 operator<<(std::ostream& stream, const DynamicMonostarUniqueKstate& state) {
-    using namespace kstate::pramga;
-    using namespace extension::boost::stream_pragma;
-    kstate::pramga::operator<<(stream, state || RSS());
-    //stream << (state || RSS()); //TODO refactor
+    using kstate::pramga::operator||;
+    using  ::extension::boost::stream_pragma::operator<<;
+    using  ::extension::boost::stream_pragma::RSS;
+    stream << (state || RSS());
     return stream;
 }
 

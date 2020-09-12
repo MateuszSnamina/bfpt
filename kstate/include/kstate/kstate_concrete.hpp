@@ -25,7 +25,7 @@
 // #######################################################################
 
 /*
- * DynamicKstate<SiteType> is a concrete subclass of 
+ * DynamicKstate<SiteType> is a concrete subclass of
  * Kstate<SiteType, boost::random_access_traversal_tag>
  * that uses std::vector as an internal buffer.
  */
@@ -48,7 +48,7 @@ static CtrFromBuffer ctr_from_buffer{};
 template <typename Range>
 std::vector<typename boost::range_value<Range>::type>
 init_vector_from_range(
-    const Range& rng) {
+        const Range& rng) {
     using Element = typename boost::range_value<Range>::type;
     using Vector = std::vector<Element>;
     return Vector(std::begin(rng), std::end(rng));
@@ -76,7 +76,7 @@ class DynamicKstate : public SpeedyKstate<typename DynamicKstateTypes<SiteType>:
     static_assert(!std::is_volatile<SiteType>::value);
     static_assert(!std::is_reference<SiteType>::value);
 
-   public:
+public:
     using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
     using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
     using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
@@ -85,16 +85,16 @@ class DynamicKstate : public SpeedyKstate<typename DynamicKstateTypes<SiteType>:
     using AnyRangeType = typename DynamicKstateTypes<SiteType>::AnyRangeType;
     using ConstAnyRangeType = typename DynamicKstateTypes<SiteType>::ConstAnyRangeType;
 
-   public:
+public:
     DynamicKstate(BufferType&&, CtrFromBuffer);
     template <typename OtherRangeType>
     DynamicKstate(const OtherRangeType&, CtrFromRange);
 
-   public:
+public:
     ConstRangeType to_range() const override;
     size_t n_sites() const override;
 
-   protected:
+protected:
     const BufferType _v;
 };
 
@@ -137,6 +137,8 @@ namespace kstate {
 
 template <typename SiteType>
 class DynamicUniqueKstate : public SpeedyKstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
+
+public:
     using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
     using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
     using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
@@ -145,15 +147,15 @@ class DynamicUniqueKstate : public SpeedyKstate<typename DynamicKstateTypes<Site
     using AnyRangeType = typename DynamicKstateTypes<SiteType>::AnyRangeType;
     using ConstAnyRangeType = typename DynamicKstateTypes<SiteType>::ConstAnyRangeType;
 
-   public:
+public:
     template <typename SomeRangeType>
     DynamicUniqueKstate(const SomeRangeType& v, CtrFromRange);
 
-   public:
+public:
     ConstRangeType to_range() const override;
     size_t n_sites() const override;
 
-   protected:
+protected:
     const BufferType _v;
 };
 
@@ -186,13 +188,13 @@ DynamicUniqueKstate<SiteType>::n_sites() const {
 // #######################################################################
 
 /*
- * DynamicKstate<SiteType, N> is a concrete subclass of 
+ * DynamicKstate<SiteType, N> is a concrete subclass of
  * Kstate<SiteType, boost::random_access_traversal_tag>
  * that uses std::array as an internal buffer.
  */
 
 namespace kstate {
-    //TODO
+//TODO
 }
 
 #endif

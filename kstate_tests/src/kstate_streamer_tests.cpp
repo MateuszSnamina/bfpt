@@ -11,32 +11,36 @@ using kstate::ctr_from_range;
 // #######################################################################
 
 TEST(KstateStringStreamer, SixElements) {
-    using namespace extension::boost::stream_pragma;
-    using namespace kstate::pramga;
+    using extension::boost::stream_pragma::operator<<;
+    using extension::boost::stream_pragma::RSS;
+    using kstate::pramga::operator||;
     const int v1[6] = {11, 12, 13, 14, 15, 16};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
     ASSERT_EQ((k1 || RSS()).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃11∙12∙13∙14∙15∙16⦄");
 }
 
 TEST(KstateStringStreamer, OneElement) {
-    using namespace extension::boost::stream_pragma;
-    using namespace kstate::pramga;
+    using extension::boost::stream_pragma::operator<<;
+    using extension::boost::stream_pragma::RSS;
+    using kstate::pramga::operator||;
     const int v1[1] = {11};
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
     ASSERT_EQ((k1 || RSS()).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃11⦄");
 }
 
 TEST(KstateStringStreamer, Empty) {
-    using namespace extension::boost::stream_pragma;
-    using namespace kstate::pramga;
+    using extension::boost::stream_pragma::operator<<;
+    using extension::boost::stream_pragma::RSS;
+    using kstate::pramga::operator||;
     std::vector<int> v1;
     const kstate::DynamicKstate<int> k1(v1, ctr_from_range);
     ASSERT_EQ((k1 || RSS()).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃⦄");
 }
 
 TEST(KstateStringStreamer, Fancy) {
-    using namespace extension::boost::stream_pragma;
-    using namespace kstate::pramga;
+    using extension::boost::stream_pragma::operator<<;
+    using extension::boost::stream_pragma::RSS;
+    using kstate::pramga::operator||;
     double v1[3] = {1.1, 1.2, 1.3};
     const kstate::DynamicKstate<double> k1(v1, ctr_from_range);
     const auto kstate_stream_settings = RSS()

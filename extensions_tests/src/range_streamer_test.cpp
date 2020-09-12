@@ -20,7 +20,7 @@ TEST(RangeStreamer, RawRangeStreamerOneElementRange) {
 TEST(RangeStreamer, RawRangeStreamerEmptyRange) {
     using namespace extension::boost::stream_pragma;
     std::vector<int> v3;
-    ASSERT_EQ((v3 |RSS()).str(), "{}");
+    ASSERT_EQ((v3 | RSS()).str(), "{}");
 }
 
 TEST(RangeStreamer, Fancy) {

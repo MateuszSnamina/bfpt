@@ -7,20 +7,6 @@
 #include <iomanip>
 
 // #######################################################################
-// ##  basis_default_range_streamer_settings                            ##
-// #######################################################################
-
-namespace kstate {
-
-static extension::boost::RangeStreamerSettings basis_default_range_streamer_settings{
-    [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; },
-    [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; },
-    [](std::ostream& s) { s << std::endl; },
-    [](std::ostream& s) { s << std::endl
-                            << "𝔹𝔸𝕊𝕀𝕊-END" << std::endl; }};
-}  // namespace kstate
-
-// #######################################################################
 // ##  BasisStreamer                                                    ##
 // #######################################################################
 
@@ -37,8 +23,8 @@ class BasisStreamer {
     BasisStreamer& set_range_streamer_settings_for_basis(extension::boost::RangeStreamerSettings);
 
    private:
-    extension::boost::RangeStreamerSettings _range_streamer_settings_for_kstate = kstate_default_range_streamer_settings;
-    extension::boost::RangeStreamerSettings _range_streamer_settings_for_basis = basis_default_range_streamer_settings;
+    extension::boost::RangeStreamerSettings _range_streamer_settings_for_kstate;
+    extension::boost::RangeStreamerSettings _range_streamer_settings_for_basis;
     std::ostream& _os;
 };
 
@@ -62,9 +48,9 @@ inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_basis(exten
 // TODO refactor the whole funciton!!!
 template <typename Element>
 BasisStreamer& BasisStreamer::stream(const Basis<Element>& basis) {
-    using namespace kstate::pramga;
-
-    ///KstateStreamer kss(_os, _range_streamer_settings_for_kstate); //TODO remove!!!
+    using extension::boost::stream_pragma::operator<<;
+    using extension::boost::stream_pragma::RSS;
+    using kstate::pramga::operator||;
     // Defaults:
     const ::std::function<void(::std::ostream&)> default_stream_preparer =
             [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
@@ -108,7 +94,7 @@ BasisStreamer& BasisStreamer::stream(const Basis<Element>& basis) {
             basis_stream_separer(_os);
         }
         basis_stream_sustainer(_os, index);
-        kstate::pramga::operator<<(_os, kstate || _range_streamer_settings_for_kstate);
+        _os << (kstate || _range_streamer_settings_for_kstate);
     }
     basis_stream_finisher(_os);
     return *this;
