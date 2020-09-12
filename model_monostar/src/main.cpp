@@ -22,6 +22,8 @@ using namespace std::complex_literals;
 
 double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     bfpt_common::CommonRecipePrintFlags print_flags;
+    print_flags.print_populated_basis_flag = true; //TEMP
+    print_flags.print_unpopulated_basis_flag = true; //TEMP
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
     const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
@@ -31,6 +33,8 @@ double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
 
 double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsigned k_n) {
     bfpt_common::CommonRecipePrintFlags print_flags;
+    print_flags.print_populated_basis_flag = true; //TEMP
+    print_flags.print_unpopulated_basis_flag = true; //TEMP
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
     const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
@@ -43,8 +47,8 @@ double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
 }
 
 int main() {
-    const unsigned max_pt_order = 6;
-    const size_t n_sites = 20;
+    const unsigned max_pt_order = 2;
+    const size_t n_sites = 10;
     std::cout << "------------------------------------------" << std::endl;
     const double gs_energy = bfpt_gs(n_sites, max_pt_order);
     std::cout << "------------------------------------------" << std::endl;

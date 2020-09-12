@@ -22,14 +22,18 @@ using DynamicMonostarUniqueKstateBasis = kstate::Basis<DynamicMonostarUniqueKsta
 
 namespace model_monostar {
 
-//TODO restore:
-
-//inline std::ostream&
-//operator<<(std::ostream& stream, const DynamicMonostarUniqueKstateBasis& state) {
-//    auto basis_streamer = kstate::BasisStreamer(stream).set_range_streamer_settings_for_kstate(monostar_kstate_range_streamer_settings);
-//    basis_streamer.stream(state);
-//    return stream;
-//}
+inline std::ostream&
+operator<<(std::ostream& stream, const DynamicMonostarUniqueKstateBasis& state) {
+    using extension::boost::stream_pragma::RSS;
+    const auto kstate_value_putter = [](std::ostream& os, DynamicMonostarUniqueKstate kstate) {
+        os << kstate;
+    };
+    const auto range_streamer_settings_for_basis = RSS<DynamicMonostarUniqueKstate>().set_stream_value_putter(kstate_value_putter);
+    auto basis_streamer = kstate::BasisStreamer<DynamicMonostarUniqueKstate>(stream);
+    basis_streamer.set_range_streamer_settings(range_streamer_settings_for_basis);
+    basis_streamer.stream(state);
+    return stream;
+}
 
 }  // namespace model_monostar
 

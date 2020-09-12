@@ -61,7 +61,7 @@ operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
     using kstate::pramga::operator<<;
-    stream << (state || RSS<MonostarSiteState>());
+    stream << (state || monostar_kstate_range_streamer_settings);
     return stream;
 }
 
@@ -70,7 +70,7 @@ operator<<(std::ostream& stream, const DynamicMonostarUniqueKstate& state) {
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
     using kstate::pramga::operator<<;
-    stream << (state || RSS<MonostarSiteState>());
+    stream << (state || monostar_kstate_range_streamer_settings);
     return stream;
 }
 

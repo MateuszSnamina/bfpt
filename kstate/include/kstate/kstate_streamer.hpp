@@ -19,7 +19,7 @@
 // ##  remove_cvref (C++20)                                             ##
 // #######################################################################
 
-namespace {
+namespace kstate {
 
 template< class T >
 struct remove_cvref {
