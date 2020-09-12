@@ -15,114 +15,210 @@
 
 // The doublestruck font: https://en.wikipedia.org/wiki/Blackboard_bold
 
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// @@@@@@@@@@@@@@@@@  VARIANT 1  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+// #######################################################################
+// ##  KstateRangeStreamerSettings                                      ##
+// #######################################################################
+
+namespace kstate {
+
+struct KstateRangeStreamerSettings {
+    KstateRangeStreamerSettings(extension::boost::RangeStreamerSettings range_streamer_settings) :
+        _range_streamer_settings(range_streamer_settings) {
+    }
+    const extension::boost::RangeStreamerSettings _range_streamer_settings;
+};
+
+}
+
+// #######################################################################
+// ##  RangeStreamer                                                    ##
+// #######################################################################
+
+namespace kstate {
+
+template <typename KstateT>
+class KstateRangeStreamer;
+
+template <typename KstateT>
+KstateRangeStreamer<KstateT> make_kstate_range_streamer(
+        KstateT&& kstate,
+        const KstateRangeStreamerSettings kstate_range_streamer_settings);
+
+// Template param `KstateT` should be `const T&`, `T&` or `T`.
+// creating objects by means of `make_range_streamer` factory function ensure this.
+template <typename KstateT>
+class KstateRangeStreamer {
+    static_assert(! ::std::is_rvalue_reference<KstateT>::value, "KstateT must not be a rvalue reference.");
+    // static_assert: KstateT is subclass of KstateT<>;
+private:
+    KstateRangeStreamer(::std::add_rvalue_reference_t<KstateT> kstate, const KstateRangeStreamerSettings kstate_range_streamer_settings) :
+        _kstate(::std::forward<KstateT>(kstate)),
+        _kstate_range_streamer_settings(kstate_range_streamer_settings) {
+    }
+public:
+
+    friend KstateRangeStreamer<KstateT> make_kstate_range_streamer<KstateT>(KstateT&& kstate, const KstateRangeStreamerSettings kstate_range_streamer_settings);
+
+    ::std::ostream& stream(::std::ostream& os) const {
+        // Defaults:
+        const ::std::function<void(::std::ostream&)> default_stream_preparer =
+                [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
+        const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
+                [](std::ostream&, size_t) {};
+        const ::std::function<void(::std::ostream&)> default_stream_separer =
+                [](std::ostream& s) { s << "∙"; };
+        const ::std::function<void(::std::ostream&)> default_stream_finisher =
+                [](std::ostream& s) { s << "⦄"; };
+        bool default_format_independence_flag = true;
+        // Apply overrules:
+        const auto stream_preparer = (
+                    _kstate_range_streamer_settings._range_streamer_settings._stream_preparer ?
+                    *_kstate_range_streamer_settings._range_streamer_settings._stream_preparer :
+                    default_stream_preparer);
+        const auto stream_sustainer = (
+                    _kstate_range_streamer_settings._range_streamer_settings._stream_sustainer ?
+                    *_kstate_range_streamer_settings._range_streamer_settings._stream_sustainer :
+                        default_stream_sustainer);
+        const auto stream_separer = (
+                    _kstate_range_streamer_settings._range_streamer_settings._stream_separer ?
+                    *_kstate_range_streamer_settings._range_streamer_settings._stream_separer :
+                    default_stream_separer);
+        const auto stream_finisher = (
+                    _kstate_range_streamer_settings._range_streamer_settings._stream_finisher ?
+                    *_kstate_range_streamer_settings._range_streamer_settings._stream_finisher :
+                    default_stream_finisher);
+        const auto format_independence_flag = (
+                    _kstate_range_streamer_settings._range_streamer_settings._format_independence_flag ?
+                    *_kstate_range_streamer_settings._range_streamer_settings._format_independence_flag :
+                    default_format_independence_flag);
+        // Build helper range_streamer_settings:
+        const auto range_streamer_settings = extension::boost::RangeStreamerSettings()
+                .set_stream_preparer(stream_preparer)
+                .set_stream_sustainer(stream_sustainer)
+                .set_stream_separer(stream_separer)
+                .set_stream_finisher(stream_finisher)
+                .set_format_independence_flag(format_independence_flag);
+        // Stream:
+        const auto range_streamer = make_range_streamer(_kstate.to_any_range(), range_streamer_settings);
+        range_streamer.stream(os);
+        return os;
+    }
+
+    ::std::string str() const {
+        ::std::ostringstream oss;
+        stream(oss);
+        return oss.str();
+    }
+
+    const KstateT _kstate;
+    const KstateRangeStreamerSettings _kstate_range_streamer_settings;
+};
+
+template <typename KstateT>
+KstateRangeStreamer<KstateT> make_kstate_range_streamer(
+    KstateT&& kstate,
+    const KstateRangeStreamerSettings kstate_range_streamer_settings) {
+    return KstateRangeStreamer<KstateT>(::std::forward<KstateT>(kstate), kstate_range_streamer_settings);
+}
+
+}  // namespace kstate
+
+
+// #######################################################################
+// ##  pragma: operator|, operator||, operator<<                        ##
+// #######################################################################
+
+namespace kstate::pramga {
+
+template<typename KstateT>
+KstateRangeStreamer<KstateT>
+operator|(
+        KstateT&& kstate,
+        const KstateRangeStreamerSettings& kstate_range_streamer_settings) {
+    return make_kstate_range_streamer<KstateT>(std::forward<KstateT>(kstate), kstate_range_streamer_settings);
+}
+
+template<typename KstateT>
+KstateRangeStreamer<KstateT>
+operator||(
+        KstateT&& kstate,
+        const extension::boost::RangeStreamerSettings& range_streamer_settings) {
+    const KstateRangeStreamerSettings& kstate_range_streamer_settings{range_streamer_settings};
+    return make_kstate_range_streamer<KstateT>(std::forward<KstateT>(kstate), kstate_range_streamer_settings);
+}
+
+template<typename KstateT>
+std::ostream& operator<<(
+        std::ostream& os,
+        const KstateRangeStreamer<KstateT>& kstate_range_streamer) {
+    kstate_range_streamer.stream(os);
+    return os;
+}
+
+}  // namespace kstate::pramga
+
 //// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-//// @@@@@@@@@@@@@@@@@  VARIANT 1  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//// @@@@@@@@@@@@@@@@@  VARIANT 2  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 //// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 //// #######################################################################
-//// ##  KstateRangeStreamerSettings                                      ##
+//// ##  make_range_streamer_from_kstate, operator||                      ##
 //// #######################################################################
 
 //namespace kstate {
 
-//struct KstateRangeStreamerSettings {
-//    KstateRangeStreamerSettings(extension::boost::RangeStreamerSettings range_streamer_settings) :
-//        _range_streamer_settings(range_streamer_settings) {
-//    }
-//    const extension::boost::RangeStreamerSettings _range_streamer_settings;
-//};
-
-//}
-
-//// #######################################################################
-//// ##  RangeStreamer                                                    ##
-//// #######################################################################
-
-//namespace kstate {
-
 //template <typename KstateT>
-//class KstateRangeStreamer;
-
-//template <typename KstateT>
-//KstateRangeStreamer<KstateT> make_kstate_range_streamer(
-//        KstateT&& kstate,
-//        const KstateRangeStreamerSettings kstate_range_streamer_settings);
-
-//// Template param `KstateT` should be `const T&`, `T&` or `T`.
-//// creating objects by means of `make_range_streamer` factory function ensure this.
-//template <typename KstateT>
-//class KstateRangeStreamer {
-//    static_assert(! ::std::is_rvalue_reference<KstateT>::value, "KstateT must not be a rvalue reference.");
-//    // static_assert: KstateT is subclass of KstateT<>;
-//private:
-//    KstateRangeStreamer(::std::add_rvalue_reference_t<KstateT> kstate, const KstateRangeStreamerSettings kstate_range_streamer_settings) :
-//        _kstate(::std::forward<KstateT>(kstate)),
-//        _kstate_range_streamer_settings(kstate_range_streamer_settings) {
-//    }
-//public:
-
-//    friend KstateRangeStreamer<KstateT> make_kstate_range_streamer<KstateT>(KstateT&& kstate, const KstateRangeStreamerSettings kstate_range_streamer_settings);
-
-//    ::std::ostream& stream(::std::ostream& os) const {
-//        // Defaults:
-//        const ::std::function<void(::std::ostream&)> default_stream_preparer =
-//                [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
-//        const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
-//                [](std::ostream&, size_t) {};
-//        const ::std::function<void(::std::ostream&)> default_stream_separer =
-//                [](std::ostream& s) { s << "∙"; };
-//        const ::std::function<void(::std::ostream&)> default_stream_finisher =
-//                [](std::ostream& s) { s << "⦄"; };
-//        bool default_format_independence_flag = true;
-//        // Apply overrules:
-//        const auto stream_preparer = (
-//                    _kstate_range_streamer_settings._range_streamer_settings._stream_preparer ?
-//                    *_kstate_range_streamer_settings._range_streamer_settings._stream_preparer :
-//                    default_stream_preparer);
-//        const auto stream_sustainer = (
-//                    _kstate_range_streamer_settings._range_streamer_settings._stream_sustainer ?
-//                    *_kstate_range_streamer_settings._range_streamer_settings._stream_sustainer :
-//                        default_stream_sustainer);
-//        const auto stream_separer = (
-//                    _kstate_range_streamer_settings._range_streamer_settings._stream_separer ?
-//                    *_kstate_range_streamer_settings._range_streamer_settings._stream_separer :
-//                    default_stream_separer);
-//        const auto stream_finisher = (
-//                    _kstate_range_streamer_settings._range_streamer_settings._stream_finisher ?
-//                    *_kstate_range_streamer_settings._range_streamer_settings._stream_finisher :
-//                    default_stream_finisher);
-//        const auto format_independence_flag = (
-//                    _kstate_range_streamer_settings._range_streamer_settings._format_independence_flag ?
-//                    *_kstate_range_streamer_settings._range_streamer_settings._format_independence_flag :
-//                    default_format_independence_flag);
-//        // Build helper range_streamer_settings:
-//        const auto range_streamer_settings = extension::boost::RangeStreamerSettings()
-//                .set_stream_preparer(stream_preparer)
-//                .set_stream_sustainer(stream_sustainer)
-//                .set_stream_separer(stream_separer)
-//                .set_stream_finisher(stream_finisher)
-//                .set_format_independence_flag(format_independence_flag);
-//        // Stream:
-//        const auto range_streamer = make_range_streamer(_kstate.to_any_range(), range_streamer_settings);
-//        range_streamer.stream(os);
-//        return os;
-//    }
-
-//    ::std::string str() const {
-//        ::std::ostringstream oss;
-//        stream(oss);
-//        return oss.str();
-//    }
-
-//    const KstateT _kstate;
-//    const KstateRangeStreamerSettings _kstate_range_streamer_settings;
-//};
-
-//template <typename KstateT>
-//KstateRangeStreamer<KstateT> make_kstate_range_streamer(
-//    KstateT&& kstate,
-//    const KstateRangeStreamerSettings kstate_range_streamer_settings) {
-//    return KstateRangeStreamer<KstateT>(::std::forward<KstateT>(kstate), kstate_range_streamer_settings);
+//extension::boost::RangeStreamer<typename KstateT::ConstAnyRangeType >
+//make_range_streamer_from_kstate(
+//    const KstateT& kstate,
+//    extension::boost::RangeStreamerSettings range_streamer_settings) {
+//    // Defaults:
+//    const ::std::function<void(::std::ostream&)> default_stream_preparer =
+//            [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
+//    const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
+//            [](std::ostream&, size_t) {};
+//    const ::std::function<void(::std::ostream&)> default_stream_separer =
+//            [](std::ostream& s) { s << "∙"; };
+//    const ::std::function<void(::std::ostream&)> default_stream_finisher =
+//            [](std::ostream& s) { s << "⦄"; };
+//    bool default_format_independence_flag = true;
+//    // Apply overrules:
+//    const auto stream_preparer = (
+//                range_streamer_settings._stream_preparer ?
+//                *range_streamer_settings._stream_preparer :
+//                default_stream_preparer);
+//    const auto stream_sustainer = (
+//                range_streamer_settings._stream_sustainer ?
+//                *range_streamer_settings._stream_sustainer :
+//                    default_stream_sustainer);
+//    const auto stream_separer = (
+//                range_streamer_settings._stream_separer ?
+//                *range_streamer_settings._stream_separer :
+//                default_stream_separer);
+//    const auto stream_finisher = (
+//                range_streamer_settings._stream_finisher ?
+//                *range_streamer_settings._stream_finisher :
+//                default_stream_finisher);
+//    const auto format_independence_flag = (
+//                range_streamer_settings._format_independence_flag ?
+//                *range_streamer_settings._format_independence_flag :
+//                default_format_independence_flag);
+//    // Build range_streamer_settings:
+//    const auto range_streamer_settings_override = extension::boost::RangeStreamerSettings()
+//            .set_stream_preparer(stream_preparer)
+//            .set_stream_sustainer(stream_sustainer)
+//            .set_stream_separer(stream_separer)
+//            .set_stream_finisher(stream_finisher)
+//            .set_format_independence_flag(format_independence_flag);
+//    // Build range_streamer:
+//    const auto range_streamer = extension::boost::make_range_streamer(
+//                kstate.to_any_range(),
+//                range_streamer_settings_override);
+//    return range_streamer;
 //}
 
 //}  // namespace kstate
@@ -130,95 +226,13 @@
 //namespace kstate::pramga {
 
 //template<typename KstateT>
-//KstateRangeStreamer<KstateT>
-//operator|(
-//        KstateT&& kstate,
-//        const KstateRangeStreamerSettings& kstate_range_streamer_settings) {
-//    return make_kstate_range_streamer<KstateT>(kstate, kstate_range_streamer_settings);
-//}
-
-//template<typename KstateT>
-//std::ostream& operator<<(
-//        std::ostream& os,
-//        const KstateRangeStreamer<KstateT>& kstate_range_streamer) {
-//    kstate_range_streamer.stream(os);
-//    return os;
+//extension::boost::RangeStreamer<typename KstateT::ConstAnyRangeType >
+//operator|| (
+//        const KstateT& kstate,
+//        extension::boost::RangeStreamerSettings range_streamer_settings) {
+//    return make_range_streamer_from_kstate<KstateT>(kstate, range_streamer_settings);
 //}
 
 //}  // namespace kstate::pramga
-
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// @@@@@@@@@@@@@@@@@  VARIANT 2  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-// #######################################################################
-// ##  make_range_streamer_from_kstate, operator||                      ##
-// #######################################################################
-
-namespace kstate {
-
-template <typename KstateT>
-extension::boost::RangeStreamer<typename KstateT::ConstAnyRangeType >
-make_range_streamer_from_kstate(
-    const KstateT& kstate,
-    extension::boost::RangeStreamerSettings range_streamer_settings) {
-    // Defaults:
-    const ::std::function<void(::std::ostream&)> default_stream_preparer =
-            [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
-    const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
-            [](std::ostream&, size_t) {};
-    const ::std::function<void(::std::ostream&)> default_stream_separer =
-            [](std::ostream& s) { s << "∙"; };
-    const ::std::function<void(::std::ostream&)> default_stream_finisher =
-            [](std::ostream& s) { s << "⦄"; };
-    bool default_format_independence_flag = true;
-    // Apply overrules:
-    const auto stream_preparer = (
-                range_streamer_settings._stream_preparer ?
-                *range_streamer_settings._stream_preparer :
-                default_stream_preparer);
-    const auto stream_sustainer = (
-                range_streamer_settings._stream_sustainer ?
-                *range_streamer_settings._stream_sustainer :
-                    default_stream_sustainer);
-    const auto stream_separer = (
-                range_streamer_settings._stream_separer ?
-                *range_streamer_settings._stream_separer :
-                default_stream_separer);
-    const auto stream_finisher = (
-                range_streamer_settings._stream_finisher ?
-                *range_streamer_settings._stream_finisher :
-                default_stream_finisher);
-    const auto format_independence_flag = (
-                range_streamer_settings._format_independence_flag ?
-                *range_streamer_settings._format_independence_flag :
-                default_format_independence_flag);
-    // Build range_streamer_settings:
-    const auto range_streamer_settings_override = extension::boost::RangeStreamerSettings()
-            .set_stream_preparer(stream_preparer)
-            .set_stream_sustainer(stream_sustainer)
-            .set_stream_separer(stream_separer)
-            .set_stream_finisher(stream_finisher)
-            .set_format_independence_flag(format_independence_flag);
-    // Build range_streamer:
-    const auto range_streamer = extension::boost::make_range_streamer(
-                kstate.to_any_range(),
-                range_streamer_settings_override);
-    return range_streamer;
-}
-
-}  // namespace kstate
-
-namespace kstate::pramga {
-
-template<typename KstateT>
-extension::boost::RangeStreamer<typename KstateT::ConstAnyRangeType >
-operator|| (
-        const KstateT& kstate,
-        extension::boost::RangeStreamerSettings range_streamer_settings) {
-    return make_range_streamer_from_kstate<KstateT>(kstate, range_streamer_settings);
-}
-
-}  // namespace kstate::pramga
 
 #endif

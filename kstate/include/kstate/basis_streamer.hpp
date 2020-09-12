@@ -48,9 +48,9 @@ inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_basis(exten
 // TODO refactor the whole funciton!!!
 template <typename Element>
 BasisStreamer& BasisStreamer::stream(const Basis<Element>& basis) {
-    using extension::boost::stream_pragma::operator<<;
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
+    using kstate::pramga::operator<<;
     // Defaults:
     const ::std::function<void(::std::ostream&)> default_stream_preparer =
             [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
