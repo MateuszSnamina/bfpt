@@ -59,21 +59,58 @@ inline BasisStreamer& BasisStreamer::set_range_streamer_settings_for_basis(exten
     return *this;
 }
 
+// TODO refactor the whole funciton!!!
 template <typename Element>
 BasisStreamer& BasisStreamer::stream(const Basis<Element>& basis) {
-    KstateStreamer kss(_os, _range_streamer_settings_for_kstate);
-    _range_streamer_settings_for_basis._stream_preparer(_os);
+    using namespace kstate::pramga;
+
+    ///KstateStreamer kss(_os, _range_streamer_settings_for_kstate); //TODO remove!!!
+    // Defaults:
+    const ::std::function<void(::std::ostream&)> default_stream_preparer =
+            [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
+    const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
+            [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; };
+    const ::std::function<void(::std::ostream&)> default_stream_separer =
+            [](std::ostream& s) { s << std::endl; };
+    const ::std::function<void(::std::ostream&)> default_stream_finisher =
+            [](std::ostream& s) { s << std::endl << "𝔹𝔸𝕊𝕀𝕊-END" << std::endl; };
+    bool default_format_independence_flag = true;
+    // Apply overrules:
+    const auto basis_stream_preparer = (
+                _range_streamer_settings_for_basis._stream_preparer ?
+                *_range_streamer_settings_for_basis._stream_preparer :
+                default_stream_preparer);
+    const auto basis_stream_sustainer = (
+                _range_streamer_settings_for_basis._stream_sustainer ?
+                *_range_streamer_settings_for_basis._stream_sustainer :
+                    default_stream_sustainer);
+    const auto basis_stream_separer = (
+                _range_streamer_settings_for_basis._stream_separer ?
+                *_range_streamer_settings_for_basis._stream_separer :
+                default_stream_separer);
+    const auto basis_stream_finisher = (
+                _range_streamer_settings_for_basis._stream_finisher ?
+                *_range_streamer_settings_for_basis._stream_finisher :
+                default_stream_finisher);
+    const auto basis_format_independence_flag = (
+                _range_streamer_settings_for_basis._format_independence_flag ?
+                *_range_streamer_settings_for_basis._format_independence_flag :
+                default_format_independence_flag);
+    // Stream:
+    const extension::std::StreamFromatStacker stream_format_stacker(
+                _os, basis_format_independence_flag);
+    basis_stream_preparer(_os);
     for (const auto& _ : basis.vec_index() | ::boost::adaptors::indexed(0)) {
         assert(_.value());
         const auto& index = _.index();
         const auto& kstate = *_.value();
         if (index != 0) {
-            _range_streamer_settings_for_basis._stream_separer(_os);
+            basis_stream_separer(_os);
         }
-        _range_streamer_settings_for_basis._stream_sustainer(_os, index);
-        kss.stream(kstate);
+        basis_stream_sustainer(_os, index);
+        kstate::pramga::operator<<(_os, kstate || _range_streamer_settings_for_kstate);
     }
-    _range_streamer_settings_for_basis._stream_finisher(_os);
+    basis_stream_finisher(_os);
     return *this;
 }
 

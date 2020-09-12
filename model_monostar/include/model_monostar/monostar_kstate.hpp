@@ -6,7 +6,10 @@
 #include <kstate/kstate_concrete.hpp>
 #include <kstate/kstate_streamer.hpp>
 
+#include <extensions/range_streamer.hpp>
+
 #include <vector>
+
 // #######################################################################
 // ## monostar_kstate_range_streamer_settings                           ##
 // #######################################################################
@@ -55,15 +58,19 @@ namespace model_monostar {
 
 inline std::ostream&
 operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
-    auto kstate_streamer = kstate::KstateStreamer(stream).set_range_streamer_settings(monostar_kstate_range_streamer_settings);
-    kstate_streamer.stream(state);
+    using namespace kstate::pramga;
+    using namespace extension::boost::stream_pragma;
+    kstate::pramga::operator<<(stream, state || RSS());
+    //stream << (state || RSS()); //TODO refactor
     return stream;
 }
 
 inline std::ostream&
 operator<<(std::ostream& stream, const DynamicMonostarUniqueKstate& state) {
-    auto kstate_streamer = kstate::KstateStreamer(stream).set_range_streamer_settings(monostar_kstate_range_streamer_settings);
-    kstate_streamer.stream(state);
+    using namespace kstate::pramga;
+    using namespace extension::boost::stream_pragma;
+    kstate::pramga::operator<<(stream, state || RSS());
+    //stream << (state || RSS()); //TODO refactor
     return stream;
 }
 
