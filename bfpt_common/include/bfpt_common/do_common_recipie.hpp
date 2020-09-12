@@ -37,14 +37,14 @@ inline double do_common_recipe(const IDynamicUniqueKstatePopulator<Element>& bai
     const std::string time_tag = "[time    ] ";
     assert(k_n < n_sites);
     // --------------------------------------------------
-    if (print_flags.print_unpopulated_basis_flag) {
-        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):";
-        std::cout << basis;
-    }
-    if (print_flags.print_unpopulated_basis_size_flag) {
-        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis) size: "
-                  << basis.size() << "." << std::endl;
-    }
+//    if (print_flags.print_unpopulated_basis_flag) {
+//        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):";
+//        std::cout << basis;
+//    }
+//    if (print_flags.print_unpopulated_basis_size_flag) {
+//        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis) size: "
+//                  << basis.size() << "." << std::endl;
+//    }
     // --------------------------------------------------
     // Define hamiltonian and basis:
     std::cout << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
@@ -55,14 +55,14 @@ inline double do_common_recipe(const IDynamicUniqueKstatePopulator<Element>& bai
     std::cout << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
     // --------------------------------------------------
-    if (print_flags.print_populated_basis_flag) {
-        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):";
-        std::cout << basis;
-    }
-    if (print_flags.print_populated_basis_size_flag) {
-        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis) size: "
-                  << basis.size() << "." << std::endl;
-    }
+//    if (print_flags.print_populated_basis_flag) {
+//        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):";
+//        std::cout << basis;
+//    }
+//    if (print_flags.print_populated_basis_size_flag) {
+//        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis) size: "
+//                  << basis.size() << "." << std::endl;
+//    }
     // --------------------------------------------------
     // Generate hamiltoniam matrix:
     std::cout << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;

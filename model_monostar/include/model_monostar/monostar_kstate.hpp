@@ -16,7 +16,7 @@
 
 namespace model_monostar {
 
-extern const extension::boost::RangeStreamerSettings monostar_kstate_range_streamer_settings;
+extern const extension::boost::RangeStreamerSettings<MonostarSiteState> monostar_kstate_range_streamer_settings;
 
 }  // namespace model_monostar
 
@@ -61,7 +61,7 @@ operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
     using kstate::pramga::operator<<;
-    stream << (state || RSS());
+    stream << (state || RSS<MonostarSiteState>());
     return stream;
 }
 
@@ -70,7 +70,7 @@ operator<<(std::ostream& stream, const DynamicMonostarUniqueKstate& state) {
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
     using kstate::pramga::operator<<;
-    stream << (state || RSS());
+    stream << (state || RSS<MonostarSiteState>());
     return stream;
 }
 
