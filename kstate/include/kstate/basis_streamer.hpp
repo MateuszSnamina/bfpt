@@ -4,6 +4,8 @@
 #include <kstate/basis.hpp>
 #include <kstate/kstate_streamer.hpp>
 
+#include <boost/range/adaptor/indirected.hpp>
+
 #include <iomanip>
 
 // #######################################################################
@@ -39,64 +41,54 @@ BasisStreamer<KstateT>::BasisStreamer(
 template<typename KstateT>
 ::std::ostream&
 BasisStreamer<KstateT>::stream(std::ostream& os) const {
-    using extension::boost::stream_pragma::RSS;    //TODO: remove!
-    using kstate::pramga::operator||;             //TODO: remove!
-    using kstate::pramga::operator<<;             //TODO: remove!
     // Defaults for basis range streamer:
     const ::std::function<void(::std::ostream&)> default_stream_preparer =
             [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
     const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
             [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; };
-    //    const ::std::function<void(::std::ostream&, KstateT)> default_stream_value_putter =
-    //            [](::std::ostream& s, KstateT ks) { s << ks; };
+    const ::std::function<void(::std::ostream&, KstateT)> default_stream_value_putter =
+            [](::std::ostream& s, KstateT ks) { s << "[PLACE-FOR-KSTATE]"; };
     const ::std::function<void(::std::ostream&)> default_stream_separer =
             [](std::ostream& s) { s << std::endl; };
     const ::std::function<void(::std::ostream&)> default_stream_finisher =
             [](std::ostream& s) { s << std::endl << "𝔹𝔸𝕊𝕀𝕊-END" << std::endl; };
     bool default_format_independence_flag = true;
     // Apply overrules:
-    const auto basis_stream_preparer = (
+    const auto stream_preparer = (
                 _range_streamer_settings._stream_preparer ?
                     *_range_streamer_settings._stream_preparer :
                     default_stream_preparer);
-    const auto basis_stream_sustainer = (
+    const auto stream_sustainer = (
                 _range_streamer_settings._stream_sustainer ?
                     *_range_streamer_settings._stream_sustainer :
                     default_stream_sustainer);
-    //    const auto basis_stream_value_putter = (
-    //                _range_streamer_settings._stream_value_putter ?
-    //                *_range_streamer_settings._stream_value_putter :
-    //                    default_stream_value_putter);
-    assert(_range_streamer_settings._stream_value_putter);
-    const auto basis_stream_value_putter = *_range_streamer_settings._stream_value_putter ;
-    const auto basis_stream_separer = (
+    const auto stream_value_putter = (
+                _range_streamer_settings._stream_value_putter ?
+                    *_range_streamer_settings._stream_value_putter :
+                    default_stream_value_putter);
+    const auto stream_separer = (
                 _range_streamer_settings._stream_separer ?
                     *_range_streamer_settings._stream_separer :
                     default_stream_separer);
-    const auto basis_stream_finisher = (
+    const auto stream_finisher = (
                 _range_streamer_settings._stream_finisher ?
                     *_range_streamer_settings._stream_finisher :
                     default_stream_finisher);
-    const auto basis_format_independence_flag = (
+    const auto format_independence_flag = (
                 _range_streamer_settings._format_independence_flag ?
                     *_range_streamer_settings._format_independence_flag :
                     default_format_independence_flag);
     // Stream:
-    const extension::std::StreamFromatStacker stream_format_stacker(
-                os, basis_format_independence_flag);
-    basis_stream_preparer(os);
-    for (const auto& _ : _basis.vec_index() | ::boost::adaptors::indexed(0)) {
-        assert(_.value());
-        const auto& index = _.index();
-        const auto& kstate = *_.value();
-        if (index != 0) {
-            basis_stream_separer(os);
-        }
-        basis_stream_sustainer(os, index);
-        basis_stream_value_putter(os, kstate );
-    }
-    basis_stream_finisher(os);
-
+    extension::boost::stream_range_impl<decltype(_basis.vec_index() | ::boost::adaptors::indirected)>(
+                _basis.vec_index() | ::boost::adaptors::indirected,
+                os,
+                stream_preparer,
+                stream_sustainer,
+                stream_value_putter,
+                stream_separer,
+                stream_finisher,
+                format_independence_flag);
+    // Return:
     return os;
 }
 
