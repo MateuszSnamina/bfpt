@@ -108,6 +108,7 @@ class Kstate {
    public:  // helper types:
     using AnyRangeType = typename boost::any_range<SiteType, TraversalTag>;
     using ConstAnyRangeType = typename boost::any_range<const SiteType, TraversalTag>;
+    using SiteTypeXXX = SiteType; //TODO change name
 
    public:
     virtual ConstAnyRangeType to_any_range() const = 0;
@@ -188,7 +189,7 @@ template <typename SiteType, typename TraversalTag>
 std::string
 Kstate<SiteType, TraversalTag>::to_str() const {
     using namespace extension::boost::stream_pragma;
-    const auto range_stream_settings = RSS()
+    const auto range_stream_settings = RSS<SiteTypeXXX>()
             .set_string_preparer("⦃")
             .set_null_sustainer()
             .set_string_separer("∙")
@@ -384,7 +385,7 @@ template <typename ConstRangeType>
 std::string
 SpeedyKstate<ConstRangeType>::to_str() const {
     using namespace extension::boost::stream_pragma;
-    const auto range_stream_settings = RSS()
+    const auto range_stream_settings = RSS<SiteType>()
             .set_string_preparer("⦃")
             .set_null_sustainer()
             .set_string_separer("∙")

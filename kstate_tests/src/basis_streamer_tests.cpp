@@ -47,21 +47,31 @@ kstate::Basis<kstate::DynamicKstate<int>> get_testet_filled_basis() {
     return basis;
 }
 
-TEST(BasisStreamer, TESTTRY) {
-    // not yet a test...
+// not yet a test...
+TEST(BasisStreamer, BasicTest) {
+    using extension::boost::stream_pragma::RSS;
+
     const auto& basis = get_testet_filled_basis();
-    kstate::BasisStringStreamer bs;
+    const auto kstate_value_putter = [](std::ostream& os, kstate::DynamicKstate<int> kstate) {
+        using extension::boost::stream_pragma::RSS;
+        using kstate::pramga::operator||;
+        using kstate::pramga::operator<<;
+        os << ( kstate || RSS<int>());
+    };
+    const auto range_streamer_settings_for_basis = RSS<kstate::DynamicKstate<int>>().set_stream_value_putter(kstate_value_putter);
+    const kstate::BasisStreamer<kstate::DynamicKstate<int>> bs(basis, range_streamer_settings_for_basis);
+    //bs.set_range_streamer_settings(range_streamer_settings_for_basis); //TODO remove
     std::string expected_string =
-        "𝔹𝔸𝕊𝕀𝕊-BEGIN\n"
-        " -      0 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃7∙12∙13⦄\n"
-        " -      1 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃11∙12∙13⦄\n"
-        " -      2 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃13∙14∙15⦄\n"
-        " -      3 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃1∙20∙15⦄\n"
-        " -      4 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃1∙14∙15⦄\n"
-        " -      5 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙20∙15⦄\n"
-        " -      6 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙20∙18⦄\n"
-        " -      7 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙21∙15⦄\n"
-        " -      8 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙21∙10⦄\n"
-        "𝔹𝔸𝕊𝕀𝕊-END\n";
-    EXPECT_EQ(bs.stream(basis).str(), expected_string);
+            "𝔹𝔸𝕊𝕀𝕊-BEGIN\n"
+            " -      0 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃7∙12∙13⦄\n"
+            " -      1 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃11∙12∙13⦄\n"
+            " -      2 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃13∙14∙15⦄\n"
+            " -      3 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃1∙20∙15⦄\n"
+            " -      4 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃1∙14∙15⦄\n"
+            " -      5 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙20∙15⦄\n"
+            " -      6 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙20∙18⦄\n"
+            " -      7 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙21∙15⦄\n"
+            " -      8 : 𝕂𝕤𝕥𝕒𝕥𝕖⦃3∙21∙10⦄\n"
+            "𝔹𝔸𝕊𝕀𝕊-END\n";
+    EXPECT_EQ(bs.str(), expected_string);
 }

@@ -61,6 +61,7 @@ struct DynamicKstateTypes {
     static_assert(!std::is_const<SiteType>::value);
     static_assert(!std::is_volatile<SiteType>::value);
     static_assert(!std::is_reference<SiteType>::value);
+    using SiteTypeXXX = SiteType;
     using BufferType = typename std::vector<SiteType>;
     using IteratorType = typename BufferType::iterator;
     using ConstIteratorType = typename BufferType::const_iterator;
@@ -139,6 +140,7 @@ template <typename SiteType>
 class DynamicUniqueKstate : public SpeedyKstate<typename DynamicKstateTypes<SiteType>::ConstRangeType> {
 
 public:
+    using SiteTypeXXX = SiteType;
     using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
     using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
     using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
