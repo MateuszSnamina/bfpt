@@ -43,9 +43,10 @@ namespace kstate {
  * In the container objects are storred as shared_ptr to the objecs.
  */
 
-template <typename Element>
+template <typename _Element>
 class VecMap {
    public:
+    using Element = _Element;
     using Key = decltype(std::declval<Element>().to_range());
     using ElementPtr = std::shared_ptr<Element>;
 
@@ -83,57 +84,58 @@ class VecMap {
     void add_element(ElementPtr c);
 };
 
-template <typename Element>
-struct VecMap<Element>::Vec {};
+template <typename _Element>
+struct VecMap<_Element>::Vec{};
 
-template <typename Element>
-struct VecMap<Element>::Map {};
+template <typename _Element>
+struct VecMap<_Element>::Map{};
 
 // *************************************************************************
 // ********  Member functions definitions     ******************************
 // *************************************************************************
 
-template <typename Element>
-unsigned VecMap<Element>::size() const {
+template <typename _Element>
+unsigned
+VecMap<_Element>::size() const {
     return container.size();
 }
 
-template <typename Element>
-typename VecMap<Element>::VecIndex&
-VecMap<Element>::vec_index() {
+template <typename _Element>
+typename VecMap<_Element>::VecIndex&
+VecMap<_Element>::vec_index() {
     return container.template get<Vec>();
 }
 
-template <typename Element>
-typename VecMap<Element>::MapIndex&
-VecMap<Element>::map_index() {
+template <typename _Element>
+typename VecMap<_Element>::MapIndex&
+VecMap<_Element>::map_index() {
     return container.template get<Map>();
 }
 
-template <typename Element>
-const typename VecMap<Element>::VecIndex&
-VecMap<Element>::vec_index() const {
+template <typename _Element>
+const typename VecMap<_Element>::VecIndex&
+VecMap<_Element>::vec_index() const {
     return container.template get<Vec>();
 }
 
-template <typename Element>
-const typename VecMap<Element>::MapIndex&
-VecMap<Element>::map_index() const {
+template <typename _Element>
+const typename VecMap<_Element>::MapIndex&
+VecMap<_Element>::map_index() const {
     return container.template get<Map>();
 }
 
-template <typename Element>
+template <typename _Element>
 template <typename OtherRangeType>
 boost::optional<unsigned>
-VecMap<Element>::find_element_and_get_its_ra_index(const OtherRangeType& v) const {
+VecMap<_Element>::find_element_and_get_its_ra_index(const OtherRangeType& v) const {
     auto search_iter = map_index().find(v);
     if (search_iter == map_index().end()) return boost::optional<unsigned>();
     auto ra_iter = container.template project<Vec>(search_iter);
     return std::distance(vec_index().begin(), ra_iter);
 }
 
-template <typename Element>
-void VecMap<Element>::add_element(ElementPtr c) {
+template <typename _Element>
+void VecMap<_Element>::add_element(ElementPtr c) {
     vec_index().push_back(c);
 }
 

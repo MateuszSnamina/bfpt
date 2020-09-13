@@ -14,8 +14,10 @@
 
 namespace kstate {
 
-template<typename KstateT>
+template<typename _KstateT>
 class BasisStreamer {
+public: // Helper types:
+    using KstateT = _KstateT;
 public:
     BasisStreamer(const Basis<KstateT>& basis, extension::boost::RangeStreamerSettings<KstateT> range_streamer_settings);
     ::std::ostream& stream(std::ostream&) const;
@@ -27,8 +29,8 @@ private:
 
 // ***********************************************************************
 
-template<typename KstateT>
-BasisStreamer<KstateT>::BasisStreamer(
+template<typename _KstateT>
+BasisStreamer<_KstateT>::BasisStreamer(
         const Basis<KstateT>& basis,
         extension::boost::RangeStreamerSettings<KstateT> range_streamer_settings) :
     _basis(basis),
@@ -37,9 +39,9 @@ BasisStreamer<KstateT>::BasisStreamer(
 
 // ***********************************************************************
 
-template<typename KstateT>
+template<typename _KstateT>
 ::std::ostream&
-BasisStreamer<KstateT>::stream(std::ostream& os) const {
+BasisStreamer<_KstateT>::stream(std::ostream& os) const {
     // Defaults for basis range streamer:
     const ::std::function<void(::std::ostream&)> default_stream_preparer =
             [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
@@ -91,9 +93,11 @@ BasisStreamer<KstateT>::stream(std::ostream& os) const {
     return os;
 }
 
-template<typename KstateT>
+// ***********************************************************************
+
+template<typename _KstateT>
 std::string
-BasisStreamer<KstateT>::str() const {
+BasisStreamer<_KstateT>::str() const {
     std::ostringstream oss;
     stream(oss);
     return oss.str();
