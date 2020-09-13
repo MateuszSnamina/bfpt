@@ -47,8 +47,8 @@ double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
 }
 
 int main() {
-    const unsigned max_pt_order = 4;
-    const size_t n_sites = 12;
+    const unsigned max_pt_order = 6;
+    const size_t n_sites = 20;
     std::cout << "------------------------------------------" << std::endl;
     const double gs_energy = bfpt_gs(n_sites, max_pt_order);
     std::cout << "------------------------------------------" << std::endl;
