@@ -11,16 +11,16 @@ namespace kstate {
 
 template <typename _ElementT>
 class Basis {
-   public:
+public:
     // Helper types:
     using ElementT = _ElementT;
+    using VecIndexT = typename VecMap<ElementT>::VecIndex;
+    using ElementPtrT = typename VecMap<ElementT>::ElementPtr;
+public:
     // Constructors:
     Basis(size_t n_sites);
     // The physical realm:
     size_t n_sites() const;
-    // Container type definition -- index typedefs:
-    using VecIndexT = typename VecMap<ElementT>::VecIndex;
-    using ElementPtrT = typename VecMap<ElementT>::ElementPtr;
     // Container size:
     unsigned size() const;
     // Container index interfaces:
@@ -31,8 +31,7 @@ class Basis {
     boost::optional<unsigned> find_element_and_get_its_ra_index(const OtherRangeType& v) const;
     // Container Member functions -- modifiers:
     void add_element(ElementPtrT c);
-
-   private:
+private:
     size_t _n_sites;
     VecMap<ElementT> _vec_map;
 };
