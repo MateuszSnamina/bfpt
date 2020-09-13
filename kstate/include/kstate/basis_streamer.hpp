@@ -25,7 +25,7 @@ template <typename BasisT>
 BasisStreamer<BasisT>
 make_basis_streamer(
         BasisT&&,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::Element>);
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::ElementT>);
 
 // ***********************************************************************
 
@@ -33,7 +33,7 @@ template<typename _BasisT>
 class BasisStreamer {
 public: // Helper types:
     using BasisT = _BasisT;
-    using ElementT = typename remove_cvref_t<BasisT>::Element;
+    using ElementT = typename remove_cvref_t<BasisT>::ElementT;
 public: // Factory function:
     friend
     BasisStreamer<BasisT> make_basis_streamer<BasisT>(BasisT&&, const extension::boost::RangeStreamerSettings<ElementT>);
@@ -128,7 +128,7 @@ BasisStreamer<_BasisT>::str() const {
 template<typename BasisT>
 BasisStreamer<BasisT> make_basis_streamer(
         BasisT&& basis,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::Element> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::ElementT> range_streamer_settings) {
     return BasisStreamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 
@@ -144,7 +144,7 @@ template<typename BasisT>
 BasisStreamer<BasisT>
 operator&&(
         BasisT&& basis,
-        extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::Element> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::ElementT> range_streamer_settings) {
     return make_basis_streamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 

@@ -154,7 +154,7 @@ template<typename KstateT>
 KstateStreamer<KstateT>
 operator||(
         KstateT&& kstate,
-        extension::boost::RangeStreamerSettings<typename remove_cvref_t<KstateT>::SiteType> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<KstateT>::SiteType> range_streamer_settings) {
     return make_kstate_streamer<KstateT>(std::forward<KstateT>(kstate), range_streamer_settings);
 }
 
