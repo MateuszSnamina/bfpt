@@ -49,6 +49,9 @@ struct RangeStreamerSettings {
     RangeStreamerSettings<T>& in_quotation_double();
     RangeStreamerSettings<T>& in_quotation_back();
     RangeStreamerSettings<T>& in_null();
+    RangeStreamerSettings<T>& like_python_tuple();
+    RangeStreamerSettings<T>& like_python_list();
+    RangeStreamerSettings<T>& like_python_set();
     // Fields:
     ::std::optional<::std::function<void(::std::ostream&)>> _stream_preparer;
     ::std::optional<::std::function<void(::std::ostream&, size_t)>> _stream_sustainer;
@@ -209,6 +212,30 @@ template<typename _T>
 RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::in_null() {
     set_char_preparer(' ');
     set_char_finisher(' ');
+    return *this;
+}
+
+template<typename _T>
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_tuple() {
+    set_char_preparer('[');
+    set_char_finisher(']');
+    set_string_separer(", ");
+    return *this;
+}
+
+template<typename _T>
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_list() {
+    set_char_preparer('[');
+    set_char_finisher(']');
+    set_string_separer(", ");
+    return *this;
+}
+
+template<typename _T>
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_set() {
+    set_char_preparer('{');
+    set_char_finisher('}');
+    set_string_separer(", ");
     return *this;
 }
 
