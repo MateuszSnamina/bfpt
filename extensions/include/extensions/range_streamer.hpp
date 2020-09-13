@@ -258,17 +258,17 @@ RangeStreamer<R> make_range_streamer(
         R&& range,
         const RangeStreamerSettings<typename ::boost::range_value<R>::type> range_streamer_settings);
 
-// Template param `R` should be `const T&`, `T&` or `T`.
-// creating objects by means of `make_range_streamer` factory function ensure this.
 template<class _R>
 class RangeStreamer {
-    static_assert(! ::std::is_rvalue_reference<_R>::value, "R must not be a rvalue reference.");
+    static_assert(! ::std::is_rvalue_reference_v<_R>,
+    "R must not be a rvalue reference.");
+    static_assert(::std::is_lvalue_reference_v<_R> || (!::std::is_reference_v<_R> && !::std::is_const_v<_R>),
+    "R must be of form: `T`, `T&` or `const T&`.");
 public: // Helper types:
     using R = _R;
     using T = typename ::boost::range_value<R>::type;
 public: // Factory function:
-    friend
-    RangeStreamer<R> make_range_streamer<R>(R&& range, const RangeStreamerSettings<T> range_streamer_settings);
+    friend RangeStreamer<R> make_range_streamer<R>(R&& range, const RangeStreamerSettings<T> range_streamer_settings);
 public: // API:
     ::std::ostream& stream(::std::ostream& os) const;
     ::std::string str() const;
@@ -282,7 +282,7 @@ private:
 template<class _R>
 RangeStreamer<_R>::RangeStreamer(
         ::std::add_rvalue_reference_t<R> range,
-        const RangeStreamerSettings<typename RangeStreamer<R>::T> range_streamer_settings) :
+        const RangeStreamerSettings<T> range_streamer_settings) :
     _range(::std::forward<R>(range)),
     _range_streamer_settings(range_streamer_settings) {
 }

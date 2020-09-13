@@ -14,41 +14,61 @@
 
 namespace kstate {
 
-template<typename _KstateT>
+// ***********************************************************************
+
+template<typename _BasisT>
+class BasisStreamer;
+
+// ***********************************************************************
+
+template <typename BasisT>
+BasisStreamer<BasisT>
+make_basis_streamer(
+        BasisT&&,
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::Element>);
+
+// ***********************************************************************
+
+template<typename _BasisT>
 class BasisStreamer {
 public: // Helper types:
-    using KstateT = _KstateT;
-public:
-    BasisStreamer(const Basis<KstateT>& basis, extension::boost::RangeStreamerSettings<KstateT> range_streamer_settings);
+    using BasisT = _BasisT;
+    using ElementT = typename remove_cvref_t<BasisT>::Element;
+public: // Factory function:
+    friend
+    BasisStreamer<BasisT> make_basis_streamer<BasisT>(BasisT&&, const extension::boost::RangeStreamerSettings<ElementT>);
+public: // API:
     ::std::ostream& stream(std::ostream&) const;
     std::string str() const;
 private:
-    const Basis<KstateT>& _basis;
-    const extension::boost::RangeStreamerSettings<KstateT> _range_streamer_settings;
+    BasisStreamer(std::add_lvalue_reference_t<BasisT>, extension::boost::RangeStreamerSettings<ElementT>);
+private:
+    const _BasisT _basis;
+    const extension::boost::RangeStreamerSettings<ElementT> _range_streamer_settings;
 };
 
 // ***********************************************************************
 
-template<typename _KstateT>
-BasisStreamer<_KstateT>::BasisStreamer(
-        const Basis<KstateT>& basis,
-        extension::boost::RangeStreamerSettings<KstateT> range_streamer_settings) :
-    _basis(basis),
+template<typename _BasisT>
+BasisStreamer<_BasisT>::BasisStreamer(
+        std::add_lvalue_reference_t<_BasisT> basis,
+        extension::boost::RangeStreamerSettings<ElementT> range_streamer_settings) :
+    _basis(std::forward<_BasisT>(basis)),
     _range_streamer_settings(range_streamer_settings) {
 }
 
 // ***********************************************************************
 
-template<typename _KstateT>
+template<typename _BasisT>
 ::std::ostream&
-BasisStreamer<_KstateT>::stream(std::ostream& os) const {
+BasisStreamer<_BasisT>::stream(std::ostream& os) const {
     // Defaults for basis range streamer:
     const ::std::function<void(::std::ostream&)> default_stream_preparer =
             [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
     const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
-            [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(6) << i << " : "; };
-    const ::std::function<void(::std::ostream&, KstateT)> default_stream_value_putter =
-            [](::std::ostream& s, KstateT) { s << "[PLACE-FOR-KSTATE]"; };
+            [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(8) << i << " : "; };
+    const ::std::function<void(::std::ostream&, ElementT)> default_stream_value_putter =
+            [](::std::ostream& s, ElementT) { s << "[PLACE-FOR-KSTATE]"; };
     const ::std::function<void(::std::ostream&)> default_stream_separer =
             [](std::ostream& s) { s << std::endl; };
     const ::std::function<void(::std::ostream&)> default_stream_finisher =
@@ -95,14 +115,47 @@ BasisStreamer<_KstateT>::stream(std::ostream& os) const {
 
 // ***********************************************************************
 
-template<typename _KstateT>
+template<typename _BasisT>
 std::string
-BasisStreamer<_KstateT>::str() const {
+BasisStreamer<_BasisT>::str() const {
     std::ostringstream oss;
     stream(oss);
     return oss.str();
 }
 
-}  // namespace kstate
+// ***********************************************************************
+
+template<typename BasisT>
+BasisStreamer<BasisT> make_basis_streamer(
+        BasisT&& basis,
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::Element> range_streamer_settings) {
+    return BasisStreamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
+}
+
+} // end of namespace kstate
+
+// #######################################################################
+// ##  pragma: operator||, operator<<                                   ##
+// #######################################################################
+
+namespace kstate::pramga {
+
+template<typename BasisT>
+BasisStreamer<BasisT>
+operator&&(
+        BasisT&& basis,
+        extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::Element> range_streamer_settings) {
+    return make_basis_streamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
+}
+
+template<typename BasisT>
+std::ostream& operator<<(
+        std::ostream& os,
+        const BasisStreamer<BasisT>& basis_streamer) {
+    basis_streamer.stream(os);
+    return os;
+}
+
+}  // namespace kstate::pramga
 
 #endif

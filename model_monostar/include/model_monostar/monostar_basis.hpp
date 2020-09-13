@@ -25,12 +25,13 @@ namespace model_monostar {
 inline std::ostream&
 operator<<(std::ostream& stream, const DynamicMonostarUniqueKstateBasis& basis) {
     using extension::boost::stream_pragma::RSS;
+    using kstate::pramga::operator&&;
+    using kstate::pramga::operator<<;
     const auto kstate_value_putter = [](std::ostream& os, DynamicMonostarUniqueKstate kstate) {
         os << kstate;
     };
     const auto range_streamer_settings = RSS<DynamicMonostarUniqueKstate>().set_stream_value_putter(kstate_value_putter);
-    auto basis_streamer = kstate::BasisStreamer<DynamicMonostarUniqueKstate>(basis, range_streamer_settings);
-    basis_streamer.stream(stream);
+    stream << (basis && range_streamer_settings);
     return stream;
 }
 
