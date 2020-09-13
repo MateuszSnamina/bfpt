@@ -151,8 +151,7 @@ void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 const int exponent_n = (int)bra_n_unique_shift;
                 const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
-                const std::complex<double> neo_sum_phase_factors =
-                        std::exp(1.0i * exponent_r) * (bra_n_replicas == 1 ? 1.0 : (k_n == 0 ? bra_n_replicas : 0.0)); //TODO check formula -- is zero case possible?
+                const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
                 kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
                 kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef);
@@ -167,7 +166,7 @@ void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
         if (_diag_info.count(ket_site_12)) {
             const auto kernel_diag_coef = _diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
-            const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift()); //TODO check formula
+            const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
             kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef;
         }
     }  // end of `Delta` loop
