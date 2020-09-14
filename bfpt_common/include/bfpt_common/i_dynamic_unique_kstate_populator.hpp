@@ -10,12 +10,12 @@
 
 namespace bfpt_common {
 
-template <typename Element>
+template <typename _SiteType>
 class IDynamicUniqueKstatePopulator {
    public:
     virtual void push_back_coupled_states_to_basis(
-        const kstate::DynamicUniqueKstate<Element>& generator,
-        kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis) const = 0;
+        const kstate::DynamicUniqueKstate<_SiteType>& generator,
+        kstate::Basis<kstate::DynamicUniqueKstate<_SiteType>>& basis) const = 0;
 };
 
 }  // namespace bfpt_common

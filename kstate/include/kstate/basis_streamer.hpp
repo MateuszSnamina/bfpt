@@ -3,6 +3,8 @@
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_streamer.hpp>
+#include <kstate/is_base_of_template.hpp>
+#include <kstate/remove_cvref.hpp>
 
 #include <boost/range/adaptor/indirected.hpp>
 
@@ -31,6 +33,12 @@ make_basis_streamer(
 
 template<typename _BasisT>
 class BasisStreamer {
+    static_assert(! ::std::is_rvalue_reference_v<_BasisT>,
+    "BasisT must not be a rvalue reference.");
+    static_assert(::std::is_lvalue_reference_v<_BasisT> || (!::std::is_reference_v<_BasisT> && !::std::is_const_v<_BasisT>),
+    "BasisT must be of form: `T`, `T&` or `const T&`.");
+    static_assert(is_base_of_template_v<remove_cvref_t<_BasisT>, Basis>,
+    "remove_cvref_t<BasisT> must be derived from Basis");
 public: // Helper types:
     using BasisT = _BasisT;
     using ElementT = typename remove_cvref_t<BasisT>::ElementT;

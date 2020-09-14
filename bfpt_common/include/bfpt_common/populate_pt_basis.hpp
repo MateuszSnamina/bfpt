@@ -30,11 +30,11 @@
 
 namespace bfpt_common {
 
-template <typename Element>
+template <typename SiteType> // TODO: change to: template <typename SiteType>
 void populate_pt_basis(
-    const IDynamicUniqueKstatePopulator<Element>& populator,
+    const IDynamicUniqueKstatePopulator<SiteType>& populator,
     const unsigned max_pt_order,
-    kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis) {
+    kstate::Basis<kstate::DynamicUniqueKstate<SiteType>>& basis) {
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();

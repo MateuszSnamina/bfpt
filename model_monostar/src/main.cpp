@@ -5,6 +5,8 @@
 #include <model_monostar/monostar_site_state.hpp>
 
 #include <bfpt_common/do_common_recipie.hpp>
+#include <bfpt_common/hamiltonian_12.hpp>
+#include <bfpt_common/generic_dynamic_unique_kstate_hamiltonian.hpp>
 
 #include <armadillo>
 
@@ -16,6 +18,7 @@
 
 using namespace std::complex_literals;
 
+
 // #######################################################################
 // ## main...                                                           ##
 // #######################################################################
@@ -26,7 +29,8 @@ double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     //print_flags.print_unpopulated_basis_flag = true; //TEMP
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
-    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    const auto hamiltonian_12 = model_monostar::prepare_hamiltonian_12(1, 1);
+    const bfpt_common::GenericDynamicUniqueKstateHamiltonian<model_monostar::MonostarSiteState> hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, 0, print_flags);
 }
@@ -37,7 +41,8 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     //print_flags.print_unpopulated_basis_flag = true; //TEMP
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
-    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    const auto hamiltonian_12 = model_monostar::prepare_hamiltonian_12(1, 1);
+    const bfpt_common::GenericDynamicUniqueKstateHamiltonian<model_monostar::MonostarSiteState> hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, k_n, print_flags);
 }

@@ -3,6 +3,9 @@
 
 #include <kstate/vec_map.hpp>
 
+#include <kstate/is_base_of_template.hpp> // needed only for static assert.
+#include <kstate/kstate_abstract.hpp> // needed only for static assert.
+
 // #######################################################################
 // ## Basis                                                             ##
 // #######################################################################
@@ -11,6 +14,10 @@ namespace kstate {
 
 template <typename _ElementT>
 class Basis {
+    static_assert(!std::is_const<_ElementT>::value);
+    static_assert(!std::is_volatile<_ElementT>::value);
+    static_assert(!std::is_reference<_ElementT>::value);
+    static_assert(is_base_of_template_v<_ElementT, Kstate>);
 public:
     // Helper types:
     using ElementT = _ElementT;
