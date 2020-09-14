@@ -47,17 +47,12 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
                                          max_pt_order, k_n, print_flags);
 }
 
-double bfpt_goldston(const size_t n_sites, const unsigned max_pt_order) {
-    return bfpt_kn_es(n_sites, max_pt_order, 0);
-}
 
 int main() {
     const unsigned max_pt_order = 6;
     const size_t n_sites = 20;
     std::cout << "------------------------------------------" << std::endl;
     const double gs_energy = bfpt_gs(n_sites, max_pt_order);
-    std::cout << "------------------------------------------" << std::endl;
-    const double es_gold_energy = bfpt_goldston(n_sites, max_pt_order);
     std::cout << "------------------------------------------" << std::endl;
     std::vector<double> es_energies;
     for (unsigned k_n = 0; k_n < n_sites; k_n++) {
@@ -69,9 +64,6 @@ int main() {
     std::cout << " ├max_pt_order = " << max_pt_order << std::endl;
     std::cout << " ├state: gs " << max_pt_order << std::endl;
     std::cout << " ││enery = " << gs_energy << std::endl;
-    std::cout << " ├state: es [goldston]" << es_gold_energy << std::endl;
-    std::cout << " ││enery = " << es_gold_energy << std::endl;
-    std::cout << " ││excitation enery = " << es_gold_energy - gs_energy << std::endl;
     for (unsigned k_n = 0; k_n < n_sites; k_n++) {
         const auto es_energy = es_energies[k_n];
         std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
