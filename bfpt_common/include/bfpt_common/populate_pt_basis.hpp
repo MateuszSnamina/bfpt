@@ -1,7 +1,7 @@
 #ifndef BFPT_COMMON_POPULATE_PT_BASIS_HPP
 #define BFPT_COMMON_POPULATE_PT_BASIS_HPP
 
-#include <bfpt_common/i_dynamic_unique_kstate_populator.hpp>
+#include <bfpt_common/i_kstate_populator.hpp>
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_abstract.hpp>

@@ -4,7 +4,7 @@
 #include <model_monostar/monostar_site_state.hpp>
 
 #include <bfpt_common/hamiltonian_12.hpp>
-#include <bfpt_common/generic_dynamic_unique_kstate_hamiltonian.hpp>
+#include <bfpt_common/generic_kstate_hamiltonian.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
 
 #include <armadillo>

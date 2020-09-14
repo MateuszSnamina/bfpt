@@ -1,7 +1,7 @@
 #ifndef BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 #define BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 
-#include <bfpt_common/i_dynamic_unique_kstate_hamiltonian.hpp>
+#include <bfpt_common/i_kstate_hamiltonian.hpp>
 #include <bfpt_common/populate_pt_basis.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
 

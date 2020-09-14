@@ -2,8 +2,8 @@
 #define BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
 
 #include <bfpt_common/hamiltonian_12.hpp>
-#include <bfpt_common/i_dynamic_unique_kstate_hamiltonian.hpp>
-#include <bfpt_common/i_dynamic_unique_kstate_populator.hpp>
+#include <bfpt_common/i_kstate_hamiltonian.hpp>
+#include <bfpt_common/i_kstate_populator.hpp>
 #include <bfpt_common/populate_pt_basis.hpp>
 
 #include <kstate/remove_cvref.hpp>
