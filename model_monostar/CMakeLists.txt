@@ -14,10 +14,13 @@ message_fancy_list("${inc}")
 add_executable("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
+  utility
   kstate
   bfpt_common
   armadillo
   linear_algebra
+  Boost::boost
+  Boost::program_options
 )
 
 message("CMake has processed: ${TARGET_NAME}")

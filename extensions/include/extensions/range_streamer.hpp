@@ -400,7 +400,7 @@ struct Stringifier {
 };
 
 template<class R>
-::std::string operator|(const RangeStreamer<R>& range_streamer, Stringifier) {
+::std::string operator*(const RangeStreamer<R>& range_streamer, Stringifier) {
     return range_streamer.str();
 }
 

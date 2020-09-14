@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 
 #################################################################
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common.cmake)
+
+#################################################################
 if (NOT (UNIX OR CYGWIN))
   message(WARNING "The project is supposed to be compiled on linux.")
 endif()
@@ -136,6 +139,7 @@ message("-----------------------------------")
 message("---  the project  -----------------")
 message("-----------------------------------")
 
+add_subdirectory(utility)
 add_subdirectory(extensions)
 add_subdirectory(extensions_tests)
 add_subdirectory(kstate)
