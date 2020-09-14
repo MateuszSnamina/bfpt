@@ -151,6 +151,7 @@ void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 const int exponent_n = (int)bra_n_unique_shift;
                 const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
+                assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
                 kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;

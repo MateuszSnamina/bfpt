@@ -3,6 +3,7 @@
 
 #include <kstate/kstate_abstract.hpp>
 #include <kstate/remove_cvref.hpp>
+#include <kstate/is_base_of_template.hpp> // needed only for static assert.
 
 #include <extensions/range_streamer.hpp>
 
@@ -44,7 +45,8 @@ class KstateStreamer {
     "KstateT must not be a rvalue reference.");
     static_assert(::std::is_lvalue_reference_v<_KstateT> || (!::std::is_reference_v<_KstateT> && !::std::is_const_v<_KstateT>),
     "KstateT must be of form: `T`, `T&` or `const T&`.");
-    // static_assert: KstateT is subclass of KstateT<>; //TODO
+    static_assert(is_base_of_template_v<remove_cvref_t<_KstateT>, Kstate>,
+    "remove_cvref_t<KstateT> must be derived from Kstate");
 public: // Helper types:
     using KstateT = _KstateT;
     using SiteType = typename remove_cvref_t<KstateT>::SiteType;
