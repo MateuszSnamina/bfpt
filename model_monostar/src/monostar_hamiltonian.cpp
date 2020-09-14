@@ -11,73 +11,14 @@
 using namespace std::complex_literals;
 
 // #######################################################################
-// ## Helper function                                                   ##
-// #######################################################################
-
-namespace model_monostar {
-
-template<typename SiteState>
-std::multimap<SiteStatePair<SiteState>, CoupleInfo<SiteState>>
-half_off_diag_info_to_full_off_diag_info(
-        const std::multimap<SiteStatePair<SiteState>, CoupleInfo<SiteState>>& half_off_diag) {
-    std::multimap<SiteStatePair<SiteState>, CoupleInfo<SiteState>> full_off_diag_info;
-    for (const auto node : half_off_diag) {
-        const SiteStatePair<SiteState>& ket_12 = node.first;
-        const CoupleInfo<SiteState>& couple_info = node.second;
-        const SiteStatePair<SiteState>& bra_12 = couple_info.state12;
-        const auto& kernel_coupling_coef = couple_info.coef;
-        const auto& complementaty_ket_12 = bra_12;
-        const auto& complementaty_bra_12 = ket_12;
-        full_off_diag_info.insert({ket_12, {kernel_coupling_coef, bra_12}});
-        full_off_diag_info.insert({complementaty_ket_12, {kernel_coupling_coef, complementaty_bra_12}});
-    }
-    return full_off_diag_info;
-}
-
-std::multimap<SiteStatePair<MonostarSiteState>, CoupleInfo<MonostarSiteState>>
-prepare_half_off_diag_info_for_af(double J) {
-    using RsultT = std::multimap<SiteStatePair<MonostarSiteState>, CoupleInfo<MonostarSiteState>>;
-    RsultT half_off_diag_info{
-        {{gs, gs}, {0.5 * J, {es,es}}}
-    };
-    return half_off_diag_info;
-}
-
-std::map<SiteStatePair<MonostarSiteState>, double>
-prepare_diag_info(double J) {
-    using RsultT = std::map<SiteStatePair<MonostarSiteState>, double>;
-    RsultT diag_info{
-        {{gs, gs}, -J * 0.25},
-        {{gs, es}, +J * 0.25},
-        {{es, gs}, +J * 0.25},
-        {{es, es}, -J * 0.25}
-    };
-    return diag_info;
-}
-
-} // end of namespace model_monostar
-
-// #######################################################################
 // ## DynamicMonostarHamiltonian                                        ##
 // #######################################################################
 
 namespace model_monostar {
 
-DynamicMonostarHamiltonian::DynamicMonostarHamiltonian(const size_t n_sites)
-    : _n_sites(n_sites) {
-    // TODO: use ctor args.
-//    _diag_info = {
-//        {{gs, gs}, -0.25},
-//        {{gs, es}, +0.25},
-//        {{es, gs}, +0.25},
-//        {{es, es}, -0.25}
-//    };
-//    _half_off_diag_info = {
-//        {{gs, gs}, {0.5, {es,es}}}
-//    };
-    _half_off_diag_info = prepare_half_off_diag_info_for_af(1);
-    _diag_info = prepare_diag_info(1);
-    _full_off_diag_info = half_off_diag_info_to_full_off_diag_info(_half_off_diag_info);
+DynamicMonostarHamiltonian::DynamicMonostarHamiltonian(const size_t n_sites, Hamiltonian12<SiteState> hamiltonian_12)
+    : _n_sites(n_sites),
+      _hamiltonian_12(hamiltonian_12){
 }
 
 void DynamicMonostarHamiltonian::push_back_coupled_states_to_basis(
@@ -89,7 +30,7 @@ void DynamicMonostarHamiltonian::push_back_coupled_states_to_basis(
         const auto ket_site_1 = *std::next(std::begin(generator_range), n_delta);
         const auto ket_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
         const SiteStatePair<SiteState> ket_site_12{ket_site_1, ket_site_2};
-        const auto equal_range = _full_off_diag_info.equal_range(ket_site_12);
+        const auto equal_range = _hamiltonian_12._full_off_diag_info.equal_range(ket_site_12);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
             [[maybe_unused]] const auto& ket_site_1_re = ket_12_re.state_1;
@@ -128,7 +69,7 @@ void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
         const SiteStatePair<SiteState> ket_site_12{ket_site_1, ket_site_2};
-        const auto equal_range = _half_off_diag_info.equal_range(ket_site_12);
+        const auto equal_range = _hamiltonian_12._half_off_diag_info.equal_range(ket_site_12);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
             [[maybe_unused]] const auto& ket_site_1_re = ket_12_re.state_1;
@@ -164,8 +105,8 @@ void DynamicMonostarHamiltonian::fill_kn_hamiltonian_matrix_coll(
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
         const SiteStatePair<SiteState> ket_site_12{ket_site_1, ket_site_2};
-        if (_diag_info.count(ket_site_12)) {
-            const auto kernel_diag_coef = _diag_info.at(ket_site_12);
+        if (_hamiltonian_12._diag_info.count(ket_site_12)) {
+            const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
             kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef;

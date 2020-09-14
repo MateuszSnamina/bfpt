@@ -17,6 +17,42 @@
 using namespace std::complex_literals;
 
 // #######################################################################
+// ## Helper function                                                   ##
+// #######################################################################
+
+namespace model_monostar {
+
+std::multimap<SiteStatePair<MonostarSiteState>, CoupleInfo<MonostarSiteState>>
+prepare_half_off_diag_info_for_af(double J) {
+    using RsultT = std::multimap<SiteStatePair<MonostarSiteState>, CoupleInfo<MonostarSiteState>>;
+    RsultT half_off_diag_info{
+        {{gs, gs}, {0.5 * J, {es,es}}}
+    };
+    return half_off_diag_info;
+}
+
+std::map<SiteStatePair<MonostarSiteState>, double>
+prepare_diag_info(double J) {
+    using RsultT = std::map<SiteStatePair<MonostarSiteState>, double>;
+    RsultT diag_info{
+        {{gs, gs}, -J * 0.25},
+        {{gs, es}, +J * 0.25},
+        {{es, gs}, +J * 0.25},
+        {{es, es}, -J * 0.25}
+    };
+    return diag_info;
+}
+
+Hamiltonian12<MonostarSiteState>
+prepare_hamiltonian_12(double J_classical = 1.0, double J_quantum = 1.0) {
+    const auto diag_info = prepare_diag_info(J_classical);
+    const auto half_off_diag_info = prepare_half_off_diag_info_for_af(J_quantum);
+    return Hamiltonian12<MonostarSiteState>{diag_info, half_off_diag_info};
+}
+
+} // end of namespace model_monostar
+
+// #######################################################################
 // ## main...                                                           ##
 // #######################################################################
 
@@ -26,7 +62,8 @@ double bfpt_gs(const size_t n_sites, const unsigned max_pt_order) {
     //print_flags.print_unpopulated_basis_flag = true; //TEMP
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_gs_kstate(n_sites)));
-    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    const auto hamiltonian_12 = model_monostar::prepare_hamiltonian_12(1, 1);
+    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, 0, print_flags);
 }
@@ -37,7 +74,8 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
     //print_flags.print_unpopulated_basis_flag = true; //TEMP
     model_monostar::DynamicMonostarUniqueKstateBasis basis{n_sites};
     basis.add_element(std::make_shared<model_monostar::DynamicMonostarUniqueKstate>(model_monostar::classical_es_kstate(n_sites)));
-    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites};
+    const auto hamiltonian_12 = model_monostar::prepare_hamiltonian_12(1, 1);
+    const model_monostar::DynamicMonostarHamiltonian hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, k_n, print_flags);
 }
