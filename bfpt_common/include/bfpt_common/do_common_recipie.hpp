@@ -23,10 +23,11 @@
 
 namespace bfpt_common {
 
-template <typename Element>
-inline double do_common_recipe(const IDynamicUniqueKstatePopulator<Element>& bais_populator,
-                               const IDynamicUniqueKstateHamiltonian<Element>& hamiltonian,
-                               kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis,
+//template <typename Element> //TODO remove!
+template<typename KstateT>
+inline double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
+                               const IKstateHamiltonian<KstateT>& hamiltonian,
+                               kstate::Basis<KstateT>& basis,
                                const unsigned max_pt_order, const unsigned k_n,
                                CommonRecipePrintFlags print_flags) {
     arma::wall_clock timer;

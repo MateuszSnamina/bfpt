@@ -4,7 +4,7 @@
 #include <bfpt_common/i_dynamic_unique_kstate_populator.hpp>
 
 #include <kstate/basis.hpp>
-#include <kstate/kstate_concrete.hpp>
+#include <kstate/kstate_abstract.hpp>
 
 #include <cassert>
 
@@ -30,11 +30,12 @@
 
 namespace bfpt_common {
 
-template <typename SiteType> // TODO: change to: template <typename SiteType>
+//template <typename SiteType>
+template<typename KstateT>
 void populate_pt_basis(
-    const IDynamicUniqueKstatePopulator<SiteType>& populator,
+    const IKstatePopulator<KstateT>& populator,
     const unsigned max_pt_order,
-    kstate::Basis<kstate::DynamicUniqueKstate<SiteType>>& basis) {
+    kstate::Basis<KstateT>& basis) {
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();

@@ -1,10 +1,14 @@
 #ifndef BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
 #define BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
 
+#include <bfpt_common/hamiltonian_12.hpp>
 #include <bfpt_common/i_dynamic_unique_kstate_hamiltonian.hpp>
 #include <bfpt_common/i_dynamic_unique_kstate_populator.hpp>
 #include <bfpt_common/populate_pt_basis.hpp>
 
+#include <kstate/remove_cvref.hpp>
+#include <kstate/is_base_of_template.hpp>
+#include <kstate/kstate_abstract.hpp>
 #include <extensions/adaptors.hpp>
 
 #include <armadillo>
@@ -19,29 +23,20 @@
 
 namespace bfpt_common {
 
-//TODO: it could be a template: template<typename _KstateT>. To copy:
-//static_assert(!std::is_const<_KstateT>::value);
-//static_assert(!std::is_volatile<_KstateT>::value);
-//static_assert(!std::is_reference<_KstateT>::value);
-//static_assert(is_base_of_template_v<_KstateT, Kstate>);
-//public:
-//Helper types:
-//using KstateT = _KstateT;
-//using SiteType = typename remove_cvref_t<KstateT>::SiteType;
-
-template<typename _SiteStateT>
-class GenericDynamicUniqueKstateHamiltonian :
-        public bfpt_common::IDynamicUniqueKstatePopulator<_SiteStateT>,
-        public bfpt_common::IDynamicUniqueKstateHamiltonian<_SiteStateT> {
-    static_assert(!std::is_reference_v<_SiteStateT>, "SiteState must not be a reference type.");
-    static_assert(!std::is_const_v<_SiteStateT>, "SiteState must not be a cosnt type.");
-    static_assert(!std::is_volatile_v<_SiteStateT>, "SiteState must not be a volatile type.");
+template<typename _KstateT>
+class GenericKstateHamiltonian :
+        public bfpt_common::IKstatePopulator<_KstateT>,
+        public bfpt_common::IKstateHamiltonian<_KstateT> {
+    static_assert(!std::is_const<_KstateT>::value);
+    static_assert(!std::is_volatile<_KstateT>::value);
+    static_assert(!std::is_reference<_KstateT>::value);
+    static_assert(kstate::is_base_of_template_v<_KstateT, kstate::Kstate>);
 public:
-    using SiteState = _SiteStateT;
-    using KstateT = kstate::DynamicUniqueKstate<SiteState>;
+    using KstateT = _KstateT;
+    using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteType;
     using BasisT = kstate::Basis<KstateT>;
 public:
-    GenericDynamicUniqueKstateHamiltonian(const size_t n_sites, Hamiltonian12<SiteState> hamiltonian_12);
+    GenericKstateHamiltonian(const size_t n_sites, Hamiltonian12<SiteStateT> hamiltonian_12);
     // Generates all conjugated states:
     void push_back_coupled_states_to_basis(
             const KstateT& generator,
@@ -63,7 +58,7 @@ private:
 
 private:
     const size_t _n_sites;
-    const Hamiltonian12<SiteState> _hamiltonian_12;
+    const Hamiltonian12<SiteStateT> _hamiltonian_12;
 };
 
 }  // namespace bfpt_common
@@ -78,15 +73,15 @@ using namespace std::complex_literals;
 namespace bfpt_common {
 
 template<typename _SiteStateT>
-GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::GenericDynamicUniqueKstateHamiltonian(
-        const size_t n_sites, Hamiltonian12<SiteState> hamiltonian_12)
+GenericKstateHamiltonian<_SiteStateT>::GenericKstateHamiltonian(
+        const size_t n_sites, Hamiltonian12<SiteStateT> hamiltonian_12)
     : _n_sites(n_sites),
       _hamiltonian_12(hamiltonian_12){
 }
 
 template<typename _SiteStateT>
 void
-GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::push_back_coupled_states_to_basis(
+GenericKstateHamiltonian<_SiteStateT>::push_back_coupled_states_to_basis(
         const KstateT& generator,
         BasisT& basis) const {
     assert(generator.n_sites() == _n_sites);
@@ -94,7 +89,7 @@ GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::push_back_coupled_states_to_
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(generator_range), n_delta);
         const auto ket_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
-        const SiteStatePair<SiteState> ket_site_12{ket_site_1, ket_site_2};
+        const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
         const auto equal_range = _hamiltonian_12._full_off_diag_info.equal_range(ket_site_12);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
@@ -122,7 +117,7 @@ GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::push_back_coupled_states_to_
 
 template<typename _SiteStateT>
 void
-GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
+GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
         const BasisT& basis,
         const size_t ket_kstate_idx,
         arma::sp_cx_mat& kn_hamiltonian_matrix,
@@ -135,7 +130,7 @@ GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_c
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const SiteStatePair<SiteState> ket_site_12{ket_site_1, ket_site_2};
+        const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
         const auto equal_range = _hamiltonian_12._half_off_diag_info.equal_range(ket_site_12);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
@@ -171,7 +166,7 @@ GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_c
         //TODO remove hardcoded ising, use _diag_info. _diag_info
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const SiteStatePair<SiteState> ket_site_12{ket_site_1, ket_site_2};
+        const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
         if (_hamiltonian_12._diag_info.count(ket_site_12)) {
             const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
@@ -183,7 +178,7 @@ GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_c
 
 template<typename _SiteStateT>
 void
-GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix(
+GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix(
         const BasisT& basis,
         arma::sp_cx_mat& kn_hamiltonian_matrix,
         const unsigned k_n) const {
@@ -196,7 +191,7 @@ GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix(
 
 template<typename _SiteStateT>
 arma::sp_cx_mat
-GenericDynamicUniqueKstateHamiltonian<_SiteStateT>::make_kn_hamiltonian_matrix(
+GenericKstateHamiltonian<_SiteStateT>::make_kn_hamiltonian_matrix(
         const BasisT& basis,
         const unsigned k_n) const {
     arma::sp_cx_mat kn_hamiltonian_matrix(basis.size(), basis.size());
