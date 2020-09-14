@@ -1,12 +1,10 @@
 #ifndef BFPT_COMMON_HAMILTONIAN_12_HPP
 #define BFPT_COMMON_HAMILTONIAN_12_HPP
 
-#include <bfpt_common/hamiltonian_12.hpp>
-
-#include <type_traits>
-#include <map>
-#include <tuple>
-#include <cassert>
+#include<type_traits>
+#include<map>
+#include<tuple>
+#include<cassert>
 
 // #######################################################################
 // ## Hamiltonian12                                                     ##
@@ -75,66 +73,5 @@ Hamiltonian12<_SiteState>::Hamiltonian12(DiagInfoT diag_info, OffDiagInfoT half_
 }
 
 }
-
-// #######################################################################
-// ## DynamicMonostarHamiltonian                                        ##
-// #######################################################################
-
-//namespace bfpt_common {
-
-////TODO: it could be a template: template<typename _KstateT>. To copy:
-////static_assert(!std::is_const<_KstateT>::value);
-////static_assert(!std::is_volatile<_KstateT>::value);
-////static_assert(!std::is_reference<_KstateT>::value);
-////static_assert(is_base_of_template_v<_KstateT, Kstate>);
-////public:
-////Helper types:
-////using KstateT = _KstateT;
-////using SiteType = typename remove_cvref_t<KstateT>::SiteType;
-
-
-
-
-////const kstate::DynamicUniqueKstate<Element>& generator,
-////kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis) const = 0;
-
-//template<typename _SiteStateT>
-//class GenericDynamicUniqueKstateHamiltonian :
-//        public bfpt_common::IDynamicUniqueKstatePopulator<_SiteStateT>,
-//        public bfpt_common::IDynamicUniqueKstateHamiltonian<_SiteStateT> {
-//    static_assert(!std::is_reference_v<_SiteStateT>, "SiteState must not be a reference type.");
-//    static_assert(!std::is_const_v<_SiteStateT>, "SiteState must not be a cosnt type.");
-//    static_assert(!std::is_volatile_v<_SiteStateT>, "SiteState must not be a volatile type.");
-//public:
-//    using SiteState = _SiteStateT;
-//    using KstateT = kstate::DynamicUniqueKstate<SiteState>;
-//    using BasisT = kstate::Basis<KstateT>;
-//public:
-//    GenericDynamicUniqueKstateHamiltonian(const size_t n_sites, Hamiltonian12<SiteState> hamiltonian_12);
-//    // Generates all conjugated states:
-//    void push_back_coupled_states_to_basis(
-//            const KstateT& generator,
-//            BasisT& basis) const override;
-//    // Generates hamiltonian matrix:
-//    arma::sp_cx_mat make_kn_hamiltonian_matrix(
-//            const BasisT& basis,
-//            const unsigned k_n) const override;
-//private:
-//    void fill_kn_hamiltonian_matrix_coll(
-//            const BasisT& basis,
-//            size_t n_col,
-//            arma::sp_cx_mat& kn_hamiltonian_matrix,
-//            const unsigned k_n) const;
-//    void fill_kn_hamiltonian_matrix(
-//            const BasisT& basis,
-//            arma::sp_cx_mat& kn_hamiltonian_matrix,
-//            const unsigned k_n) const;
-
-//private:
-//    const size_t _n_sites;
-//    const Hamiltonian12<SiteState> _hamiltonian_12;
-//};
-
-//}  // namespace bfpt_common
 
 #endif

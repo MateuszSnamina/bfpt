@@ -12,11 +12,11 @@
 
 namespace bfpt_common {
 
-template <typename Element> // TODO: change to: template <typename _SiteType>
+template <typename _SiteType>
 class IDynamicUniqueKstateHamiltonian {
    public:
     virtual arma::sp_cx_mat make_kn_hamiltonian_matrix(
-        const kstate::Basis<kstate::DynamicUniqueKstate<Element>>& basis,
+        const kstate::Basis<kstate::DynamicUniqueKstate<_SiteType>>& basis,
         const unsigned k_n) const = 0;
 };
 
