@@ -30,7 +30,7 @@
 
 namespace bfpt_common {
 
-template <typename Element>
+template <typename Element> // TODO: change to: template <typename SiteType>
 void populate_pt_basis(
     const IDynamicUniqueKstatePopulator<Element>& populator,
     const unsigned max_pt_order,

@@ -10,7 +10,7 @@
 
 namespace bfpt_common {
 
-template <typename Element>
+template <typename Element> // TODO: change to: template <typename _SiteType>
 class IDynamicUniqueKstatePopulator {
    public:
     virtual void push_back_coupled_states_to_basis(
