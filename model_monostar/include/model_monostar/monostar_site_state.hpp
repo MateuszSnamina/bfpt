@@ -17,8 +17,8 @@ class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
     MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
     bool operator<(const MonostarSiteState& other) const;
     bool operator==(const MonostarSiteState& other) const;
-
-   public:  // TODO: make it private
+    friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
+   private:
     bool _is_excited;
 };
 
@@ -32,6 +32,12 @@ inline bool MonostarSiteState::operator==(const MonostarSiteState& other) const 
     return static_cast<int>(this->_is_excited) == static_cast<int>(other._is_excited);
 }
 
+inline std::ostream&
+operator<<(std::ostream& stream, const MonostarSiteState& state) {
+    stream << (state._is_excited ? '*' : '_');
+    return stream;
+}
+
 }  // namespace model_monostar
 
 // #######################################################################
@@ -42,20 +48,6 @@ namespace model_monostar {
 
 extern const MonostarSiteState gs;  // ground-state (there is no star)
 extern const MonostarSiteState es;  // excited-state (there is a star)
-
-}  // namespace model_monostar
-
-// #######################################################################
-// ## MonostarSiteState -- printing                                     ##
-// #######################################################################
-
-namespace model_monostar {
-
-inline std::ostream&
-operator<<(std::ostream& stream, const MonostarSiteState& state) {
-    stream << (state._is_excited ? '*' : '_');
-    return stream;
-}
 
 }  // namespace model_monostar
 
