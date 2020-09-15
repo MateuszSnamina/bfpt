@@ -39,7 +39,7 @@ inline double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     assert(k_n < n_sites);
     // --------------------------------------------------
     if (print_flags.print_unpopulated_basis_flag) {
-        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):";
+        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):" << std::endl;
         std::cout << basis;
     }
     if (print_flags.print_unpopulated_basis_size_flag) {
@@ -57,7 +57,7 @@ inline double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     std::cout << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
     // --------------------------------------------------
     if (print_flags.print_populated_basis_flag) {
-        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):";
+        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):" << std::endl;
         std::cout << basis;
     }
     if (print_flags.print_populated_basis_size_flag) {

@@ -320,7 +320,7 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
     assert(matrix.n_cols == matrix.n_rows);
     assert(n_vectors > 0);
     const auto size = matrix.n_cols;
-    assert(n_vectors < size);
+    assert(n_vectors <= size);
     // --------------------------------------------------------------
     if (matrix.size() < 40) {
         std::cerr << "[debug-info] [fallbacked_eigs_sym] fallbacked_eigs_sym uses dense calculus." << std::endl;

@@ -7,19 +7,16 @@
 #include<map>
 
 // #######################################################################
-// ## Helper function for preparing Hamiltonian12                       ##
+// ## prepare_hamiltonian_12_{af,fm}                                    ##
 // #######################################################################
 
 namespace model_monostar {
 
-std::multimap<bfpt_common::SiteStatePair<MonostarSiteState>, bfpt_common::CoupleInfo<MonostarSiteState>>
-prepare_half_off_diag_info_for_af(double J);
-
-std::map<bfpt_common::SiteStatePair<MonostarSiteState>, double>
-prepare_diag_info(double J);
+bfpt_common::Hamiltonian12<MonostarSiteState>
+prepare_hamiltonian_12_af(double J_classical = 1.0, double J_quantum = 1.0);
 
 bfpt_common::Hamiltonian12<MonostarSiteState>
-prepare_hamiltonian_12(double J_classical = 1.0, double J_quantum = 1.0);
+prepare_hamiltonian_12_fm(double J_classical = 1.0, double J_quantum = 1.0);
 
 } // end of namespace model_monostar
 
