@@ -249,9 +249,9 @@ Kstate<_SiteType, _TraversalTag>::to_str() const {
  *
  * SpeedyKstate<ConstRangeType> overrides the following descriptor-type
  * member functions:
- *  - n_least_replication_shift() const.
- *  - norm_factor() const       // TODO
- *  - is_prolific(int n_k) const.
+ *  - n_least_replication_shift() const,
+ *  - norm_factor() const,
+ *  - is_prolific(int n_k) const,
  *  - to_str() const.
  * And provides the following two member functions:
  *  - compare_range(const OtherConstRangeType& other) const,
