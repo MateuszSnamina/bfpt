@@ -23,7 +23,6 @@
 
 namespace bfpt_common {
 
-//template <typename Element> //TODO remove!
 template<typename KstateT>
 inline double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                                const IKstateHamiltonian<KstateT>& hamiltonian,
