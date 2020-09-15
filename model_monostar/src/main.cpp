@@ -54,11 +54,20 @@ double bfpt_kn_es(const size_t n_sites, const unsigned max_pt_order, const unsig
 void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
     using namespace extension::boost::stream_pragma;
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                    = " << interpreted_program_options.n_sites << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                       = " << interpreted_program_options.n_pt << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                 = " << interpreted_program_options.model_type << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] energy_getter_type         = " << interpreted_program_options.J_classical << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] energy_getter_type         = " << interpreted_program_options.J_quantum << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                           = " << interpreted_program_options.n_sites << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                              = " << interpreted_program_options.n_pt << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                        = " << interpreted_program_options.model_type << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] J_classical                       = " << interpreted_program_options.J_classical << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] J_quantum                         = " << interpreted_program_options.J_quantum << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                          = " << interpreted_program_options.run_type << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_size_flag = " << interpreted_program_options.print_flags.print_unpopulated_basis_size_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_flag        = " << interpreted_program_options.print_flags.print_populated_basis_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_size_flag   = " << interpreted_program_options.print_flags.print_populated_basis_size_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_sp_hamiltonian_flag         = " << interpreted_program_options.print_flags.print_sp_hamiltonian_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_hamiltonian_flag            = " << interpreted_program_options.print_flags.print_hamiltonian_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
 }
 
 int main(int argc, char** argv) {

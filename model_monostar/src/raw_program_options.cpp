@@ -45,12 +45,38 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
              boost::program_options::value<double>(&program_options.J_classical)->default_value(1.0))
             // --J_quantum,-q:
             ("J_quantum,q",
-             boost::program_options::value<double>(&program_options.J_quantum)->default_value(1.0));
+             boost::program_options::value<double>(&program_options.J_quantum)->default_value(1.0))
+            // --run_type,-r:
+            ("run_type,r",
+             boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))
+            // --print_unpopulated_basis_flag,-U:
+            ("print_unpopulated_basis_flag,U",
+             boost::program_options::bool_switch(&program_options.print_unpopulated_basis_flag)->default_value(false))
+            // --print_unpopulated_basis_size_flag:
+            ("print_unpopulated_basis_size_flag",
+             boost::program_options::bool_switch(&program_options.print_unpopulated_basis_size_flag)->default_value(true))
+            // --print_populated_basis_flag,-b:
+            ("print_populated_basis_flag,b",
+             boost::program_options::bool_switch(&program_options.print_populated_basis_flag)->default_value(false))
+            // --print_populated_basis_size_flag:
+            ("print_populated_basis_size_flag",
+             boost::program_options::bool_switch(&program_options.print_populated_basis_size_flag)->default_value(true))
+            // --print_sp_hamiltonian_flag,S:
+            ("print_sp_hamiltonian_flag,S",
+             boost::program_options::bool_switch(&program_options.print_sp_hamiltonian_flag)->default_value(false))
+            // --print_hamiltonian_flag,-H:
+            ("print_hamiltonian_flag,H",
+             boost::program_options::bool_switch(&program_options.print_hamiltonian_flag)->default_value(false))
+            // --print_eigen_values_flag,-L:
+            ("print_eigen_values_flag,E",
+             boost::program_options::bool_switch(&program_options.print_eigen_values_flag)->default_value(true))
+            // --print_eigen_vectors_flag,-V:
+            ("print_eigen_vectors_flag,V",
+             boost::program_options::bool_switch(&program_options.print_eigen_vectors_flag)->default_value(false));
     boost::program_options::positional_options_description p;
     // positional arguments:
-    p.add("temperature_steps", 1);
-    p.add("n_thermal", 1);
-    p.add("n_average", 1);
+    p.add("n_sites", 1);
+    p.add("n_pt", 1);
     p.add("model", 1);
     boost::program_options::variables_map vm;
     try {

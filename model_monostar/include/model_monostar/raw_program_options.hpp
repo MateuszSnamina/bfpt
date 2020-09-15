@@ -8,6 +8,15 @@ struct RawProgramOptions {
   std::string model_type_string;
   double J_classical;
   double J_quantum;
+  std::string run_type_string;
+  bool print_unpopulated_basis_flag;
+  bool print_unpopulated_basis_size_flag;
+  bool print_populated_basis_flag;
+  bool print_populated_basis_size_flag;
+  bool print_sp_hamiltonian_flag;
+  bool print_hamiltonian_flag;
+  bool print_eigen_values_flag;
+  bool print_eigen_vectors_flag;
 };
 
 RawProgramOptions grep_program_options(int argc, char** argv);

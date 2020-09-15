@@ -2,6 +2,9 @@
 
 #include <model_monostar/raw_program_options.hpp>
 #include <model_monostar/enum_model_type.hpp>
+#include <model_monostar/enum_run_type.hpp>
+
+#include <bfpt_common/common_recipe_print_flags.hpp>
 
 #include <string>
 
@@ -11,6 +14,8 @@ struct InterpretedProgramOptions {
   ModelType model_type;
   double J_classical;
   double J_quantum;
+  RunType run_type;
+  bfpt_common::CommonRecipePrintFlags print_flags;
 };
 
 InterpretedProgramOptions interpret_program_options(const RawProgramOptions&);
