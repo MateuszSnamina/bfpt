@@ -37,7 +37,7 @@ public:
         assert(_J_classical > 0);
     }
     double get_gs_energy() const override {
-        return _J_classical * (- 0.25 *  _n_sites);
+        return _J_classical * _n_sites * (- 0.25 );
     }
     double get_es_energy(unsigned n_k) const override {
         return _J_classical - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites);
@@ -56,10 +56,9 @@ public:
     ReferenceEnergiesAf(unsigned n_sites, double J) :
         ReferenceEnergies(n_sites),
         _J(J) {
-        assert(_J > 0);
     }
     double get_gs_energy() const override {
-        return _J  * (-1000000000) * _n_sites; //TODO implement the formula!
+        return - _J * _n_sites * (std::log(2) - 0.25);
     }
     double get_es_energy(unsigned n_k) const override {
         return _J * arma::datum::pi/2 * std::abs(std::sin(2 * arma::datum::pi * n_k / _n_sites));
