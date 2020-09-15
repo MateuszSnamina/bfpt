@@ -15,7 +15,6 @@ utility::Result<RunType, std::domain_error> interpret_run_type_string(const std:
     using extension::boost::stream_pragma::RSS;
     using extension::boost::stream_pragma::operator|;
     using extension::boost::stream_pragma::Stringifier;
-    //using namespace extension::boost::stream_pragma;// TEMP TODO remove
     using ResultT = utility::Result<RunType, std::domain_error>;
     if (interpret_run_type_string_map.count(run_type_string)) {
         return ResultT::Ok(interpret_run_type_string_map.at(run_type_string));

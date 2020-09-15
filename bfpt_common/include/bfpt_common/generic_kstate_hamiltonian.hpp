@@ -173,7 +173,6 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
         } // end of `_half_off_diag_info` equal_range loop
     }  // end of `Delta` loop
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        //TODO remove hardcoded ising, use _diag_info. _diag_info
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
         const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
