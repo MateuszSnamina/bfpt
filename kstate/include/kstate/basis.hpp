@@ -14,10 +14,17 @@ namespace kstate {
 
 template <typename _ElementT>
 class Basis {
-    static_assert(!std::is_const<_ElementT>::value);
-    static_assert(!std::is_volatile<_ElementT>::value);
-    static_assert(!std::is_reference<_ElementT>::value);
-    static_assert(is_base_of_template_v<_ElementT, Kstate>);
+    static_assert(!std::is_array_v<_ElementT>);
+    static_assert(!std::is_function_v<_ElementT>);
+    static_assert(!std::is_void_v<std::decay<_ElementT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_ElementT>>);
+    static_assert(!std::is_pointer_v<std::decay<_ElementT>>);
+    static_assert(!std::is_member_object_pointer_v<_ElementT>);
+    static_assert(!std::is_member_function_pointer_v<_ElementT>);
+    static_assert(!std::is_const_v<_ElementT>);
+    static_assert(!std::is_volatile_v<_ElementT>);
+    static_assert(!std::is_reference_v<_ElementT>);
+    static_assert(std::is_enum_v<std::decay<_ElementT>> || std::is_union_v<std::decay<_ElementT>> || std::is_class_v<std::decay<_ElementT>>);
 public:
     // Helper types:
     using ElementT = _ElementT;

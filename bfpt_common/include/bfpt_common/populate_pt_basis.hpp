@@ -36,6 +36,20 @@ void populate_pt_basis(
     const IKstatePopulator<KstateT>& populator,
     const unsigned max_pt_order,
     kstate::Basis<KstateT>& basis) {
+    static_assert(!std::is_array_v<KstateT>);
+    static_assert(!std::is_function_v<KstateT>);
+    static_assert(!std::is_void_v<std::decay<KstateT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<KstateT>>);
+    static_assert(!std::is_enum_v<std::decay<KstateT>>);
+    static_assert(!std::is_union_v<std::decay<KstateT>>);
+    static_assert(std::is_class_v<std::decay<KstateT>>);
+    static_assert(!std::is_pointer_v<std::decay<KstateT>>);
+    static_assert(!std::is_member_object_pointer_v<KstateT>);
+    static_assert(!std::is_member_function_pointer_v<KstateT>);
+    static_assert(!std::is_const_v<KstateT>);
+    static_assert(!std::is_volatile_v<KstateT>);
+    static_assert(!std::is_reference_v<KstateT>);
+    static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();

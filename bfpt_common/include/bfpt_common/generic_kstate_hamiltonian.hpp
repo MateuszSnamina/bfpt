@@ -27,9 +27,19 @@ template<typename _KstateT>
 class GenericKstateHamiltonian :
         public bfpt_common::IKstatePopulator<_KstateT>,
         public bfpt_common::IKstateHamiltonian<_KstateT> {
-    static_assert(!std::is_const<_KstateT>::value);
-    static_assert(!std::is_volatile<_KstateT>::value);
-    static_assert(!std::is_reference<_KstateT>::value);
+    static_assert(!std::is_array_v<_KstateT>);
+    static_assert(!std::is_function_v<_KstateT>);
+    static_assert(!std::is_void_v<std::decay<_KstateT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_KstateT>>);
+    static_assert(!std::is_enum_v<std::decay<_KstateT>>);
+    static_assert(!std::is_union_v<std::decay<_KstateT>>);
+    static_assert(std::is_class_v<std::decay<_KstateT>>);
+    static_assert(!std::is_pointer_v<std::decay<_KstateT>>);
+    static_assert(!std::is_member_object_pointer_v<_KstateT>);
+    static_assert(!std::is_member_function_pointer_v<_KstateT>);
+    static_assert(!std::is_const_v<_KstateT>);
+    static_assert(!std::is_volatile_v<_KstateT>);
+    static_assert(!std::is_reference_v<_KstateT>);
     static_assert(kstate::is_base_of_template_v<_KstateT, kstate::Kstate>);
 public:
     using KstateT = _KstateT;

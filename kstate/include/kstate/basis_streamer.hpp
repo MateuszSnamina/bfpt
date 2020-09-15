@@ -33,9 +33,20 @@ make_basis_streamer(
 
 template<typename _BasisT>
 class BasisStreamer {
-    static_assert(! ::std::is_rvalue_reference_v<_BasisT>,
+    static_assert(!std::is_array_v<_BasisT>);
+    static_assert(!std::is_function_v<_BasisT>);
+    static_assert(!std::is_void_v<std::decay<_BasisT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_BasisT>>);
+    static_assert(!std::is_enum_v<std::decay<_BasisT>>);
+    static_assert(!std::is_union_v<std::decay<_BasisT>>);
+    static_assert(std::is_class_v<std::decay<_BasisT>>);
+    static_assert(!std::is_pointer_v<std::decay<_BasisT>>);
+    static_assert(!std::is_member_object_pointer_v<_BasisT>);
+    static_assert(!std::is_member_function_pointer_v<_BasisT>);
+    static_assert(!std::is_volatile_v<_BasisT>);
+    static_assert(!std::is_rvalue_reference_v<_BasisT>,
     "BasisT must not be a rvalue reference.");
-    static_assert(::std::is_lvalue_reference_v<_BasisT> || (!::std::is_reference_v<_BasisT> && !::std::is_const_v<_BasisT>),
+    static_assert(std::is_lvalue_reference_v<_BasisT> || (!std::is_reference_v<_BasisT> && !std::is_const_v<_BasisT>),
     "BasisT must be of form: `T`, `T&` or `const T&`.");
     static_assert(is_base_of_template_v<remove_cvref_t<_BasisT>, Basis>,
     "remove_cvref_t<BasisT> must be derived from Basis");

@@ -41,7 +41,18 @@ make_kstate_streamer(
 
 template<typename _KstateT>
 class KstateStreamer {
-    static_assert(! ::std::is_rvalue_reference_v<_KstateT>,
+    static_assert(!std::is_array_v<_KstateT>);
+    static_assert(!std::is_function_v<_KstateT>);
+    static_assert(!std::is_void_v<std::decay<_KstateT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_KstateT>>);
+    static_assert(!std::is_enum_v<std::decay<_KstateT>>);
+    static_assert(!std::is_union_v<std::decay<_KstateT>>);
+    static_assert(std::is_class_v<std::decay<_KstateT>>);
+    static_assert(!std::is_pointer_v<std::decay<_KstateT>>);
+    static_assert(!std::is_member_object_pointer_v<_KstateT>);
+    static_assert(!std::is_member_function_pointer_v<_KstateT>);
+    static_assert(!std::is_volatile_v<_KstateT>);
+    static_assert(!std::is_rvalue_reference_v<_KstateT>,
     "KstateT must not be a rvalue reference.");
     static_assert(::std::is_lvalue_reference_v<_KstateT> || (!::std::is_reference_v<_KstateT> && !::std::is_const_v<_KstateT>),
     "KstateT must be of form: `T`, `T&` or `const T&`.");

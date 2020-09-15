@@ -5,6 +5,7 @@
 #include<map>
 #include<tuple>
 #include<cassert>
+#include<type_traits>
 
 // #######################################################################
 // ## Hamiltonian12                                                     ##
@@ -14,9 +15,17 @@ namespace bfpt_common {
 
 template<typename _SiteStateT>
 struct SiteStatePair {
-    static_assert(!std::is_reference_v<_SiteStateT>, "SiteState must not be a reference type.");
-    static_assert(!std::is_const_v<_SiteStateT>, "SiteState must not be a cosnt type.");
-    static_assert(!std::is_volatile_v<_SiteStateT>, "SiteState must not be a volatile type.");
+    static_assert(!std::is_array_v<_SiteStateT>);
+    static_assert(!std::is_function_v<_SiteStateT>);
+    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
+    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
+    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
+    static_assert(!std::is_const_v<_SiteStateT>);
+    static_assert(!std::is_volatile_v<_SiteStateT>);
+    static_assert(!std::is_reference_v<_SiteStateT>);
     using SiteStateT = _SiteStateT;
     SiteStateT state_1;
     SiteStateT state_2;
@@ -29,6 +38,17 @@ bool operator<(const SiteStatePair<SiteStateT>& lhs, const SiteStatePair<SiteSta
 
 template<typename _SiteStateT>
 struct CoupleInfo {
+    static_assert(!std::is_array_v<_SiteStateT>);
+    static_assert(!std::is_function_v<_SiteStateT>);
+    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
+    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
+    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
+    static_assert(!std::is_const_v<_SiteStateT>);
+    static_assert(!std::is_volatile_v<_SiteStateT>);
+    static_assert(!std::is_reference_v<_SiteStateT>);
     using SiteStateT = _SiteStateT;
     double coef;
     SiteStatePair<SiteStateT> state12;
@@ -36,6 +56,17 @@ struct CoupleInfo {
 
 template<typename _SiteStateT>
 class Hamiltonian12 {
+    static_assert(!std::is_array_v<_SiteStateT>);
+    static_assert(!std::is_function_v<_SiteStateT>);
+    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
+    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
+    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
+    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
+    static_assert(!std::is_const_v<_SiteStateT>);
+    static_assert(!std::is_volatile_v<_SiteStateT>);
+    static_assert(!std::is_reference_v<_SiteStateT>);
 public:
     using SiteStateT = _SiteStateT;
     using OffDiagInfoT = std::multimap<SiteStatePair<SiteStateT>, CoupleInfo<SiteStateT>>;

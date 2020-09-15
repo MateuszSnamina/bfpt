@@ -62,12 +62,19 @@ namespace kstate {
 
 template <typename _SiteType, typename _TraversalTag = boost::random_access_traversal_tag>
 class Kstate {
-    static_assert(!std::is_const<_SiteType>::value);
-    static_assert(!std::is_volatile<_SiteType>::value);
-    static_assert(!std::is_reference<_SiteType>::value);
+    static_assert(!std::is_array_v<_SiteType>);
+    static_assert(!std::is_function_v<_SiteType>);
+    static_assert(!std::is_void_v<std::decay<_SiteType>>);
+    static_assert(!std::is_null_pointer_v<std::decay<_SiteType>>);
+    static_assert(std::is_enum_v<std::decay<_SiteType>> || std::is_union_v<std::decay<_SiteType>> || std::is_class_v<std::decay<_SiteType>>);
+    static_assert(!std::is_pointer_v<std::decay<_SiteType>>);
+    static_assert(!std::is_member_object_pointer_v<_SiteType>);
+    static_assert(!std::is_member_function_pointer_v<_SiteType>);
+    static_assert(!std::is_const_v<_SiteType>);
+    static_assert(!std::is_volatile_v<_SiteType>);
+    static_assert(!std::is_reference_v<_SiteType>);
     static_assert(std::is_same<_TraversalTag, boost::random_access_traversal_tag>::value ||
     std::is_same<_TraversalTag, boost::forward_traversal_tag>::value);
-
 public: // Helper types:
     using SiteType = _SiteType;
     using TraversalTag = _TraversalTag;
