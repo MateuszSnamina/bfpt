@@ -60,10 +60,12 @@ The `H_12_diag` does not depend the variant and is governed by `J_classical`:
 | `(gs, es)`  | `+J_classical/4`    |
 | `(es, gs)`  | `+J_classical/4`    |
 | `(es, es)`  | `-J_classical/4`    |
+
 `H_12_off_diag` in `fm` model variant is given by:
 | coupled states pairs      | coupling contribution |
 |---------------------------|-----------------------|
 | `(es, gs)` <-> `(gs, es)` | `-J_quantum/2`        |
+
 `H_12_off_diag` in `af` model variant is given by:
 | coupled states pairs      | coupling contribution |
 |---------------------------|-----------------------|
