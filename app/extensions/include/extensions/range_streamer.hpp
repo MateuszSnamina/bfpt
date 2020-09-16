@@ -212,6 +212,7 @@ template<typename _T>
 RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::in_null() {
     set_char_preparer(' ');
     set_char_finisher(' ');
+    set_null_sustainer();
     return *this;
 }
 
@@ -220,6 +221,7 @@ RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_tuple() {
     set_char_preparer('[');
     set_char_finisher(']');
     set_string_separer(", ");
+    set_null_sustainer();
     return *this;
 }
 
@@ -228,6 +230,7 @@ RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_list() {
     set_char_preparer('[');
     set_char_finisher(']');
     set_string_separer(", ");
+    set_null_sustainer();
     return *this;
 }
 
@@ -236,6 +239,7 @@ RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_set() {
     set_char_preparer('{');
     set_char_finisher('}');
     set_string_separer(", ");
+    set_null_sustainer();
     return *this;
 }
 

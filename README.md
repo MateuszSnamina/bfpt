@@ -1,5 +1,6 @@
-# Bfpt – what it is
+# Bfpt
 
+## what it is not
 Bfpt (Brute Force Perturbation Theory) is a numeric solver of quantum Hamiltonian eigenproblem for discrete one dimensional periodic systems.
 
 The solver perform exact denationalization (ED) in a subspace of the system Hilbert space. The subspace is constructed in a spirit of perturbation calculus. The construction starts with the 0-th order subspace filled exclusively with quantum states provded by the solver user. Then the next order subspaces are constructed iteratively: The (n+1)-th order subspace is the n-th order subspace extended by the Hamiltonian image of the n-th order subspace. The solver user defines the target subspace order. Having the desired subspace constructed, Hamiltonian restricted to the subspace is diagonalized using a spare matrices numeric method.
@@ -10,7 +11,7 @@ The archetype problem fitting the solver domain is one dimensional Heisenberg an
 
 The solver is conceived to be general and easily extensible so to encore further experimenting. The project tries to achieve the objectives by involving easy to play modern C++ with balanced static and dynamic polymorphism, limited usage of external libraries focusing only on battle-tested ones:  Armadillo, BLAS, LAPACK, ARPACK libraries stack for linear algebra, and boost library for standard general purposes.
 
-## Bfpt – what it is not
+## what it is not
 
 - The solver is not meant to be a competitor for Bethe ansatz based solutions.
 - Bfpt is not meant to be the fastest numeric solver created.
@@ -19,15 +20,20 @@ The solver is conceived to be general and easily extensible so to encore further
 
 # Build
 
-The project requires build tools (cmake3.14 and gcc9) and 3p libraries (armadillo9 boost1.71) to be installed. On Ubuntu 20.04:
+The project requires build tools (cmake3.16 and gcc9) and 3p libraries (armadillo9 boost1.71) to be installed. On Ubuntu 20.04:
 
 ```
+apt install gcc-9
+apt install cmake
 apt install libboost-dev
 apt install libboost-program-options-dev
 apt install libarmadillo-dev
+mkdir build_release
 cd build_release
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j 4
+cd ..
+build_release/bin/model_monostar # try it!
 ```
 
 # Example

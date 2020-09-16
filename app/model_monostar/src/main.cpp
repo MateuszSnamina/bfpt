@@ -10,7 +10,12 @@
 #include <bfpt_common/generic_kstate_hamiltonian.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
 
+#include <extensions/range_streamer.hpp>
+#include <extensions/stream_fromat_stacker.hpp>
+
 #include <armadillo>
+
+#include <boost/range/adaptor/transformed.hpp>
 
 #include <iostream>
 
@@ -68,6 +73,58 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
 }
 
 
+void print_results_tree(
+        const InterpretedProgramOptions& interpreted_program_options,
+        const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies,
+        const std::optional<double>& gs_energy,
+        const std::optional<std::vector<double>>& es_energies) {
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+        std::cout << " ├state: gs "  << std::endl;
+        std::cout << " ││enery = " << *gs_energy << std::endl;
+        if (reference_energies) {
+            std::cout << " ││enery (reference) = " << reference_energies->get_gs_energy() << std::endl;
+        }
+    }
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        for (unsigned k_n = 0; k_n < interpreted_program_options.n_sites; k_n++) {
+            const auto es_energy = (*es_energies)[k_n];
+            std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
+            std::cout << " ││abs. enery        = " << es_energy << std::endl;
+            if (gs_energy) {
+                std::cout << " ││exc. enery        = " << es_energy - *gs_energy << std::endl;
+                if (reference_energies) {
+                    std::cout << " ││exc. enery (ref.) = " << reference_energies->get_es_energy(k_n) << std::endl;
+                }
+            }
+        }
+    }
+}
+
+void print_post_data(
+        const InterpretedProgramOptions& interpreted_program_options,
+        /*const std::unique_ptr<model_monostar::ReferenceEnergies> reference_energies,*/
+        const std::optional<double>& gs_energy,
+        const std::optional<std::vector<double>>& es_energies) {
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    using  extension::boost::stream_pragma::RSS;
+    using extension::boost::stream_pragma::operator|;
+    using extension::boost::stream_pragma::operator<<;
+    using namespace boost::adaptors;
+    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+        std::cout << "[RESULT] [POST] gs_energy: " << *gs_energy << std::endl;
+    }
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        std::cout << "[RESULT] [POST] es_absolute_energies: " << ((*es_energies) | RSS<double>().like_python_list()) << std::endl;
+    }
+    if (interpreted_program_options.run_type == RunType::EG) {
+        const auto absolute_energy_into_excitation_energy =
+                [gs_energy](double es_energy)->double{return es_energy - *gs_energy;};
+        const auto exciation_energies = (*es_energies) | transformed(absolute_energy_into_excitation_energy);
+        std::cout << "[RESULT] [POST] es_exciation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
+    }
+}
+
 int main(int argc, char** argv) {
     try {
         // ******************************************************************
@@ -88,11 +145,11 @@ int main(int argc, char** argv) {
             assert(false);
         }();
         // ******************************************************************
-        const std::unique_ptr<model_monostar::ReferenceEnergies> reference_energies =
-                [&interpreted_program_options]() -> std::unique_ptr<model_monostar::ReferenceEnergies> {
+        const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies =
+                [&interpreted_program_options]() -> std::shared_ptr<model_monostar::ReferenceEnergies> {
                 if (interpreted_program_options.model_type == ModelType::AF &&
                     interpreted_program_options.J_classical == interpreted_program_options.J_quantum) {
-                return std::make_unique<model_monostar::ReferenceEnergiesAf>(
+                return std::make_shared<model_monostar::ReferenceEnergiesAf>(
                     interpreted_program_options.n_sites,
                     interpreted_program_options.J_classical);
     }
@@ -136,30 +193,21 @@ int main(int argc, char** argv) {
             return std::nullopt;
         }();
         // ******************************************************************
-        if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-            std::cout << " ├state: gs "  << std::endl;
-            std::cout << " ││enery = " << *gs_energy << std::endl;
-            if (reference_energies) {
-                std::cout << " ││enery (reference) = " << reference_energies->get_gs_energy() << std::endl;
-            }
-        }
-        if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-            for (unsigned k_n = 0; k_n < interpreted_program_options.n_sites; k_n++) {
-                const auto es_energy = (*es_energies)[k_n];
-                std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
-                std::cout << " ││abs. enery        = " << es_energy << std::endl;
-                if (gs_energy) {
-                    std::cout << " ││exc. enery        = " << es_energy - *gs_energy << std::endl;
-                    if (reference_energies) {
-                        std::cout << " ││exc. enery (ref.) = " << reference_energies->get_es_energy(k_n) << std::endl;
-                    }
-                }
-            }
-        }
-        std::cout << "------------------------------------------" << std::endl;
+        print_results_tree(
+                    interpreted_program_options,
+                    reference_energies,
+                    gs_energy,
+                    es_energies);
+        print_post_data(
+                    interpreted_program_options,
+                    /*reference_energies,*/
+                    gs_energy,
+                    es_energies);
+        // ******************************************************************
     } catch (std::exception& e) {
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
         std::cerr << e.what() << std::endl;
         return 1;
     }
 }
+

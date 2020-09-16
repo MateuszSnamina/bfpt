@@ -23,4 +23,6 @@ target_link_libraries("${TARGET_NAME}"
   Boost::program_options
 )
 
+set_target_properties("${TARGET_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
+
 message("CMake has processed: ${TARGET_NAME}")
