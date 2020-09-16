@@ -57,12 +57,16 @@ def prepare_reference_data(n_sites):
     patch_data_for_two_pi(data)
     return data
 
-def put_data_on_absolute_energy_plot(ax, data, **style):
+def put_data_on_absolute_energy_plot(ax, data, scatter=False, **style):
   ax.axhline(y = data['gs_energy'], **style)
   ax.plot(data['domain'], data['es_absolute_energies'], **style)
+  if scatter:
+      ax.scatter(data['domain'], data['es_absolute_energies'], marker='*', **style)
 
-def put_data_on_excitation_energy_plot(ax, data, **style):
+def put_data_on_excitation_energy_plot(ax, data, scatter=False, **style):
   ax.plot(data['domain'], data['es_excitation_energies'], **style)
+  if scatter:
+      ax.scatter(data['domain'], data['es_excitation_energies'], marker='*', **style)
 
 def index_to_color(idx, length):
     if len(data_list) > 1:
@@ -94,7 +98,7 @@ ax1 = fig.add_subplot(111)
 put_data_on_absolute_energy_plot(ax1, reference_data, color='gray', linewidth=4)
 for (index , data) in enumerate(data_list):
     color = index_to_color(index, len(data_list))  
-    put_data_on_absolute_energy_plot(ax1, data, color=color, linewidth=2)
+    put_data_on_absolute_energy_plot(ax1, data, scatter=True, color=color, linewidth=2)
 ax1.grid()
 ax1.set_xlim(0, 2 * math.pi)
 ax1.xaxis.set_major_locator(plt.MultipleLocator(math.pi / 2))
@@ -110,9 +114,10 @@ ax1 = fig.add_subplot(111)
 put_data_on_excitation_energy_plot(ax1, reference_data, color='gray', linewidth=4)
 for (index , data) in enumerate(data_list):
     color = index_to_color(index, len(data_list))  
-    put_data_on_excitation_energy_plot(ax1, data, color=color, linewidth=2)
+    put_data_on_excitation_energy_plot(ax1, data, scatter=True, color=color, linewidth=2)
 ax1.grid()
 ax1.set_xlim(0, 2 * math.pi)
+ax1.set_ylim(0, None)
 ax1.xaxis.set_major_locator(plt.MultipleLocator(math.pi / 2))
 ax1.xaxis.set_minor_locator(plt.MultipleLocator(math.pi / 12))
 ax1.xaxis.set_major_formatter(plt.FuncFormatter(utility.multiple_formatter.multiple_formatter()))

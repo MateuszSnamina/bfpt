@@ -37,5 +37,43 @@ build_release/bin/model_monostar # try it!
 ```
 
 # Example
+ 
+The project contains an executable (`model_monostar`) showing how to use the solver for 1D Heisenberg (anti)ferromagnet.
+ 
+Monostar model is defined for quantum systems made of two-level subsystems described here as a chain of nodes with
+the nodes interaction restricted to the nearest neighbors.
+The chain node quantum levels are denoted `gs` and `es` (like ground state and excited state).
+The system Hamiltonian `H` is translationally invariant (with periodic boundary conditions)
+and is prescribed by the kernel two-nodes Hamiltionian `H_12`: `H = \sum_{<ij>} H_12(i,j)` (with the summation over pairs of adjacent nodes).
+`H_12` is further decomposed into `H_12_diag` and `H_12_off_diag` parts;
+`H_12_diag` defines diagonal energies of `(gs, gs)`, `(gs, es)`, `(es, gs)`, `(es, es)`,
+whereas `H_12_off_diag` describes coupling between the state pairs.
 
-The project contains an executable (model_monostar) showing how to use the solver for 1D Heisenberg antiferromagnet.
+The model goes in two flavors: `fm` and `af`, each parameterized with two real values `J_classical` and `J_quantum`.
+The `H_12_diag` does not depend the variant and is governed by `J_classical` 
+| states pair | energy contribution |
+|-------------|---------------------|
+| `(gs, gs)`  | -J_classical/4      |
+| `(gs, es)`  | +J_classical/4      |
+| `(es, gs)`  | +J_classical/4      |
+| `(es, es)`  | -J_classical/4      |
+
+
+`H_12_off_diag` in `fm` model variant is given by:
+| coupled states pairs      | coupling contribution |
+|---------------------------|-----------------------|
+| `(es, gs)` <-> `(gs, es)` | -J_quantum/2          |
+
+`H_12_off_diag` in `af` model variant is given by:
+| coupled states pairs      | coupling contribution |
+|---------------------------|-----------------------|
+| `(gs, gs)` <-> `(es, es)` | +J_quantum/2          |
+
+The `fm` monostar model is trivially equivalent with Heisenberg ferromagnet with `gs` translated into `spin down` and `es` translated into `spin up`. `af` monostar model is equivalent to  Heisenberg antiferromagnet with the monostar states to spin states association given by `gs`=`down`, `es`=`up` on one sub-lattice, and `gs`=`up`, `es`=`down` on the other sublattice.
+
+The plot below presents the system Hamiltonian eigenenergies for `af` monostar system of 20 nodes calculated with `bfpt` at different levels of approximation. The considered system states are: the system ground state (horizontal lines on the plots) and system states from the first excited band (the curves on the plots). Result for PR orders from 2 to 7 are represented by scatter plot with colors going from red to blue. In addition exact reference results obtained for infinite chain was included (the reference ground state energy was scaled so to preserve the quantum correlation energy per node); the reference energies are represented by gray lines.
+
+![Alt text](img/model_monostar_20sites_absolute_energy.png "Monostar model -- absolute energies")
+
+TODO
+![Alt text](img/model_monostar_20sites_excitation_enery.png "Monostar model -- excitation energies")
