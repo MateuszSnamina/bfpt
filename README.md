@@ -62,14 +62,14 @@ The `H_12_diag` does not depend the variant and is governed by `J_classical`:
 | `(es, es)`  | `-J_classical/4`    |
 
 `H_12_off_diag` in `fm` model variant is given by:
-| coupled states pairs      | coupling contribution |
-|---------------------------|-----------------------|
-| `(es, gs)` <-> `(gs, es)` | `-J_quantum/2`        |
+| coupled states pairs    | coupling contribution |
+|-------------------------|-----------------------|
+| `(es, gs)` ⟷ `(gs, es)` | `-J_quantum/2`        |
 
 `H_12_off_diag` in `af` model variant is given by:
-| coupled states pairs      | coupling contribution |
-|---------------------------|-----------------------|
-| `(gs, gs)` <-> `(es, es)` | `+J_quantum/2`        |
+| coupled states pairs    | coupling contribution |
+|-------------------------|-----------------------|
+| `(gs, gs)` ⟷ `(es, es)` | `+J_quantum/2`        |
 
 `fm` monostar model is trivially equivalent to Heisenberg ferromagnet model with `gs` translated into `spin down` and `es` translated into `spin up`. `af` monostar model is equivalent to Heisenberg antiferromagnet with the monostar states to spin states association given by `gs`≡`down`, `es`≡`up` for nodes on one magnetic sub-lattice, and `gs`≡`up`, `es`≡`down` on the other.
 To keep the equivalence explicit, here term "monostar model" is used instead of "Heisenberg (anti)ferromagnet mode" to avoid confusion.
