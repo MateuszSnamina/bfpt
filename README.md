@@ -1,6 +1,6 @@
 # Bfpt
 
-## what it is not
+## What it is
 Bfpt (Brute Force Perturbation Theory) is a numeric solver of quantum Hamiltonian eigenproblem for discrete one dimensional periodic systems.
 
 The solver perform exact denationalization (ED) in a subspace of the system Hilbert space. The subspace is constructed in a spirit of perturbation calculus. The construction starts with the 0-th order subspace filled exclusively with quantum states provded by the solver user. Then the next order subspaces are constructed iteratively: The (n+1)-th order subspace is the n-th order subspace extended by the Hamiltonian image of the n-th order subspace. The solver user defines the target subspace order. Having the desired subspace constructed, Hamiltonian restricted to the subspace is diagonalized using a spare matrices numeric method.
@@ -11,7 +11,7 @@ The archetype problem fitting the solver domain is one dimensional Heisenberg an
 
 The solver is conceived to be general and easily extensible so to encore further experimenting. The project tries to achieve the objectives by involving easy to play modern C++ with balanced static and dynamic polymorphism, limited usage of external libraries focusing only on battle-tested ones:  Armadillo, BLAS, LAPACK, ARPACK libraries stack for linear algebra, and boost library for standard general purposes.
 
-## what it is not
+## What it is not
 
 - The solver is not meant to be a competitor for Bethe ansatz based solutions.
 - Bfpt is not meant to be the fastest numeric solver created.
@@ -56,18 +56,18 @@ The model goes in two flavors: `fm` and `af`, each parameterized with two real v
 The `H_12_diag` does not depend the variant and is governed by `J_classical`:
 | states pair | energy contribution |
 |-------------|---------------------|
-| `(gs, gs)`  | -J_classical/4      |
-| `(gs, es)`  | +J_classical/4      |
-| `(es, gs)`  | +J_classical/4      |
-| `(es, es)`  | -J_classical/4      |
+| `(gs, gs)`  | `-J_classical/4`    |
+| `(gs, es)`  | `+J_classical/4`    |
+| `(es, gs)`  | `+J_classical/4`    |
+| `(es, es)`  | `-J_classical/4`    |
 `H_12_off_diag` in `fm` model variant is given by:
 | coupled states pairs      | coupling contribution |
 |---------------------------|-----------------------|
-| `(es, gs)` <-> `(gs, es)` | -J_quantum/2          |
+| `(es, gs)` <-> `(gs, es)` | `-J_quantum/2`        |
 `H_12_off_diag` in `af` model variant is given by:
 | coupled states pairs      | coupling contribution |
 |---------------------------|-----------------------|
-| `(gs, gs)` <-> `(es, es)` | +J_quantum/2          |
+| `(gs, gs)` <-> `(es, es)` | `+J_quantum/2`        |
 
 `fm` monostar model is trivially equivalent to Heisenberg ferromagnet model with `gs` translated into `spin down` and `es` translated into `spin up`. `af` monostar model is equivalent to Heisenberg antiferromagnet with the monostar states to spin states association given by `gs`≡`down`, `es`≡`up` for nodes on one magnetic sub-lattice, and `gs`≡`up`, `es`≡`down` on the other.
 To keep the equivalence explicit, here term "monostar model" is used instead of "Heisenberg (anti)ferromagnet mode" to avoid confusion.
