@@ -18,7 +18,7 @@ public:
         assert(n_sites > 0);
     }
     virtual double get_gs_energy() const = 0;
-    virtual double get_es_energy(unsigned n_k) const = 0;
+    virtual double get_es_energy(unsigned n_k) const = 0; //TODO: change name to: get_es_exciation_enery
     virtual ~ReferenceEnergies() = default;
 protected:
     const unsigned _n_sites;

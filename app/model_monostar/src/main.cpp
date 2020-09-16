@@ -16,6 +16,7 @@
 #include <armadillo>
 
 #include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/irange.hpp>
 
 #include <iostream>
 
@@ -114,6 +115,13 @@ void print_post_data(
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         std::cout << "[RESULT] [POST] gs_energy: " << *gs_energy << std::endl;
     }
+    if (interpreted_program_options.run_type == RunType::EG) {
+        const auto& n_sites = interpreted_program_options.n_sites;
+        const auto nk_to_k =
+                [n_sites](int n_k)->double{return (2 * arma::datum::pi * n_k) / n_sites;};
+        const auto domain = boost::irange(0u, n_sites) | transformed(nk_to_k);
+        std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
+    }
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
         std::cout << "[RESULT] [POST] es_absolute_energies: " << ((*es_energies) | RSS<double>().like_python_list()) << std::endl;
     }
@@ -121,7 +129,7 @@ void print_post_data(
         const auto absolute_energy_into_excitation_energy =
                 [gs_energy](double es_energy)->double{return es_energy - *gs_energy;};
         const auto exciation_energies = (*es_energies) | transformed(absolute_energy_into_excitation_energy);
-        std::cout << "[RESULT] [POST] es_exciation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
+        std::cout << "[RESULT] [POST] es_excitation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
     }
 }
 

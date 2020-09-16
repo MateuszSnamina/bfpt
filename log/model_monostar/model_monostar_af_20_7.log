@@ -1,0 +1,396 @@
+[INFO   ] [PROGRAM_OPTIONS] n_sites                           = 20
+[INFO   ] [PROGRAM_OPTIONS] n_pt                              = 7
+[INFO   ] [PROGRAM_OPTIONS] model_type                        = ModelType::AF
+[INFO   ] [PROGRAM_OPTIONS] J_classical                       = 1
+[INFO   ] [PROGRAM_OPTIONS] J_quantum                         = 1
+[INFO   ] [PROGRAM_OPTIONS] run_type                          = ModelType::EG
+[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_flag      = 0
+[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_size_flag = 1
+[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_flag        = 0
+[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_size_flag   = 1
+[INFO   ] [PROGRAM_OPTIONS] print_sp_hamiltonian_flag         = 0
+[INFO   ] [PROGRAM_OPTIONS] print_hamiltonian_flag            = 0
+[INFO   ] [PROGRAM_OPTIONS] print_eigen_values_flag           = 1
+[INFO   ] [PROGRAM_OPTIONS] print_eigen_vectors_flag          = 0
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 1.17853s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 1773.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 2.23191s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 0.147241s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.7889
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 7.35316s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.59666s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.86836s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.5868
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.29613s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.61111s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.71905s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.3438
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.33037s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.57504s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.34623s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.8886
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.31027s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.58891s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.73302s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.5296
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.28296s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.56219s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.41841s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.2940
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.25896s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.54223s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.32682s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.2122
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.26044s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.62422s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.39879s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.2940
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.27464s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.56876s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 3.12992s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.5296
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.31896s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.54468s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.241s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.8886
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.26831s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.57492s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.79136s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.3438
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.31663s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.5397s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.8803s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.5868
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.29151s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.57606s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.58566s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.3438
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.31773s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.56385s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.33111s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.8886
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.29977s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.63202s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.75305s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.5296
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.2862s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.55457s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.08141s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.2940
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.26398s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.55217s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.99286s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.2122
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.29282s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.64732s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.13023s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.2940
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.53147s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.79271s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.76795s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.5296
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.52307s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.74754s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 2.61699s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -7.8886
+------------------------------------------
+[common-recipe] [data    ] Unpopulated basis (0'th pt-order basis) size: 1.
+[common-recipe] [progress] About to populate pt-basis.
+[common-recipe] [time    ] Populating pt-basis took 6.45778s.
+[common-recipe] [progress] Has populated pt-basis.
+[common-recipe] [data    ] Populated basis (7'th pt-order basis) size: 9234.
+[common-recipe] [progress] About to generate hamiltoniam.
+[common-recipe] [time    ] Generating kn-hamiltoniam matrix took 9.8821s.
+[common-recipe] [progress] Has generated kn-hamiltoniam.
+[common-recipe] [progress] About to solve eigen problem.
+[common-recipe] [time    ] Solving eigen problem took: 1.76745s.
+[common-recipe] [progress] Has solved eigen problem.
+[common-recipe] [data    ] eigen_values:
+[common-recipe]   -8.3438
+------------------------------------------
+ ├state: gs 
+ ││enery = -8.78894
+ ││enery (reference) = -8.86294
+ ├state: es [k_n = 0]
+ ││abs. enery        = -8.5868
+ ││exc. enery        = 0.202142
+ ││exc. enery (ref.) = 0
+ ├state: es [k_n = 1]
+ ││abs. enery        = -8.34376
+ ││exc. enery        = 0.445183
+ ││exc. enery (ref.) = 0.485403
+ ├state: es [k_n = 2]
+ ││abs. enery        = -7.88858
+ ││exc. enery        = 0.900358
+ ││exc. enery (ref.) = 0.923291
+ ├state: es [k_n = 3]
+ ││abs. enery        = -7.52955
+ ││exc. enery        = 1.25939
+ ││exc. enery (ref.) = 1.2708
+ ├state: es [k_n = 4]
+ ││abs. enery        = -7.29398
+ ││exc. enery        = 1.49496
+ ││exc. enery (ref.) = 1.49392
+ ├state: es [k_n = 5]
+ ││abs. enery        = -7.21216
+ ││exc. enery        = 1.57678
+ ││exc. enery (ref.) = 1.5708
+ ├state: es [k_n = 6]
+ ││abs. enery        = -7.29398
+ ││exc. enery        = 1.49496
+ ││exc. enery (ref.) = 1.49392
+ ├state: es [k_n = 7]
+ ││abs. enery        = -7.52955
+ ││exc. enery        = 1.25939
+ ││exc. enery (ref.) = 1.2708
+ ├state: es [k_n = 8]
+ ││abs. enery        = -7.88858
+ ││exc. enery        = 0.900358
+ ││exc. enery (ref.) = 0.923291
+ ├state: es [k_n = 9]
+ ││abs. enery        = -8.34376
+ ││exc. enery        = 0.445183
+ ││exc. enery (ref.) = 0.485403
+ ├state: es [k_n = 10]
+ ││abs. enery        = -8.5868
+ ││exc. enery        = 0.202142
+ ││exc. enery (ref.) = 1.92367e-16
+ ├state: es [k_n = 11]
+ ││abs. enery        = -8.34376
+ ││exc. enery        = 0.445183
+ ││exc. enery (ref.) = 0.485403
+ ├state: es [k_n = 12]
+ ││abs. enery        = -7.88858
+ ││exc. enery        = 0.900358
+ ││exc. enery (ref.) = 0.923291
+ ├state: es [k_n = 13]
+ ││abs. enery        = -7.52955
+ ││exc. enery        = 1.25939
+ ││exc. enery (ref.) = 1.2708
+ ├state: es [k_n = 14]
+ ││abs. enery        = -7.29398
+ ││exc. enery        = 1.49496
+ ││exc. enery (ref.) = 1.49392
+ ├state: es [k_n = 15]
+ ││abs. enery        = -7.21216
+ ││exc. enery        = 1.57678
+ ││exc. enery (ref.) = 1.5708
+ ├state: es [k_n = 16]
+ ││abs. enery        = -7.29398
+ ││exc. enery        = 1.49496
+ ││exc. enery (ref.) = 1.49392
+ ├state: es [k_n = 17]
+ ││abs. enery        = -7.52955
+ ││exc. enery        = 1.25939
+ ││exc. enery (ref.) = 1.2708
+ ├state: es [k_n = 18]
+ ││abs. enery        = -7.88858
+ ││exc. enery        = 0.900358
+ ││exc. enery (ref.) = 0.923291
+ ├state: es [k_n = 19]
+ ││abs. enery        = -8.34376
+ ││exc. enery        = 0.445183
+ ││exc. enery (ref.) = 0.485403
+[RESULT] [POST] gs_energy: -8.78894
+[RESULT] [POST] domain: [0, 0.314159, 0.628319, 0.942478, 1.25664, 1.5708, 1.88496, 2.19911, 2.51327, 2.82743, 3.14159, 3.45575, 3.76991, 4.08407, 4.39823, 4.71239, 5.02655, 5.34071, 5.65487, 5.96903]
+[RESULT] [POST] es_absolute_energies: [-8.5868, -8.34376, -7.88858, -7.52955, -7.29398, -7.21216, -7.29398, -7.52955, -7.88858, -8.34376, -8.5868, -8.34376, -7.88858, -7.52955, -7.29398, -7.21216, -7.29398, -7.52955, -7.88858, -8.34376]
+[RESULT] [POST] es_excitation_energies: [0.202142, 0.445183, 0.900358, 1.25939, 1.49496, 1.57678, 1.49496, 1.25939, 0.900358, 0.445183, 0.202142, 0.445183, 0.900358, 1.25939, 1.49496, 1.57678, 1.49496, 1.25939, 0.900358, 0.445183]
