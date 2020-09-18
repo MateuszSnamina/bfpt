@@ -214,15 +214,16 @@ eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
     // --------------------------------------------------------------
     assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
-    const auto size = matrix.n_cols;
+    const auto size = matrix.n_cols; //TODO mark UNUSED
+    const arma::uword n_vectors_not_reduced_to_calculate = 2 * n_vectors + n_extra_vectors;
+    assert(n_vectors_not_reduced_to_calculate < 2 * size);
+    // --------------------------------------------------------------
     const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
     assert(re_matrix.n_cols == re_matrix.n_rows);
     assert(re_matrix.n_cols == 2 * size);
     // --------------------------------------------------------------
     arma::vec eigen_values_not_reduced;
     arma::mat re_eigen_vectors_not_reduced;
-    const arma::uword n_vectors_not_reduced_to_calculate = 2 * n_vectors + n_extra_vectors;
-    assert(n_vectors_not_reduced_to_calculate < 2 * size);
     const bool eigs_sym_success = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
                                                  n_vectors_not_reduced_to_calculate, form, tol);
     if (!eigs_sym_success) {
@@ -277,7 +278,7 @@ eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
         const arma::span not_reduced_span(2 * span.first, 2 * span.second - 1);
         const arma::span reduced_span(span.first, span.second - 1);
         arma::cx_mat basis;
-        const bool orth_success = arma::orth(basis, cx_eigen_vectors_not_reduced.cols(not_reduced_span), 10 * tol);
+        const bool orth_success = arma::orth(basis, cx_eigen_vectors_not_reduced.cols(not_reduced_span), 1000 * tol);
         if (!orth_success) {
             std::string message = "arma::orth claims it failed.";
             std::cerr << "[debug-info] " << message << "." << std::endl;
@@ -300,7 +301,11 @@ eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
             FailedToReproduceComplexDegeneracySubspace error_detail{span, span_size, basis.n_cols};
             return LinearAlgebraRuntimeException{message, error_detail};
         }
-        eigen_vectors.cols(reduced_span) = basis;
+        //std::cout << "span.second, span.first: " << span.second << ", " << span.first << std::endl; // TODO remove
+        //std::cout << "not_reduced_span -> " << 2 * span.first << ", " << 2 * span.second - 1 << std::endl; // TODO remove
+        //std::cout << "reduced_span     -> " << span.first << ", " << span.second - 1 << std::endl; // TODO remove
+        //std::cout << "basis.n_rows, basis.n_cols: " << basis.n_rows  << ", " << basis.n_cols << std::endl; // TODO remove
+        eigen_vectors.cols(reduced_span) = basis.cols(0, span_size - 1);
     }
     return HermitianEigenInfo{eigen_values, eigen_vectors};
 }
@@ -322,7 +327,7 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
     const auto size = matrix.n_cols;
     assert(n_vectors <= size);
     // --------------------------------------------------------------
-    if (matrix.size() < 40) {
+    if (size < 40) {
         std::cerr << "[debug-info] [fallbacked_eigs_sym] fallbacked_eigs_sym uses dense calculus." << std::endl;
         const auto eig_sym_result = lin_alg::eig_sym(arma::cx_mat(matrix));
         if (eig_sym_result.is_err()) {
@@ -333,6 +338,7 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
         return HermitianEigenInfo{eigen_info.eigen_values(requested_span), eigen_info.eigen_vectors.cols(requested_span)};
     }
     // --------------------------------------------------------------
+    assert(n_vectors < size);
     for (unsigned n_try = 0; n_try < max_n_tries; n_try++) {
         std::cerr << "[debug-info] [fallbacked_eigs_sym] try no: " << std::to_string(n_try) << "." << std::endl;
         const unsigned n_extra_vectors = n_try;
