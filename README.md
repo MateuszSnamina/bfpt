@@ -47,10 +47,10 @@ The nodes interactions are assumed to be restricted to the nearest neighbors.
 
 A chain node quantum levels are denoted: `gs` and `es` (like ground state and excited state).
 The system Hamiltonian `H` is translationally invariant (with periodic boundary conditions)
-and is prescribed by the kernel two-nodes Hamiltionian `H_12`: `H = \sum_{<ij>} H_12(i,j)` (with the summation over pairs of adjacent nodes).
+and is prescribed by two-nodes kernel Hamiltionian `H_12` (`H = \sum_{<ij>} H_12(i,j)` with the summation over pairs of adjacent nodes).
 `H_12` is further decomposed into `H_12_diag` and `H_12_off_diag` parts;
-`H_12_diag` defines diagonal energies of `(gs, gs)`, `(gs, es)`, `(es, gs)`, `(es, es)` nodes pairs,
-whereas `H_12_off_diag` describes coupling between the pairs.
+`H_12_diag` defines diagonal energies for `(gs, gs)`, `(gs, es)`, `(es, gs)`, `(es, es)` nodes pairs,
+whereas `H_12_off_diag` describes couplings between the pairs.
 
 The model goes in two flavors: `fm` and `af`, each parameterized with two real values `J_classical` and `J_quantum`.
 The `H_12_diag` does not depend the variant and is governed by `J_classical`:
