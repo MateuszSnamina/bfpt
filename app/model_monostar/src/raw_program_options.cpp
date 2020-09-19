@@ -49,6 +49,12 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --run_type,-r:
             ("run_type,r",
              boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))
+            // --es_momentum_domain_string,-d:
+            ("es_momentum_domain_string,d",
+             boost::program_options::value<std::string>(&program_options.es_momentum_domain_string)->default_value("all"))
+            // --es_n_k,-k:
+            ("es_n_k,k",
+             boost::program_options::value<unsigned>(&program_options.es_n_k)->default_value(0))
             // --print_unpopulated_basis_flag,-U:
             ("print_unpopulated_basis_flag,U",
              boost::program_options::bool_switch(&program_options.print_unpopulated_basis_flag)->default_value(false))

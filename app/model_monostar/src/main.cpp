@@ -63,6 +63,7 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] J_classical                       = " << interpreted_program_options.J_classical << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] J_quantum                         = " << interpreted_program_options.J_quantum << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                          = " << interpreted_program_options.run_type << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] es_momentum_domain                = " << interpreted_program_options.es_momentum_domain << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_size_flag = " << interpreted_program_options.print_flags.print_unpopulated_basis_size_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_flag        = " << interpreted_program_options.print_flags.print_populated_basis_flag << std::endl;
@@ -79,6 +80,10 @@ void print_results_tree(
         const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies,
         const std::optional<double>& gs_energy,
         const std::optional<std::vector<double>>& es_energies) {
+    const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+                interpreted_program_options.es_momentum_domain,
+                interpreted_program_options.n_sites);
+    assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         std::cout << " ├state: gs "  << std::endl;
@@ -88,7 +93,7 @@ void print_results_tree(
         }
     }
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        for (unsigned k_n = 0; k_n < interpreted_program_options.n_sites; k_n++) {
+        for (unsigned k_n =  es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
             const auto es_energy = (*es_energies)[k_n];
             std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
             std::cout << " ││abs. enery        = " << es_energy << std::endl;
@@ -112,6 +117,10 @@ void print_post_data(
     using extension::boost::stream_pragma::operator|;
     using extension::boost::stream_pragma::operator<<;
     using namespace boost::adaptors;
+    const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+                interpreted_program_options.es_momentum_domain,
+                interpreted_program_options.n_sites);
+    assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         std::cout << "[RESULT] [POST] gs_energy: " << *gs_energy << std::endl;
     }
@@ -121,7 +130,7 @@ void print_post_data(
                 [n_sites](int n_k)->double{return (2 * arma::datum::pi * n_k) / n_sites;};
         const auto domain = boost::irange(0u, n_sites) | transformed(nk_to_k);
         std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
-    }
+    }  //TODO: FIX for: es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.first
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
         std::cout << "[RESULT] [POST] es_absolute_energies: " << ((*es_energies) | RSS<double>().like_python_list()) << std::endl;
     }
@@ -187,8 +196,12 @@ int main(int argc, char** argv) {
                 [&interpreted_program_options, &hamiltonian_12]() -> std::optional<std::vector<double>> {
             std::cout << "------------------------------------------" << std::endl;
             if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+                const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+                            interpreted_program_options.es_momentum_domain,
+                            interpreted_program_options.n_sites);
                 std::vector<double> es_energies;
-                for (unsigned k_n = 0; k_n < interpreted_program_options.n_sites; k_n++) {
+                for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
+                    std::cout << "[PROGRESS] " << "solving n_k: " << k_n << std::endl;
                     const double es_energy = bfpt_kn_es(
                                 hamiltonian_12,
                                 interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
