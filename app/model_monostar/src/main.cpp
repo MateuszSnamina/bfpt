@@ -128,9 +128,9 @@ void print_post_data(
         const auto& n_sites = interpreted_program_options.n_sites;
         const auto nk_to_k =
                 [n_sites](int n_k)->double{return (2 * arma::datum::pi * n_k) / n_sites;};
-        const auto domain = boost::irange(0u, n_sites) | transformed(nk_to_k);
+        const auto domain = boost::irange(es_momentum_range_sapn.first, es_momentum_range_sapn.second) | transformed(nk_to_k);
         std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
-    }  //TODO: FIX for: es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.first
+    }
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
         std::cout << "[RESULT] [POST] es_absolute_energies: " << ((*es_energies) | RSS<double>().like_python_list()) << std::endl;
     }
