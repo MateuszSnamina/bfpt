@@ -72,6 +72,11 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_hamiltonian_flag            = " << interpreted_program_options.print_flags.print_hamiltonian_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_min_max_n_kstates    = " << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
+
+
 }
 
 

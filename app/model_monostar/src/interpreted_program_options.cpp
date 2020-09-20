@@ -43,5 +43,8 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
     interpreted_program_options.print_flags.print_hamiltonian_flag= raw_program_options.print_hamiltonian_flag;
     interpreted_program_options.print_flags.print_eigen_values_flag = raw_program_options.print_eigen_values_flag;
     interpreted_program_options.print_flags.print_eigen_vectors_flag  = raw_program_options.print_eigen_vectors_flag;
+    interpreted_program_options.print_flags.print_pretty_vectors_flag  = raw_program_options.print_pretty_vectors_flag;
+    interpreted_program_options.print_flags.print_pretty_min_max_n_kstates  = {raw_program_options.print_pretty_min_n_kstates, raw_program_options.print_pretty_max_n_kstates};
+    interpreted_program_options.print_flags.print_pretty_probability_treshold  = raw_program_options.print_pretty_probability_treshold;
     return interpreted_program_options;
 }

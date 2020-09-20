@@ -63,15 +63,15 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --print_unpopulated_basis_flag,-U:
             ("print_unpopulated_basis_flag,U",
              boost::program_options::bool_switch(&program_options.print_unpopulated_basis_flag)->default_value(false))
-            // --print_unpopulated_basis_size_flag:
-            ("print_unpopulated_basis_size_flag",
-             boost::program_options::bool_switch(&program_options.print_unpopulated_basis_size_flag)->default_value(true))
-            // --print_populated_basis_flag,-b:
-            ("print_populated_basis_flag,b",
+            // --print_unpopulated_basis_size_flag,-u:
+            ("print_unpopulated_basis_size_flag,u",
+             boost::program_options::bool_switch(&program_options.print_unpopulated_basis_size_flag)->default_value(false))
+            // --print_populated_basis_flag,-B:
+            ("print_populated_basis_flag,B",
              boost::program_options::bool_switch(&program_options.print_populated_basis_flag)->default_value(false))
-            // --print_populated_basis_size_flag:
-            ("print_populated_basis_size_flag",
-             boost::program_options::bool_switch(&program_options.print_populated_basis_size_flag)->default_value(true))
+            // --print_populated_basis_size_flag,-b:
+            ("print_populated_basis_size_flag,b",
+             boost::program_options::bool_switch(&program_options.print_populated_basis_size_flag)->default_value(false))
             // --print_sp_hamiltonian_flag,S:
             ("print_sp_hamiltonian_flag,S",
              boost::program_options::bool_switch(&program_options.print_sp_hamiltonian_flag)->default_value(false))
@@ -80,10 +80,23 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
              boost::program_options::bool_switch(&program_options.print_hamiltonian_flag)->default_value(false))
             // --print_eigen_values_flag,-L:
             ("print_eigen_values_flag,E",
-             boost::program_options::bool_switch(&program_options.print_eigen_values_flag)->default_value(true))
+             boost::program_options::bool_switch(&program_options.print_eigen_values_flag)->default_value(false))
             // --print_eigen_vectors_flag,-V:
             ("print_eigen_vectors_flag,V",
-             boost::program_options::bool_switch(&program_options.print_eigen_vectors_flag)->default_value(false));
+             boost::program_options::bool_switch(&program_options.print_eigen_vectors_flag)->default_value(false))
+            // --print_pretty_vectors_flag,-i:
+            ("print_pretty_vectors_flag,i",
+             boost::program_options::bool_switch(&program_options.print_pretty_vectors_flag)->default_value(true)) //TODO: make it false
+            // --print_pretty_min_n_kstates:
+            ("print_pretty_min_n_kstates",
+             boost::program_options::value<unsigned>(&program_options.print_pretty_min_n_kstates)->default_value(5))
+            // --print_pretty_max_n_kstates:
+            ("print_pretty_max_n_kstates",
+             boost::program_options::value<unsigned>(&program_options.print_pretty_max_n_kstates)->default_value(20))
+            // --print_pretty_probability_treshold:
+            ("print_pretty_probability_treshold",
+             boost::program_options::value<double>(&program_options.print_pretty_probability_treshold)->default_value(0.1));
+
     boost::program_options::positional_options_description p;
     // positional arguments:
     p.add("n_sites", 1);

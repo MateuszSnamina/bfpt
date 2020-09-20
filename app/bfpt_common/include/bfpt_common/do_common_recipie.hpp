@@ -16,6 +16,10 @@
 #include <string>
 
 #include <cassert>
+#include <iomanip>
+#include <algorithm>
+#include <complex>
+#include <cmath>
 
 // #######################################################################
 // ## do_common_recipe                                                  ##
@@ -23,18 +27,89 @@
 
 namespace bfpt_common {
 
+const std::string message_prefix = "[common-recipe] ";
+const std::string progress_tag = "[progress] ";
+const std::string data_tag = "[data    ] ";
+const std::string time_tag = "[time    ] ";
+
 template<typename KstateT>
-inline double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
-                               const IKstateHamiltonian<KstateT>& hamiltonian,
-                               kstate::Basis<KstateT>& basis,
-                               const unsigned max_pt_order, const unsigned k_n,
-                               CommonRecipePrintFlags print_flags) {
+void pretty_print(
+        kstate::Basis<KstateT>& basis,
+        const arma::vec& eigen_values,
+        const arma::cx_mat& eigen_vectors,
+        std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
+        double print_pretty_probability_treshold) {
+    assert(eigen_vectors.n_cols == eigen_values.n_rows);
+    assert(basis.size() == eigen_vectors.n_rows);
+    const auto basis_size = basis.size();
+    struct KstateIdxAndProbability {
+        unsigned idx;
+        double probability;
+    };
+    const auto order_kstateIdx_and_probability = []
+            (const KstateIdxAndProbability& lhs, const KstateIdxAndProbability& rhs) -> bool {
+        return lhs.probability > rhs.probability;
+    };
+    for (unsigned n_eigien_vector = 0; n_eigien_vector < eigen_vectors.n_cols; n_eigien_vector++) {
+        const auto eigen_value = eigen_values(n_eigien_vector);
+        const auto eigien_vector = eigen_vectors.col(n_eigien_vector);
+        std::cout << message_prefix << data_tag
+                  << "eigen vector no: " << std::setw(6) << n_eigien_vector << ", "
+                  << "eigen energy: " << eigen_value
+                  << "." << std::endl;
+        std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector =
+                [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
+            std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
+            kstateIdx_and_probability_vector_builder.resize(basis_size);
+            for(unsigned idx = 0; idx < basis_size; idx++) {
+                kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
+            }
+            std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
+            return kstateIdx_and_probability_vector_builder;
+        } ();
+        const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+        std::cout << std::fixed << std::setprecision(9);
+        double accumulated_probability = 0.0;
+        for(unsigned print_idx = 0; print_idx < basis_size; print_idx++) {
+            if (print_pretty_min_max_n_kstates.second <= print_idx) {
+                std::cout << message_prefix << data_tag
+                          << "Break pretty print loop as the requested max number of contributions are already printed."
+                          << std::endl;
+                break;
+            }
+            unsigned idx = kstateIdx_and_probability_vector[print_idx].idx;
+            const auto kstate_ptr = basis.vec_index()[idx];
+            const std::complex<double> amplitude = eigien_vector(idx);
+            const double probability = std::norm(amplitude);
+            accumulated_probability += probability;
+            if (print_pretty_min_max_n_kstates.first <= print_idx &&  probability < print_pretty_probability_treshold) {
+                std::cout << message_prefix << data_tag
+                          <<  "Break pretty print loop as the rest of the kstate contributions have probabilities lower than the requested threshold." << std::endl;
+                break;
+            }
+            std::cout << message_prefix << data_tag
+                      << "eigen vector no: " << std::setw(6) << n_eigien_vector << ", "
+                      << "kstate constribution: " << (*kstate_ptr) << ", "
+                      << "probability: " << std::noshowpos << probability << ", "
+                      << "amplitude: " << std::showpos << amplitude << ", "
+                      << "kstate basis idx: " << std::setw(6) << idx << ", "
+                      << "kstate print idx: " << std::setw(6) << print_idx
+                      << "." << std::endl;
+        } // end of print_idx loop
+       std::cout << message_prefix << data_tag
+                 << "The listed above kstate contributions accumulated_probability: " << std::noshowpos << accumulated_probability
+                 << "." << std::endl;
+    } // end of n_eigien_vector loop
+}
+
+template<typename KstateT>
+double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
+                        const IKstateHamiltonian<KstateT>& hamiltonian,
+                        kstate::Basis<KstateT>& basis,
+                        const unsigned max_pt_order, const unsigned k_n,
+                        CommonRecipePrintFlags print_flags) {
     arma::wall_clock timer;
-    __attribute__((unused)) const size_t n_sites = basis.n_sites();
-    const std::string message_prefix = "[common-recipe] ";
-    const std::string progress_tag = "[progress] ";
-    const std::string data_tag = "[data    ] ";
-    const std::string time_tag = "[time    ] ";
+    __attribute__((unused)) const size_t n_sites = basis.n_sites(); //TODO [[unised]]
     assert(k_n < n_sites);
     // --------------------------------------------------
     if (print_flags.print_unpopulated_basis_flag) {
@@ -109,6 +184,11 @@ inline double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
         // std::cout << "eigen_vectors.col(0): " << std::endl
         //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     }
+    if (print_flags.print_pretty_vectors_flag) {
+        pretty_print(basis, eigen_values, eigen_vectors,
+                     print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold);
+    }
+
     // --------------------------------------------------
     return eigen_values(0);
 }
