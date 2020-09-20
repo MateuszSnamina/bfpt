@@ -6,10 +6,10 @@
 #include <boost/range/adaptor/map.hpp>
 
 const extern std::map<std::string, EsMomentumDomain> interpret_es_momentum_domain_map{
-    {"quarter_pi_without", EsMomentumDomain::quarter_pi_without},
-    {"quarter_pi_with", EsMomentumDomain::quarter_pi_with},
     {"half_pi_without", EsMomentumDomain::half_pi_without},
     {"half_pi_with", EsMomentumDomain::half_pi_with},
+    {"pi_without", EsMomentumDomain::pi_without},
+    {"pi_with", EsMomentumDomain::pi_with},
     {"all", EsMomentumDomain::all},
     {"one", EsMomentumDomain::one},
 };
@@ -33,14 +33,14 @@ utility::Result<EsMomentumDomain, std::domain_error> interpret_es_momentum_domai
 }
 
 EsMomentumDomainVariant es_momentum_domain_enum_to_variant(EsMomentumDomain m, unsigned n_k) {
-    if (m == EsMomentumDomain::quarter_pi_without) {
-        return EsMomentumDomainQuarterPiWithout{};
-    } else if (m == EsMomentumDomain::quarter_pi_with) {
-        return EsMomentumDomainQuarterPiWith{};
-    } else if (m == EsMomentumDomain::half_pi_without) {
+    if (m == EsMomentumDomain::half_pi_without) {
         return EsMomentumDomainHalfPiWithout{};
     } else if (m == EsMomentumDomain::half_pi_with) {
         return EsMomentumDomainHalfPiWith{};
+    } else if (m == EsMomentumDomain::pi_without) {
+        return EsMomentumDomainPiWithout{};
+    } else if (m == EsMomentumDomain::pi_with) {
+        return EsMomentumDomainPiWith{};
     } else if (m == EsMomentumDomain::all) {
         return EsMomentumDomainAll{};
     } else if (m == EsMomentumDomain::one) {

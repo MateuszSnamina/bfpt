@@ -1,6 +1,8 @@
 // METRPOPOLIS:
 #include <model_monostar/raw_program_options.hpp>
 #include <model_monostar/interpret_model_type_string.hpp>
+#include <model_monostar/interpret_run_type_string.hpp>
+#include <model_monostar/interpret_es_momentum_domain.hpp>
 // EXTENSIONS:
 #include <extensions/range_streamer.hpp>
 // BOOST:
@@ -17,9 +19,12 @@ void emit_help(std::ostream& s,
     s << "Program: model_monostar" << std::endl;
     s << desc << std::endl;
     const auto range_stream_settings = RSS<std::string>().set_null_sustainer().set_string_separer(", ");
-    const std::string possible_values_model_type_string =
-            (interpret_model_type_string_map | boost::adaptors::map_keys | range_stream_settings).str();
+    const std::string possible_values_model_type_string = (interpret_model_type_string_map | boost::adaptors::map_keys | range_stream_settings).str();
+    const std::string possible_values_run_type_string = (interpret_run_type_string_map | boost::adaptors::map_keys | range_stream_settings).str();
+    const std::string possible_values_es_momentum_domain = (interpret_es_momentum_domain_map | boost::adaptors::map_keys | range_stream_settings).str();
     std::cout << "Possible values of model_type string: " << possible_values_model_type_string << "." << std::endl;
+    std::cout << "Possible values of run_type string: " << possible_values_run_type_string << "." << std::endl;
+    std::cout << "Possible values of es_momentum_domain string: " << possible_values_es_momentum_domain << "." << std::endl;
 }
 
 }  // namespace

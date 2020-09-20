@@ -3,9 +3,9 @@
 Simple resut plotter for bfpt-app
 
 Usage:
-  plot_results.py [-4] [-2] [-s] af [-n <n_sites>] [-J <coupling-value>] <log_file>...
-  plot_results.py [-4] [-2] [-s] fm  [-n <n_sites>] [-J <coupling-value>] <log_file>...
-  plot_results.py [-s] <log_file>...
+  plot_results.py [-4] [-2] [-p] [-s] af [-n <n_sites>] [-J <coupling-value>] <log_file>...
+  plot_results.py [-4] [-2] [-p] [-s] fm [-n <n_sites>] [-J <coupling-value>] <log_file>...
+  plot_results.py [-4] [-2] [-p] [-s] <log_file>...
 
 Options:
   -s, --save                             Save the figures as png files in cwd
@@ -13,6 +13,7 @@ Options:
   -J <value>, --coupling-value <value>   Ising coupling value [default: 1.0]
   -4, --reconstruct4                     Uses data from [0, Pi/2] to infer data for (Pi/2, Pi]
   -2, --reconstruct2                     Uses data from [0, Pi] to infer data for (Pi, 2Pi]
+  -p, --patch_two_pi                     Fill value for 2Pi as it is for 0
 '''
 
 import yaml
@@ -27,29 +28,36 @@ from utility.multiple_formatter import multiple_formatter
 ## reconstruct data functions                ##
 ###############################################
 
+def is_near(v1, v2, epsilon=0.00001):
+  return abs(v1 - v2) < epsilon
+
 def reconstruct_pivot(pivot, X, Y1, Y2):
-  epsilon = 0.00001
-  if abs(X[-1] - pivot) < epsilon:
-    X = X + [pivot - x for x in X[1::-1]]
-    Y1 = Y1 + Y1[1::-1]
-    Y2 = Y2 + Y2[1::-1]
+  assert(len(X) == len(Y1) == len(Y2))
+  assert(X == sorted(X))
+  assert(len(X) >= 1)
+  if is_near(X[-1], pivot) and len(X) >= 2:
+    X = X + [2 * pivot - x for x in X[-2::-1]]
+    Y1 = Y1 + Y1[-2::-1]
+    Y2 = Y2 + Y2[-2::-1]
   else:
-    X = X + [pivot - x for x in X[::-1]]
+    X = X + [2 * pivot - x for x in X[::-1]]
     Y1 = Y1 + Y1[::-1]
     Y2 = Y2 + Y2[::-1]
   return X, Y1, Y2
 
 def reconstruct2(X, Y1, Y2):
-  return reconstruct_pivot(math.pi / 2, X, Y1, Y2)
+  return reconstruct_pivot(math.pi, X, Y1, Y2)
 
 def reconstruct4(X, Y1, Y2):
-  return reconstruct_pivot(math.pi / 4, X, Y1, Y2)
+  return reconstruct_pivot(math.pi / 2, X, Y1, Y2)
 
-def patch_data_for_two_pi(data):
-    idx_of_zero = data['domain'].index(0.0)
-    data['domain'].append(2 * math.pi)
-    data['es_excitation_energies'].append(data['es_excitation_energies'][idx_of_zero])
-    data['es_absolute_energies'].append(data['es_absolute_energies'][idx_of_zero])
+def patch_two_pi(X, Y1, Y2):
+  idx_of_zero = X.index(0.0)
+  X.append(2 * math.pi)
+  Y1.append(Y1[idx_of_zero])
+  Y2.append(Y2[idx_of_zero])
+  return X, Y1, Y2
+
 
 ###############################################
 ## build data functions                      ##
@@ -75,12 +83,13 @@ def grep_log_data(log_file_path):
        domain, es_absolute_energies, es_excitation_energies = reconstruct4(domain, es_absolute_energies, es_excitation_energies)
     if po['--reconstruct2']:
        domain, es_absolute_energies, es_excitation_energies = reconstruct2(domain, es_absolute_energies, es_excitation_energies)
+    if po['--patch_two_pi']:
+       domain, es_absolute_energies, es_excitation_energies = patch_two_pi(domain, es_absolute_energies, es_excitation_energies)
     data = {
         'gs_energy': gs_energy,
         'domain': domain,
         'es_excitation_energies' : es_excitation_energies,
         'es_absolute_energies' : es_absolute_energies}
-    patch_data_for_two_pi(data)
     return data
 
 def prepare_af_reference_data(n_sites, J):
@@ -89,12 +98,12 @@ def prepare_af_reference_data(n_sites, J):
     domain = [2 * math.pi * x / GRID for x in range(0, GRID)]
     es_excitation_energies =  [J * math.pi / 2 * abs(math.sin(k)) for k in domain]
     es_absolute_energies =  [J * gs_energy + es_exciation_enery for es_exciation_enery in es_excitation_energies]
+    domain, es_absolute_energies, es_excitation_energies = patch_two_pi(domain, es_absolute_energies, es_excitation_energies)
     data = {
         'gs_energy': gs_energy,
         'domain': domain,
         'es_excitation_energies' : es_excitation_energies,
         'es_absolute_energies' : es_absolute_energies}
-    patch_data_for_two_pi(data)
     return data
 
 def prepare_fm_reference_data(n_sites, J):
@@ -129,7 +138,7 @@ def index_to_color(idx, length):
 #################################################
 
 po = docopt(__doc__)
-print(po)
+
 if po['af']:
   n_sites = int(po['--n_sites'])
   J = float(po['--coupling-value'])
@@ -143,7 +152,7 @@ else:
 
 data_list = []
 for log_file_path in po['<log_file>']:
-  print(f"{log_file_path=}")
+  print(f"Grep {log_file_path=} ...")
   data = grep_log_data(log_file_path)
   data_list.append(data)
 
