@@ -160,7 +160,7 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     // --------------------------------------------------
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
     timer.tic();
-    const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(kn_hamiltonian_matrix, 1, 1e-6);
+    const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
     const double time_solving_eigen_problem = timer.toc();
     if (eigs_sym_result.is_err()) {
         std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;

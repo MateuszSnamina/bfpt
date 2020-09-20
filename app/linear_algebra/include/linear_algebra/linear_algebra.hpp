@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+#include <optional>
 
 // #######################################################################
 // ## Types:                                                            ##
@@ -43,10 +44,10 @@ using LinearAlgebraResult = Result<OutT, LinearAlgebraRuntimeException>;
  * │ Re(corrspondin_cx_col) │
  * │ Im(corrspondin_cx_col) │
  * ╰                        ╯
- * 
+ *
  * Example (of a cx_vec-vec mapping):
  * cx_vec{1+2i,3+4i}  <-mapping->  vec{1,3,2,4}
- * 
+ *
  * Example (of a cx_vec-vec mapping):
  * ╭      ╮               ╭   ╮
  * │ 1+2i │  <-mapping->  │ 1 │
@@ -84,7 +85,7 @@ arma::sp_cx_mat re_to_cx(const arma::sp_mat& m_re);
  * │  +Im(m_cx), +Re(m_cx) │
  * ╰                       ╯
  * where `m_cx` is the imput matrix of `cx_mat` type.
- * 
+ *
  * Note: If the input is a hermitian matrix,
  *       then the result matrix is symmetric.
  */
@@ -106,7 +107,7 @@ arma::sp_mat main_matrix_cx_to_re(const arma::sp_cx_mat& m_cx);
  * │ 3 │                   ╰   ╯
  * │ 3 │
  * ╰   ╯
- * 
+ *
  * The input vector is assumed to be filled in a way that:
  * the n-th and the (n+1)-th have the save value
  * (do not differ more than eps).
@@ -140,7 +141,7 @@ LinearAlgebraResult<arma::vec> reduce_eigen_values(const arma::vec& eigen_values
  * │ 3 │
  * │ 3 │
  * ╰   ╯
- * 
+ *
  * The input eigen_values is assumed to be sorted (ascending).
  * The two eigen_vectors are treated as from the same degeneracy subspaces
  * if their eigen values differ no more than eps.
@@ -155,12 +156,28 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 
 namespace lin_alg {
 
+struct HermitianEigenInfoImpl {
+    arma::vec eigen_values;
+    std::optional<arma::cx_mat> eigen_vectors;
+};
+
 struct HermitianEigenInfo {
     arma::vec eigen_values;
     arma::cx_mat eigen_vectors;
 };
 
 }  // namespace lin_alg
+
+
+// #######################################################################
+// ## fallbacked_eigs_sym                                               ##
+// #######################################################################
+
+// used for tag dispatch function resolution:
+namespace lin_alg {
+struct WithVectors{};
+struct WithoutVectors{};
+}
 
 // #######################################################################
 // ## eig_sym                                                          ##
@@ -175,8 +192,17 @@ namespace lin_alg {
 struct ArmaEigSymClaimsFailed {
 };
 
+LinearAlgebraResult<HermitianEigenInfoImpl>
+eig_sym_impl(bool with_vectors,
+             const arma::cx_mat& matrix);
+
 LinearAlgebraResult<HermitianEigenInfo>
-eig_sym(const arma::cx_mat& matrix);
+eig_sym(WithVectors,
+        const arma::cx_mat& matrix);
+
+LinearAlgebraResult<arma::vec>
+eig_sym(WithoutVectors,
+        const arma::cx_mat& matrix);
 
 }  // namespace lin_alg
 
@@ -186,7 +212,7 @@ eig_sym(const arma::cx_mat& matrix);
 
 /*
  * My version of arma::eig_sym(...) function.
- * 
+ *
  * My version solves eingen problem for cx_mat
  * by translating it into eingen problem for mat.
  */
@@ -211,9 +237,21 @@ struct FailedToReproduceComplexDegeneracySubspace {
     arma::uword n_got_degeneracy_subspace_dimension;
 };
 
+LinearAlgebraResult<HermitianEigenInfoImpl>
+eigs_sym_impl(bool with_vectors,
+              const arma::sp_cx_mat& matrix, unsigned n_vectors,
+              const unsigned n_extra_vectors, const char* form, const double tol);
+
 LinearAlgebraResult<HermitianEigenInfo>
-eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
+eigs_sym(WithVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
          const unsigned n_extra_vectors, const char* form, const double tol);
+
+LinearAlgebraResult<arma::vec>
+eigs_sym(WithoutVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+         const unsigned n_extra_vectors, const char* form, const double tol);
+
 
 }  // namespace lin_alg
 
@@ -227,9 +265,21 @@ eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
 
 namespace lin_alg {
 
+LinearAlgebraResult<HermitianEigenInfoImpl>
+fallbacked_eigs_sym_impl(bool with_vectors,
+                         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+                         const double tol, const unsigned max_n_tries = 7);
+
 LinearAlgebraResult<HermitianEigenInfo>
-fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, unsigned n_vectors,
+fallbacked_eigs_sym(WithVectors,
+                    const arma::sp_cx_mat& matrix, unsigned n_vectors,
                     const double tol, const unsigned max_n_tries = 7);
+
+LinearAlgebraResult<arma::vec>
+fallbacked_eigs_sym(WithoutVectors,
+                    const arma::sp_cx_mat& matrix, unsigned n_vectors,
+                    const double tol, const unsigned max_n_tries = 7);
+
 
 struct AllTriesFailed {
     //std::vector<atd::any> details_for_tries;

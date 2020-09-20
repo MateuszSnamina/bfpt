@@ -184,8 +184,10 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 
 namespace lin_alg {
 
-LinearAlgebraResult<HermitianEigenInfo>
-eig_sym(const arma::cx_mat& matrix) {
+LinearAlgebraResult<HermitianEigenInfoImpl>
+eig_sym_impl(bool with_vectors_flag,
+             const arma::cx_mat& matrix) {
+    //TODO: implement the version for with_vectors_flag = false!
     // --------------------------------------------------------------
     assert(matrix.n_cols == matrix.n_rows);
     // --------------------------------------------------------------
@@ -197,7 +199,32 @@ eig_sym(const arma::cx_mat& matrix) {
         std::cerr << "[debug-info] " << message << "." << std::endl;
         return LinearAlgebraRuntimeException{message, ArmaEigSymClaimsFailed{}};
     }
-    return HermitianEigenInfo{eigen_values, eigen_vectors};
+    return HermitianEigenInfoImpl{eigen_values, eigen_vectors};
+}
+
+LinearAlgebraResult<HermitianEigenInfo>
+eig_sym(WithVectors, const arma::cx_mat& matrix) {
+    const auto result = eig_sym_impl(true, matrix);
+    if (result.is_ok()) {
+        const auto result_value =result.unwrap();
+        assert(result_value.eigen_vectors);
+        return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
+}
+
+LinearAlgebraResult<arma::vec>
+eig_sym(WithoutVectors, const arma::cx_mat& matrix) {
+    const auto result = eig_sym_impl(false, matrix);
+    if (result.is_ok()) {
+        const auto result_value =result.unwrap();
+        return result_value.eigen_values;
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
 }
 
 }  // namespace lin_alg
@@ -208,9 +235,11 @@ eig_sym(const arma::cx_mat& matrix) {
 
 namespace lin_alg {
 
-LinearAlgebraResult<HermitianEigenInfo>
-eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
+LinearAlgebraResult<HermitianEigenInfoImpl>
+eigs_sym_impl(bool with_vectors_flag,
+         const arma::sp_cx_mat& matrix, const unsigned n_vectors,
          const unsigned n_extra_vectors, const char* form, const double tol) {
+    //TODO: implement the version for with_vectors_flag = false!
     // --------------------------------------------------------------
     assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
@@ -307,7 +336,36 @@ eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
         //std::cout << "basis.n_rows, basis.n_cols: " << basis.n_rows  << ", " << basis.n_cols << std::endl; // TODO remove
         eigen_vectors.cols(reduced_span) = basis.cols(0, span_size - 1);
     }
-    return HermitianEigenInfo{eigen_values, eigen_vectors};
+    return HermitianEigenInfoImpl{eigen_values, eigen_vectors};
+}
+
+LinearAlgebraResult<HermitianEigenInfo>
+eigs_sym(WithVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+         const unsigned n_extra_vectors, const char* form, const double tol) {
+    const auto result = eigs_sym_impl(true, matrix, n_vectors, n_extra_vectors, form, tol);
+    if (result.is_ok()) {
+        const auto result_value =result.unwrap();
+        assert(result_value.eigen_vectors);
+        return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
+}
+
+LinearAlgebraResult<arma::vec>
+eigs_sym(WithoutVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+         const unsigned n_extra_vectors, const char* form, const double tol) {
+    const auto result = eigs_sym_impl(false, matrix, n_vectors, n_extra_vectors, form, tol);
+    if (result.is_ok()) {
+        const auto result_value =result.unwrap();
+        return result_value.eigen_values;
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
 }
 
 }  // namespace lin_alg
@@ -318,8 +376,9 @@ eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
 
 namespace lin_alg {
 
-LinearAlgebraResult<HermitianEigenInfo>
-fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
+LinearAlgebraResult<HermitianEigenInfoImpl>
+fallbacked_eigs_sym_impl(bool with_vectors_flag,
+        const arma::sp_cx_mat& matrix, const unsigned n_vectors,
                     const double tol, const unsigned max_n_tries) {
     // --------------------------------------------------------------
     assert(matrix.n_cols == matrix.n_rows);
@@ -329,13 +388,13 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
     // --------------------------------------------------------------
     if (size < 40) {
         std::cerr << "[debug-info] [fallbacked_eigs_sym] fallbacked_eigs_sym uses dense calculus." << std::endl;
-        const auto eig_sym_result = lin_alg::eig_sym(arma::cx_mat(matrix));
+        const auto eig_sym_result = lin_alg::eig_sym_impl(with_vectors_flag, arma::cx_mat(matrix));
         if (eig_sym_result.is_err()) {
             return eig_sym_result.unwrap_err();
         }
         const auto eigen_info = eig_sym_result.unwrap();
         const arma::span requested_span(0, n_vectors - 1);
-        return HermitianEigenInfo{eigen_info.eigen_values(requested_span), eigen_info.eigen_vectors.cols(requested_span)};
+        return HermitianEigenInfoImpl{eigen_info.eigen_values(requested_span), (*eigen_info.eigen_vectors).cols(requested_span)};
     }
     // --------------------------------------------------------------
     assert(n_vectors < size);
@@ -346,7 +405,7 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
             std::cerr << "[debug-info] [fallbacked_eigs_sym] The try is impossible to run as the number of vectros to calculate would exceed the space dimension." << std::endl;
             break;
         }
-        const auto eigs_sym_result = lin_alg::eigs_sym(matrix, n_vectors, n_extra_vectors, "sa", tol);
+        const auto eigs_sym_result = lin_alg::eigs_sym_impl(with_vectors_flag, matrix, n_vectors, n_extra_vectors, "sa", tol);
         if (eigs_sym_result.is_ok()) {
             std::cerr << "[debug-info] [fallbacked_eigs_sym] The try succeded." << std::endl;
             return eigs_sym_result.unwrap();
@@ -361,4 +420,34 @@ fallbacked_eigs_sym(const arma::sp_cx_mat& matrix, const unsigned n_vectors,
     return LinearAlgebraRuntimeException{message, AllTriesFailed{}};
 }
 
+LinearAlgebraResult<HermitianEigenInfo>
+fallbacked_eigs_sym(
+        WithVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+         const double tol, const unsigned max_n_tries) {
+    const auto result = fallbacked_eigs_sym_impl(true, matrix, n_vectors, tol, max_n_tries);
+    if (result.is_ok()) {
+        const auto result_value =result.unwrap();
+        assert(result_value.eigen_vectors);
+        return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
+}
+
+LinearAlgebraResult<arma::vec>
+fallbacked_eigs_sym(
+        WithoutVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+         const double tol, const unsigned max_n_tries) {
+    const auto result = fallbacked_eigs_sym_impl(false, matrix, n_vectors, tol, max_n_tries);
+    if (result.is_ok()) {
+        const auto result_value =result.unwrap();
+        return result_value.eigen_values;
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
+}
 }  // namespace lin_alg
