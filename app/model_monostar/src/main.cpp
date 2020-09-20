@@ -37,7 +37,8 @@ double bfpt_gs(
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
     const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
-                                         max_pt_order, 0, print_flags);
+                                         max_pt_order, 0,
+                                         print_flags, "[gs] ");
 }
 
 double bfpt_kn_es(
@@ -51,7 +52,8 @@ double bfpt_kn_es(
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
     const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
-                                         max_pt_order, k_n, print_flags);
+                                         max_pt_order, k_n,
+                                         print_flags, "[es (" + std::to_string(k_n) + ")] ");
 }
 
 void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {

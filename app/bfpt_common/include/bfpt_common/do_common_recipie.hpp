@@ -38,7 +38,8 @@ void pretty_print(
         const arma::vec& eigen_values,
         const arma::cx_mat& eigen_vectors,
         std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
-        double print_pretty_probability_treshold) {
+        double print_pretty_probability_treshold,
+        std::string print_outer_prefix = "") {
     assert(eigen_vectors.n_cols == eigen_values.n_rows);
     assert(basis.size() == eigen_vectors.n_rows);
     const auto basis_size = basis.size();
@@ -53,7 +54,7 @@ void pretty_print(
     for (unsigned n_eigien_vector = 0; n_eigien_vector < eigen_vectors.n_cols; n_eigien_vector++) {
         const auto eigen_value = eigen_values(n_eigien_vector);
         const auto eigien_vector = eigen_vectors.col(n_eigien_vector);
-        std::cout << message_prefix << data_tag
+        std::cout << print_outer_prefix << message_prefix << data_tag
                   << "eigen vector no: " << std::setw(6) << n_eigien_vector << ", "
                   << "eigen energy: " << eigen_value
                   << "." << std::endl;
@@ -72,7 +73,7 @@ void pretty_print(
         double accumulated_probability = 0.0;
         for(unsigned print_idx = 0; print_idx < basis_size; print_idx++) {
             if (print_pretty_min_max_n_kstates.second <= print_idx) {
-                std::cout << message_prefix << data_tag
+                std::cout << print_outer_prefix << message_prefix << data_tag
                           << "Break pretty print loop as the requested max number of contributions are already printed."
                           << std::endl;
                 break;
@@ -83,11 +84,11 @@ void pretty_print(
             const double probability = std::norm(amplitude);
             accumulated_probability += probability;
             if (print_pretty_min_max_n_kstates.first <= print_idx &&  probability < print_pretty_probability_treshold) {
-                std::cout << message_prefix << data_tag
+                std::cout << print_outer_prefix << message_prefix << data_tag
                           <<  "Break pretty print loop as the rest of the kstate contributions have probabilities lower than the requested threshold." << std::endl;
                 break;
             }
-            std::cout << message_prefix << data_tag
+            std::cout << print_outer_prefix << message_prefix << data_tag
                       << "eigen vector no: " << std::setw(6) << n_eigien_vector << ", "
                       << "kstate constribution: " << (*kstate_ptr) << ", "
                       << "probability: " << std::noshowpos << probability << ", "
@@ -96,7 +97,7 @@ void pretty_print(
                       << "kstate print idx: " << std::setw(6) << print_idx
                       << "." << std::endl;
         } // end of print_idx loop
-       std::cout << message_prefix << data_tag
+       std::cout << print_outer_prefix << message_prefix << data_tag
                  << "The listed above kstate contributions accumulated_probability: " << std::noshowpos << accumulated_probability
                  << "." << std::endl;
     } // end of n_eigien_vector loop
@@ -107,86 +108,88 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                         const IKstateHamiltonian<KstateT>& hamiltonian,
                         kstate::Basis<KstateT>& basis,
                         const unsigned max_pt_order, const unsigned k_n,
-                        CommonRecipePrintFlags print_flags) {
+                        CommonRecipePrintFlags print_flags,
+                        std::string print_outer_prefix = "") {
     arma::wall_clock timer;
     __attribute__((unused)) const size_t n_sites = basis.n_sites(); //TODO [[unised]]
     assert(k_n < n_sites);
     // --------------------------------------------------
     if (print_flags.print_unpopulated_basis_flag) {
-        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):" << std::endl;
+        std::cout << print_outer_prefix << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):" << std::endl;
         std::cout << basis;
     }
     if (print_flags.print_unpopulated_basis_size_flag) {
-        std::cout << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis) size: "
+        std::cout << print_outer_prefix << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis) size: "
                   << basis.size() << "." << std::endl;
     }
     // --------------------------------------------------
     // Define hamiltonian and basis:
-    std::cout << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
     populate_pt_basis(bais_populator, max_pt_order, basis);
     const double time_populating_pt_basis = timer.toc();
-    std::cout << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
-    std::cout << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
     // --------------------------------------------------
     if (print_flags.print_populated_basis_flag) {
-        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):" << std::endl;
+        std::cout << print_outer_prefix << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):" << std::endl;
         std::cout << basis;
     }
     if (print_flags.print_populated_basis_size_flag) {
-        std::cout << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis) size: "
+        std::cout << print_outer_prefix << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis) size: "
                   << basis.size() << "." << std::endl;
     }
     // --------------------------------------------------
     // Generate hamiltoniam matrix:
-    std::cout << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
     const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
-    std::cout << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
-    std::cout << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
     // --------------------------------------------------
     if (print_flags.print_sp_hamiltonian_flag) {
-        std::cout << message_prefix << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
         std::cout << kn_hamiltonian_matrix;
     }
     if (print_flags.print_hamiltonian_flag) {
-        std::cout << message_prefix << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
         std::cout << arma::cx_mat(kn_hamiltonian_matrix);
     }
     // --------------------------------------------------
-    std::cout << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
     timer.tic();
     const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(kn_hamiltonian_matrix, 1, 1e-6);
     const double time_solving_eigen_problem = timer.toc();
     if (eigs_sym_result.is_err()) {
-        std::cout << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
-        std::cout << message_prefix << progress_tag << "Failed to solve eigen problem." << std::endl;
-        std::cout << message_prefix << progress_tag << "The reported error message:" << std::endl;
+        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+        std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem." << std::endl;
+        std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
         std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
         return arma::datum::nan;
     }
     const auto eigen_info = eigs_sym_result.unwrap();
     const arma::vec& eigen_values = eigen_info.eigen_values;
     const arma::cx_mat& eigen_vectors = eigen_info.eigen_vectors;
-    std::cout << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
-    std::cout << message_prefix << progress_tag << "Has solved eigen problem." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+    std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem." << std::endl;
     // --------------------------------------------------
     if (print_flags.print_eigen_values_flag) {
-        std::cout << message_prefix << data_tag << "eigen_values:" << std::endl;
-        std::cout << message_prefix << eigen_values;
+        std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
+        std::cout << print_outer_prefix << message_prefix << eigen_values;
         // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
     }
     if (print_flags.print_eigen_vectors_flag) {
-        std::cout << message_prefix << data_tag << "eigen_vectors:" << std::endl;
-        std::cout << message_prefix << eigen_vectors;
+        std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_vectors:" << std::endl;
+        std::cout << print_outer_prefix << message_prefix << eigen_vectors;
         // std::cout << "eigen_vectors.col(0): " << std::endl
         //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
     }
     if (print_flags.print_pretty_vectors_flag) {
         pretty_print(basis, eigen_values, eigen_vectors,
-                     print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold);
+                     print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold,
+                     print_outer_prefix);
     }
 
     // --------------------------------------------------
