@@ -86,7 +86,7 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
              boost::program_options::bool_switch(&program_options.print_eigen_vectors_flag)->default_value(false))
             // --print_pretty_vectors_flag,-i:
             ("print_pretty_vectors_flag,i",
-             boost::program_options::bool_switch(&program_options.print_pretty_vectors_flag)->default_value(true)) //TODO: make it false
+             boost::program_options::bool_switch(&program_options.print_pretty_vectors_flag)->default_value(false))
             // --print_pretty_min_n_kstates:
             ("print_pretty_min_n_kstates",
              boost::program_options::value<unsigned>(&program_options.print_pretty_min_n_kstates)->default_value(5))

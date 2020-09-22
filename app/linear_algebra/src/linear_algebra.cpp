@@ -179,127 +179,18 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 }  // namespace lin_alg
 
 // #######################################################################
-// ## eigs_sym                                                          ##
+// ## reduce_eigen_vectors                                              ##
 // #######################################################################
 
 namespace lin_alg {
 
-LinearAlgebraResult<HermitianEigenInfoImpl>
-eig_sym_impl(bool with_vectors_flag,
-             const arma::cx_mat& matrix) {
-    //TODO: implement the version for with_vectors_flag = false!
-    // --------------------------------------------------------------
-    assert(matrix.n_cols == matrix.n_rows);
-    // --------------------------------------------------------------
-    arma::vec eigen_values;
-    arma::cx_mat eigen_vectors;
-    const bool eig_sym_success = arma::eig_sym(eigen_values, eigen_vectors, matrix);
-    if (!eig_sym_success) {
-        std::string message = "arma::eigs_sym claims it failed.";
-        std::cerr << "[debug-info] " << message << "." << std::endl;
-        return LinearAlgebraRuntimeException{message, ArmaEigSymClaimsFailed{}};
-    }
-    return HermitianEigenInfoImpl{eigen_values, eigen_vectors};
-}
-
-LinearAlgebraResult<HermitianEigenInfo>
-eig_sym(WithVectors, const arma::cx_mat& matrix) {
-    const auto result = eig_sym_impl(true, matrix);
-    if (result.is_ok()) {
-        const auto result_value =result.unwrap();
-        assert(result_value.eigen_vectors);
-        return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
-    } else {
-        const auto result_error = result.unwrap_err();
-        return result_error;
-    }
-}
-
-LinearAlgebraResult<arma::vec>
-eig_sym(WithoutVectors, const arma::cx_mat& matrix) {
-    const auto result = eig_sym_impl(false, matrix);
-    if (result.is_ok()) {
-        const auto result_value =result.unwrap();
-        return result_value.eigen_values;
-    } else {
-        const auto result_error = result.unwrap_err();
-        return result_error;
-    }
-}
-
-}  // namespace lin_alg
-
-// #######################################################################
-// ## eigs_sym                                                          ##
-// #######################################################################
-
-namespace lin_alg {
-
-LinearAlgebraResult<HermitianEigenInfoImpl>
-eigs_sym_impl(bool with_vectors_flag,
-         const arma::sp_cx_mat& matrix, const unsigned n_vectors,
-         const unsigned n_extra_vectors, const char* form, const double tol) {
-    //TODO: implement the version for with_vectors_flag = false!
-    // --------------------------------------------------------------
-    assert(n_vectors > 0);
-    assert(matrix.n_cols == matrix.n_rows);
-    const auto size = matrix.n_cols; //TODO mark UNUSED
-    const arma::uword n_vectors_not_reduced_to_calculate = 2 * n_vectors + n_extra_vectors;
-    assert(n_vectors_not_reduced_to_calculate < 2 * size);
-    // --------------------------------------------------------------
-    const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
-    assert(re_matrix.n_cols == re_matrix.n_rows);
-    assert(re_matrix.n_cols == 2 * size);
-    // --------------------------------------------------------------
-    arma::vec eigen_values_not_reduced;
-    arma::mat re_eigen_vectors_not_reduced;
-    const bool eigs_sym_success = arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
-                                                 n_vectors_not_reduced_to_calculate, form, tol);
-    if (!eigs_sym_success) {
-        std::string message = "arma::eigs_sym claims it failed.";
-        std::cerr << "[debug-info] " << message << "." << std::endl;
-        return LinearAlgebraRuntimeException{message, ArmaEigsSymClaimsFailed{}};
-    }
-    if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
-        const std::string message1 = "arma::eigs_sym does not claim it failed, but the number of eigenvalues it found is less than needed.";
-        const std::string message2a = "(Requested " + std::to_string(n_vectors_not_reduced_to_calculate) + " eigenvalues, ";
-        const std::string message2b = "got only " + std::to_string(eigen_values_not_reduced.n_rows) + " eigenvalues, ";
-        const std::string message2c = "while needed " + std::to_string(2 * n_vectors) + " eigenvalues.)";
-        const std::string message2 = message2a + message2b + message2c;
-        const std::string message = message1 + message2;
-        std::cerr << "[debug-info] [line 1/2] " << message1 << std::endl;
-        std::cerr << "[debug-info] [line 2/2] " << message2 << std::endl;
-        ArmaEigsSymFailedToFoundEnoughEigenvectors error_detail{n_vectors_not_reduced_to_calculate, eigen_values_not_reduced.n_rows, 2 * n_vectors};
-        return LinearAlgebraRuntimeException{message, error_detail};
-    }
-    assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
-    if (re_eigen_vectors_not_reduced.n_cols < 2 * n_vectors) {
-        const std::string message1 = "arma::eigs_sym does not claim it failed, but the number of eigenvectors it found is less than needed.";
-        const std::string message2a = "(Requested: " + std::to_string(n_vectors_not_reduced_to_calculate) + " eigenvectors, ";
-        const std::string message2b = "got only: " + std::to_string(re_eigen_vectors_not_reduced.n_rows) + " eigenvectors, ";
-        const std::string message2c = "while needed: " + std::to_string(2 * n_vectors) + " eigenvectors.)";
-        const std::string message2 = message2a + message2b + message2c;
-        const std::string message = message1 + " " + message2;
-        std::cerr << "[debug-info] [line 1/2] " << message1 << std::endl;
-        std::cerr << "[debug-info] [line 2/2] " << message2 << std::endl;
-        ArmaEigsSymFailedToFoundEnoughEigenvectors error_detail{n_vectors_not_reduced_to_calculate, eigen_values_not_reduced.n_rows, 2 * n_vectors};
-        return LinearAlgebraRuntimeException{message, error_detail};
-        // return false;
-    }
-    eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
-    re_eigen_vectors_not_reduced = re_eigen_vectors_not_reduced.cols(arma::span(0, 2 * n_vectors - 1));
-    const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
-    // --------------------------------------------------------------
-    // Reduction - eigen_values:
-    const auto reduce_eigen_values_result = reduce_eigen_values(eigen_values_not_reduced, 10 * tol);
-    if (reduce_eigen_values_result.is_err()) {
-        return reduce_eigen_values_result.unwrap_err();
-    }
-    const arma::vec eigen_values = reduce_eigen_values_result.unwrap();
-    // --------------------------------------------------------------
-    // Reduction - eigen_vectors:
+LinearAlgebraResult<arma::cx_mat> reduce_eigen_vectors(
+        const arma::cx_mat& cx_eigen_vectors_not_reduced,
+        const arma::vec& eigen_values,
+        double tol) {
+    assert(cx_eigen_vectors_not_reduced.n_cols == 2 * eigen_values.n_rows);
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, tol);
-    arma::cx_mat eigen_vectors(matrix.n_cols, eigen_values.n_rows);
+    arma::cx_mat eigen_vectors(cx_eigen_vectors_not_reduced.n_rows, eigen_values.n_rows);
     for (unsigned span_idx = 0; span_idx < spans.size(); span_idx++) {
         const auto& span = spans[span_idx];
         assert(span.first < span.second);  // span cannot be empty.
@@ -336,16 +227,53 @@ eigs_sym_impl(bool with_vectors_flag,
         //std::cout << "basis.n_rows, basis.n_cols: " << basis.n_rows  << ", " << basis.n_cols << std::endl; // TODO remove
         eigen_vectors.cols(reduced_span) = basis.cols(0, span_size - 1);
     }
-    return HermitianEigenInfoImpl{eigen_values, eigen_vectors};
+    return eigen_vectors;
 }
 
+}  // namespace lin_alg
+
+
+// #######################################################################
+// ## eigs_sym                                                          ##
+// #######################################################################
+
+namespace lin_alg {
+
+LinearAlgebraResult<HermitianEigenInfoImpl>
+eig_sym_impl(bool with_vectors_flag,
+             const arma::cx_mat& matrix) {
+    // --------------------------------------------------------------
+    assert(matrix.n_cols == matrix.n_rows);
+    // --------------------------------------------------------------
+    arma::vec eigen_values;
+    arma::cx_mat eigen_vectors;
+    const bool eig_sym_success =
+            [with_vectors_flag, &eigen_values, &eigen_vectors, &matrix]() -> bool {
+        if (with_vectors_flag) {
+            return arma::eig_sym(eigen_values, eigen_vectors, matrix);
+        } else {
+            return arma::eig_sym(eigen_values, matrix);
+        }
+    }();
+    if (!eig_sym_success) {
+        std::string message = "arma::eigs_sym claims it failed.";
+        std::cerr << "[debug-info] " << message << "." << std::endl;
+        return LinearAlgebraRuntimeException{message, ArmaEigSymClaimsFailed{}};
+    }
+    if (with_vectors_flag) {
+        return HermitianEigenInfoImpl{eigen_values, eigen_vectors};
+    } else {
+        return HermitianEigenInfoImpl{eigen_values, std::nullopt};
+    }
+}
+
+// #######################################################################
+
 LinearAlgebraResult<HermitianEigenInfo>
-eigs_sym(WithVectors,
-         const arma::sp_cx_mat& matrix, unsigned n_vectors,
-         const unsigned n_extra_vectors, const char* form, const double tol) {
-    const auto result = eigs_sym_impl(true, matrix, n_vectors, n_extra_vectors, form, tol);
+eig_sym(WithVectors, const arma::cx_mat& matrix) {
+    const auto result = eig_sym_impl(true, matrix);
     if (result.is_ok()) {
-        const auto result_value =result.unwrap();
+        const auto result_value = result.unwrap();
         assert(result_value.eigen_vectors);
         return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
     } else {
@@ -354,13 +282,141 @@ eigs_sym(WithVectors,
     }
 }
 
+// #######################################################################
+
+LinearAlgebraResult<arma::vec>
+eig_sym(WithoutVectors, const arma::cx_mat& matrix) {
+    const auto result = eig_sym_impl(false, matrix);
+    if (result.is_ok()) {
+        const auto result_value = result.unwrap();
+        return result_value.eigen_values;
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
+}
+
+}  // namespace lin_alg
+
+// #######################################################################
+// ## eigs_sym                                                          ##
+// #######################################################################
+
+namespace lin_alg {
+
+LinearAlgebraResult<HermitianEigenInfoImpl>
+eigs_sym_impl(bool with_vectors_flag,
+              const arma::sp_cx_mat& matrix, const unsigned n_vectors,
+              const unsigned n_extra_vectors, const char* form, const double tol) {
+    // --------------------------------------------------------------
+    assert(n_vectors > 0);
+    assert(matrix.n_cols == matrix.n_rows);
+    const auto size = matrix.n_cols; //TODO mark UNUSED
+    const arma::uword n_vectors_not_reduced_to_calculate = 2 * n_vectors + n_extra_vectors;
+    assert(n_vectors_not_reduced_to_calculate < 2 * size);
+    // --------------------------------------------------------------
+    const arma::sp_mat re_matrix = main_matrix_cx_to_re(matrix);
+    assert(re_matrix.n_cols == re_matrix.n_rows);
+    assert(re_matrix.n_cols == 2 * size);
+    // --------------------------------------------------------------
+    arma::vec eigen_values_not_reduced;
+    arma::mat re_eigen_vectors_not_reduced;
+    const bool eigs_sym_success =
+            [with_vectors_flag,
+            &eigen_values_not_reduced, &re_eigen_vectors_not_reduced, &re_matrix,
+            &n_vectors_not_reduced_to_calculate, form, tol]() -> bool {
+        if (with_vectors_flag) {
+            return arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
+                                  n_vectors_not_reduced_to_calculate, form, tol);
+        } else {
+            return arma::eigs_sym(eigen_values_not_reduced, re_matrix,
+                                  n_vectors_not_reduced_to_calculate, form, tol);
+        }
+    }();
+    if (!eigs_sym_success) {
+        std::string message = "arma::eigs_sym claims it failed.";
+        std::cerr << "[debug-info] " << message << "." << std::endl;
+        return LinearAlgebraRuntimeException{message, ArmaEigsSymClaimsFailed{}};
+    }
+    {
+        if (eigen_values_not_reduced.n_rows < 2 * n_vectors) {
+            const std::string message1 = "arma::eigs_sym does not claim it failed, but the number of eigenvalues it found is less than needed.";
+            const std::string message2a = "(Requested " + std::to_string(n_vectors_not_reduced_to_calculate) + " eigenvalues, ";
+            const std::string message2b = "got only " + std::to_string(eigen_values_not_reduced.n_rows) + " eigenvalues, ";
+            const std::string message2c = "while needed " + std::to_string(2 * n_vectors) + " eigenvalues.)";
+            const std::string message2 = message2a + message2b + message2c;
+            const std::string message = message1 + message2;
+            std::cerr << "[debug-info] [line 1/2] " << message1 << std::endl;
+            std::cerr << "[debug-info] [line 2/2] " << message2 << std::endl;
+            ArmaEigsSymFailedToFoundEnoughEigenvectors error_detail{n_vectors_not_reduced_to_calculate, eigen_values_not_reduced.n_rows, 2 * n_vectors};
+            return LinearAlgebraRuntimeException{message, error_detail};
+        }
+        eigen_values_not_reduced = eigen_values_not_reduced(arma::span(0, 2 * n_vectors - 1));
+    }
+    if (with_vectors_flag) {
+        assert(re_eigen_vectors_not_reduced.n_rows == 2 * size);
+        if (re_eigen_vectors_not_reduced.n_cols < 2 * n_vectors) {
+            const std::string message1 = "arma::eigs_sym does not claim it failed, but the number of eigenvectors it found is less than needed.";
+            const std::string message2a = "(Requested: " + std::to_string(n_vectors_not_reduced_to_calculate) + " eigenvectors, ";
+            const std::string message2b = "got only: " + std::to_string(re_eigen_vectors_not_reduced.n_rows) + " eigenvectors, ";
+            const std::string message2c = "while needed: " + std::to_string(2 * n_vectors) + " eigenvectors.)";
+            const std::string message2 = message2a + message2b + message2c;
+            const std::string message = message1 + " " + message2;
+            std::cerr << "[debug-info] [line 1/2] " << message1 << std::endl;
+            std::cerr << "[debug-info] [line 2/2] " << message2 << std::endl;
+            ArmaEigsSymFailedToFoundEnoughEigenvectors error_detail{n_vectors_not_reduced_to_calculate, eigen_values_not_reduced.n_rows, 2 * n_vectors};
+            return LinearAlgebraRuntimeException{message, error_detail};
+        }
+        re_eigen_vectors_not_reduced = re_eigen_vectors_not_reduced.cols(arma::span(0, 2 * n_vectors - 1));
+    }
+    // --------------------------------------------------------------
+    // Reduction - eigen_values:
+    const auto reduce_eigen_values_result = reduce_eigen_values(eigen_values_not_reduced, 10 * tol);
+    if (reduce_eigen_values_result.is_err()) {
+        return reduce_eigen_values_result.unwrap_err();
+    }
+    const arma::vec eigen_values = reduce_eigen_values_result.unwrap();
+    // --------------------------------------------------------------
+    if (with_vectors_flag) {
+        const arma::cx_mat cx_eigen_vectors_not_reduced = re_to_cx(re_eigen_vectors_not_reduced);
+        // Reduction - eigen_vectors:
+        const auto reduce_eigen_vectors_result = reduce_eigen_vectors(cx_eigen_vectors_not_reduced, eigen_values, tol);
+        if (reduce_eigen_vectors_result.is_err()) {
+            return reduce_eigen_vectors_result.unwrap_err();
+        }
+        const arma::cx_mat eigen_vectors = reduce_eigen_vectors_result.unwrap();
+        return HermitianEigenInfoImpl{eigen_values, eigen_vectors};
+    } else {
+        return HermitianEigenInfoImpl{eigen_values, std::nullopt};
+    }
+}
+
+// #######################################################################
+
+LinearAlgebraResult<HermitianEigenInfo>
+eigs_sym(WithVectors,
+         const arma::sp_cx_mat& matrix, unsigned n_vectors,
+         const unsigned n_extra_vectors, const char* form, const double tol) {
+    const auto result = eigs_sym_impl(true, matrix, n_vectors, n_extra_vectors, form, tol);
+    if (result.is_ok()) {
+        const auto result_value = result.unwrap();
+        assert(result_value.eigen_vectors);
+        return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
+    } else {
+        const auto result_error = result.unwrap_err();
+        return result_error;
+    }
+}
+
+// #######################################################################
+
 LinearAlgebraResult<arma::vec>
 eigs_sym(WithoutVectors,
          const arma::sp_cx_mat& matrix, unsigned n_vectors,
          const unsigned n_extra_vectors, const char* form, const double tol) {
     const auto result = eigs_sym_impl(false, matrix, n_vectors, n_extra_vectors, form, tol);
     if (result.is_ok()) {
-        const auto result_value =result.unwrap();
+        const auto result_value = result.unwrap();
         return result_value.eigen_values;
     } else {
         const auto result_error = result.unwrap_err();
@@ -378,8 +434,8 @@ namespace lin_alg {
 
 LinearAlgebraResult<HermitianEigenInfoImpl>
 fallbacked_eigs_sym_impl(bool with_vectors_flag,
-        const arma::sp_cx_mat& matrix, const unsigned n_vectors,
-                    const double tol, const unsigned max_n_tries) {
+                         const arma::sp_cx_mat& matrix, const unsigned n_vectors,
+                         const double tol, const unsigned max_n_tries) {
     // --------------------------------------------------------------
     assert(matrix.n_cols == matrix.n_rows);
     assert(n_vectors > 0);
@@ -420,14 +476,16 @@ fallbacked_eigs_sym_impl(bool with_vectors_flag,
     return LinearAlgebraRuntimeException{message, AllTriesFailed{}};
 }
 
+// #######################################################################
+
 LinearAlgebraResult<HermitianEigenInfo>
 fallbacked_eigs_sym(
         WithVectors,
-         const arma::sp_cx_mat& matrix, unsigned n_vectors,
-         const double tol, const unsigned max_n_tries) {
+        const arma::sp_cx_mat& matrix, unsigned n_vectors,
+        const double tol, const unsigned max_n_tries) {
     const auto result = fallbacked_eigs_sym_impl(true, matrix, n_vectors, tol, max_n_tries);
     if (result.is_ok()) {
-        const auto result_value =result.unwrap();
+        const auto result_value = result.unwrap();
         assert(result_value.eigen_vectors);
         return HermitianEigenInfo{result_value.eigen_values, *result_value.eigen_vectors};
     } else {
@@ -436,14 +494,16 @@ fallbacked_eigs_sym(
     }
 }
 
+// #######################################################################
+
 LinearAlgebraResult<arma::vec>
 fallbacked_eigs_sym(
         WithoutVectors,
-         const arma::sp_cx_mat& matrix, unsigned n_vectors,
-         const double tol, const unsigned max_n_tries) {
+        const arma::sp_cx_mat& matrix, unsigned n_vectors,
+        const double tol, const unsigned max_n_tries) {
     const auto result = fallbacked_eigs_sym_impl(false, matrix, n_vectors, tol, max_n_tries);
     if (result.is_ok()) {
-        const auto result_value =result.unwrap();
+        const auto result_value = result.unwrap();
         return result_value.eigen_values;
     } else {
         const auto result_error = result.unwrap_err();
