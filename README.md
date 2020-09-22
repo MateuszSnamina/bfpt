@@ -78,6 +78,12 @@ The plot below presents the system Hamiltonian eigenenergies for `af` monostar s
 
 ![Alt text](img/model_monostar_20sites_absolute_energy.png "Monostar model -- absolute energies")
 
-TODO
+The model excitation energies are obtained as a difference of the relevant excited states energy and the ground state energy.
 
 ![Alt text](img/model_monostar_20sites_excitation_enery.png "Monostar model -- excitation energies")
+
+
+The content of the eigenstates may be printed in a pretty form in which the state configuration contributions for are sorted and displayed in human friendly way.
+For example the below screen shows the decomposition for the groundstate of 16 nodes `af` monostar model.
+
+![Alt text](img/monostar_16sites_gs_eigenvector.png "Monostar model -- excitation energies")
