@@ -3,12 +3,12 @@
 ## What it is
 Bfpt (Brute Force Perturbation Theory) is a numeric solver of quantum Hamiltonian eigenproblem for finite discrete one dimensional periodic systems.
 
-The solver performs exact denationalization (ED) in a subspace of the system Hilbert space. The subspace is constructed in a spirit of perturbation calculus. The construction starts with the 0-th order subspace filled exclusively with quantum states provded (as an input) by the solver user. Then the next order subspaces are constructed iteratively: The `(n+1)`-th order subspace is the `n`-th order subspace extended by the Hamiltonian image of the `n`-th order subspace. The solver user defines the target subspace order. Having the desired subspace constructed, Hamiltonian restricted to the subspace is diagonalized using a spare matrices numeric method.
+The solver performs exact denationalization (ED) in a subspace of the system Hilbert space. The subspace is constructed in a spirit of perturbation calculus. The construction starts with the `0`-th order subspace filled exclusively with quantum states provded (as an input) by the solver user. Then the next order subspaces are constructed iteratively: The `(n+1)`-th order subspace is the `n`-th order subspace extended by the Hamiltonian image of the `n`-th order subspace. The solver user defines the target subspace order. Having the desired subspace constructed, Hamiltonian restricted to the subspace is diagonalized using a spare matrices numeric method.
 
 Note that for sufficiently high value of the order parameter the relevant subspace is an invariant subspace of Hamiltonian and
 the solver performs ED.
 
-All calculations (both at the subspace generation stage and the diagonalization stage) are performed in the ‘inverse space’ (or 'momentum space')-- in the realm of quantum states with given Bloch's theorem pseudo-momentum.
+All calculations (both at the subspace generation stage and the diagonalization stage) are performed in the 'inverse space' (or 'momentum space') -- in the realm of quantum states with given Bloch's theorem pseudo-momentum.
 
 The archetype problem fitting the solver domain is one dimensional Heisenberg antiferromagnet. Even though the Heisenberg model is a lighthouse for development, the author's original motivation is to address spin-orbital Kugel–Khomskii models (like the one described for copper fluoride KCuF3).
 
@@ -35,7 +35,7 @@ apt install libarmadillo-dev
 mkdir build_release
 pushd build_release
 cmake -DCMAKE_BUILD_TYPE=Release ..
-make -j 4
+make "-j$(nproc)"
 popd
 build_release/bin/model_monostar # try it!
 ```
@@ -98,4 +98,4 @@ The content of the eigenstates may be printed in a pretty form in which the stat
 
 [TODO]
 
-# Example -- a spinorbital monostar
+# Example -- a spinorbital
