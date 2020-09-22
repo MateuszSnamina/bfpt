@@ -97,9 +97,9 @@ void pretty_print(
                       << "kstate print idx: " << std::setw(6) << print_idx
                       << "." << std::endl;
         } // end of print_idx loop
-       std::cout << print_outer_prefix << message_prefix << data_tag
-                 << "The listed above kstate contributions accumulated_probability: " << std::noshowpos << accumulated_probability
-                 << "." << std::endl;
+        std::cout << print_outer_prefix << message_prefix << data_tag
+                  << "The listed above kstate contributions accumulated_probability: " << std::noshowpos << accumulated_probability
+                  << "." << std::endl;
     } // end of n_eigien_vector loop
 }
 
@@ -158,42 +158,64 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
         std::cout << arma::cx_mat(kn_hamiltonian_matrix);
     }
     // --------------------------------------------------
-    std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem." << std::endl;
-    timer.tic();
-    const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
-    const double time_solving_eigen_problem = timer.toc();
-    if (eigs_sym_result.is_err()) {
+    const bool should_calculate_eigenvectors = print_flags.print_eigen_vectors_flag || print_flags.print_pretty_vectors_flag;
+    // --------------------------------------------------
+    if (should_calculate_eigenvectors) {
+        std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
+        timer.tic();
+        const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
+        const double time_solving_eigen_problem = timer.toc();
+        if (eigs_sym_result.is_err()) {
+            std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+            std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
+            std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
+            std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
+            return arma::datum::nan;
+        }
         std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
-        std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem." << std::endl;
-        std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
-        std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
-        return arma::datum::nan;
+        std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem (eigenvalues & eigenvectors)." << std::endl;
+        const auto eigen_info = eigs_sym_result.unwrap();
+        const arma::vec& eigen_values = eigen_info.eigen_values;
+        const arma::cx_mat& eigen_vectors = eigen_info.eigen_vectors;
+        // --------------------------------------------------
+        if (print_flags.print_eigen_values_flag) {
+            std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
+            std::cout << print_outer_prefix << message_prefix << eigen_values;
+        }
+        if (print_flags.print_eigen_vectors_flag) {
+            std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_vectors:" << std::endl;
+            std::cout << print_outer_prefix << message_prefix << eigen_vectors;
+        }
+        if (print_flags.print_pretty_vectors_flag) {
+            pretty_print(basis, eigen_values, eigen_vectors,
+                         print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold,
+                         print_outer_prefix);
+        }
+        return eigen_values(0);
+    } else {
+        std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues only)." << std::endl;
+        timer.tic();
+        const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithoutVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
+        const double time_solving_eigen_problem = timer.toc();
+        if (eigs_sym_result.is_err()) {
+            std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+            std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues only)." << std::endl;
+            std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
+            std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
+            return arma::datum::nan;
+        }
+        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+        std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem (eigenvalues only)." << std::endl;
+        const arma::vec& eigen_values = eigs_sym_result.unwrap();
+        // --------------------------------------------------
+        if (print_flags.print_eigen_values_flag) {
+            std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
+            std::cout << print_outer_prefix << message_prefix << eigen_values;
+        }
+        return eigen_values(0);
     }
-    const auto eigen_info = eigs_sym_result.unwrap();
-    const arma::vec& eigen_values = eigen_info.eigen_values;
-    const arma::cx_mat& eigen_vectors = eigen_info.eigen_vectors;
-    std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
-    std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem." << std::endl;
     // --------------------------------------------------
-    if (print_flags.print_eigen_values_flag) {
-        std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
-        std::cout << print_outer_prefix << message_prefix << eigen_values;
-        // std::cout << "min eigen_value: " << eigen_values(0) << std::endl;
-    }
-    if (print_flags.print_eigen_vectors_flag) {
-        std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_vectors:" << std::endl;
-        std::cout << print_outer_prefix << message_prefix << eigen_vectors;
-        // std::cout << "eigen_vectors.col(0): " << std::endl
-        //           << eigen_vectors.col(0) / eigen_vectors(0, 0) << std::endl;
-    }
-    if (print_flags.print_pretty_vectors_flag) {
-        pretty_print(basis, eigen_values, eigen_vectors,
-                     print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold,
-                     print_outer_prefix);
-    }
-
-    // --------------------------------------------------
-    return eigen_values(0);
+    assert(false);
 }
 
 }  // namespace bfpt_common
