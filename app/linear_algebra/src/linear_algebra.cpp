@@ -450,7 +450,12 @@ fallbacked_eigs_sym_impl(bool with_vectors_flag,
         }
         const auto eigen_info = eig_sym_result.unwrap();
         const arma::span requested_span(0, n_vectors - 1);
-        return HermitianEigenInfoImpl{eigen_info.eigen_values(requested_span), (*eigen_info.eigen_vectors).cols(requested_span)};
+        if (with_vectors_flag) {
+            assert(eigen_info.eigen_vectors);
+            return HermitianEigenInfoImpl{eigen_info.eigen_values(requested_span), (*eigen_info.eigen_vectors).cols(requested_span)};
+        } else {
+            return HermitianEigenInfoImpl{eigen_info.eigen_values(requested_span), std::nullopt};
+        }
     }
     // --------------------------------------------------------------
     assert(n_vectors < size);
