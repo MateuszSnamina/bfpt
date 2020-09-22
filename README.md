@@ -53,7 +53,7 @@ and is prescribed by two-nodes kernel Hamiltionian `H_12` (`H = \sum_{<ij>} H_12
 whereas `H_12_off_diag` describes couplings between the pairs.
 
 The model goes in two flavors: `fm` and `af`, each parameterized with two real values `J_classical` and `J_quantum`.
-The `H_12_diag` does not depend the variant and is governed by `J_classical`:
+The `H_12_diag` does not depend on the `fm`/`af` variant and is governed by `J_classical`:
 | states pair | energy contribution |
 |-------------|---------------------|
 | `(gs, gs)`  | `-J_classical/4`    |
