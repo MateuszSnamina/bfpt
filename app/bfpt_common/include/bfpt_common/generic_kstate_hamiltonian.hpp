@@ -142,13 +142,11 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
     const auto& ket_kstate = (*ket_kstate_ptr).to_range();
-
     //    double other_time = 0.0;//TODO remove
     //    double insert_time = 0.0;//TODO remove
     //    std::chrono::high_resolution_clock::time_point tp_o_1, tp_o_2;//TODO remove
     //    std::chrono::high_resolution_clock::time_point tp_i_1, tp_i_2;//TODO remove
     //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
@@ -187,16 +185,13 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
                 //kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef); // we do not include the stat as we build matrix M such as H = M + M^T.
                 //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
                 //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
-
             }
         } // end of `_half_off_diag_info` equal_range loop
     }  // end of `Delta` loop
-
     //    std::cout << "OFF-DIAG: other_time, insert_time: " << other_time << ", " << insert_time << std::endl;//TODO remove
     //    other_time = 0.0;//TODO remove
     //    insert_time = 0.0;//TODO remove
     //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
@@ -205,7 +200,6 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
-
             //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
             //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
             //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
@@ -238,7 +232,7 @@ GenericKstateHamiltonian<_SiteStateT>::make_kn_hamiltonian_matrix(
         fill_kn_hamiltonian_matrix_coll(basis, ket_kstate_idx, kn_hamiltonian_matrix_all[tid], k_n);
     }
     const auto tp_fill_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    std::cout << "fill took    :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl;//TODO remove
+    std::cout << "fill took     :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl;//TODO remove
     // *********** reduction ****************
     const auto tp_reduce_1 = std::chrono::high_resolution_clock::now();//TODO remove
     for (unsigned d = 1; d < n_threads; d *=2) {
@@ -255,14 +249,14 @@ GenericKstateHamiltonian<_SiteStateT>::make_kn_hamiltonian_matrix(
         }
     }
     const auto tp_reduce_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    std::cout << "reduce took  :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_reduce_2 - tp_reduce_1).count() / 1e6 << "ms" << std::endl;//TODO remove
+    std::cout << "reduce took   :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_reduce_2 - tp_reduce_1).count() / 1e6 << "ms" << std::endl;//TODO remove
     // *********** add transpose ************
     const auto tp_trans_1 = std::chrono::high_resolution_clock::now();//TODO remove
     kn_hamiltonian_matrix_all[0] += kn_hamiltonian_matrix_all[0].t();
     const auto tp_trans_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    std::cout << "trnapose took:" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_trans_2 - tp_trans_1).count() / 1e6 << "ms" << std::endl;//TODO remove
+    std::cout << "transpose took:" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_trans_2 - tp_trans_1).count() / 1e6 << "ms" << std::endl;//TODO remove
     // *********** return *******************
-    return kn_hamiltonian_matrix_all[0] + kn_hamiltonian_matrix_all[0].t();
+    return kn_hamiltonian_matrix_all[0];
 }
 
 }  // namespace bfpt_common
