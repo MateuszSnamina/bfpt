@@ -14,6 +14,8 @@
 
 #include <armadillo>
 
+#include <omp.h>
+
 #include <type_traits>
 #include <cassert>
 #include <complex>
@@ -65,11 +67,6 @@ private:
             size_t n_col,
             arma::sp_cx_mat& kn_hamiltonian_matrix,
             const unsigned k_n) const;
-    void fill_kn_hamiltonian_matrix(
-            const BasisT& basis,
-            arma::sp_cx_mat& kn_hamiltonian_matrix,
-            const unsigned k_n,
-            unsigned n_threads) const;
 
 private:
     const size_t _n_sites;
@@ -148,7 +145,6 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
 
     //    double other_time = 0.0;//TODO remove
     //    double insert_time = 0.0;//TODO remove
-
     //    std::chrono::high_resolution_clock::time_point tp_o_1, tp_o_2;//TODO remove
     //    std::chrono::high_resolution_clock::time_point tp_i_1, tp_i_2;//TODO remove
     //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
@@ -183,25 +179,18 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
-
                 //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
                 //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
                 //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-
                 //tp_i_1 = std::chrono::high_resolution_clock::now();//TODO remove
-#pragma omp  critical
-                {
-
-                    kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
-                    kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef);
-                }
+                kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
+                //kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef); // we do not include the stat as we build matrix M such as H = M + M^T.
                 //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
                 //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
 
             }
         } // end of `_half_off_diag_info` equal_range loop
     }  // end of `Delta` loop
-
 
     //    std::cout << "OFF-DIAG: other_time, insert_time: " << other_time << ", " << insert_time << std::endl;//TODO remove
     //    other_time = 0.0;//TODO remove
@@ -220,12 +209,8 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
             //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
             //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-
             //tp_i_1 = std::chrono::high_resolution_clock::now();//TODO remove
-#pragma omp  critical
-            {
-                kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef;
-            }
+            kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
             //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
             //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
         }
@@ -235,29 +220,49 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
 }
 
 template<typename _SiteStateT>
-void
-GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix(
-        const BasisT& basis,
-        arma::sp_cx_mat& kn_hamiltonian_matrix,
-        const unsigned k_n,
-        unsigned n_threads) const {
-    assert(kn_hamiltonian_matrix.n_cols == basis.size());
-    assert(kn_hamiltonian_matrix.n_rows == basis.size());
-#pragma omp parallel for num_threads(n_threads)
-    for (arma::uword ket_kstate_idx = 0; ket_kstate_idx < basis.size(); ket_kstate_idx++) {
-        fill_kn_hamiltonian_matrix_coll(basis, ket_kstate_idx, kn_hamiltonian_matrix, k_n);
-    }
-}
-
-template<typename _SiteStateT>
 arma::sp_cx_mat
 GenericKstateHamiltonian<_SiteStateT>::make_kn_hamiltonian_matrix(
         const BasisT& basis,
         const unsigned k_n,
         unsigned n_threads) const {
-    arma::sp_cx_mat kn_hamiltonian_matrix(basis.size(), basis.size());
-    fill_kn_hamiltonian_matrix(basis, kn_hamiltonian_matrix, k_n, n_threads);
-    return kn_hamiltonian_matrix;
+    // *********** prepare ****************
+    std::vector<arma::sp_cx_mat> kn_hamiltonian_matrix_all(n_threads);
+    for (unsigned i = 0; i < n_threads; i++) {
+        kn_hamiltonian_matrix_all[i] = arma::sp_cx_mat(basis.size(), basis.size());
+    }
+    // *********** filling ****************
+    const auto tp_fill_1 = std::chrono::high_resolution_clock::now();//TODO remove
+#pragma omp parallel for num_threads(n_threads) schedule(guided)
+    for (arma::uword ket_kstate_idx = 0; ket_kstate_idx < basis.size(); ket_kstate_idx++) {
+        const auto tid = omp_get_thread_num();
+        fill_kn_hamiltonian_matrix_coll(basis, ket_kstate_idx, kn_hamiltonian_matrix_all[tid], k_n);
+    }
+    const auto tp_fill_2 = std::chrono::high_resolution_clock::now();//TODO remove
+    std::cout << "fill took    :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl;//TODO remove
+    // *********** reduction ****************
+    const auto tp_reduce_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    for (unsigned d = 1; d < n_threads; d *=2) {
+#pragma omp parallel num_threads(n_threads)
+        {
+            const auto tid = omp_get_thread_num();
+            if (tid % (2 * d) == 0) {
+                const auto idx1 = tid;
+                const auto idx2 = tid + d;
+                if (idx2 < n_threads) {
+                    kn_hamiltonian_matrix_all[idx1] += kn_hamiltonian_matrix_all[idx2];
+                }
+            }
+        }
+    }
+    const auto tp_reduce_2 = std::chrono::high_resolution_clock::now();//TODO remove
+    std::cout << "reduce took  :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_reduce_2 - tp_reduce_1).count() / 1e6 << "ms" << std::endl;//TODO remove
+    // *********** add transpose ************
+    const auto tp_trans_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    kn_hamiltonian_matrix_all[0] += kn_hamiltonian_matrix_all[0].t();
+    const auto tp_trans_2 = std::chrono::high_resolution_clock::now();//TODO remove
+    std::cout << "trnapose took:" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_trans_2 - tp_trans_1).count() / 1e6 << "ms" << std::endl;//TODO remove
+    // *********** return *******************
+    return kn_hamiltonian_matrix_all[0] + kn_hamiltonian_matrix_all[0].t();
 }
 
 }  // namespace bfpt_common
