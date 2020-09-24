@@ -29,7 +29,8 @@
 double bfpt_gs(
         const bfpt_common::Hamiltonian12<model_monostar::MonostarSiteState>& hamiltonian_12,
         const size_t n_sites, const unsigned max_pt_order,
-        const bfpt_common::CommonRecipePrintFlags& print_flags) {
+        const bfpt_common::CommonRecipePrintFlags& print_flags,
+        unsigned n_threads) {
     //using SiteStateT = model_monostar::MonostarSiteState;
     using KstateT = model_monostar::DynamicMonostarUniqueKstate;
     using BasisT = model_monostar::DynamicMonostarUniqueKstateBasis;
@@ -38,13 +39,15 @@ double bfpt_gs(
     const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, 0,
-                                         print_flags, "[gs] ");
+                                         print_flags, "[gs] ",
+                                         n_threads);
 }
 
 double bfpt_kn_es(
         const bfpt_common::Hamiltonian12<model_monostar::MonostarSiteState>& hamiltonian_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
-        const bfpt_common::CommonRecipePrintFlags& print_flags) {
+        const bfpt_common::CommonRecipePrintFlags& print_flags,
+        unsigned n_threads) {
     //using SiteStateT = model_monostar::MonostarSiteState;
     using KstateT = model_monostar::DynamicMonostarUniqueKstate;
     using BasisT = model_monostar::DynamicMonostarUniqueKstateBasis;
@@ -53,7 +56,8 @@ double bfpt_kn_es(
     const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, k_n,
-                                         print_flags, "[es (" + std::to_string(k_n) + ")] ");
+                                         print_flags, "[es (" + std::to_string(k_n) + ")] ",
+                                         n_threads);
 }
 
 void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
@@ -77,8 +81,7 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_min_max_n_kstates    = " << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
-
-
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_threads                         = " << interpreted_program_options.n_threads << std::endl;
 }
 
 
@@ -193,7 +196,8 @@ int main(int argc, char** argv) {
                 return bfpt_gs(
                             hamiltonian_12,
                             interpreted_program_options.n_sites, interpreted_program_options.n_pt,
-                            interpreted_program_options.print_flags);
+                            interpreted_program_options.print_flags,
+                            interpreted_program_options.n_threads);
                 std::cout << "------------------------------------------" << std::endl;
             }
             return std::nullopt;
@@ -212,7 +216,8 @@ int main(int argc, char** argv) {
                     const double es_energy = bfpt_kn_es(
                                 hamiltonian_12,
                                 interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
-                                interpreted_program_options.print_flags);
+                                interpreted_program_options.print_flags,
+                                interpreted_program_options.n_threads);
                     es_energies.push_back(es_energy);
                     std::cout << "------------------------------------------" << std::endl;
                 }

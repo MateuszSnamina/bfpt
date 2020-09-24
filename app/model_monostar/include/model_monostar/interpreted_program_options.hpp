@@ -18,6 +18,7 @@ struct InterpretedProgramOptions {
   RunType run_type;
   EsMomentumDomainVariant es_momentum_domain;
   bfpt_common::CommonRecipePrintFlags print_flags;
+  unsigned n_threads;
 };
 
 InterpretedProgramOptions interpret_program_options(const RawProgramOptions&);

@@ -37,7 +37,8 @@ public:
 public:
     virtual arma::sp_cx_mat make_kn_hamiltonian_matrix(
             const BasisT& basis,
-            const unsigned k_n) const = 0;
+            const unsigned k_n,
+            unsigned n_threads) const = 0;
 };
 
 }  // namespace bfpt_common

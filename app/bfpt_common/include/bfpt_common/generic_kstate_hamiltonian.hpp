@@ -6,6 +6,7 @@
 #include <bfpt_common/i_kstate_populator.hpp>
 #include <bfpt_common/populate_pt_basis.hpp>
 
+#include <kstate/kstate_abstract.hpp>
 #include <kstate/remove_cvref.hpp>
 #include <kstate/is_base_of_template.hpp>
 #include <kstate/kstate_abstract.hpp>
@@ -16,6 +17,8 @@
 #include <type_traits>
 #include <cassert>
 #include <complex>
+
+#include<chrono> //TODO: remove (debug)
 
 // #######################################################################
 // ## DynamicMonostarHamiltonian                                        ##
@@ -54,7 +57,8 @@ public:
     // Generates hamiltonian matrix:
     arma::sp_cx_mat make_kn_hamiltonian_matrix(
             const BasisT& basis,
-            const unsigned k_n) const override;
+            const unsigned k_n,
+            unsigned n_threads) const override;
 private:
     void fill_kn_hamiltonian_matrix_coll(
             const BasisT& basis,
@@ -64,7 +68,8 @@ private:
     void fill_kn_hamiltonian_matrix(
             const BasisT& basis,
             arma::sp_cx_mat& kn_hamiltonian_matrix,
-            const unsigned k_n) const;
+            const unsigned k_n,
+            unsigned n_threads) const;
 
 private:
     const size_t _n_sites;
@@ -118,7 +123,10 @@ GenericKstateHamiltonian<_SiteStateT>::push_back_coupled_states_to_basis(
                     extension::boost::adaptors::refined(n_delta, bra_site_1) |
                     extension::boost::adaptors::refined(n_delta_p1, bra_site_2);
             const auto conjugated_kstate_ptr = std::make_shared<KstateT>(conjugated_range, kstate::ctr_from_range);
-            basis.add_element(conjugated_kstate_ptr);
+#pragma omp critical
+            {
+                basis.add_element(conjugated_kstate_ptr);
+            }
         } // end of `_full_off_diag_info` equal_range loop
     }  // end of `Delta` loop
 }
@@ -137,6 +145,14 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
     const auto& ket_kstate = (*ket_kstate_ptr).to_range();
+
+    //    double other_time = 0.0;//TODO remove
+    //    double insert_time = 0.0;//TODO remove
+
+    //    std::chrono::high_resolution_clock::time_point tp_o_1, tp_o_2;//TODO remove
+    //    std::chrono::high_resolution_clock::time_point tp_i_1, tp_i_2;//TODO remove
+    //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
+
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
@@ -167,11 +183,31 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
-                kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
-                kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef);
+
+                //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
+                //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
+                //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
+
+                //tp_i_1 = std::chrono::high_resolution_clock::now();//TODO remove
+#pragma omp  critical
+                {
+
+                    kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
+                    kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef);
+                }
+                //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
+                //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
+
             }
         } // end of `_half_off_diag_info` equal_range loop
     }  // end of `Delta` loop
+
+
+    //    std::cout << "OFF-DIAG: other_time, insert_time: " << other_time << ", " << insert_time << std::endl;//TODO remove
+    //    other_time = 0.0;//TODO remove
+    //    insert_time = 0.0;//TODO remove
+    //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
+
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
@@ -180,9 +216,22 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
-            kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef;
+
+            //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
+            //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
+            //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
+
+            //tp_i_1 = std::chrono::high_resolution_clock::now();//TODO remove
+#pragma omp  critical
+            {
+                kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef;
+            }
+            //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
+            //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
         }
     }  // end of `Delta` loop
+
+    //std::cout << "ON-DIAG: other_time, insert_time: " << other_time << ", " << insert_time << std::endl;//TODO remove
 }
 
 template<typename _SiteStateT>
@@ -190,9 +239,11 @@ void
 GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix(
         const BasisT& basis,
         arma::sp_cx_mat& kn_hamiltonian_matrix,
-        const unsigned k_n) const {
+        const unsigned k_n,
+        unsigned n_threads) const {
     assert(kn_hamiltonian_matrix.n_cols == basis.size());
     assert(kn_hamiltonian_matrix.n_rows == basis.size());
+#pragma omp parallel for num_threads(n_threads)
     for (arma::uword ket_kstate_idx = 0; ket_kstate_idx < basis.size(); ket_kstate_idx++) {
         fill_kn_hamiltonian_matrix_coll(basis, ket_kstate_idx, kn_hamiltonian_matrix, k_n);
     }
@@ -202,9 +253,10 @@ template<typename _SiteStateT>
 arma::sp_cx_mat
 GenericKstateHamiltonian<_SiteStateT>::make_kn_hamiltonian_matrix(
         const BasisT& basis,
-        const unsigned k_n) const {
+        const unsigned k_n,
+        unsigned n_threads) const {
     arma::sp_cx_mat kn_hamiltonian_matrix(basis.size(), basis.size());
-    fill_kn_hamiltonian_matrix(basis, kn_hamiltonian_matrix, k_n);
+    fill_kn_hamiltonian_matrix(basis, kn_hamiltonian_matrix, k_n, n_threads);
     return kn_hamiltonian_matrix;
 }
 

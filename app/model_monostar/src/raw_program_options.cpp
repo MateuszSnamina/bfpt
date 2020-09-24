@@ -95,7 +95,10 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
              boost::program_options::value<unsigned>(&program_options.print_pretty_max_n_kstates)->default_value(20))
             // --print_pretty_probability_treshold:
             ("print_pretty_probability_treshold",
-             boost::program_options::value<double>(&program_options.print_pretty_probability_treshold)->default_value(0.1));
+             boost::program_options::value<double>(&program_options.print_pretty_probability_treshold)->default_value(0.1))
+            // --n_threads,j:
+            ("n_threads,j",
+             boost::program_options::value<unsigned>(&program_options.n_threads)->default_value(4));
 
     boost::program_options::positional_options_description p;
     // positional arguments:

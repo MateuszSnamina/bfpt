@@ -109,10 +109,13 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                         kstate::Basis<KstateT>& basis,
                         const unsigned max_pt_order, const unsigned k_n,
                         CommonRecipePrintFlags print_flags,
-                        std::string print_outer_prefix = "") {
-    arma::wall_clock timer;
-    __attribute__((unused)) const size_t n_sites = basis.n_sites(); //TODO [[unised]]
+                        std::string print_outer_prefix = "",
+                        unsigned n_threads = 1) {
+    assert(n_threads != 0);
+    assert(n_threads <= 256);
+    [[maybe_unused]] const size_t n_sites = basis.n_sites();
     assert(k_n < n_sites);
+    arma::wall_clock timer;
     // --------------------------------------------------
     if (print_flags.print_unpopulated_basis_flag) {
         std::cout << print_outer_prefix << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):" << std::endl;
@@ -127,7 +130,7 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    populate_pt_basis(bais_populator, max_pt_order, basis);
+    populate_pt_basis(bais_populator, max_pt_order, basis, n_threads);
     const double time_populating_pt_basis = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
@@ -144,7 +147,7 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     // Generate hamiltoniam matrix:
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
-    const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n);
+    const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n, n_threads);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;

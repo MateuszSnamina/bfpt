@@ -35,7 +35,8 @@ template<typename KstateT>
 void populate_pt_basis(
     const IKstatePopulator<KstateT>& populator,
     const unsigned max_pt_order,
-    kstate::Basis<KstateT>& basis) {
+    kstate::Basis<KstateT>& basis,
+    unsigned n_threads = 1) {
     static_assert(!std::is_array_v<KstateT>);
     static_assert(!std::is_function_v<KstateT>);
     static_assert(!std::is_void_v<std::decay<KstateT>>);
@@ -54,6 +55,7 @@ void populate_pt_basis(
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();
         assert(last_chunk_size <= old_size);
+#pragma omp parallel for num_threads(n_threads)
         for (unsigned idx = old_size - last_chunk_size; idx < old_size; idx++) {
             const auto el = basis.vec_index()[idx];
             assert(el);

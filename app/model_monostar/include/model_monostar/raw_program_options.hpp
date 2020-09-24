@@ -23,6 +23,7 @@ struct RawProgramOptions {
   double print_pretty_probability_treshold;
   std::string es_momentum_domain_string;
   unsigned es_n_k;
+  unsigned n_threads;
 };
 
 RawProgramOptions grep_program_options(int argc, char** argv);
