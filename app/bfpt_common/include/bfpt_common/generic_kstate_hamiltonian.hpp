@@ -14,8 +14,6 @@
 
 #include <armadillo>
 
-#include <omp.h>
-
 #include <type_traits>
 #include <cassert>
 #include <complex>
