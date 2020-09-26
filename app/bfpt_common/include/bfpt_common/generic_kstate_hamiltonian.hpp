@@ -20,7 +20,7 @@
 #include <cassert>
 #include <complex>
 
-#include<chrono> //TODO: remove (debug)
+//#include<chrono>  // performance debug sake
 
 // #######################################################################
 // ## GenericKstateHamiltonian                                          ##

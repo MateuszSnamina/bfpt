@@ -35,22 +35,22 @@ generate_hamiltonian(
     static_assert(!std::is_volatile_v<KstateT>);
     static_assert(!std::is_reference_v<KstateT>);
     static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);
-    // *********** prepare ****************
+    // *********** prepare ****************************************************************
     std::vector<arma::sp_cx_mat> kn_hamiltonian_matrix_all(n_threads);
     for (unsigned i = 0; i < n_threads; i++) {
         kn_hamiltonian_matrix_all[i] = arma::sp_cx_mat(basis.size(), basis.size());
     }
-    // *********** filling ****************
-    const auto tp_fill_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    // *********** filling ****************************************************************
+    //const auto tp_fill_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
 #pragma omp parallel for num_threads(n_threads) schedule(guided)
     for (arma::uword ket_kstate_idx = 0; ket_kstate_idx < basis.size(); ket_kstate_idx++) {
         const auto tid = omp_get_thread_num();
         hamiltoniam_interface.fill_kn_hamiltonian_matrix_coll(basis, ket_kstate_idx, kn_hamiltonian_matrix_all[tid], k_n);
     }
-    const auto tp_fill_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    std::cout << "fill took     :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl;//TODO remove
-    // *********** reduction ****************
-    const auto tp_reduce_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    // const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+    //std::cout << "fill took     : " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
+    // *********** reduction **************************************************************
+    //const auto tp_reduce_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     for (unsigned d = 1; d < n_threads; d *=2) {
 #pragma omp parallel num_threads(n_threads)
         {
@@ -64,14 +64,14 @@ generate_hamiltonian(
             }
         }
     }
-    const auto tp_reduce_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    std::cout << "reduce took   :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_reduce_2 - tp_reduce_1).count() / 1e6 << "ms" << std::endl;//TODO remove
-    // *********** add transpose ************
-    const auto tp_trans_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    //const auto tp_reduce_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+    //std::cout << "reduce took   : " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_reduce_2 - tp_reduce_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
+    // *********** add transpose **********************************************************
+    //const auto tp_trans_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     kn_hamiltonian_matrix_all[0] += kn_hamiltonian_matrix_all[0].t();
-    const auto tp_trans_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    std::cout << "transpose took:" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_trans_2 - tp_trans_1).count() / 1e6 << "ms" << std::endl;//TODO remove
-    // *********** return *******************
+    //const auto tp_trans_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+    //std::cout << "transpose took: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_trans_2 - tp_trans_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
+    // *********** return *****************************************************************
     return kn_hamiltonian_matrix_all[0];
 }
 
