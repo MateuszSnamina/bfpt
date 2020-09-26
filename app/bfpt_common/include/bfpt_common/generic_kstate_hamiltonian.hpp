@@ -20,7 +20,7 @@
 #include <cassert>
 #include <complex>
 
-//#include<chrono>  // performance debug sake
+//#include<chrono> // performance debug sake
 
 // #######################################################################
 // ## GenericKstateHamiltonian                                          ##
@@ -117,8 +117,6 @@ GenericKstateHamiltonian<_SiteStateT>::get_coupled_states(
     return result;
 }
 
-/// ------------------------------ arbitrary k_n:
-
 template<typename _SiteStateT>
 void
 GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
@@ -131,18 +129,11 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
     const auto& ket_kstate = (*ket_kstate_ptr).to_range();
-    //    double other_time = 0.0;//TODO remove
-    //    double insert_time = 0.0;//TODO remove
-    //    double unique_shift_time = 0.0;//TODO remove
-    //    double not_unique_shift_time = 0.0;
-    //    std::chrono::high_resolution_clock::time_point tp_o_1, tp_o_2;//TODO remove
-    //    std::chrono::high_resolution_clock::time_point tp_i_1, tp_i_2;//TODO remove
-    //    std::chrono::high_resolution_clock::time_point tp_u_1, tp_u_2;//TODO remove
-    //    std::chrono::high_resolution_clock::time_point tp_nu_1, tp_nu_2;//TODO remove
-    //    std::chrono::high_resolution_clock::time_point tp_offdiag_1, tp_offdiag_2;//TODO remove
-    //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-    //    tp_offdiag_1 = std::chrono::high_resolution_clock::now();//TODO remove
-    //    tp_nu_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    //std::chrono::high_resolution_clock::time_point tp_u_1, tp_u_2; // performance debug sake
+    //std::chrono::high_resolution_clock::time_point tp_nu_1, tp_nu_2; // performance debug sake
+    //double unique_shift_time = 0.0, not_unique_shift_time = 0.0; // performance debug sake
+    //const auto tp_offdiag_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
+    //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
@@ -162,15 +153,14 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             const auto bra_kstate = ket_kstate
                     | extension::boost::adaptors::refined(n_delta, bra_site_1)
                     | extension::boost::adaptors::refined(n_delta_p1, bra_site_2);
-            //            tp_nu_2 = std::chrono::high_resolution_clock::now();//TODO remove
-            //            not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count();//TODO remove
-            //            tp_u_1 = std::chrono::high_resolution_clock::now();//TODO remove
+            //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+            //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
+            //tp_u_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
             const auto bra_kstate_unique_shifted = kstate::make_unique_shift(bra_kstate);
-            //            tp_u_2 = std::chrono::high_resolution_clock::now();//TODO remove
-            //            unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_u_2 - tp_u_1).count();//TODO remove
-            //            tp_nu_1 = std::chrono::high_resolution_clock::now();//TODO remove
+            //tp_u_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+            //unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_u_2 - tp_u_1).count(); // performance debug sake
+            //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_unique_shifted)) {
-                //if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(kstate::make_unique_shift(bra_kstate))) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm_1 = _n_sites * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
                 const size_t bra_n_unique_shift = kstate::n_unique_shift(bra_kstate);
@@ -181,28 +171,17 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
-                //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
-                //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
-                //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-                //tp_i_1 = std::chrono::high_resolution_clock::now();//TODO remove
                 kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
-                //kn_hamiltonian_matrix(ket_kstate_idx, bra_kstate_idx) += std::conj(pre_norm_2 * kernel_coupling_coef); // we do not include the stat as we build matrix M such as H = M + M^T.
-                //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
-                //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
             }
         } // end of `_half_off_diag_info` equal_range loop
     }  // end of `Delta` loop
-    //    std::cout << "OFF-DIAG: other_time, insert_time: " << other_time << ", " << insert_time << std::endl;//TODO remove
-    //    tp_nu_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    //    not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count();//TODO remove
-    //    tp_offdiag_2 = std::chrono::high_resolution_clock::now();//TODO remove
-    //    const double offdiag_time = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_offdiag_2 - tp_offdiag_1).count();//TODO remove
-    //    std::cout << "OFF-DIAG: offdiag_time          : " << offdiag_time << std::endl;//TODO remove
-    //    std::cout << "OFF-DIAG: unique_shift_time     : " << unique_shift_time << std::endl;//TODO remove
-    //    std::cout << "OFF-DIAG: not_unique_shift_time : " << not_unique_shift_time << std::endl;//TODO remove
-    //    other_time = 0.0;//TODO remove
-    //    insert_time = 0.0;//TODO remove
-    //    tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
+    //const auto tp_offdiag_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+    //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
+    //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
+    //const double offdiag_time = std::chrono::duration_cast<std::chrono::nanoseconds>(tp_offdiag_2 - tp_offdiag_1).count(); // performance debug sake
+    //std::cout << "[OFF-DIAG] [TIMING]: offdiag_time          : " << offdiag_time << std::endl; // performance debug sake
+    //std::cout << "[OFF-DIAG] [TIMING]: unique_shift_time     : " << unique_shift_time << std::endl; // performance debug sake
+    //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
@@ -211,17 +190,9 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
-            //tp_o_2 = std::chrono::high_resolution_clock::now();//TODO remove
-            //other_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_o_2 - tp_o_1).count();//TODO remove
-            //tp_o_1 = std::chrono::high_resolution_clock::now();//TODO remove
-            //tp_i_1 = std::chrono::high_resolution_clock::now();//TODO remove
             kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
-            //tp_i_2 = std::chrono::high_resolution_clock::now();//TODO remove
-            //insert_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_i_2 - tp_i_1).count();//TODO remove
         }
     }  // end of `Delta` loop
-
-    //std::cout << "ON-DIAG: other_time, insert_time: " << other_time << ", " << insert_time << std::endl;//TODO remove
 }
 
 }  // namespace bfpt_common

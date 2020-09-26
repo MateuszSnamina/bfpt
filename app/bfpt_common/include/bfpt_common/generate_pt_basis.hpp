@@ -57,7 +57,7 @@ void generate_pt_basis(
     static_assert(!std::is_volatile_v<KstateT>);
     static_assert(!std::is_reference_v<KstateT>);
     static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);
-    // *********** pt orders loop  ****************
+    // *********** pt orders loop  ************************************************************
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();
