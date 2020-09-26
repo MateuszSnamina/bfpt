@@ -1,7 +1,8 @@
 #ifndef KSTATE_VEC_MAP_HPP
 #define KSTATE_VEC_MAP_HPP
 
-#include <boost/algorithm/string/predicate.hpp>
+#include <kstate/kstate_comparator.hpp>
+
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/random_access_index.hpp>
@@ -10,21 +11,6 @@
 
 #include <memory>
 
-// #######################################################################
-// ## Helper                                                            ##
-// #######################################################################
-
-namespace kstate {
-
-struct RangeComparer {
-    template <typename ConstRangeType1, typename ConstRangeType2>
-    bool operator()(const ConstRangeType1& lhs,
-                    const ConstRangeType2& rhs) const {
-        return boost::lexicographical_compare(lhs, rhs);
-    }
-};
-
-}  // namespace
 
 // #######################################################################
 // ## VecMap                                                            ##
@@ -60,7 +46,7 @@ class VecMap {
     using KayExtractorDef = boost::multi_index::const_mem_fun<Element, Key, &Element::to_range>;
     // Container type definition -- index typedefs:
     using VecIndexDef = boost::multi_index::random_access<VecTagDef>;
-    using MapIndexDef = boost::multi_index::ordered_unique<MapTagDef, KayExtractorDef, RangeComparer>;
+    using MapIndexDef = boost::multi_index::ordered_unique<MapTagDef, KayExtractorDef, RangeComparator>;
     // Container type definition -- final container typedef:
     using Container = boost::multi_index::multi_index_container<ElementPtr, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>;
     // The container:

@@ -1,8 +1,6 @@
 #ifndef MODEL_MONOSTAR_MONOSTAR_SITE_STATE_HPP
 #define MODEL_MONOSTAR_MONOSTAR_SITE_STATE_HPP
 
-#include <model_monostar/monostar_site_state.hpp>
-
 #include <boost/operators.hpp>
 #include <iostream>
 

@@ -2,7 +2,9 @@
 #define BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 
 #include <bfpt_common/i_kstate_hamiltonian.hpp>
-#include <bfpt_common/populate_pt_basis.hpp>
+#include <bfpt_common/i_kstate_populator.hpp>
+#include <bfpt_common/generate_pt_basis.hpp> // TODO change to  <bfpt_common/generate_basis.hpp>
+#include <bfpt_common/generate_hamiltonian.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
 
 #include <linear_algebra/linear_algebra.hpp>
@@ -130,7 +132,7 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    populate_pt_basis(bais_populator, max_pt_order, basis, n_threads);
+    generate_pt_basis(bais_populator, max_pt_order, basis, n_threads);
     const double time_populating_pt_basis = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
@@ -147,7 +149,8 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     // Generate hamiltoniam matrix:
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
-    const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n, n_threads);
+    //const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n, n_threads); //TODO remove
+    const auto kn_hamiltonian_matrix = generate_hamiltonian(hamiltonian, basis, k_n, n_threads);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;

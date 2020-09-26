@@ -13,6 +13,16 @@
 
 namespace bfpt_common {
 
+/*
+ * This inteface is to providing k-hamiltonian builder.
+ * Technically, the hamiltonian is build from matrix G
+ * such as H = G + G^\dagger.
+ *
+ * The class provides method for filling a single column in the matrix G.
+ * (The arg name `kn_hamiltonian_matrix` is for the matrix G).
+ *
+ */
+
 template<typename _KstateT>
 class IKstateHamiltonian {
     static_assert(!std::is_array_v<_KstateT>);
@@ -35,10 +45,11 @@ public:
     using BasisT = kstate::Basis<KstateT>;
 
 public:
-    virtual arma::sp_cx_mat make_kn_hamiltonian_matrix(
+    virtual void fill_kn_hamiltonian_matrix_coll(
             const BasisT& basis,
-            const unsigned k_n,
-            unsigned n_threads) const = 0;
+            size_t n_col,
+            arma::sp_cx_mat& kn_hamiltonian_matrix,
+            const unsigned k_n) const = 0;
 };
 
 }  // namespace bfpt_common

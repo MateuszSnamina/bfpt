@@ -5,6 +5,7 @@
 #include <kstate/is_base_of_template.hpp>
 #include <kstate/kstate_abstract.hpp>
 #include <kstate/basis.hpp>
+#include <kstate/kstate_stl.hpp>
 
 // #######################################################################
 // ##  IDynamicUniqueKstatePopulator                                    ##
@@ -33,9 +34,8 @@ class IKstatePopulator {
     using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteType;
     using BasisT = kstate::Basis<KstateT>;
    public:
-    virtual void push_back_coupled_states_to_basis(
-        const KstateT& generator,
-        BasisT& basis) const = 0;
+    virtual kstate::KstateSet<KstateT> get_coupled_states(
+        const KstateT& generator) const = 0;
 };
 
 }  // namespace bfpt_common
