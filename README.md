@@ -82,7 +82,7 @@ To keep the equivalence explicit, here term "monostar model" is used instead of 
 
 ## Results from bftp solver
 
-The plot below presents the system Hamiltonian eigenenergies for `af` monostar system of 20 nodes calculated with `bfpt` at different levels of approximation. The considered system states are: the system ground state (horizontal lines on the plot) and system states from the first excited band (the curves on the plot). Result obtained in calculations with the Hilbert space subspaces of orders from 1 to 9 (inclusive) are represented by lines with colors going from red to blue. In addition exact results for infinite chain was included for reference; the reference energies are represented by gray lines. (The ground state energy was scaled so to preserve the quantum correlation energy per node.)
+The plot below presents the system Hamiltonian eigenenergies for `af` monostar system of 20 nodes calculated with `bfpt` at different levels of approximation. The considered system states are: the system ground state (horizontal lines on the plot) and system states from the first excited band (the curves on the plot). Result obtained in calculations with the Hilbert space subspaces of orders from 1 to 8 (inclusive) are represented by lines with colors going from red to blue. In addition exact results for infinite chain was included for reference; the reference energies are represented by gray lines. (The ground state energy was scaled so to preserve the quantum correlation energy per node.)
 
 !["Monostar model -- absolute energies"](img/model_monostar_20sites_absolute_energy.png "Monostar model -- absolute energies")
 
