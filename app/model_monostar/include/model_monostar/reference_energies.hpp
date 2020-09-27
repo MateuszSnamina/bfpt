@@ -33,21 +33,23 @@ protected:
 
 class ReferenceEnergiesFm final : public ReferenceEnergies {
 public:
-    ReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum) :
+    ReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B) :
         ReferenceEnergies(n_sites),
         _J_classical(J_classical),
-        _J_quantum(J_quantum) {
+        _J_quantum(J_quantum),
+        _B(B) {
         assert(_J_classical > 0);
     }
     double get_gs_energy() const override {
-        return _J_classical * _n_sites * (- 0.25 );
+        return _n_sites * ((-0.25) * _J_classical + (-0.5) * _B);
     }
     double get_es_exciation_enery(unsigned n_k) const override {
-        return _J_classical - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites);
+        return _J_classical + _B - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites);
     }
 private:
     const double _J_classical;
     const double _J_quantum;
+    const double _B;
 };
 
 // #######################################################################

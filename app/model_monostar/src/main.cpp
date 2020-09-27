@@ -192,9 +192,10 @@ int main(int argc, char** argv) {
                 [&interpreted_program_options]() {
                 const auto J_classical = interpreted_program_options.hamiltonian_params.get_J_classical();
                 const auto J_quantum = interpreted_program_options.hamiltonian_params.get_J_quantum();
+                const auto B = interpreted_program_options.hamiltonian_params.get_B();
                 switch (interpreted_program_options.model_type) {
                 case ModelType::AF:
-                        if (interpreted_program_options.model_type == ModelType::AF && J_classical == J_quantum) {
+                        if (interpreted_program_options.model_type == ModelType::AF && J_classical == J_quantum && B == 0) {
                             return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                                           std::make_shared<model_monostar::ReferenceEnergiesAf>(
                                               interpreted_program_options.n_sites, J_classical));
@@ -205,7 +206,7 @@ int main(int argc, char** argv) {
                 case ModelType::FM:
                         return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                                   std::make_shared<model_monostar::ReferenceEnergiesFm>(
-                                    interpreted_program_options.n_sites, J_classical, J_quantum));
+                                    interpreted_program_options.n_sites, J_classical, J_quantum, B));
                 default:
                     assert(false);
                     return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
