@@ -65,25 +65,35 @@ double bfpt_kn_es(
 void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
     using namespace extension::boost::stream_pragma;
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                           = " << interpreted_program_options.n_sites << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                              = " << interpreted_program_options.n_pt << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                        = " << interpreted_program_options.model_type << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_params::J_classical   = " << interpreted_program_options.hamiltonian_params.get_J_classical() << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_params::J_quantum     = " << interpreted_program_options.hamiltonian_params.get_J_quantum() << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_params::B             = " << interpreted_program_options.hamiltonian_params.get_B() << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                          = " << interpreted_program_options.run_type << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] es_momentum_domain                = " << interpreted_program_options.es_momentum_domain << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_size_flag = " << interpreted_program_options.print_flags.print_unpopulated_basis_size_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_flag        = " << interpreted_program_options.print_flags.print_populated_basis_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_populated_basis_size_flag   = " << interpreted_program_options.print_flags.print_populated_basis_size_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_sp_hamiltonian_flag         = " << interpreted_program_options.print_flags.print_sp_hamiltonian_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_hamiltonian_flag            = " << interpreted_program_options.print_flags.print_hamiltonian_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_min_max_n_kstates    = " << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                            = " << interpreted_program_options.n_sites << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                               = " << interpreted_program_options.n_pt << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
+    if (interpreted_program_options.model_type == ModelType::AF || interpreted_program_options.model_type == ModelType::FM){
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_classical     = " << interpreted_program_options.hamiltonian_af_fm_params.get_J_classical() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_quantum       = " << interpreted_program_options.hamiltonian_af_fm_params.get_J_quantum() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_af_fm_params.get_B() << std::endl;
+    }
+    if (interpreted_program_options.model_type == ModelType::FO) {
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pdelta_coef        = " << interpreted_program_options.hamiltonian_fo_params.get_Pdelta_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxx_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << interpreted_program_options.theta_opt << std::endl;
+    }
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] es_momentum_domain                 = " << interpreted_program_options.es_momentum_domain << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::unpopulated_basis_size_flag = " << interpreted_program_options.print_flags.print_unpopulated_basis_size_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::populated_basis_flag        = " << interpreted_program_options.print_flags.print_populated_basis_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::populated_basis_size_flag   = " << interpreted_program_options.print_flags.print_populated_basis_size_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::hamiltonian_stats           = " << interpreted_program_options.print_flags.print_hamiltonian_stats << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::sp_hamiltonian_flag         = " << interpreted_program_options.print_flags.print_sp_hamiltonian_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::hamiltonian_flag            = " << interpreted_program_options.print_flags.print_hamiltonian_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_min_max_n_kstates    = " << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_threads                         = " << interpreted_program_options.n_threads << std::endl;
 }
 
@@ -164,12 +174,12 @@ int main(int argc, char** argv) {
         print_input_data(interpreted_program_options);
         // ******************************************************************
         const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {
-            const double B = interpreted_program_options.hamiltonian_params.get_B();
-            return model_monostar::prepare_hamiltonian_kernel_1(B);
+            const double B = interpreted_program_options.hamiltonian_af_fm_params.get_B();
+            return model_monostar::prepare_hamiltonian_kernel_1_af_fm(B);
         }();
         const auto hamiltonian_kernel_12 = [&interpreted_program_options]() {
-            const auto J_classical = interpreted_program_options.hamiltonian_params.get_J_classical();
-            const auto J_quantum = interpreted_program_options.hamiltonian_params.get_J_quantum();
+            const auto J_classical = interpreted_program_options.hamiltonian_af_fm_params.get_J_classical();
+            const auto J_quantum = interpreted_program_options.hamiltonian_af_fm_params.get_J_quantum();
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
                 return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
@@ -190,27 +200,27 @@ int main(int argc, char** argv) {
         // ******************************************************************
         const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies =
                 [&interpreted_program_options]() {
-                const auto J_classical = interpreted_program_options.hamiltonian_params.get_J_classical();
-                const auto J_quantum = interpreted_program_options.hamiltonian_params.get_J_quantum();
-                const auto B = interpreted_program_options.hamiltonian_params.get_B();
-                switch (interpreted_program_options.model_type) {
-                case ModelType::AF:
-                        if (interpreted_program_options.model_type == ModelType::AF && J_classical == J_quantum && B == 0) {
-                            return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
-                                          std::make_shared<model_monostar::ReferenceEnergiesAf>(
-                                              interpreted_program_options.n_sites, J_classical));
-                        } else {
-                            return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
-                        }
-                          return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
-                case ModelType::FM:
-                        return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
-                                  std::make_shared<model_monostar::ReferenceEnergiesFm>(
-                                    interpreted_program_options.n_sites, J_classical, J_quantum, B));
-                default:
-                    assert(false);
+            const auto J_classical = interpreted_program_options.hamiltonian_af_fm_params.get_J_classical();
+            const auto J_quantum = interpreted_program_options.hamiltonian_af_fm_params.get_J_quantum();
+            const auto B = interpreted_program_options.hamiltonian_af_fm_params.get_B();
+            switch (interpreted_program_options.model_type) {
+            case ModelType::AF:
+                if (interpreted_program_options.model_type == ModelType::AF && J_classical == J_quantum && B == 0) {
+                    return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
+                                std::make_shared<model_monostar::ReferenceEnergiesAf>(
+                                    interpreted_program_options.n_sites, J_classical));
+                } else {
                     return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
                 }
+                return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+            case ModelType::FM:
+                return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
+                            std::make_shared<model_monostar::ReferenceEnergiesFm>(
+                                interpreted_program_options.n_sites, J_classical, J_quantum, B));
+            default:
+                assert(false);
+                return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+            }
         }();
         // ******************************************************************
         const std::optional<double> gs_energy =

@@ -9,11 +9,17 @@ struct RawProgramOptions {
   double hamiltonian_J_classical;
   double hamiltonian_J_quantum;
   double hamiltonian_B;
+  double hamiltonian_Pdelta_coef;
+  double hamiltonian_Pxx_coef;
+  double hamiltonian_Pxz_coef;
+  double hamiltonian_Pzz_coef;
+  double theta_opt;
   std::string run_type_string;
   bool print_unpopulated_basis_flag;
   bool print_unpopulated_basis_size_flag;
   bool print_populated_basis_flag;
   bool print_populated_basis_size_flag;
+  bool print_hamiltonian_stats;
   bool print_sp_hamiltonian_flag;
   bool print_hamiltonian_flag;
   bool print_eigen_values_flag;

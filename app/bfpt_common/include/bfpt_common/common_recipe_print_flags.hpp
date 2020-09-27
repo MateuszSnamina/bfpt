@@ -14,6 +14,7 @@ struct CommonRecipePrintFlags {
     bool print_unpopulated_basis_size_flag = true;
     bool print_populated_basis_flag = false;
     bool print_populated_basis_size_flag = true;
+    bool print_hamiltonian_stats = true;
     bool print_sp_hamiltonian_flag = false;
     bool print_hamiltonian_flag = false;
     bool print_eigen_values_flag = true;

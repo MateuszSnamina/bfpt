@@ -1,5 +1,7 @@
 #include<model_monostar/monostar_hamiltonian_kernel.hpp>
 
+#include<cmath>
+
 // #######################################################################
 // ## Helper function for preparing Hamiltonian12                       ##
 // #######################################################################
@@ -62,7 +64,7 @@ prepare_hamiltonian_kernel_12_fm(double J_classical, double J_quantum) {
 
 
 bfpt_common::HamiltonianKernel1<MonostarSiteState>
-prepare_hamiltonian_kernel_1(double B) {
+prepare_hamiltonian_kernel_1_af_fm(double B) {
     using OnDiagInfoType = std::map<bfpt_common::StateKernel1<MonostarSiteState>, double>;
     using OffDiagInfoType = std::multimap<bfpt_common::StateKernel1<MonostarSiteState>, bfpt_common::CoupleInfoKernel1<MonostarSiteState>>;
     OnDiagInfoType on_diag_info{
@@ -73,6 +75,46 @@ prepare_hamiltonian_kernel_1(double B) {
     };
     return bfpt_common::HamiltonianKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
 }
+
+bfpt_common::HamiltonianKernel12<MonostarSiteState>
+prepare_hamiltonian_kernel_12_af_fm(double Pxx_coef, double Pxz_coef, double Pzz_coef, double theta_opt) {
+    assert(Pxz_coef == 0.0); // TODO: implement nonzero case.
+    using OnDiagInfoType = std::map<bfpt_common::StateKernel12<MonostarSiteState>, double>;
+    using OffDiagInfoType = std::multimap<bfpt_common::StateKernel12<MonostarSiteState>, bfpt_common::CoupleInfoKernel12<MonostarSiteState>>;
+    const double s2 = std::sin(theta_opt/2), c2 = std::cos(theta_opt/2);
+    OnDiagInfoType on_diag_info {
+        {{gs, gs}, +Pxx_coef * s2 * s2 * s2 * s2 + Pzz_coef * c2 * c2 * c2 * c2},
+        {{gs, es}, +Pxx_coef * s2 * s2 * c2 * c2 + Pzz_coef * s2 * s2 * c2 * c2},
+        {{es, gs}, +Pxx_coef * s2 * s2 * c2 * c2 + Pzz_coef * s2 * s2 * c2 * c2},
+        {{es, es}, +Pxx_coef * c2 * c2 * c2 * c2 + Pzz_coef * s2 * s2 * s2 * s2}
+    };
+    OffDiagInfoType half_off_diag_info {
+        {{gs, gs}, {+Pxx_coef * s2 * s2 * s2 * c2 - Pzz_coef * s2 * c2 * c2 * c2, {gs, es}}},
+        {{gs, gs}, {+Pxx_coef * s2 * s2 * s2 * c2 - Pzz_coef * s2 * c2 * c2 * c2, {es, gs}}},
+        {{gs, gs}, {+Pxx_coef * s2 * s2 * c2 * c2 + Pzz_coef * s2 * s2 * c2 * c2, {es, es}}},
+        {{gs, es}, {+Pxx_coef * s2 * s2 * c2 * c2 + Pzz_coef * s2 * s2 * c2 * c2, {es, gs}}},
+        {{gs, es}, {+Pxx_coef * s2 * c2 * c2 * c2 - Pzz_coef * s2 * s2 * s2 * c2, {es, es}}},
+        {{es, gs}, {+Pxx_coef * s2 * c2 * c2 * c2 - Pzz_coef * s2 * s2 * s2 * c2, {es, es}}},
+    };
+    return bfpt_common::HamiltonianKernel12<MonostarSiteState>{on_diag_info, half_off_diag_info};
+}
+
+bfpt_common::HamiltonianKernel1<MonostarSiteState>
+prepare_hamiltonian_kernel_1_fo(double Pdelta_coef, double theta_opt) {
+    using OnDiagInfoType = std::map<bfpt_common::StateKernel1<MonostarSiteState>, double>;
+    using OffDiagInfoType = std::multimap<bfpt_common::StateKernel1<MonostarSiteState>, bfpt_common::CoupleInfoKernel1<MonostarSiteState>>;
+    const double s1 = std::sin(theta_opt), c1 = std::cos(theta_opt);
+    OnDiagInfoType on_diag_info {
+        {{gs}, +Pdelta_coef * s1},
+        {{es}, -Pdelta_coef * s1},
+    };
+    OffDiagInfoType half_off_diag_info {
+        {{gs}, {+Pdelta_coef * c1, {es}}},
+    };
+    return bfpt_common::HamiltonianKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
+}
+
+
 
 
 } // end of namespace model_monostar

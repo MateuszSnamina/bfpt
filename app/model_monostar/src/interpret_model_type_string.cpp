@@ -8,6 +8,7 @@
 const extern std::map<std::string, ModelType> interpret_model_type_string_map{
     {"af", ModelType::AF},
     {"fm", ModelType::FM},
+    {"fo", ModelType::FO},
 };
 
 utility::Result<ModelType, std::domain_error> interpret_model_type_string(const std::string& model_type_string) {

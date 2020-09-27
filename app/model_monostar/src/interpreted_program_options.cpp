@@ -18,11 +18,18 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         const std::string message = message1 + "\n" + _.unwrap_err().what();
         throw std::runtime_error(message);
     }
-    interpreted_program_options.hamiltonian_params = HamiltonianParams::Builder()
+    interpreted_program_options.hamiltonian_af_fm_params = HamiltonianAfFmParams::Builder()
             .set_J_classical(raw_program_options.hamiltonian_J_classical)
             .set_J_quantum(raw_program_options.hamiltonian_J_quantum)
             .set_B(raw_program_options.hamiltonian_B)
             .build();
+    interpreted_program_options.hamiltonian_fo_params = HamiltonianFoParams::Builder()
+            .set_Pdelta_coef(raw_program_options.hamiltonian_Pdelta_coef)
+            .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
+            .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
+            .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
+            .build();
+    interpreted_program_options.theta_opt = raw_program_options.theta_opt;
     if (const auto _ = interpret_run_type_string(raw_program_options.run_type_string)) {
         interpreted_program_options.run_type = _.unwrap();
     } else {
@@ -42,6 +49,7 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
     interpreted_program_options.print_flags.print_unpopulated_basis_size_flag = raw_program_options.print_unpopulated_basis_size_flag;
     interpreted_program_options.print_flags.print_populated_basis_flag = raw_program_options.print_populated_basis_flag;
     interpreted_program_options.print_flags.print_populated_basis_size_flag = raw_program_options.print_populated_basis_size_flag;
+    interpreted_program_options.print_flags.print_hamiltonian_stats = raw_program_options.print_hamiltonian_stats;
     interpreted_program_options.print_flags.print_sp_hamiltonian_flag = raw_program_options.print_sp_hamiltonian_flag;
     interpreted_program_options.print_flags.print_hamiltonian_flag = raw_program_options.print_hamiltonian_flag;
     interpreted_program_options.print_flags.print_eigen_values_flag = raw_program_options.print_eigen_values_flag;

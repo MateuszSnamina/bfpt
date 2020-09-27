@@ -155,6 +155,13 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
     // --------------------------------------------------
+    if (print_flags.print_hamiltonian_stats) {
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.n_rows: " << kn_hamiltonian_matrix.n_rows << std::endl;
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.n_cols: " << kn_hamiltonian_matrix.n_cols << std::endl;
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.n_nonzero: " << kn_hamiltonian_matrix.n_nonzero << std::endl;
+        const double fill_quotient = double(kn_hamiltonian_matrix.n_nonzero) / double(kn_hamiltonian_matrix.n_cols * kn_hamiltonian_matrix.n_rows);
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.fill_quotient: " << fill_quotient * 100 << "%" << std::endl;
+    }
     if (print_flags.print_sp_hamiltonian_flag) {
         std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
         std::cout << kn_hamiltonian_matrix;

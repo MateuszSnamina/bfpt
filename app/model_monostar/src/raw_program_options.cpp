@@ -54,6 +54,21 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --hamiltonian_B:
             ("hamiltonian_B",
              boost::program_options::value<double>(&program_options.hamiltonian_B)->default_value(0.0))
+            // --hamiltonian_delta:
+            ("hamiltonian_delta",
+             boost::program_options::value<double>(&program_options.hamiltonian_Pdelta_coef)->default_value(1.0))
+            // --hamiltonian_xx:
+            ("hamiltonian_xx",
+             boost::program_options::value<double>(&program_options.hamiltonian_Pxx_coef)->default_value(1.0))
+            // --hamiltonian_xz:
+            ("hamiltonian_xz",
+             boost::program_options::value<double>(&program_options.hamiltonian_Pxz_coef)->default_value(0.0))
+            // --hamiltonian_zz:
+            ("hamiltonian_zz",
+             boost::program_options::value<double>(&program_options.hamiltonian_Pzz_coef)->default_value(0.0))
+            // --theta_opt,o:
+            ("theta_opt,o",
+             boost::program_options::value<double>(&program_options.theta_opt)->default_value(0.0))
             // --run_type,-r:
             ("run_type,r",
              boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))
@@ -75,6 +90,9 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --print_populated_basis_size_flag,-b:
             ("print_populated_basis_size_flag,b",
              boost::program_options::bool_switch(&program_options.print_populated_basis_size_flag)->default_value(false))
+            // --print_hamiltonian_stats:
+            ("print_hamiltonian_stats",
+             boost::program_options::bool_switch(&program_options.print_hamiltonian_stats)->default_value(false))
             // --print_sp_hamiltonian_flag,S:
             ("print_sp_hamiltonian_flag,S",
              boost::program_options::bool_switch(&program_options.print_sp_hamiltonian_flag)->default_value(false))

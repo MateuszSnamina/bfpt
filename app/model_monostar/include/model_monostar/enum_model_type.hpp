@@ -7,7 +7,8 @@
 
 enum class ModelType {
     FM,
-    AF
+    AF,
+    FO
 };
 
 inline std::ostream& operator<<(std::ostream& s, const ModelType& m) {
@@ -15,6 +16,8 @@ inline std::ostream& operator<<(std::ostream& s, const ModelType& m) {
         s << "ModelType::FM";
     } else if (m == ModelType::AF) {
         s << "ModelType::AF";
+    } else if (m == ModelType::AF) {
+        s << "ModelType::FO";
     } else {
         throw std::logic_error("Invalid model enum value!");
     }
