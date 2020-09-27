@@ -1,7 +1,7 @@
 #include <model_monostar/raw_program_options.hpp>
 #include <model_monostar/interpreted_program_options.hpp>
 #include <model_monostar/monostar_basis.hpp>
-#include <model_monostar/monostar_hamiltonian.hpp>
+#include <model_monostar/monostar_hamiltonian_kernel.hpp>
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
 #include <model_monostar/reference_energies.hpp>
@@ -27,7 +27,8 @@
 // #######################################################################
 
 double bfpt_gs(
-        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_12,
+        const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
+        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
@@ -36,7 +37,7 @@ double bfpt_gs(
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
-    const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
+    const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, 0,
                                          print_flags, "[gs] ",
@@ -44,7 +45,8 @@ double bfpt_gs(
 }
 
 double bfpt_kn_es(
-        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_12,
+        const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
+        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
@@ -53,7 +55,7 @@ double bfpt_kn_es(
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
-    const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
+    const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, k_n,
                                          print_flags, "[es (" + std::to_string(k_n) + ")] ",
@@ -160,14 +162,16 @@ int main(int argc, char** argv) {
         // ******************************************************************
         print_input_data(interpreted_program_options);
         // ******************************************************************
-        const auto hamiltonian_12 = [&interpreted_program_options](){
+        const double B = 0;
+        const auto hamiltonian_kernel_1 = model_monostar::prepare_hamiltonian_kernel_1(B);
+        const auto hamiltonian_kernel_12 = [&interpreted_program_options](){
             const auto J_classical = interpreted_program_options.J_classical;
-            const auto J_quantum = interpreted_program_options.J_quantum      ;
+            const auto J_quantum = interpreted_program_options.J_quantum;
             if (interpreted_program_options.model_type == ModelType::AF) {
-                return model_monostar::prepare_hamiltonian_12_af(J_classical, J_quantum);
+                return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
             }
             if (interpreted_program_options.model_type == ModelType::FM) {
-                return model_monostar::prepare_hamiltonian_12_fm(J_classical, J_quantum);
+                return model_monostar::prepare_hamiltonian_kernel_12_fm(J_classical, J_quantum);
             }
             assert(false);
         }();
@@ -190,11 +194,12 @@ int main(int argc, char** argv) {
     }();
         // ******************************************************************
         const std::optional<double> gs_energy =
-                [&interpreted_program_options, &hamiltonian_12]() -> std::optional<double>{
+                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<double>{
             if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
                 std::cout << "------------------------------------------" << std::endl;
                 return bfpt_gs(
-                            hamiltonian_12,
+                            hamiltonian_kernel_1,
+                            hamiltonian_kernel_12,
                             interpreted_program_options.n_sites, interpreted_program_options.n_pt,
                             interpreted_program_options.print_flags,
                             interpreted_program_options.n_threads);
@@ -204,7 +209,7 @@ int main(int argc, char** argv) {
         }();
         // ******************************************************************
         const std::optional<std::vector<double>> es_energies =
-                [&interpreted_program_options, &hamiltonian_12]() -> std::optional<std::vector<double>> {
+                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<std::vector<double>> {
             std::cout << "------------------------------------------" << std::endl;
             if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
                 const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
@@ -214,7 +219,8 @@ int main(int argc, char** argv) {
                 for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
                     std::cout << "[PROGRESS] " << "solving n_k: " << k_n << std::endl;
                     const double es_energy = bfpt_kn_es(
-                                hamiltonian_12,
+                                hamiltonian_kernel_1,
+                                hamiltonian_kernel_12,
                                 interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
                                 interpreted_program_options.print_flags,
                                 interpreted_program_options.n_threads);

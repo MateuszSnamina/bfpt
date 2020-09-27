@@ -50,7 +50,7 @@ struct CoupleInfoKernel1 {
     static_assert(!std::is_reference_v<_SiteStateT>);
     using SiteStateT = _SiteStateT;
     double coef;
-    StateKernel1<SiteStateT> state1;
+    StateKernel1<SiteStateT> kernel_state;
 };
 
 template<typename _SiteStateT>
@@ -85,7 +85,7 @@ half_off_diag_info_to_full_off_diag_info_1(
     for (const auto node : half_off_diag) {
         const StateKernel1<SiteState>& ket_1 = node.first;
         const CoupleInfoKernel1<SiteState>& couple_info = node.second;
-        const StateKernel1<SiteState>& bra_1 = couple_info.state1;
+        const StateKernel1<SiteState>& bra_1 = couple_info.kernel_state;
         const auto& kernel_coupling_coef = couple_info.coef;
         const auto& complementaty_ket_1 = bra_1;
         const auto& complementaty_bra_1 = ket_1;
@@ -148,7 +148,7 @@ struct CoupleInfoKernel12 {
     static_assert(!std::is_reference_v<_SiteStateT>);
     using SiteStateT = _SiteStateT;
     double coef;
-    StateKernel12<SiteStateT> state12;
+    StateKernel12<SiteStateT> kernel_state;
 };
 
 template<typename _SiteStateT>
@@ -183,7 +183,7 @@ half_off_diag_info_to_full_off_diag_info_12(
     for (const auto node : half_off_diag) {
         const StateKernel12<SiteState>& ket_12 = node.first;
         const CoupleInfoKernel12<SiteState>& couple_info = node.second;
-        const StateKernel12<SiteState>& bra_12 = couple_info.state12;
+        const StateKernel12<SiteState>& bra_12 = couple_info.kernel_state;
         const auto& kernel_coupling_coef = couple_info.coef;
         const auto& complementaty_ket_12 = bra_12;
         const auto& complementaty_bra_12 = ket_12;

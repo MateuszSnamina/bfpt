@@ -50,7 +50,10 @@ public:
     using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteType;
     using BasisT = kstate::Basis<KstateT>;
 public:
-    GenericKstateHamiltonian(const size_t n_sites, HamiltonianKernel12<SiteStateT> hamiltonian_12);
+    GenericKstateHamiltonian(
+            const size_t n_sites,
+            HamiltonianKernel1<SiteStateT> hamiltonian_kernel_1,
+            HamiltonianKernel12<SiteStateT> hamiltonian_kernel_12);
     kstate::KstateSet<KstateT> get_coupled_states(
             const KstateT& generator) const override;
     void fill_kn_hamiltonian_matrix_coll(
@@ -60,7 +63,8 @@ public:
             const unsigned k_n) const override;
 private:
     const size_t _n_sites;
-    const HamiltonianKernel12<SiteStateT> _hamiltonian_12;
+    const HamiltonianKernel1<SiteStateT> _hamiltonian_kernel_1;
+    const HamiltonianKernel12<SiteStateT> _hamiltonian_kernel_12;
 };
 
 }  // namespace bfpt_common
@@ -76,9 +80,12 @@ namespace bfpt_common {
 
 template<typename _SiteStateT>
 GenericKstateHamiltonian<_SiteStateT>::GenericKstateHamiltonian(
-        const size_t n_sites, HamiltonianKernel12<SiteStateT> hamiltonian_12)
+        const size_t n_sites,
+        HamiltonianKernel1<SiteStateT> hamiltonian_kernel_1,
+        HamiltonianKernel12<SiteStateT> hamiltonian_kernel_12)
     : _n_sites(n_sites),
-      _hamiltonian_12(hamiltonian_12){
+      _hamiltonian_kernel_1(hamiltonian_kernel_1),
+      _hamiltonian_kernel_12(hamiltonian_kernel_12) {
 }
 
 template<typename _SiteStateT>
@@ -89,26 +96,26 @@ GenericKstateHamiltonian<_SiteStateT>::get_coupled_states(
     assert(generator.n_sites() == _n_sites);
     const auto generator_range = generator.to_range();
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_site_1 = *std::next(std::begin(generator_range), n_delta);
-        const auto ket_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
-        const StateKernel12<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
-        const auto equal_range = _hamiltonian_12._full_off_diag_info.equal_range(ket_site_12);
+        const auto ket_kernel_site_1 = *std::next(std::begin(generator_range), n_delta);
+        const auto ket_kernel_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
+        const StateKernel12<SiteStateT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
+        const auto equal_range = _hamiltonian_kernel_12._full_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
-            [[maybe_unused]] const auto& ket_site_1_re = ket_12_re.state_1;
-            [[maybe_unused]] const auto& ket_site_2_re = ket_12_re.state_2;
-            assert(ket_site_1_re == ket_site_1);
-            assert(ket_site_2_re == ket_site_2);
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_12_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_12_re.state_2;
+            assert(ket_kernel_site_1_re == ket_kernel_site_1);
+            assert(ket_kernel_site_2_re == ket_kernel_site_2);
             const auto& couple_info = off_diag_node_it->second;
             //[[maybe_unused]] const auto& kernel_coupling_coef = couple_info.coef;
-            const auto& bra_12 = couple_info.state12;
-            const auto& bra_site_1 = bra_12.state_1;
-            const auto& bra_site_2 = bra_12.state_2;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            const auto& bra_kernel_site_2 = bra_kernel.state_2;
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
             const auto conjugated_range =
                     generator_range |
-                    extension::boost::adaptors::refined(n_delta, bra_site_1) |
-                    extension::boost::adaptors::refined(n_delta_p1, bra_site_2);
+                    extension::boost::adaptors::refined(n_delta, bra_kernel_site_1) |
+                    extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2);
             const auto conjugated_range_unique_shifted = kstate::make_unique_shift(conjugated_range);
             const auto conjugated_kstate_ptr = std::make_shared<KstateT>(conjugated_range_unique_shifted, kstate::ctr_from_range);
             result.insert(conjugated_kstate_ptr);
@@ -134,30 +141,37 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
     const auto& ket_kstate = (*ket_kstate_ptr).to_range();
+
+//    for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
+//TODO!!!!
+//        } // end of `_half_off_diag_info` equal_range loop
+//    } // end of filling hamiltonian1-off0siag loop
+
+
     //std::chrono::high_resolution_clock::time_point tp_u_1, tp_u_2; // performance debug sake
     //std::chrono::high_resolution_clock::time_point tp_nu_1, tp_nu_2; // performance debug sake
     //double unique_shift_time = 0.0, not_unique_shift_time = 0.0; // performance debug sake
     //const auto tp_offdiag_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
-        const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const StateKernel12<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
-        const auto equal_range = _hamiltonian_12._half_off_diag_info.equal_range(ket_site_12);
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
+        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
+        const StateKernel12<SiteStateT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
+        const auto equal_range = _hamiltonian_kernel_12._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
-            const auto& ket_12_re = off_diag_node_it->first;
-            [[maybe_unused]] const auto& ket_site_1_re = ket_12_re.state_1;
-            [[maybe_unused]] const auto& ket_site_2_re = ket_12_re.state_2;
-            assert(ket_site_1_re == ket_site_1);
-            assert(ket_site_2_re == ket_site_2);
+            const auto& ket_kernel_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_kernel_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_kernel_re.state_2;
+            assert(ket_kernel_site_1_re == ket_kernel_site_1);
+            assert(ket_kernel_site_2_re == ket_kernel_site_2);
             const auto& couple_info = off_diag_node_it->second;
             const auto& kernel_coupling_coef = couple_info.coef;
-            const auto& bra_12 = couple_info.state12;
-            const auto& bra_site_1 = bra_12.state_1;
-            const auto& bra_site_2 = bra_12.state_2;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            const auto& bra_kernel_site_2 = bra_kernel.state_2;
             const auto bra_kstate = ket_kstate
-                    | extension::boost::adaptors::refined(n_delta, bra_site_1)
-                    | extension::boost::adaptors::refined(n_delta_p1, bra_site_2);
+                    | extension::boost::adaptors::refined(n_delta, bra_kernel_site_1)
+                    | extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2);
             //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
             //tp_u_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
@@ -188,11 +202,11 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     //std::cout << "[OFF-DIAG] [TIMING]: unique_shift_time     : " << unique_shift_time << std::endl; // performance debug sake
     //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
-        const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const StateKernel12<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
-        if (_hamiltonian_12._diag_info.count(ket_site_12)) {
-            const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
+        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
+        const StateKernel12<SiteStateT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
+        if (_hamiltonian_kernel_12._diag_info.count(ket_kernel)) {
+            const auto kernel_diag_coef = _hamiltonian_kernel_12._diag_info.at(ket_kernel);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
             kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.

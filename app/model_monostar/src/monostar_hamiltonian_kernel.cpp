@@ -1,4 +1,4 @@
-#include<model_monostar/monostar_hamiltonian.hpp>
+#include<model_monostar/monostar_hamiltonian_kernel.hpp>
 
 // #######################################################################
 // ## Helper function for preparing Hamiltonian12                       ##
@@ -41,23 +41,38 @@ prepare_half_off_diag_info_for_fm(double J) {
 }
 
 // #######################################################################
-// ## prepare_hamiltonian_12_{af,fm}                                    ##
+// ## prepare_hamiltonian_kernel_{1,12}_{af,fm}                         ##
 // #######################################################################
 
 namespace model_monostar {
 
 bfpt_common::HamiltonianKernel12<MonostarSiteState>
-prepare_hamiltonian_12_af(double J_classical, double J_quantum) {
+prepare_hamiltonian_kernel_12_af(double J_classical, double J_quantum) {
     const auto diag_info = prepare_diag_info(J_classical);
     const auto half_off_diag_info = prepare_half_off_diag_info_for_af(J_quantum);
     return bfpt_common::HamiltonianKernel12<MonostarSiteState>{diag_info, half_off_diag_info};
 }
 
 bfpt_common::HamiltonianKernel12<MonostarSiteState>
-prepare_hamiltonian_12_fm(double J_classical, double J_quantum) {
+prepare_hamiltonian_kernel_12_fm(double J_classical, double J_quantum) {
     const auto diag_info = prepare_diag_info(J_classical);
     const auto half_off_diag_info = prepare_half_off_diag_info_for_fm(J_quantum);
     return bfpt_common::HamiltonianKernel12<MonostarSiteState>{diag_info, half_off_diag_info};
 }
+
+
+bfpt_common::HamiltonianKernel1<MonostarSiteState>
+prepare_hamiltonian_kernel_1(double B) {
+    using OnDiagInfoType = std::map<bfpt_common::StateKernel1<MonostarSiteState>, double>;
+    using OffDiagInfoType = std::multimap<bfpt_common::StateKernel1<MonostarSiteState>, bfpt_common::CoupleInfoKernel1<MonostarSiteState>>;
+    OnDiagInfoType on_diag_info{
+        {{gs}, -B * 0.5},
+        {{es}, +B * 0.5},
+    };
+    OffDiagInfoType half_off_diag_info{
+    };
+    return bfpt_common::HamiltonianKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
+}
+
 
 } // end of namespace model_monostar
