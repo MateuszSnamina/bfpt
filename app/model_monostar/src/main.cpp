@@ -6,7 +6,7 @@
 #include <model_monostar/monostar_site_state.hpp>
 #include <model_monostar/reference_energies.hpp>
 
-#include <bfpt_common/hamiltonian_12.hpp>
+#include <bfpt_common/hamiltonian_kernel.hpp>
 #include <bfpt_common/generic_kstate_hamiltonian.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
 
@@ -27,7 +27,7 @@
 // #######################################################################
 
 double bfpt_gs(
-        const bfpt_common::Hamiltonian12<model_monostar::MonostarSiteState>& hamiltonian_12,
+        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_12,
         const size_t n_sites, const unsigned max_pt_order,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
@@ -44,7 +44,7 @@ double bfpt_gs(
 }
 
 double bfpt_kn_es(
-        const bfpt_common::Hamiltonian12<model_monostar::MonostarSiteState>& hamiltonian_12,
+        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {

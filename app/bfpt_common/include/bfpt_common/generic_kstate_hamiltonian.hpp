@@ -1,7 +1,7 @@
 #ifndef BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
 #define BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
 
-#include <bfpt_common/hamiltonian_12.hpp>
+#include <bfpt_common/hamiltonian_kernel.hpp>
 #include <bfpt_common/i_kstate_hamiltonian.hpp>
 #include <bfpt_common/i_kstate_populator.hpp>
 #include <bfpt_common/generate_pt_basis.hpp>
@@ -49,7 +49,7 @@ public:
     using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteType;
     using BasisT = kstate::Basis<KstateT>;
 public:
-    GenericKstateHamiltonian(const size_t n_sites, Hamiltonian12<SiteStateT> hamiltonian_12);
+    GenericKstateHamiltonian(const size_t n_sites, HamiltonianKernel12<SiteStateT> hamiltonian_12);
     kstate::KstateSet<KstateT> get_coupled_states(
             const KstateT& generator) const override;
     void fill_kn_hamiltonian_matrix_coll(
@@ -59,7 +59,7 @@ public:
             const unsigned k_n) const override;
 private:
     const size_t _n_sites;
-    const Hamiltonian12<SiteStateT> _hamiltonian_12;
+    const HamiltonianKernel12<SiteStateT> _hamiltonian_12;
 };
 
 }  // namespace bfpt_common
@@ -75,7 +75,7 @@ namespace bfpt_common {
 
 template<typename _SiteStateT>
 GenericKstateHamiltonian<_SiteStateT>::GenericKstateHamiltonian(
-        const size_t n_sites, Hamiltonian12<SiteStateT> hamiltonian_12)
+        const size_t n_sites, HamiltonianKernel12<SiteStateT> hamiltonian_12)
     : _n_sites(n_sites),
       _hamiltonian_12(hamiltonian_12){
 }
@@ -90,7 +90,7 @@ GenericKstateHamiltonian<_SiteStateT>::get_coupled_states(
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(generator_range), n_delta);
         const auto ket_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
-        const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
+        const StateKernel12<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
         const auto equal_range = _hamiltonian_12._full_off_diag_info.equal_range(ket_site_12);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
@@ -135,7 +135,7 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
+        const StateKernel12<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
         const auto equal_range = _hamiltonian_12._half_off_diag_info.equal_range(ket_site_12);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_12_re = off_diag_node_it->first;
@@ -183,7 +183,7 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const SiteStatePair<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
+        const StateKernel12<SiteStateT> ket_site_12{ket_site_1, ket_site_2};
         if (_hamiltonian_12._diag_info.count(ket_site_12)) {
             const auto kernel_diag_coef = _hamiltonian_12._diag_info.at(ket_site_12);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
