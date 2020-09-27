@@ -110,7 +110,7 @@ void print_results_tree(
             if (gs_energy) {
                 std::cout << " ││exc. enery        = " << es_energy - *gs_energy << std::endl;
                 if (reference_energies) {
-                    std::cout << " ││exc. enery (ref.) = " << reference_energies->get_es_energy(k_n) << std::endl;
+                    std::cout << " ││exc. enery (ref.) = " << reference_energies->get_es_exciation_enery(k_n) << std::endl;
                 }
             }
         }
