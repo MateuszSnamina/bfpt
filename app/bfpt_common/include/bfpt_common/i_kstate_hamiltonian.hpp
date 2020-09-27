@@ -8,7 +8,7 @@
 #include <armadillo>
 
 // #######################################################################
-// ## IDynamicUniqueKstateHamiltonian                                   ##
+// ## IKstateHamiltonian                                                ##
 // #######################################################################
 
 namespace bfpt_common {

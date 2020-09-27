@@ -1,5 +1,5 @@
-#ifndef BFPT_COMMON_I_DYNAMIC_UNIQUE_KSTATE_POPULATOR_HPP
-#define BFPT_COMMON_I_DYNAMIC_UNIQUE_KSTATE_POPULATOR_HPP
+#ifndef BFPT_COMMON_I_POPULATOR_HPP
+#define BFPT_COMMON_I_POPULATOR_HPP
 
 #include <kstate/remove_cvref.hpp>
 #include <kstate/is_base_of_template.hpp>
@@ -8,7 +8,7 @@
 #include <kstate/kstate_stl.hpp>
 
 // #######################################################################
-// ##  IDynamicUniqueKstatePopulator                                    ##
+// ##  IKstatePopulator                                                 ##
 // #######################################################################
 
 namespace bfpt_common {

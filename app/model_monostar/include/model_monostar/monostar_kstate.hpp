@@ -3,6 +3,7 @@
 
 #include <model_monostar/monostar_site_state.hpp>
 
+#include <kstate/unique_shift.hpp>
 #include <kstate/kstate_concrete.hpp>
 #include <kstate/kstate_streamer.hpp>
 
@@ -21,13 +22,12 @@ extern const extension::boost::RangeStreamerSettings<MonostarSiteState> monostar
 }  // namespace model_monostar
 
 // #######################################################################
-// ## DynamicMonostarKstate nad DynamicMonostarUniqueKstate             ##
+// ## DynamicMonostarKstate                                             ##
 // #######################################################################
 
 namespace model_monostar {
 
 using DynamicMonostarKstate = kstate::DynamicKstate<MonostarSiteState>;
-using DynamicMonostarUniqueKstate = kstate::DynamicUniqueKstate<MonostarSiteState>;
 
 }  // namespace model_monostar
 
@@ -37,36 +37,27 @@ using DynamicMonostarUniqueKstate = kstate::DynamicUniqueKstate<MonostarSiteStat
 
 namespace model_monostar {
 
-inline DynamicMonostarUniqueKstate classical_gs_kstate(const unsigned n_sites) {
+inline DynamicMonostarKstate classical_gs_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, model_monostar::gs);
-    return DynamicMonostarUniqueKstate(generator_array, kstate::ctr_from_range);
+    return DynamicMonostarKstate(kstate::make_unique_shift(generator_array), kstate::ctr_from_range);
 }
 
-inline DynamicMonostarUniqueKstate classical_es_kstate(const unsigned n_sites) {
+inline DynamicMonostarKstate classical_es_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, model_monostar::gs);
     generator_array[0] = es;
-    return DynamicMonostarUniqueKstate(generator_array, kstate::ctr_from_range);
+    return DynamicMonostarKstate(kstate::make_unique_shift(generator_array), kstate::ctr_from_range);
 }
 
 }  // namespace model_monostar
 
 // #######################################################################
-// ## DynamicMonostarKstate nad DynamicMonostarUniqueKstate - printing  ##
+// ## DynamicMonostarKstate - printing                                  ##
 // #######################################################################
 
 namespace model_monostar {
 
 inline std::ostream&
 operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
-    using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator||;
-    using kstate::pramga::operator<<;
-    stream << (state || monostar_kstate_range_streamer_settings);
-    return stream;
-}
-
-inline std::ostream&
-operator<<(std::ostream& stream, const DynamicMonostarUniqueKstate& state) {
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
     using kstate::pramga::operator<<;

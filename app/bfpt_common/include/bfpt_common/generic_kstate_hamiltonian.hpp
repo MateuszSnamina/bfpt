@@ -1,11 +1,12 @@
-#ifndef BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
-#define BFPT_COMMON_GENERIC_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
+#ifndef BFPT_COMMON_GENERIC_KSTATE_HAMILTONIAN_HPP
+#define BFPT_COMMON_GENERIC_KSTATE_HAMILTONIAN_HPP
 
 #include <bfpt_common/hamiltonian_kernel.hpp>
 #include <bfpt_common/i_kstate_hamiltonian.hpp>
 #include <bfpt_common/i_kstate_populator.hpp>
 #include <bfpt_common/generate_pt_basis.hpp>
 
+#include <kstate/unique_shift.hpp>
 #include <kstate/kstate_abstract.hpp>
 #include <kstate/remove_cvref.hpp>
 #include <kstate/is_base_of_template.hpp>
@@ -108,13 +109,19 @@ GenericKstateHamiltonian<_SiteStateT>::get_coupled_states(
                     generator_range |
                     extension::boost::adaptors::refined(n_delta, bra_site_1) |
                     extension::boost::adaptors::refined(n_delta_p1, bra_site_2);
-            const auto conjugated_kstate_ptr = std::make_shared<KstateT>(conjugated_range, kstate::ctr_from_range);
+            const auto conjugated_range_unique_shifted = kstate::make_unique_shift(conjugated_range);
+            const auto conjugated_kstate_ptr = std::make_shared<KstateT>(conjugated_range_unique_shifted, kstate::ctr_from_range);
             result.insert(conjugated_kstate_ptr);
         } // end of `_full_off_diag_info` equal_range loop
     }  // end of `Delta` loop
     return result;
 }
 
+
+/*
+ * In this implementation we assume thar
+ * in the basis there are only elements that are unique shifted!
+ */
 template<typename _SiteStateT>
 void
 GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(

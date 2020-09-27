@@ -1,4 +1,5 @@
 #include <kstate/kstate_concrete.hpp>
+#include <kstate/unique_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 
@@ -241,25 +242,25 @@ TEST(DynamicKstate, ToStrTest1) {
 
 TEST(DynamicUniqueKstate, CtrTest0) {
     const std::array<int, 1> v2 = {11};
-    const kstate::DynamicUniqueKstate<int> k2(v2, ctr_from_range);
+    const kstate::DynamicKstate<int> k2(kstate::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃11⦄");
 }
 
 TEST(DynamicUniqueKstate, CtrTest1) {
     const std::array<int, 2> v2 = {11, 12};
-    const kstate::DynamicUniqueKstate<int> k2(v2, ctr_from_range);
+    const kstate::DynamicKstate<int> k2(kstate::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
 }
 
 TEST(DynamicUniqueKstate, CtrTest2) {
     const std::array<int, 2> v2 = {12, 11};
-    const kstate::DynamicUniqueKstate<int> k2(v2, ctr_from_range);
+    const kstate::DynamicKstate<int> k2(kstate::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
 }
 
 TEST(DynamicUniqueKstate, CtrTest3) {
     const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};
-    const kstate::DynamicUniqueKstate<int> k2(v2, ctr_from_range);
+    const kstate::DynamicKstate<int> k2(kstate::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
 }
 

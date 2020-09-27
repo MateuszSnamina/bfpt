@@ -3,7 +3,7 @@
 
 #include <kstate/kstate_abstract.hpp>
 
-#include <extensions/adaptors.hpp>
+//#include <extensions/adaptors.hpp> //TODO remove
 #include <extensions/range_streamer.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -126,61 +126,6 @@ DynamicKstate<_SiteType>::to_range() const {
 template <typename _SiteType>
 size_t
 DynamicKstate<_SiteType>::n_sites() const {
-    return _v.size();
-}
-
-}  // namespace kstate
-
-// #######################################################################
-// ## UniqueDynamicKstate                                               ##
-// #######################################################################
-
-namespace kstate {
-
-template <typename _SiteType>
-class DynamicUniqueKstate : public SpeedyKstate<typename DynamicKstateTypes<_SiteType>::ConstRangeType> {
-
-public:
-    using SiteType = _SiteType;
-    using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
-    using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
-    using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
-    using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
-    using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
-    using AnyRangeType = typename DynamicKstateTypes<SiteType>::AnyRangeType;
-    using ConstAnyRangeType = typename DynamicKstateTypes<SiteType>::ConstAnyRangeType;
-
-public:
-    template <typename SomeRangeType>
-    DynamicUniqueKstate(const SomeRangeType& v, CtrFromRange);
-
-public:
-    ConstRangeType to_range() const override;
-    size_t n_sites() const override;
-
-protected:
-    const BufferType _v;
-};
-
-// ***********************************************************************
-
-template <typename _SiteType>
-template <typename SomeRangeType>
-DynamicUniqueKstate<_SiteType>::DynamicUniqueKstate(const SomeRangeType& r, CtrFromRange)
-    : _v(init_vector_from_range(r | extension::boost::adaptors::rotated(n_unique_shift(r)))) {
-}
-
-// ***********************************************************************
-
-template <typename _SiteType>
-typename DynamicUniqueKstate<_SiteType>::ConstRangeType
-DynamicUniqueKstate<_SiteType>::to_range() const {
-    return _v;
-}
-
-template <typename _SiteType>
-size_t
-DynamicUniqueKstate<_SiteType>::n_sites() const {
     return _v.size();
 }
 

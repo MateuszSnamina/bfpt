@@ -32,8 +32,8 @@ double bfpt_gs(
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
     //using SiteStateT = model_monostar::MonostarSiteState;
-    using KstateT = model_monostar::DynamicMonostarUniqueKstate;
-    using BasisT = model_monostar::DynamicMonostarUniqueKstateBasis;
+    using KstateT = model_monostar::DynamicMonostarKstate;
+    using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
     const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};
@@ -49,8 +49,8 @@ double bfpt_kn_es(
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
     //using SiteStateT = model_monostar::MonostarSiteState;
-    using KstateT = model_monostar::DynamicMonostarUniqueKstate;
-    using BasisT = model_monostar::DynamicMonostarUniqueKstateBasis;
+    using KstateT = model_monostar::DynamicMonostarKstate;
+    using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
     const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_12};

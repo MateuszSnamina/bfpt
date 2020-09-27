@@ -1,8 +1,6 @@
 #ifndef KSTATE_KSTATE_ABSTRACT_HPP
 #define KSTATE_KSTATE_ABSTRACT_HPP
 
-#include <kstate/unique_shift.hpp>
-
 #include <extensions/adaptors.hpp>
 #include <extensions/range_streamer.hpp>
 

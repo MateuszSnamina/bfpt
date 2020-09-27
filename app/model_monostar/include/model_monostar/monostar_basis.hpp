@@ -7,30 +7,30 @@
 #include <kstate/basis_streamer.hpp>
 
 // #######################################################################
-// ## DynamicMonostarUniqueKstateBasis                                  ##
+// ## DynamicMonostarKstateBasis                                        ##
 // #######################################################################
 
 namespace model_monostar {
 
-using DynamicMonostarUniqueKstateBasis = kstate::Basis<DynamicMonostarUniqueKstate>;
+using DynamicMonostarKstateBasis = kstate::Basis<DynamicMonostarKstate>;
 
 }  // namespace model_monostar
 
 // #######################################################################
-// ## DynamicMonostarUniqueKstateBasis - printing                       ##
+// ## DynamicMonostarKstateBasis - printing                             ##
 // #######################################################################
 
 namespace model_monostar {
 
 inline std::ostream&
-operator<<(std::ostream& stream, const DynamicMonostarUniqueKstateBasis& basis) {
+operator<<(std::ostream& stream, const DynamicMonostarKstateBasis& basis) {
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator&&;
     using kstate::pramga::operator<<;
-    const auto kstate_value_putter = [](std::ostream& os, DynamicMonostarUniqueKstate kstate) {
+    const auto kstate_value_putter = [](std::ostream& os, DynamicMonostarKstate kstate) {
         os << kstate;
     };
-    const auto range_streamer_settings = RSS<DynamicMonostarUniqueKstate>().set_stream_value_putter(kstate_value_putter);
+    const auto range_streamer_settings = RSS<DynamicMonostarKstate>().set_stream_value_putter(kstate_value_putter);
     stream << (basis && range_streamer_settings);
     return stream;
 }
