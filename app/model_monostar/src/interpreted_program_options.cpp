@@ -18,8 +18,11 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         const std::string message = message1 + "\n" + _.unwrap_err().what();
         throw std::runtime_error(message);
     }
-    interpreted_program_options.J_classical = raw_program_options.J_classical;
-    interpreted_program_options.J_quantum = raw_program_options.J_quantum;
+    interpreted_program_options.hamiltonian_params = HamiltonianParams::Builder()
+            .set_J_classical(raw_program_options.hamiltonian_J_classical)
+            .set_J_quantum(raw_program_options.hamiltonian_J_quantum)
+            .set_B(raw_program_options.hamiltonian_B)
+            .build();
     if (const auto _ = interpret_run_type_string(raw_program_options.run_type_string)) {
         interpreted_program_options.run_type = _.unwrap();
     } else {

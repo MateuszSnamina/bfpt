@@ -6,8 +6,9 @@ struct RawProgramOptions {
   unsigned n_sites;
   unsigned n_pt;
   std::string model_type_string;
-  double J_classical;
-  double J_quantum;
+  double hamiltonian_J_classical;
+  double hamiltonian_J_quantum;
+  double hamiltonian_B;
   std::string run_type_string;
   bool print_unpopulated_basis_flag;
   bool print_unpopulated_basis_size_flag;

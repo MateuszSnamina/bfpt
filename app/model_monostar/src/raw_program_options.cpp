@@ -45,12 +45,15 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --model_type_string,-m:
             ("model_type_string,m",
              boost::program_options::value<std::string>(&program_options.model_type_string)->default_value("af"))
-            // --J_classical,-c:
-            ("J_classical,c",
-             boost::program_options::value<double>(&program_options.J_classical)->default_value(1.0))
-            // --J_quantum,-q:
-            ("J_quantum,q",
-             boost::program_options::value<double>(&program_options.J_quantum)->default_value(1.0))
+            // --hamiltonian_J_classical:
+            ("hamiltonian_J_classical",
+             boost::program_options::value<double>(&program_options.hamiltonian_J_classical)->default_value(1.0))
+            // --hamiltonian_J_quantum:
+            ("hamiltonian_J_quantum",
+             boost::program_options::value<double>(&program_options.hamiltonian_J_quantum)->default_value(1.0))
+            // --hamiltonian_B:
+            ("hamiltonian_B",
+             boost::program_options::value<double>(&program_options.hamiltonian_B)->default_value(0.0))
             // --run_type,-r:
             ("run_type,r",
              boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))

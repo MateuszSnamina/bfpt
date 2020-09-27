@@ -68,8 +68,9 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                           = " << interpreted_program_options.n_sites << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                              = " << interpreted_program_options.n_pt << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                        = " << interpreted_program_options.model_type << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] J_classical                       = " << interpreted_program_options.J_classical << std::endl;
-    std::cout << "[INFO   ] [PROGRAM_OPTIONS] J_quantum                         = " << interpreted_program_options.J_quantum << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_params::J_classical   = " << interpreted_program_options.hamiltonian_params.get_J_classical() << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_params::J_quantum     = " << interpreted_program_options.hamiltonian_params.get_J_quantum() << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_params::B             = " << interpreted_program_options.hamiltonian_params.get_B() << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                          = " << interpreted_program_options.run_type << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] es_momentum_domain                = " << interpreted_program_options.es_momentum_domain << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print_unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
@@ -162,36 +163,54 @@ int main(int argc, char** argv) {
         // ******************************************************************
         print_input_data(interpreted_program_options);
         // ******************************************************************
-        const double B = 0;
-        const auto hamiltonian_kernel_1 = model_monostar::prepare_hamiltonian_kernel_1(B);
-        const auto hamiltonian_kernel_12 = [&interpreted_program_options](){
-            const auto J_classical = interpreted_program_options.J_classical;
-            const auto J_quantum = interpreted_program_options.J_quantum;
-            if (interpreted_program_options.model_type == ModelType::AF) {
+        const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {
+            const double B = interpreted_program_options.hamiltonian_params.get_B();
+            return model_monostar::prepare_hamiltonian_kernel_1(B);
+        }();
+        const auto hamiltonian_kernel_12 = [&interpreted_program_options]() {
+            const auto J_classical = interpreted_program_options.hamiltonian_params.get_J_classical();
+            const auto J_quantum = interpreted_program_options.hamiltonian_params.get_J_quantum();
+            switch (interpreted_program_options.model_type) {
+            case ModelType::AF:
                 return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
-            }
-            if (interpreted_program_options.model_type == ModelType::FM) {
+            case ModelType::FM:
                 return model_monostar::prepare_hamiltonian_kernel_12_fm(J_classical, J_quantum);
-            }
-            assert(false);
+            default:
+                assert(false);
+                return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
+            };
+            //            if (interpreted_program_options.model_type == ModelType::AF) {
+            //                return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
+            //            }
+            //            if (interpreted_program_options.model_type == ModelType::FM) {
+            //                return model_monostar::prepare_hamiltonian_kernel_12_fm(J_classical, J_quantum);
+            //            }
+            //            assert(false);
         }();
         // ******************************************************************
         const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies =
-                [&interpreted_program_options]() -> std::shared_ptr<model_monostar::ReferenceEnergies> {
-                if (interpreted_program_options.model_type == ModelType::AF &&
-                    interpreted_program_options.J_classical == interpreted_program_options.J_quantum) {
-                return std::make_shared<model_monostar::ReferenceEnergiesAf>(
-                    interpreted_program_options.n_sites,
-                    interpreted_program_options.J_classical);
-    }
-                if (interpreted_program_options.model_type == ModelType::FM) {
-                return std::make_unique<model_monostar::ReferenceEnergiesFm>(
-                    interpreted_program_options.n_sites,
-                    interpreted_program_options.J_classical,
-                    interpreted_program_options.J_quantum);
-    }
-                return nullptr;
-    }();
+                [&interpreted_program_options]() {
+                const auto J_classical = interpreted_program_options.hamiltonian_params.get_J_classical();
+                const auto J_quantum = interpreted_program_options.hamiltonian_params.get_J_quantum();
+                switch (interpreted_program_options.model_type) {
+                case ModelType::AF:
+                        if (interpreted_program_options.model_type == ModelType::AF && J_classical == J_quantum) {
+                            return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
+                                          std::make_shared<model_monostar::ReferenceEnergiesAf>(
+                                              interpreted_program_options.n_sites, J_classical));
+                        } else {
+                            return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+                        }
+                          return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+                case ModelType::FM:
+                        return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
+                                  std::make_shared<model_monostar::ReferenceEnergiesFm>(
+                                    interpreted_program_options.n_sites, J_classical, J_quantum));
+                default:
+                    assert(false);
+                    return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+                }
+        }();
         // ******************************************************************
         const std::optional<double> gs_energy =
                 [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<double>{
