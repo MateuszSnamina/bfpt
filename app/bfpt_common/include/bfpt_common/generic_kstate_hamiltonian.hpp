@@ -161,7 +161,6 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm_1 = _n_sites * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
-                const size_t bra_n_unique_shift = kstate::n_unique_shift(bra_kstate);
                 const size_t bra_n_least_replication_shift = basis.vec_index()[bra_kstate_idx]->n_least_replication_shift();
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 const int exponent_n = (int)bra_n_unique_shift;
@@ -228,7 +227,17 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     //std::cout << "[OFF-DIAG] [TIMING]: unique_shift_time     : " << unique_shift_time << std::endl; // performance debug sake
     //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
     // ********** ON-DIAG, HAMILTONIAN1 **********************************************
-    // TODO
+    for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
+        const StateKernel1<SiteStateT> ket_kernel{ket_kernel_site_1};
+        if (_hamiltonian_kernel_1._diag_info.count(ket_kernel)) {
+            const auto kernel_diag_coef = _hamiltonian_kernel_1._diag_info.at(ket_kernel);
+            const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
+            const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
+            //TODO is not pre_norm_2 ALWAYS equal to 1.0?
+            kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+        }
+    }  // end of `Delta` loop
     // ********** ON-DIAG, HAMILTONIAN12 *********************************************
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
@@ -238,6 +247,7 @@ GenericKstateHamiltonian<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
             const auto kernel_diag_coef = _hamiltonian_kernel_12._diag_info.at(ket_kernel);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
+            //TODO is not pre_norm_2 ALWAYS equal to 1.0?
             kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
