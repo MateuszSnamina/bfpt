@@ -49,8 +49,8 @@ struct CoupleInfoKernel1 {
     static_assert(!std::is_volatile_v<_SiteStateT>);
     static_assert(!std::is_reference_v<_SiteStateT>);
     using SiteStateT = _SiteStateT;
-    double coef;
     StateKernel1<SiteStateT> kernel_state;
+    double coef;
 };
 
 template<typename _SiteStateT>
@@ -89,8 +89,8 @@ half_off_diag_info_to_full_off_diag_info_1(
         const auto& kernel_coupling_coef = couple_info.coef;
         const auto& complementaty_ket_1 = bra_1;
         const auto& complementaty_bra_1 = ket_1;
-        full_off_diag_info.insert({ket_1, {kernel_coupling_coef, bra_1}});
-        full_off_diag_info.insert({complementaty_ket_1, {kernel_coupling_coef, complementaty_bra_1}});
+        full_off_diag_info.insert({ket_1, {bra_1, kernel_coupling_coef, }});
+        full_off_diag_info.insert({complementaty_ket_1, {complementaty_bra_1, kernel_coupling_coef}});
     }
     return full_off_diag_info;
 }
@@ -147,8 +147,8 @@ struct CoupleInfoKernel12 {
     static_assert(!std::is_volatile_v<_SiteStateT>);
     static_assert(!std::is_reference_v<_SiteStateT>);
     using SiteStateT = _SiteStateT;
-    double coef;
     StateKernel12<SiteStateT> kernel_state;
+    double coef;
 };
 
 template<typename _SiteStateT>
@@ -187,8 +187,8 @@ half_off_diag_info_to_full_off_diag_info_12(
         const auto& kernel_coupling_coef = couple_info.coef;
         const auto& complementaty_ket_12 = bra_12;
         const auto& complementaty_bra_12 = ket_12;
-        full_off_diag_info.insert({ket_12, {kernel_coupling_coef, bra_12}});
-        full_off_diag_info.insert({complementaty_ket_12, {kernel_coupling_coef, complementaty_bra_12}});
+        full_off_diag_info.insert({ket_12, {bra_12, kernel_coupling_coef}});
+        full_off_diag_info.insert({complementaty_ket_12, {complementaty_bra_12, kernel_coupling_coef}});
     }
     return full_off_diag_info;
 }

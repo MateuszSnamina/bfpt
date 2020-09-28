@@ -25,9 +25,9 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
             .build();
     interpreted_program_options.hamiltonian_fo_params = HamiltonianFoParams::Builder()
             .set_Pdelta_coef(raw_program_options.hamiltonian_Pdelta_coef)
-            .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
-            .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
             .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
+            .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
+            .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
             .build();
     interpreted_program_options.theta_opt = raw_program_options.theta_opt;
     if (const auto _ = interpret_run_type_string(raw_program_options.run_type_string)) {

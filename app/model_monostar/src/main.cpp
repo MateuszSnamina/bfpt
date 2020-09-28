@@ -75,9 +75,9 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     }
     if (interpreted_program_options.model_type == ModelType::FO) {
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pdelta_coef        = " << interpreted_program_options.hamiltonian_fo_params.get_Pdelta_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxx_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxz_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxx_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << interpreted_program_options.theta_opt << std::endl;
     }
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
@@ -281,4 +281,3 @@ int main(int argc, char** argv) {
         return 1;
     }
 }
-
