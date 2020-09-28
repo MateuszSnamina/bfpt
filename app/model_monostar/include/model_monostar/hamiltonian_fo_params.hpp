@@ -80,8 +80,12 @@ double HamiltonianFoParams::get_site_energy(double theta) {
 /*
  *
  * Function to optimize over θ:
- * E(θ) = - A * sin(θ) + B * cos⁴(θ/2) + C * cos²(θ/2)sin²(θ/2) + D * sin⁴(θ/2)
- * dE/dθ =
+ * E(θ) = - Asin(θ) + B*cos⁴(θ/2) + C*cos²(θ/2)sin²(θ/2) + D*sin⁴(θ/2)
+ *      = - Asin(θ) + B[½+½cos(θ)]² + C[½*sin(θ)]² + D[½-½cos(θ)]²
+ *      = - Asin(θ) + ¼B[1+cos(θ)]² + ¼C[sin(θ)]² + ¼D[1-cos(θ)]²
+ *
+ * dE/dθ = - Acos(θ) - ½B[1+cos(θ)]sin(θ) + ½C[sin(θ)]cos(θ) + ½D[1-cos(θ)]sin(θ)
+ *       = - Acos(θ) + ½(-B+D)sin(θ) + ½(-B+C-D)sin(θ)cos(θ)
  * d²E/dθ² =
  *
  */
