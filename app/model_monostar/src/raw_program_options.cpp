@@ -54,9 +54,12 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --hamiltonian_B:
             ("hamiltonian_B",
              boost::program_options::value<double>(&program_options.hamiltonian_B)->default_value(0.0))
-            // --hamiltonian_delta:
-            ("hamiltonian_delta",
-             boost::program_options::value<double>(&program_options.hamiltonian_Pdelta_coef)->default_value(1.0))
+            // --hamiltonian_tau_minus:
+            ("hamiltonian_tau_minus",
+             boost::program_options::value<double>(&program_options.hamiltonian_tau_minus_coef)->default_value(1.0))
+            // --hamiltonian_tau_z:
+            ("hamiltonian_tau_z",
+             boost::program_options::value<double>(&program_options.hamiltonian_tau_z_coef)->default_value(1.0))
             // --hamiltonian_zz:
             ("hamiltonian_zz",
              boost::program_options::value<double>(&program_options.hamiltonian_Pzz_coef)->default_value(0.0))
