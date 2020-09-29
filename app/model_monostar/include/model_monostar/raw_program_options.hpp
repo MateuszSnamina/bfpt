@@ -9,8 +9,8 @@ struct RawProgramOptions {
   double hamiltonian_J_classical;
   double hamiltonian_J_quantum;
   double hamiltonian_B;
-  double hamiltonian_tau_minus_coef;
   double hamiltonian_tau_z_coef;
+  double hamiltonian_tau_minus_coef;
   double hamiltonian_Pzz_coef;
   double hamiltonian_Pxz_coef;
   double hamiltonian_Pxx_coef;

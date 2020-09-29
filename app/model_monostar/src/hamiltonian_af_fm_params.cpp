@@ -1,5 +1,9 @@
 #include<model_monostar/hamiltonian_af_fm_params.hpp>
 
+// #######################################################################
+// ## HamiltonianAfFmParams                                             ##
+// #######################################################################
+
 HamiltonianAfFmParams::Builder HamiltonianAfFmParams::Builder::set_J_classical(double J_classicall) {
     _J_classicall = J_classicall;
     return *this;

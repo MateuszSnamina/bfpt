@@ -1,5 +1,9 @@
 #pragma once
 
+// #######################################################################
+// ## HamiltonianAfFmParams                                             ##
+// #######################################################################
+
 class HamiltonianAfFmParams {
 public:
     double get_J_classical() const;
