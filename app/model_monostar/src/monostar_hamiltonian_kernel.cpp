@@ -88,8 +88,8 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
  * Hamiltonians are often expressed in terms of
  * one-orbital projection operatos like these four:
  *
- * P^z = |z⟩⟨z|,         P^x = |x⟩⟨x|,
- * P^+ = |+⟩⟨+|,         P^- = |-⟩⟨-|,
+ * Pᶻ = |z⟩⟨z|,         Pˣ = |x⟩⟨x|,
+ * P⁺ = |+⟩⟨+|,         P⁻ = |-⟩⟨-|,
  *
  * where:
  *  |x⟩ and |z⟩ are shortcu notation of |x² - y²⟩ and |3z² - r²⟩,
@@ -98,17 +98,17 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
  * The matrix representatrion of the projection operators
  * in the (|z⟩, |x⟩) basis is as follow:
  *
- *         |z⟩ |x⟩                        |z⟩ |x⟩
- *       ╭        ╮                     ╭        ╮
- * P^z = │ +1   0 │  |z⟩          P^x = │  0   0 │  |z⟩
- *       │  0   0 │  |x⟩                │  0  +1 │  |x⟩
- *       ╰        ╯                     ╰        ╯
+ *        |z⟩ |x⟩                       |z⟩ |x⟩
+ *      ╭        ╮                    ╭        ╮
+ * Pᶻ = │ +1   0 │  |z⟩          Pˣ = │  0   0 │  |z⟩
+ *      │  0   0 │  |x⟩               │  0  +1 │  |x⟩
+ *      ╰        ╯                    ╰        ╯
  *
- *         |z⟩ |x⟩                        |z⟩ |x⟩
- *       ╭        ╮                     ╭        ╮
- * P^+ = │ +½  +½ │  |z⟩          P^- = │ +½  -½ │  |z⟩
- *       │ +½  +½ │  |x⟩                │ -½  +½ │  |x⟩
- *       ╰        ╯                     ╰        ╯
+ *        |z⟩ |x⟩                       |z⟩ |x⟩
+ *      ╭        ╮                    ╭        ╮
+ * P⁺ = │ +½  +½ │  |z⟩          P⁻ = │ +½  -½ │  |z⟩
+ *      │ +½  +½ │  |x⟩               │ -½  +½ │  |x⟩
+ *      ╰        ╯                    ╰        ╯
  *
  * In the program all calculations are performed in "rotated orbitals"
  * basis. It is defined by a single parameter θ by the relation:
@@ -122,46 +122,46 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
  * in "rotated orbitals" basis:
  *
  *                 |∥⟩  |⟂⟩            |∥⟩      |⟂⟩
- *               ╭          ╮       ╭                 ╮
- * P^z = ½ + ½ * │ +c1  -s1 │ |∥⟩ = │ +(c2)²   -s2*c2 │ |∥⟩
- *               │ -s1  -c1 │ |⟂⟩   │ -s2*c2   +(s2)² │ |⟂⟩
- *               ╰          ╯       ╰                 ╯
+ *              ╭          ╮       ╭                 ╮
+ * Pᶻ = ½ + ½ * │ +c1  -s1 │ |∥⟩ = │ +(c2)²   -s2*c2 │ |∥⟩
+ *              │ -s1  -c1 │ |⟂⟩   │ -s2*c2   +(s2)² │ |⟂⟩
+ *              ╰          ╯       ╰                 ╯
  *
  *                 |∥⟩  |⟂⟩            |∥⟩      |⟂⟩
- *               ╭          ╮       ╭                 ╮
- * P^x = ½ + ½ * │ -c1  +s1 │ |∥⟩ = │ +(s2)²   +s2*c2 │ |∥⟩
- *               │ +s1  +c1 │ |⟂⟩   │ +s2*c2   +(c2)² │ |⟂⟩
- *               ╰          ╯       ╰                 ╯
+ *              ╭          ╮       ╭                 ╮
+ * Pˣ = ½ + ½ * │ -c1  +s1 │ |∥⟩ = │ +(s2)²   +s2*c2 │ |∥⟩
+ *              │ +s1  +c1 │ |⟂⟩   │ +s2*c2   +(c2)² │ |⟂⟩
+ *              ╰          ╯       ╰                 ╯
  *
  *                 |∥⟩  |⟂⟩               |∥⟩         |⟂⟩
- *               ╭          ╮           ╭                         ╮
- * P^+ = ½ + ½ * │ +s1  +c1 │ |∥⟩ = ½ * │ 1+2*s2*c2   (c2)²-(s2)² │ |∥⟩
- *               │ +c1  -s1 │ |⟂⟩       │ (c2)²-(s2)² 1-2*s2*c2   │ |⟂⟩
- *               ╰          ╯           ╰                         ╯
+ *              ╭          ╮           ╭                         ╮
+ * P⁺ = ½ + ½ * │ +s1  +c1 │ |∥⟩ = ½ * │ 1+2*s2*c2   (c2)²-(s2)² │ |∥⟩
+ *              │ +c1  -s1 │ |⟂⟩       │ (c2)²-(s2)² 1-2*s2*c2   │ |⟂⟩
+ *              ╰          ╯           ╰                         ╯
  *
- *                 |∥⟩  |⟂⟩               |∥⟩         |⟂⟩
- *               ╭          ╮           ╭                         ╮
- * P^- = ½ + ½ * │ -s1  -c1 │ |∥⟩ = ½ * │ 1-2*s2*c2   (s2)²-(c2)² │ |∥⟩
- *               │ -c1  +s1 │ |⟂⟩       │ (s2)²-(c2)² 1+2*s2*c2   │ |⟂⟩
- *               ╰          ╯           ╰                         ╯
+ *                |∥⟩  |⟂⟩               |∥⟩         |⟂⟩
+ *              ╭          ╮           ╭                         ╮
+ * P⁻ = ½ + ½ * │ -s1  -c1 │ |∥⟩ = ½ * │ 1-2*s2*c2   (s2)²-(c2)² │ |∥⟩
+ *              │ -c1  +s1 │ |⟂⟩       │ (s2)²-(c2)² 1+2*s2*c2   │ |⟂⟩
+ *              ╰          ╯           ╰                         ╯
  *
  * Where: c2 ≣ cos(θ/2), s2 ≣ sin(θ/2).
  * Where: c1 ≣ cos(θ), s1 ≣ sin(θ).
  *
  * We also define τ operators:
  *
- * τ^z = |z⟩⟨z| - |x⟩⟨x|
- * τ^- = |-⟩⟨-| - |+⟩⟨+|
+ * τᶻ = |z⟩⟨z| - |x⟩⟨x|
+ * τ⁻ = |-⟩⟨-| - |+⟩⟨+|
  *
  * The in the program the a general Hamiltonian for the orbitals chain is considered:
- * H_1z = sum_i tau_z_coef * τ^z(i)
- * H_1- = sum_i tau_minus_coef * τ^-(i)
- * H_12zz = sum_<ij> Pzz_coef * (P^z(i) P^z(j))
- * H_12xz = sum_<ij> Pxz_coef * (P^x(i) P^z(j) + P^z(i) P^x(j))
- * H_12xx = sum_<ij> Pxx_coef * (P^x(i) P^x(j))
- * H_1 = H_1- + H_1z
- * H_12 = H_12zz + H_12xz + H_12xx
- * H = H_1 + H_12
+ * H₁ᶻ = sum_i tau_z_coef * τᶻ(i)
+ * H₁⁻ = sum_i tau_minus_coef * τ⁻(i)
+ * H₁₂ᶻᶻ = sum_<ij> Pzz_coef * (Pᶻ(i) Pᶻ(j))
+ * H₁₂ˣᶻ = sum_<ij> Pxz_coef * (Pˣ(i) Pᶻ(j) + Pᶻ(i) Pˣ(j))
+ * H₁₂ˣˣ = sum_<ij> Pxx_coef * (Pˣ(i) Pˣ(j))
+ * H₁ = H₁⁻ + H₁ᶻ
+ * H₁₂ = H₁₂ᶻᶻ + H₁₂ˣᶻ + H₁₂ˣˣ
+ * H = H₁ + H₁₂
  */
 
 bfpt_common::HamiltonianKernel12<MonostarSiteState>
@@ -206,7 +206,6 @@ prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double
     const double tau_minus_gg = -s1;
     const double tau_minus_ge = -c1;
     const double tau_minus_ee = +s1;
-
     OnDiagInfoType on_diag_info {
         {{gs}, tau_z_coef * tau_z_gg + tau_minus_coef * tau_minus_gg},
         {{es}, tau_z_coef * tau_z_ee + tau_minus_coef * tau_minus_ee},
