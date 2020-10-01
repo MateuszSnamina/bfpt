@@ -581,8 +581,8 @@ std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_cos_coef
         if (_sqcos_coef > 0) {
             const double theta_1 = +M_PI/2;
             const double theta_2 = -M_PI/2;
-            [[maybe_unused]] const double f_theta_1 = get_value(theta_1);
-            [[maybe_unused]] const double f_theta_2 = get_value(theta_2);
+            [[maybe_unused]] const double f_theta_1 = get_value_without_prefactor(theta_1);
+            [[maybe_unused]] const double f_theta_2 = get_value_without_prefactor(theta_2);
             assert(almost_equal(f_theta_1, +_sin_coef + _free_coef, 1.0));
             assert(almost_equal(f_theta_2, -_sin_coef + _free_coef, 1.0));
             if (_sin_coef < 0) {
@@ -602,8 +602,8 @@ std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_cos_coef
             const double B_prim = _sin_coef/ (2 * _sqcos_coef);
             const double theta_3 = std::asin(B_prim);
             const double theta_4 = M_PI - std::asin(B_prim);
-            [[maybe_unused]] const double f_theta_3 = get_value(theta_3);
-            [[maybe_unused]] const double f_theta_4 = get_value(theta_4);
+            [[maybe_unused]] const double f_theta_3 = get_value_without_prefactor(theta_3);
+            [[maybe_unused]] const double f_theta_4 = get_value_without_prefactor(theta_4);
             assert(almost_equal(f_theta_3, f_theta_4, 1.0));
             return {theta_3, theta_4};
         }
