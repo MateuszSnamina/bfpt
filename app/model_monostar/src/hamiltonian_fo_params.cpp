@@ -1,10 +1,15 @@
 #include<model_monostar/hamiltonian_fo_params.hpp>
 
-#include<cmath>
 #include<limits>
+#include<functional>
+#include<optional>
+
+#include<cmath>
 #include<cassert>
 
-// https://stackoverflow.com/questions/1727881/how-to-use-the-pi-constant-in-c
+#include<iostream> //TODO remove (debug)
+
+// Ref: https://stackoverflow.com/questions/1727881/how-to-use-the-pi-constant-in-c
 #ifndef M_PI
 #define M_PI (3.14159265358979323846)
 #endif
@@ -13,10 +18,9 @@
 // ## almost_equal                                                      ##
 // #######################################################################
 
-// Ref: https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon
-
 namespace {
 
+// Ref: https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon
 template<class T>
 typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
 almost_equal(T x, T y, int ulp = 100) {
@@ -24,6 +28,178 @@ almost_equal(T x, T y, int ulp = 100) {
             || std::fabs(x-y) < std::numeric_limits<T>::min();
 }
 
+}
+
+// #######################################################################
+// ## ZeroFinder                                                        ##
+// #######################################################################
+
+std::set<double> remove_almost_equal_numbers(const std::set<double>& numbers, int ulp = 100) {
+    std::set<double> result;
+    for (const auto& number : numbers) {
+        if (result.empty() || !almost_equal(*(result.crbegin()), number, ulp)) {
+            result.insert(number);
+        }
+    }
+    return result;
+}
+
+/*
+ * Finds x_0 such as `a < x_0 < b` and `f(x_0) = 0`.
+ * The function works if (f(a)>0 and f(b)<0) or (f(a)<0 and f(b)>0)
+ * and assumes there is exactly one solution of the problem.
+ */
+std::optional<double> find_zero_in_given_range(
+        const std::function<double(double)>& fn,
+        std::pair<double, double> range) {
+    double& a = range.first;
+    double& b = range.second;
+    //std::cout << "SSS a, b: " << a << ", " << b << std::endl; //TODO remove
+    double fna = fn(a);
+    double fnb = fn(b);
+    if (fna == 0) {
+        return a;
+    } else if (fnb == 0) {
+        return b;
+    } else if (std::copysign(1.0, fna) == std::copysign(1.0, fnb)) {
+        return std::nullopt;
+    } else if ((std::copysign(1.0, fna) == +1 && std::copysign(1.0, fnb) == -1) ||
+               (std::copysign(1.0, fna) == -1 && std::copysign(1.0, fnb) == +1) ){
+        assert(a != 0);
+        assert(b != 0);
+        while ( std::abs(b-a) > 5 * std::numeric_limits<double>::epsilon() ) {
+            //std::cout << "LLL a, b: " << a << ", " << b << std::endl; //TODO remove
+            assert(std::copysign(1.0, fna) == -1 || std::copysign(1.0, fna) == +1);
+            assert(std::copysign(1.0, fnb) == -1 || std::copysign(1.0, fnb) == +1);
+            assert(std::copysign(1.0, fna) != std::copysign(1.0, fnb));
+            const double c = (b+a) / 2;
+            const double fnc = fn(c);
+            if (fnc == 0) {
+                a = c;
+                b = c;
+            } else if (std::copysign(1.0, fnc) == std::copysign(1.0, fnb)) {
+                assert((std::copysign(1.0, fna) == +1 && std::copysign(1.0, fnc) == -1) ||
+                       (std::copysign(1.0, fna) == -1 && std::copysign(1.0, fnc) == +1));
+                b = c;
+                fnb = fnc;
+            } else if (std::copysign(1.0, fna) == std::copysign(1.0, fnc)) {
+                assert((std::copysign(1.0, fnc) == +1 && std::copysign(1.0, fnb) == -1) ||
+                       (std::copysign(1.0, fnc) == -1 && std::copysign(1.0, fnb) == +1));
+                a = c;
+                fna = fnc;
+            } else {
+                // fn(c) is nan.
+                return std::nullopt;
+            }
+        } // end of while loop
+        return (a + b) / 2;
+    } else {
+        // at least one of: fn(a), fn(b) is NaN.
+        return std::nullopt;
+    }
+}
+
+std::set<double> find_zero_in_subranges(
+        const std::function<double(double)>& fn,
+        const std::pair<double, double>& range,
+        unsigned n_subranges = 100) {
+    assert(n_subranges > 0);
+    const std::optional<std::pair<double, double>> sanitized_range = [&range]() -> std::optional<std::pair<double, double>> {
+        const double& a = range.first;
+        const double& b = range.second;
+        if (a < b) {
+            return std::make_pair(a, b);
+        } else if (a < b) {
+            return std::make_pair(b, a);
+        } else {
+            return std::nullopt;
+        }
+    }();
+    if (!sanitized_range) {
+        return {};
+    }
+    std::set<double> result;
+    for (unsigned n_subrange = 0; n_subrange < n_subranges; n_subrange++) {
+        const double& a = (*sanitized_range).first;
+        const double& b = (*sanitized_range).second;
+        const double subrange_size = (b - a) / n_subranges;
+        const std::pair<double, double> subrange = {a + n_subrange * subrange_size, a + (n_subrange + 1) * subrange_size};
+        if (const auto result_subrange = find_zero_in_given_range(fn, subrange)){
+            result.insert(*result_subrange);
+        }
+    }
+    return result;
+}
+
+std::set<double> find_all_extrema( // of extreama of `fn(x)`
+                                   const std::function<double(double)>& fn_prim, // when the derrvative `[d/dx](fn)` is given
+                                   const std::pair<double, double>& range,
+                                   unsigned n_subranges = 100) {
+    const std::set<double> all_extrema_raw = find_zero_in_subranges(fn_prim, range, n_subranges);
+    const std::set<double> all_extrema_refined = remove_almost_equal_numbers(all_extrema_raw);
+    //    std::cout << "[find_all_extrema::get_minimum_argument] [Debug]: all_extrema_refined" << std::endl; //TODO: remove
+    //    for  (const auto phi : all_extrema_refined) { //TODO: remove
+    //        std::cout << phi  << std::endl; //TODO: remove
+    //    } //TODO: remove
+    //    std::cout << "**************" << std::endl; //TODO: remove
+    return all_extrema_refined;
+}
+
+double is_minimum(const std::function<double(double)>& fn, double x) {
+    const double fnx = fn(x);
+    for(double epsilon = 10 * std::numeric_limits<double>::epsilon(); epsilon < std::numeric_limits<double>::max() / 1000; epsilon *=2) {
+        const double a = x + epsilon;
+        const double b = x - epsilon;
+        const double fna = fn(a);
+        const double fnb = fn(b);
+        if ((fna > fnx && !almost_equal(fna, fnx)) &&
+                (fnb > fnx && !almost_equal(fnb, fnx))) {
+            return true;
+        } else if ((fna < fnx && !almost_equal(fna, fnx)) ||
+                   (fnb < fnx && !almost_equal(fnb, fnx))) {
+            return false;
+        } else {
+            continue;
+        }
+    }
+    return false;
+}
+
+std::set<double> find_all_local_minima(
+        const std::function<double(double)>& fn,
+        const std::function<double(double)>& fn_prim, // d/dx(fn)
+        const std::pair<double, double>& range,
+        unsigned n_subranges = 100) {
+    const std::set<double> all_extrema = find_all_extrema(fn_prim, range, n_subranges);
+    std::set<double> all_local_minima;
+    for (const auto& extremum : all_extrema) {
+        if  (is_minimum(fn, extremum)) {
+            all_local_minima.insert(extremum);
+        }
+    }
+    return all_local_minima;
+}
+
+std::set<double> find_all_global_minima(
+        const std::function<double(double)>& fn,
+        const std::function<double(double)>& fn_prim, // d/dx(fn)
+        const std::pair<double, double>& range,
+        unsigned n_subranges = 100) {
+    const std::set<double> all_local_minima = find_all_local_minima(fn, fn_prim, range, n_subranges);
+    if (all_local_minima.empty()) {
+        return {};
+    } else {
+        std::set<double> results;
+        const double global_minimum = *all_local_minima.cbegin();
+        double fn_global_minimum = fn(global_minimum);
+        for (const auto local_minimum : all_local_minima) {
+            double fn_local_minimum = fn(local_minimum);
+            if (almost_equal(fn_global_minimum, fn_local_minimum)) {
+                results.insert(local_minimum);
+            }
+        }
+        return results;
+    }
 }
 
 // #######################################################################
@@ -36,6 +212,11 @@ almost_equal(T x, T y, int ulp = 100) {
  *      = H * [(-y) * cos(θ) + (x) * sin(θ)]          // where: y ≡ -A/H, x ≡ +B/H
  *      = H * [-sin(θ₀) * cos(θ) + cos(θ₀) * sin(θ)]  // where: θ₀ ≡ atan2(y, x);
  *      = H * sin(θ-θ₀)
+ * f(θ) = A*cos(θ) + B*sin(θ) + Z
+ *      = H * [A/H * cos(θ) + B/H * sin(θ)]           // where: H ≡ √(A²+B²), valid if H≠0
+ *      = -H * [x * cos(θ) + y * sin(θ)]               // where: x ≡ -A/H, y ≡ -B/H
+ *      = -H * [cos(θ₀) * cos(θ) + sin(θ₀) * sin(θ)]   // where: θ₀ ≡ atan2(y, x);
+ *      = -H * cos(θ-θ₀)
  */
 
 namespace {
@@ -57,7 +238,7 @@ public:
     double get_sin_coef() const;
     double get_free_coef() const;
     double get_value(double phi) const ;
-    std::optional<double> get_minimum_argument() const;
+    std::set<double> get_minimum_argument() const;
 private:
     AcosPlucBsinPlusZ(double cos_coef, double sin_coef, double free_coef);
     bool is_degenerated_to_const_function() const;
@@ -109,18 +290,20 @@ double AcosPlucBsinPlusZ::get_value(double phi) const {
             + _free_coef;
 }
 
-std::optional<double> AcosPlucBsinPlusZ::get_minimum_argument() const {
+std::set<double> AcosPlucBsinPlusZ::get_minimum_argument() const {
     const double h = std::hypot(_cos_coef, _sin_coef);
     if (is_degenerated_to_const_function()) {
-        return std::nullopt;
+        return {};
     }
-    const double x = + _sin_coef / h;
-    const double y = - _cos_coef / h;
+    //std::cout << "_cos_coef, _sin_coef: " << _cos_coef << " " << _sin_coef << std::endl; //TODO remove
+    const double x = - _cos_coef / h;
+    const double y = - _sin_coef / h;
     const double phi_0 = std::atan2(y, x);
+    //std::cout << "phi_0:" << phi_0 << std::endl; //TODO remove
     if (std::abs(phi_0 + M_PI) < std::numeric_limits<double>::epsilon()) {
-        return M_PI;
+        return {M_PI};
     } else {
-        return phi_0;
+        return {phi_0};
     }
 }
 
@@ -208,8 +391,9 @@ public:
     double get_sin_coef() const;
     double get_sqcos_coef() const;
     double get_free_coef() const;
-    double get_value(double phi) const ;
-    std::optional<double> get_minimum_argument() const;
+    double get_value(double phi) const;
+    double get_derivative_value(double phi) const;
+    std::set<double> get_minimum_argument() const;
 private:
     AcosPlucBsinPlusCsqcosPlusZ(double cos_coef, double sin_coef, double sqcos_coef, double free_coef);
     const double _cos_coef;
@@ -220,10 +404,10 @@ private:
     bool is_degenerated_to_cos_coef_equal_to_zero_case() const;
     bool is_degenerated_to_sin_coef_equal_to_zero_case() const;
     bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
-    std::optional<double> get_minimum_argument_when_cos_coef_is_zero() const;
-    std::optional<double> get_minimum_argument_when_sin_coef_is_zero() const;
-    std::optional<double> get_minimum_argument_when_sqcos_coef_is_zero() const;
-    std::optional<double> get_minimum_not_analitycal() const;
+    std::set<double> get_minimum_argument_when_cos_coef_is_zero() const;
+    std::set<double> get_minimum_argument_when_sin_coef_is_zero() const;
+    std::set<double> get_minimum_argument_when_sqcos_coef_is_zero() const;
+    std::set<double> get_minimum_not_analitycal() const;
 };
 
 AcosPlucBsinPlusCsqcosPlusZ::Builder AcosPlucBsinPlusCsqcosPlusZ::Builder::set_cos_coef(double cos_coef) {
@@ -280,30 +464,53 @@ double AcosPlucBsinPlusCsqcosPlusZ::get_value(double phi) const {
             + _free_coef;
 }
 
-std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument() const {
-    if (is_degenerated_to_const_function()) {
-        return std::nullopt;
-    }
-    if (is_degenerated_to_cos_coef_equal_to_zero_case()) {
-        return get_minimum_argument_when_cos_coef_is_zero();
-    }
-    if (is_degenerated_to_sin_coef_equal_to_zero_case()) {
-        return get_minimum_argument_when_sin_coef_is_zero();
-    }
-    if (is_degenerated_to_sqcos_coef_equal_to_zero_case()) {
-        return get_minimum_argument_when_sqcos_coef_is_zero();
-    }
-    return get_minimum_not_analitycal();
+double AcosPlucBsinPlusCsqcosPlusZ::get_derivative_value(double phi) const {
+    return - _cos_coef * std::sin(phi)
+            + _sin_coef * std::cos(phi)
+            - 2 * _sqcos_coef * std::cos(phi) * std::sin(phi);
 }
 
-std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_cos_coef_is_zero() const {
+std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument() const {
+    std::cout << "[AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument] [Debug]: get_minimum_not_analitycal" << std::endl;
+    for  (const auto phi : get_minimum_not_analitycal()) {
+        std::cout << phi  << std::endl;
+    }
+    std::cout << "**************" << std::endl;
+    if (is_degenerated_to_const_function()) {
+        return {};
+    } else if (is_degenerated_to_sqcos_coef_equal_to_zero_case()) {
+        { //TODO: remove
+            std::cout << "[AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument] [Debug]: get_minimum_argument_when_cos_coef_is_zero" << std::endl; //TODO: remove
+            for  (const auto phi : get_minimum_argument_when_sqcos_coef_is_zero()) { //TODO: remove
+                std::cout << phi  << std::endl; //TODO: remove
+            } //TODO: remove
+            std::cout << "**************" << std::endl; //TODO: remove
+        } //TODO: remove
+        return get_minimum_argument_when_sqcos_coef_is_zero();
+    } else if (is_degenerated_to_cos_coef_equal_to_zero_case()) {
+        { //TODO: remove
+            std::cout << "[AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument] [Debug]: get_minimum_argument_when_cos_coef_is_zero" << std::endl; //TODO: remove
+            for  (const auto phi : get_minimum_argument_when_cos_coef_is_zero()) { //TODO: remove
+                std::cout << phi  << std::endl; //TODO: remove
+            } //TODO: remove
+            std::cout << "**************" << std::endl; //TODO: remove
+        } //TODO: remove
+        return get_minimum_argument_when_cos_coef_is_zero();
+    } else if (is_degenerated_to_sin_coef_equal_to_zero_case()) {
+        return get_minimum_argument_when_sin_coef_is_zero();
+    } else {
+        return get_minimum_not_analitycal();
+    }
+}
+
+std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_cos_coef_is_zero() const {
     assert(!is_degenerated_to_const_function());
     assert(almost_equal(_cos_coef, 0.0));
     assert(!almost_equal(_sqcos_coef, 0.0));
     if (_sin_coef <= -std::abs(2 * _sqcos_coef)) {
-        return +M_PI/2;
+        return {+M_PI/2};
     } else if (_sin_coef >= +std::abs(2 * _sqcos_coef)) {
-        return -M_PI/2;
+        return {-M_PI/2};
     } else {
         assert(std::abs(_sin_coef) < std::abs(2 * _sqcos_coef));
         if (_sqcos_coef > 0) {
@@ -315,15 +522,14 @@ std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_cos
             assert(f_theta_2 == -_sin_coef + _free_coef);
             if (_sin_coef < 0) {
                 assert(f_theta_1 <= f_theta_2 || almost_equal(f_theta_1, f_theta_2));
-                return +M_PI/2;
+                return {+M_PI/2};
             } else if (_sin_coef > 0) {
                 assert(f_theta_2 <= f_theta_1 || almost_equal(f_theta_1, f_theta_2));
-                return -M_PI/2;
+                return {-M_PI/2};
             } else {
                 assert(_sin_coef == 0);
                 assert(almost_equal(f_theta_1, f_theta_2));
-                return +M_PI/2;
-                //return {-M_PI/2, +M_PI/2}; //TODO retrun both global minima.
+                return {-M_PI/2, +M_PI/2};
             }
         } else {
             assert(std::abs(_sin_coef) < std::abs(2 * _sqcos_coef));
@@ -334,23 +540,21 @@ std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_cos
             [[maybe_unused]] const double f_theta_3 = get_value(theta_3);
             [[maybe_unused]] const double f_theta_4 = get_value(theta_4);
             assert(almost_equal(f_theta_3, f_theta_4));
-            return f_theta_3;
-            //return {f_theta_3, f_theta_3}; //TODO retrun both global minima.
+            return {f_theta_3, f_theta_3};
         }
     }
 }
 
-
-std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_sin_coef_is_zero() const {
+std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_sin_coef_is_zero() const {
     assert(!is_degenerated_to_const_function());
     assert(almost_equal(_sin_coef, 0.0));
     assert(!almost_equal(_sqcos_coef, 0.0));
     assert(false);
     //TODO implement
-    return 0.0/0.0;
+    return {0.0/0.0};
 }
 
-std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_sqcos_coef_is_zero() const {
+std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_sqcos_coef_is_zero() const {
     return AcosPlucBsinPlusZ::Builder()
             .set_cos_coef(_cos_coef)
             .set_sin_coef(_sin_coef)
@@ -359,10 +563,10 @@ std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_argument_when_sqc
             .get_minimum_argument();
 }
 
-std::optional<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_not_analitycal() const {
-    assert(false);
-    //TODO implement
-    return 0.0/0.0;
+std::set<double> AcosPlucBsinPlusCsqcosPlusZ::get_minimum_not_analitycal() const {
+    const std::function<double(double)> fn = [this](double phi){return get_value(phi);};
+    const std::function<double(double)> fn_prim = [this](double phi){return get_derivative_value(phi);};
+    return find_all_global_minima(fn, fn_prim, {-M_PI, +M_PI});
 }
 
 bool AcosPlucBsinPlusCsqcosPlusZ::is_degenerated_to_const_function() const {
@@ -395,18 +599,18 @@ bool AcosPlucBsinPlusCsqcosPlusZ::is_degenerated_to_sqcos_coef_equal_to_zero_cas
 namespace {
 
 AcosPlucBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(HamiltonianFoParams params) {
-    // E(θ) = + A*cos(θ) - B*sin(θ)  + C*cos⁴(θ/2) + 2*D*cos²(θ/2)sin²(θ/2) + E*sin⁴(θ/2)
-    //      = + A*cos(θ) - B*sin(θ)  + C[½+½cos(θ)]² + 2*D[½*sin(θ)]² + E[½-½cos(θ)]²
-    //      = + A*cos(θ) - B*sin(θ)  + ¼C[1+cos(θ)]² + ½D[sin(θ)]² + ¼E[1-cos(θ)]²
-    //      = + A*cos(θ) - B*sin(θ)  + (¼C+¼E) + ½(C-E)*cos(θ) + ¼(C+E)*cos²(θ) + ½D - ½D*cos²(θ)
+    // E(θ) = + A*cos(θ) + B*sin(θ)  + C*cos⁴(θ/2) + 2*D*cos²(θ/2)sin²(θ/2) + E*sin⁴(θ/2)
+    //      = + A*cos(θ) + B*sin(θ)  + C[½+½cos(θ)]² + 2*D[½*sin(θ)]² + E[½-½cos(θ)]²
+    //      = + A*cos(θ) + B*sin(θ)  + ¼C[1+cos(θ)]² + ½D[sin(θ)]² + ¼E[1-cos(θ)]²
+    //      = + A*cos(θ) + B*sin(θ)  + (¼C+¼E) + ½(C-E)*cos(θ) + ¼(C+E)*cos²(θ) + ½D - ½D*cos²(θ)
     //      =  [A+½(C-E)]*cos(θ) - B*sin(θ) + ¼(C+E-2D)*cos²(θ) + ¼(C+E+2D)
-    // where: A ≡ tau_z_coef,
-    //        B ≡ tau_minus_coef,
-    //        C ≡ Pzz_coef,
-    //        D ≡ Pxz_coef,
-    //        E ≡ Pxx_coef.
+    // where: A ≡ +tau_z_coef,
+    //        B ≡ -tau_minus_coef,
+    //        C ≡ +Pzz_coef,
+    //        D ≡ +Pxz_coef,
+    //        E ≡ +Pxx_coef.
     const double cos_coef = params.get_tau_z_coef() + 0.5 * ( + params.get_Pzz_coef() - params.get_Pxx_coef());
-    const double sin_coef = params.get_tau_minus_coef();
+    const double sin_coef = -params.get_tau_minus_coef();
     const double sqcos_coef = 0.25 * (params.get_Pzz_coef() + params.get_Pxx_coef() - 2 * params.get_Pxz_coef());
     const double free_coef = 0.25 * (params.get_Pzz_coef() + params.get_Pxx_coef() + 2 * params.get_Pxz_coef());
     return AcosPlucBsinPlusCsqcosPlusZ::Builder()
@@ -484,6 +688,6 @@ double HamiltonianFoParams::get_site_energy(double theta) const {
     return hamiltonian_fo_params_to_classic_energy_function(*this).get_value(theta);
 }
 
-std::optional<double> HamiltonianFoParams::get_theta_opt() const {
+std::set<double> HamiltonianFoParams::get_theta_opt() const {
     return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument();
 }

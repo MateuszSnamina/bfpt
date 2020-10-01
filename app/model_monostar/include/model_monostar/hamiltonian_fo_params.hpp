@@ -1,6 +1,6 @@
 #pragma once
 
-#include<optional>
+#include<set>
 
 // #######################################################################
 // ## HamiltonianFoParams                                               ##
@@ -31,7 +31,7 @@ public:
     double get_Pxz_coef() const;
     double get_Pxx_coef() const;
     double get_site_energy(double theta) const;
-    std::optional<double> get_theta_opt() const;
+    std::set<double> get_theta_opt() const;
 private:
     HamiltonianFoParams(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);
     double _tau_z_coef;

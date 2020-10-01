@@ -16,7 +16,7 @@ inline std::ostream& operator<<(std::ostream& s, const ModelType& m) {
         s << "ModelType::FM";
     } else if (m == ModelType::AF) {
         s << "ModelType::AF";
-    } else if (m == ModelType::AF) {
+    } else if (m == ModelType::FO) {
         s << "ModelType::FO";
     } else {
         throw std::logic_error("Invalid model enum value!");
