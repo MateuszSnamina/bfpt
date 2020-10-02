@@ -2,12 +2,12 @@
 #include<model_monostar/hamiltonian_fo_params_helpers.hpp>
 
 // #######################################################################
-// ## hamiltonian_fo_params_to_classic_energy_function                  ##
+// ## hamiltonian_fo_params_to_classic_energy_function                  ##//TODO change name: fo_params->params_fo
 // #######################################################################
 
 namespace {
 
-AcosPlusBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(HamiltonianFoParams params) {
+AcosPlusBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(HamiltonianFoParams params) { //TODO change name: fo_params->params_fo
     // E(θ) = + A*cos(θ) + B*sin(θ)  + C*cos⁴(θ/2) + 2*D*cos²(θ/2)sin²(θ/2) + E*sin⁴(θ/2)
     //      = + A*cos(θ) + B*sin(θ)  + C[½+½cos(θ)]² + 2*D[½*sin(θ)]² + E[½-½cos(θ)]²
     //      = + A*cos(θ) + B*sin(θ)  + ¼C[1+cos(θ)]² + ½D[sin(θ)]² + ¼E[1-cos(θ)]²
@@ -33,7 +33,7 @@ AcosPlusBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(Ham
 } // end of namespace
 
 // #######################################################################
-// ## HamiltonianFoParams                                               ##
+// ## HamiltonianFoParams                                               ## //TODO change name: FoParams->ParamsFo
 // #######################################################################
 
 HamiltonianFoParams::Builder HamiltonianFoParams::Builder::set_tau_z_coef(double tau_z_coef) {

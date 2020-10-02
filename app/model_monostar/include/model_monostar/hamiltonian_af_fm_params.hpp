@@ -1,10 +1,10 @@
 #pragma once
 
 // #######################################################################
-// ## HamiltonianAfFmParams                                             ##
+// ## HamiltonianAfFmParams                                             ## //TODO change name: AfFmParams->ParamsAfFm
 // #######################################################################
 
-class HamiltonianAfFmParams {
+class HamiltonianAfFmParams { //TODO change name: AfFmParams->ParamsAfFm
 public:
     double get_J_classical() const;
     double get_J_quantum() const;

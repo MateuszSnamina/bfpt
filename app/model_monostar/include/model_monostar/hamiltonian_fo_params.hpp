@@ -5,7 +5,7 @@
 #include<set>
 
 // #######################################################################
-// ## HamiltonianFoParams                                               ##
+// ## HamiltonianFoParams                                               ## //TODO change name: FoParams->ParamsFo
 // #######################################################################
 
 class HamiltonianFoParams {
