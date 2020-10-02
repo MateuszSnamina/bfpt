@@ -35,7 +35,7 @@ public:
     double get_site_energy(double theta) const;
     std::set<double> get_theta_opt() const;
     std::set<double> get_theta_opt_numerical() const;
-    utility::Result<std::set<double>, NoKnownAnalicycalSolutionError> get_theta_opt_analitycal() const;
+    utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_theta_opt_analytical() const;
 
 private:
     HamiltonianFoParams(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);

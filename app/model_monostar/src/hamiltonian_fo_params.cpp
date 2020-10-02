@@ -107,6 +107,6 @@ std::set<double> HamiltonianFoParams::get_theta_opt_numerical() const {
     return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_numerical();
 }
 
-utility::Result<std::set<double>, NoKnownAnalicycalSolutionError> HamiltonianFoParams::get_theta_opt_analitycal() const {
-    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_analitycal();
+utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> HamiltonianFoParams::get_theta_opt_analytical() const {
+    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_analytical();
 }

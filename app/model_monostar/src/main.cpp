@@ -177,7 +177,7 @@ void print_theta_opt(const HamiltonianFoParams& hamiltonian_fo_params) {
     using extension::boost::stream_pragma::RSS;
     using extension::boost::stream_pragma::operator|;
     using extension::boost::stream_pragma::operator<<;
-    if (const auto & _ = hamiltonian_fo_params.get_theta_opt_analitycal()) {
+    if (const auto & _ = hamiltonian_fo_params.get_theta_opt_analytical()) {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
     } else {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << "<no known analicycal solution solver>" << std::endl;
