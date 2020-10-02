@@ -1,7 +1,8 @@
 #include <model_monostar/raw_program_options.hpp>
 #include <model_monostar/interpreted_program_options.hpp>
 #include <model_monostar/monostar_basis.hpp>
-#include <model_monostar/monostar_hamiltonian_kernel.hpp>
+#include <model_monostar/hamiltonian_kernel_af_fm.hpp>
+#include <model_monostar/hamiltonian_kernel_fo.hpp>
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
 #include <model_monostar/reference_energies.hpp>
@@ -215,23 +216,32 @@ int main(int argc, char** argv) {
         }
         // ******************************************************************
         const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {
-            const double B = interpreted_program_options.hamiltonian_af_fm_params.get_B();
-            return model_monostar::prepare_hamiltonian_kernel_1_af_fm(B);
-        }();
-        const auto hamiltonian_kernel_12 = [&interpreted_program_options]() {
-            const auto J_classical = interpreted_program_options.hamiltonian_af_fm_params.get_J_classical();
-            const auto J_quantum = interpreted_program_options.hamiltonian_af_fm_params.get_J_quantum();
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
-                return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
             case ModelType::FM:
-                return model_monostar::prepare_hamiltonian_kernel_12_fm(J_classical, J_quantum);
+                return model_monostar::prepare_hamiltonian_kernel_1_af_fm(interpreted_program_options.hamiltonian_af_fm_params);
             case ModelType::FO:
-                std::cout << "FO IS NOT IMPLEMENTED" << std::endl;
-                assert(false);
+            {
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
+                return model_monostar::prepare_hamiltonian_kernel_1_fo(interpreted_program_options.hamiltonian_fo_params, orbital_theta_to_use);
+            }
             default:
-                assert(false);
-                return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
+                throw std::domain_error("Invalid model_type enum value.");
+            }
+        }();
+        const auto hamiltonian_kernel_12 = [&interpreted_program_options]() {
+            switch (interpreted_program_options.model_type) {
+            case ModelType::AF:
+                return model_monostar::prepare_hamiltonian_kernel_12_af(interpreted_program_options.hamiltonian_af_fm_params);
+            case ModelType::FM:
+                return model_monostar::prepare_hamiltonian_kernel_12_fm(interpreted_program_options.hamiltonian_af_fm_params);
+            case ModelType::FO:
+            {
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
+                return model_monostar::prepare_hamiltonian_kernel_12_fo(interpreted_program_options.hamiltonian_fo_params, orbital_theta_to_use);
+            }
+            default:
+                throw std::domain_error("Invalid model_type enum value.");
             };
         }();
         // ******************************************************************
@@ -254,9 +264,13 @@ int main(int argc, char** argv) {
                 return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                             std::make_shared<model_monostar::ReferenceEnergiesFm>(
                                 interpreted_program_options.n_sites, J_classical, J_quantum, B));
+            case ModelType::FO:
+            {
+                //                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
+            }
+                throw std::domain_error("FO IS NOT IMPLEMENTED.");
             default:
-                assert(false);
-                return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+                throw std::domain_error("Invalid model_type enum value.");
             }
         }();
         // ******************************************************************
