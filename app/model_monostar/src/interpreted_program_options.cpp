@@ -4,6 +4,7 @@
 #include <model_monostar/interpret_model_type_string.hpp>
 #include <model_monostar/interpret_run_type_string.hpp>
 #include <model_monostar/interpret_es_momentum_domain.hpp>
+#include <model_monostar/interpret_orbital_theta_string.hpp>
 
 #include <stdexcept>
 
@@ -30,7 +31,13 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
             .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
             .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
             .build();
-    interpreted_program_options.theta_opt = raw_program_options.theta_opt;
+    if (const auto _ = interpret_orbital_theta_string(raw_program_options.orbital_theta_string)) {
+        interpreted_program_options.orbital_theta = _.unwrap();
+    } else {
+        const std::string message1 = "Problem with interpreting 'orbital_theta_string' program option.";
+        const std::string message = message1 + "\n" + _.unwrap_err().what();
+        throw std::runtime_error(message);
+    }
     if (const auto _ = interpret_run_type_string(raw_program_options.run_type_string)) {
         interpreted_program_options.run_type = _.unwrap();
     } else {

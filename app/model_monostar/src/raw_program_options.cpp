@@ -57,8 +57,8 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --hamiltonian_tau_z:
             ("hamiltonian_tau_z",
              boost::program_options::value<double>(&program_options.hamiltonian_tau_z_coef)->default_value(0.0))
-            // --hamiltonian_minus:
-            ("hamiltonian_minus",
+            // --hamiltonian_tau_minus:
+            ("hamiltonian_tau_minus",
              boost::program_options::value<double>(&program_options.hamiltonian_tau_minus_coef)->default_value(1.0))
             // --hamiltonian_zz:
             ("hamiltonian_zz",
@@ -69,9 +69,9 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --hamiltonian_xx:
             ("hamiltonian_xx",
              boost::program_options::value<double>(&program_options.hamiltonian_Pxx_coef)->default_value(0.0))
-            // --theta_opt,o:
-            ("theta_opt,o",
-             boost::program_options::value<double>(&program_options.theta_opt)->default_value(0.0))
+            // --orbital_theta,o:
+            ("orbital_theta,o",
+             boost::program_options::value<std::string>(&program_options.orbital_theta_string)->default_value("auto"))
             // --run_type,-r:
             ("run_type,r",
              boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))

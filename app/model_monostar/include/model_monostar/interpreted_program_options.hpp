@@ -10,6 +10,7 @@
 #include <bfpt_common/common_recipe_print_flags.hpp>
 
 #include <string>
+#include <optional>
 
 struct InterpretedProgramOptions {
   unsigned n_sites;
@@ -17,7 +18,7 @@ struct InterpretedProgramOptions {
   ModelType model_type;
   HamiltonianAfFmParams hamiltonian_af_fm_params;
   HamiltonianFoParams hamiltonian_fo_params;
-  double theta_opt;
+  std::optional<double> orbital_theta;
   RunType run_type;
   EsMomentumDomainVariant es_momentum_domain;
   bfpt_common::CommonRecipePrintFlags print_flags;
