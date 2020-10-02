@@ -2,8 +2,19 @@
 
 #include<set>
 
+#include<utility/result.hpp>
+
 // #######################################################################
-// ## AcosPlucBsinPlusZ                                                 ##
+// ## NoKnownAnalicycalSolutionError                                    ##
+// #######################################################################
+
+class NoKnownAnalicycalSolutionError: public std::domain_error {
+public:
+    NoKnownAnalicycalSolutionError();
+};
+
+// #######################################################################
+// ## AcosPlusBsinPlusZ                                                 ##
 // #######################################################################
 
 /*
@@ -19,14 +30,14 @@
  *      = -H * cos(θ-θ₀)
  */
 
-class AcosPlucBsinPlusZ {
+class AcosPlusBsinPlusZ {
 public:
     class Builder {
     public:
         Builder set_cos_coef(double);
         Builder set_sin_coef(double);
         Builder set_free_coef(double);
-        AcosPlucBsinPlusZ build() const;
+        AcosPlusBsinPlusZ build() const;
     private:
         double _cos_coef = 0.0;
         double _sin_coef = 0.0;
@@ -38,7 +49,7 @@ public:
     double get_value(double phi) const ;
     std::set<double> get_minimum_argument() const;
 private:
-    AcosPlucBsinPlusZ(double cos_coef, double sin_coef, double free_coef);
+    AcosPlusBsinPlusZ(double cos_coef, double sin_coef, double free_coef);
     bool is_degenerated_to_const_function() const;
     const double _cos_coef;
     const double _sin_coef;
@@ -46,31 +57,28 @@ private:
 };
 
 // #######################################################################
-// ## AcosPlucBsinPlusCsqcosPlusZ                                       ##
+// ## BsinPlusCsqcosPlusZ                                               ##
 // #######################################################################
 
 /*
- * f(θ) = A*cos(θ) + B*sin(θ) + C*cos²(θ) + Z
- * df/dθ = -A*sin(θ) + B*cos(θ) - 2*C*cos(θ)*sin(θ)
- *       = -2C * [-A'*sin(θ) -B'*cos(θ) +cos(θ)*sin(θ)]     where A'≡-A/2C, B'≡+B/2C if C≠0
- *       = -2C * [-B' + sin(θ)] * [-A' + cos(θ)] + 2*C*A'*B'
- *
- * ******** Case when A=0 ********
- * df/dθ = -2C * [-B' + sin(θ)] * cos(θ)
+ * f(θ) = B*sin(θ) + C*cos²(θ) + Z
+ * df/dθ = B*cos(θ) - 2*C*cos(θ)*sin(θ)
+ *       = -2C * [-B'*cos(θ) + cos(θ)*sin(θ)]     where B'≡+B/2C if C≠0
+ *       = -2C * [-B' + sin(θ)] * cos(θ)
  * d²f/dθ² = 2C * [-B' + sin(θ)] * sin(θ) - 2C * cos²(θ)
- * Case when A=0 ⋀ B' < -1:
+ * Case when B' < -1:
  * θ₁ = π/2
  * θ₂ = 3π/2
  * d²f/dθ²[θ₁] = +2C * [-B' + 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1-B') = +sgn(C)
  * d²f/dθ²[θ₂] = -2C * [-B' - 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1+B') = -sgn(C)
  * θ₁ is a minimum if C > 0.
- * Case when A=0 ⋀ B' = -1:
+ * Case when B' = -1:
  * θ₁ = π/2
  * θ₂ = -π/2
  * d²f/dθ²[θ₁] = +2C * [-B' + 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1-B') = +sgn(C)
  * d²f/dθ²[θ₂] = -2C * [-B' - 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1+B') = 0
  * ⇒ θ₁ is a minimum if C > 0.
- * Case when A=0 ⋀ -1 < B' < +1:
+ * Case when -1 < B' < +1:
  * θ₁ = π/2
  * θ₂ = 3π/2
  * θ₃ = arcsin(B')    // θ₃ is in -π/2..+π/2
@@ -87,13 +95,13 @@ private:
  * ⇒ θ₂ is global  minimum if C > 0 ⋀ B > 0.
  * ⇒ both θ₁ and θ₂ are global minimum if C > 0 ⋀ B = 0.
  * ⇒ both θ₃ and θ₄ are global minimum if C < 0.
- * Case when A=0 ⋀ B' = +1:
+ * Case when B' = +1:
  * θ₁ = π/2
  * θ₂ = 3π/2
  * d²f/dθ²[θ₁] = +2C * [-B' + 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1-B') = 0
  * d²f/dθ²[θ₂] = -2C * [-B' - 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1+B') = +sgn(C)
  * ⇒ θ₂ is minimum if C > 0.
- * Case when A=0 ⋀ B' > 1:
+ * Case when B' > 1:
  * θ₁ = π/2
  * θ₂ = -π/2
  * d²f/dθ²[θ₁] = +2C * [-B' + 1] ⇒ sgn(d²f/dθ²[θ₁]) = +sgn(C)sgn(1-B') = -sgn(C)
@@ -101,7 +109,84 @@ private:
  * ⇒ θ₂ is minimum if C > 0.
  */
 
-class AcosPlucBsinPlusCsqcosPlusZ {
+class BsinPlusCsqcosPlusZ {
+public:
+    class Builder {
+    public:
+        Builder set_sin_coef(double);
+        Builder set_sqcos_coef(double);
+        Builder set_free_coef(double);
+        BsinPlusCsqcosPlusZ build() const;
+    private:
+        double _sin_coef = 0.0;
+        double _sqcos_coef = 0.0;
+        double _free_coef = 0.0;
+    };
+    double get_sin_coef() const;
+    double get_sqcos_coef() const;
+    double get_free_coef() const;
+    double get_value(double phi) const;
+    std::set<double> get_minimum_argument() const;
+private:
+    BsinPlusCsqcosPlusZ(double sin_coef, double sqcos_coef, double free_coef);
+    const double _sin_coef;
+    const double _sqcos_coef;
+    const double _free_coef;
+    bool is_degenerated_to_const_function() const;
+    bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
+    std::set<double> get_minimum_argument_analitycal_when_sqcos_coef_is_zero() const;
+    std::set<double> get_minimum_argument_analitycal_when_sqcos_coef_is_not_zero() const;
+};
+
+//// #######################################################################
+//// ## AcosPlusCsqcosPlusZ                                               ##
+//// #######################################################################
+
+///*
+// * f(θ) = A*cos(θ) + C*cos²(θ) + Z
+// * df/dθ = -A*sin(θ) - 2*C*cos(θ)*sin(θ)
+// *       = -2C * [-A'*sin(θ) +cos(θ)*sin(θ)]     where A'≡-A/2C if C≠0
+// *       = -2C * [sin(θ)] * [-A' + cos(θ)] + 2*C*A'*B'
+// */
+
+//class AcosPlusCsqcosPlusZ {
+//public:
+//    class Builder {
+//    public:
+//        Builder set_cos_coef(double);
+//        Builder set_sqcos_coef(double);
+//        Builder set_free_coef(double);
+//        AcosPlusCsqcosPlusZ build() const;
+//    private:
+//        double _cos_coef = 0.0;
+//        double _sqcos_coef = 0.0;
+//        double _free_coef = 0.0;
+//    };
+//    double get_cos_coef() const;
+//    double get_sqcos_coef() const;
+//    double get_free_coef() const;
+//    double get_value(double phi) const;
+//    std::set<double> get_minimum_argument() const;
+//private:
+//    AcosPlusCsqcosPlusZ(double cos_coef, double sqcos_coef, double free_coef);
+//    const double _cos_coef;
+//    const double _sqcos_coef;
+//    const double _free_coef;
+//};
+
+// #######################################################################
+// ## AcosPlusBsinPlusCsqcosPlusZ                                       ##
+// #######################################################################
+
+/*
+ * f(θ) = A*cos(θ) + B*sin(θ) + C*cos²(θ) + Z
+ * df/dθ = -A*sin(θ) + B*cos(θ) - 2*C*cos(θ)*sin(θ)
+ *       = -2C * [-A'*sin(θ) -B'*cos(θ) +cos(θ)*sin(θ)]     where A'≡-A/2C, B'≡+B/2C if C≠0
+ *       = -2C * [-B' + sin(θ)] * [-A' + cos(θ)] + 2*C*A'*B'
+ *
+ */
+
+class AcosPlusBsinPlusCsqcosPlusZ {
 public:
     class Builder {
     public:
@@ -109,7 +194,7 @@ public:
         Builder set_sin_coef(double);
         Builder set_sqcos_coef(double);
         Builder set_free_coef(double);
-        AcosPlucBsinPlusCsqcosPlusZ build() const;
+        AcosPlusBsinPlusCsqcosPlusZ build() const;
     private:
         double _cos_coef = 0.0;
         double _sin_coef = 0.0;
@@ -123,9 +208,11 @@ public:
     double get_value(double phi) const;
     double get_derivative_value(double phi) const;
     std::set<double> get_minimum_argument() const;
+    std::set<double> get_minimum_argument_numerical() const;
+    utility::Result<std::set<double>, NoKnownAnalicycalSolutionError> get_minimum_argument_analitycal() const;
 private:
     static double calculate_prefactor(double cos_coef, double sin_coef, double sqcos_coef, double free_coef);
-    AcosPlucBsinPlusCsqcosPlusZ(double cos_coef, double sin_coef, double sqcos_coef, double free_coef);
+    AcosPlusBsinPlusCsqcosPlusZ(double cos_coef, double sin_coef, double sqcos_coef, double free_coef);
     const double _prefactor;
     const double _cos_coef;
     const double _sin_coef;
@@ -134,11 +221,10 @@ private:
     double get_value_without_prefactor(double phi) const;
     double get_derivative_value_without_prefactor(double phi) const;
     bool is_degenerated_to_const_function() const;
+    bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
     bool is_degenerated_to_cos_coef_equal_to_zero_case() const;
     bool is_degenerated_to_sin_coef_equal_to_zero_case() const;
-    bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
-    std::set<double> get_minimum_argument_when_cos_coef_is_zero() const;
-    std::set<double> get_minimum_argument_when_sin_coef_is_zero() const;
-    std::set<double> get_minimum_argument_when_sqcos_coef_is_zero() const;
-    std::set<double> get_minimum_not_analitycal() const;
+    std::set<double> get_minimum_argument_analitycal_when_sqcos_coef_is_zero() const;
+    std::set<double> get_minimum_argument_analitycal_when_sqcos_coef_is_not_zero_and_cos_coef_is_zero() const;
+    std::set<double> get_minimum_argument_analitycal_when_sqcos_coef_is_not_zero_and_sin_coef_is_zero() const;
 };

@@ -51,9 +51,8 @@ double is_minimum(const std::function<double(double)>& fn, double x) {
 std::set<double> find_all_extrema(const std::function<double(double)>& fn_prim,
                                   const std::pair<double, double>& range,
                                   unsigned n_subranges) {
-    const std::set<double> all_extrema_raw = find_zero_in_subranges(fn_prim, range, n_subranges);
-    const std::set<double> all_extrema_refined = utility::remove_almost_equal_numbers(all_extrema_raw, (range.second - range.first) / n_subranges);
-    return all_extrema_refined;
+    const std::set<double> all_extrema = find_zero_in_subranges(fn_prim, range, n_subranges);
+    return all_extrema;
 }
 
 // #######################################################################

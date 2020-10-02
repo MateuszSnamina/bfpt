@@ -1,5 +1,7 @@
 #include<model_monostar/simple_numerical_root_finder.hpp>
 
+#include<utility/almost_equal.hpp>
+
 #include<cmath>
 #include<cassert>
 
@@ -12,6 +14,7 @@ std::optional<double> find_zero_in_given_range(
         std::pair<double, double> range) {
     double& a = range.first;
     double& b = range.second;
+    const double problem_scale = std::abs(b - a);
     double fna = fn(a);
     double fnb = fn(b);
     if (fna == 0) {
@@ -24,7 +27,7 @@ std::optional<double> find_zero_in_given_range(
                (std::copysign(1.0, fna) == -1 && std::copysign(1.0, fnb) == +1) ){
         assert(fna != 0);
         assert(fnb != 0);
-        while ( std::abs(b-a) > 5 * std::numeric_limits<double>::epsilon() ) {
+        while (!utility::almost_equal(a,b, problem_scale)) {
             assert(std::copysign(1.0, fna) == -1 || std::copysign(1.0, fna) == +1);
             assert(std::copysign(1.0, fnb) == -1 || std::copysign(1.0, fnb) == +1);
             assert(std::copysign(1.0, fna) != std::copysign(1.0, fnb));
@@ -74,15 +77,17 @@ std::set<double> find_zero_in_subranges(
     if (!sanitized_range) {
         return {};
     }
+    const double& a = (*sanitized_range).first;
+    const double& b = (*sanitized_range).second;
+    const double problem_scale = (b - a);
     std::set<double> result;
     for (unsigned n_subrange = 0; n_subrange < n_subranges; n_subrange++) {
-        const double& a = (*sanitized_range).first;
-        const double& b = (*sanitized_range).second;
         const double subrange_size = (b - a) / n_subranges;
         const std::pair<double, double> subrange = {a + n_subrange * subrange_size, a + (n_subrange + 1) * subrange_size};
-        if (const auto result_subrange = find_zero_in_given_range(fn, subrange)){
+        if (const auto result_subrange = find_zero_in_given_range(fn, subrange)) {
             result.insert(*result_subrange);
         }
     }
+    result = utility::remove_almost_equal_numbers(result, problem_scale);
     return result;
 }

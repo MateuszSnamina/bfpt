@@ -7,7 +7,7 @@
 
 namespace {
 
-AcosPlucBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(HamiltonianFoParams params) {
+AcosPlusBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(HamiltonianFoParams params) {
     // E(θ) = + A*cos(θ) + B*sin(θ)  + C*cos⁴(θ/2) + 2*D*cos²(θ/2)sin²(θ/2) + E*sin⁴(θ/2)
     //      = + A*cos(θ) + B*sin(θ)  + C[½+½cos(θ)]² + 2*D[½*sin(θ)]² + E[½-½cos(θ)]²
     //      = + A*cos(θ) + B*sin(θ)  + ¼C[1+cos(θ)]² + ½D[sin(θ)]² + ¼E[1-cos(θ)]²
@@ -22,7 +22,7 @@ AcosPlucBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(Ham
     const double sin_coef = -params.get_tau_minus_coef();
     const double sqcos_coef = 0.25 * (params.get_Pzz_coef() + params.get_Pxx_coef() - 2 * params.get_Pxz_coef());
     const double free_coef = 0.25 * (params.get_Pzz_coef() + params.get_Pxx_coef() + 2 * params.get_Pxz_coef());
-    return AcosPlucBsinPlusCsqcosPlusZ::Builder()
+    return AcosPlusBsinPlusCsqcosPlusZ::Builder()
             .set_cos_coef(cos_coef)
             .set_sin_coef(sin_coef)
             .set_sqcos_coef(sqcos_coef)
@@ -101,4 +101,12 @@ double HamiltonianFoParams::get_site_energy(double theta) const {
 
 std::set<double> HamiltonianFoParams::get_theta_opt() const {
     return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument();
+}
+
+std::set<double> HamiltonianFoParams::get_theta_opt_numerical() const {
+    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_numerical();
+}
+
+utility::Result<std::set<double>, NoKnownAnalicycalSolutionError> HamiltonianFoParams::get_theta_opt_analitycal() const {
+    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_analitycal();
 }

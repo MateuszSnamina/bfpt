@@ -65,10 +65,9 @@ double bfpt_kn_es(
 void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
     using namespace extension::boost::stream_pragma;
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-    using  extension::boost::stream_pragma::RSS;
-    using extension::boost::stream_pragma::operator|;
-    using extension::boost::stream_pragma::operator<<;
-
+    //    using  extension::boost::stream_pragma::RSS;
+    //    using extension::boost::stream_pragma::operator|;
+    //    using extension::boost::stream_pragma::operator<<;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                            = " << interpreted_program_options.n_sites << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                               = " << interpreted_program_options.n_pt << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
@@ -84,7 +83,6 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxz_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxx_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << interpreted_program_options.theta_opt << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] optimal orbital theta              = " << (interpreted_program_options.hamiltonian_fo_params.get_theta_opt() | RSS<double>()) << std::endl;
     }
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
@@ -173,6 +171,21 @@ void print_post_data(
     }
 }
 
+void print_theta_opt(const HamiltonianFoParams& hamiltonian_fo_params) {
+    using namespace extension::boost::stream_pragma;
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    using extension::boost::stream_pragma::RSS;
+    using extension::boost::stream_pragma::operator|;
+    using extension::boost::stream_pragma::operator<<;
+    if (const auto & _ = hamiltonian_fo_params.get_theta_opt_analitycal()) {
+        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
+    } else {
+        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << "<no known analicycal solution solver>" << std::endl;
+    }
+    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)  = " << (hamiltonian_fo_params.get_theta_opt_numerical()| RSS<double>().like_python_set()) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta              = " << (hamiltonian_fo_params.get_theta_opt() | RSS<double>().like_python_set() ) << std::endl;
+}
+
 int main(int argc, char** argv) {
     try {
         // ******************************************************************
@@ -181,6 +194,11 @@ int main(int argc, char** argv) {
         // ******************************************************************
         print_input_data(interpreted_program_options);
         // ******************************************************************
+        if (interpreted_program_options.model_type == ModelType::FO) {
+            print_theta_opt(interpreted_program_options.hamiltonian_fo_params);
+        }
+        // ******************************************************************
+
         const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {
             const double B = interpreted_program_options.hamiltonian_af_fm_params.get_B();
             return model_monostar::prepare_hamiltonian_kernel_1_af_fm(B);
