@@ -175,8 +175,8 @@ private:
  * Case when C ≠ 0 ∧ -1 < A' < +1:
  *   θ₁ = 0
  *   θ₂ = π
- *   θ₃ = arccos(A')   // θ₃ is in 0..π
- *   θ₄ = -arccos(A')  // as: cos(-θ)=cos(θ)
+ *   θ₃ = +arccos(A')   // θ₃ is in 0..π
+ *   θ₄ = -arccos(A')   // as: cos(-θ)=cos(θ)
  *   d²f/dθ²[θ₁] = -2C * [-A' + 1] ⇒ sgn(d²f/dθ²[θ₁]) = -sgn(C)sgn(1-A') = -sgn(C)
  *   d²f/dθ²[θ₂] = +2C * [-A' - 1] ⇒ sgn(d²f/dθ²[θ₁]) = -sgn(C)sgn(1+A') = -sgn(C)
  *   d²f/dθ²[θ₃] = +2C * sin²(θ₃) ⇒ sgn(d²f/dθ²[θ₃]) =  +sgn(C)
@@ -209,31 +209,31 @@ private:
  *   θ₂ is a minimum if C < 0.
  */
 
-//class AcosPlusCsqcosPlusZ {
-//public:
-//    class Builder {
-//    public:
-//        Builder set_cos_coef(double);
-//        Builder set_sqcos_coef(double);
-//        Builder set_free_coef(double);
-//        AcosPlusCsqcosPlusZ build() const;
-//    private:
-//        double _cos_coef = 0.0;
-//        double _sqcos_coef = 0.0;
-//        double _free_coef = 0.0;
-//    };
-//    double get_cos_coef() const;
-//    double get_sqcos_coef() const;
-//    double get_free_coef() const;
-//    double get_value(double phi) const;
-//    std::set<double> get_minimum_argument() const;
-//private:
-//    AcosPlusCsqcosPlusZ(double cos_coef, double sqcos_coef, double free_coef);
-//    const double _cos_coef;
-//    const double _sqcos_coef;
-//    const double _free_coef;
-//    bool is_degenerated_to_const_function() const;
-//    bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
-//    std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_zero() const;
-//    std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_not_zero() const;
-//};
+class AcosPlusCsqcosPlusZ {
+public:
+    class Builder {
+    public:
+        Builder set_cos_coef(double);
+        Builder set_sqcos_coef(double);
+        Builder set_free_coef(double);
+        AcosPlusCsqcosPlusZ build() const;
+    private:
+        double _cos_coef = 0.0;
+        double _sqcos_coef = 0.0;
+        double _free_coef = 0.0;
+    };
+    double get_cos_coef() const;
+    double get_sqcos_coef() const;
+    double get_free_coef() const;
+    double get_value(double phi) const;
+    std::set<double> get_minimum_argument() const;
+private:
+    AcosPlusCsqcosPlusZ(double cos_coef, double sqcos_coef, double free_coef);
+    const double _cos_coef;
+    const double _sqcos_coef;
+    const double _free_coef;
+    bool is_degenerated_to_const_function() const;
+    bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
+    std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_zero() const;
+    std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_not_zero() const;
+};

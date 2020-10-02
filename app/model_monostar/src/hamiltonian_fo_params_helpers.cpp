@@ -136,9 +136,12 @@ std::set<double> AcosPlusBsinPlusCsqcosPlusZ::get_minimum_argument_analytical_wh
 std::set<double> AcosPlusBsinPlusCsqcosPlusZ::get_minimum_argument_analytical_when_sqcos_coef_is_not_zero_and_sin_coef_is_zero() const {
     assert(!utility::almost_equal(_sqcos_coef, 0.0, 1.0));
     assert(utility::almost_equal(_sin_coef, 0.0, 1.0));
-    assert(false);
-    //TODO implement
-    return {0.0/0.0};
+    return AcosPlusCsqcosPlusZ::Builder()
+            .set_cos_coef(_cos_coef)
+            .set_sqcos_coef(_sqcos_coef)
+            .set_free_coef(_free_coef)
+            .build()
+            .get_minimum_argument();
 }
 
 std::set<double> AcosPlusBsinPlusCsqcosPlusZ::get_minimum_argument_numerical() const {
