@@ -5,6 +5,7 @@
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
 #include <model_monostar/reference_energies.hpp>
+#include <model_monostar/get_orbital_theta.hpp>
 
 #include <bfpt_common/hamiltonian_kernel.hpp>
 #include <bfpt_common/generic_kstate_hamiltonian.hpp>
@@ -21,9 +22,10 @@
 #include <iostream>
 
 #include <cassert>
+#include <cstdlib>
 
 // #######################################################################
-// ## main...                                                           ##
+// ## main - helpers                                                    ##
 // #######################################################################
 
 double bfpt_gs(
@@ -61,6 +63,10 @@ double bfpt_kn_es(
                                          print_flags, "[es (" + std::to_string(k_n) + ")] ",
                                          n_threads);
 }
+
+// #######################################################################
+// ## print_foo                                                         ##
+// #######################################################################
 
 void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
     using namespace extension::boost::stream_pragma;
@@ -175,7 +181,7 @@ void print_post_data(
     }
 }
 
-void print_theta_opt(const HamiltonianFoParams& hamiltonian_fo_params) {
+void print_theta_opt(const HamiltonianFoParams& hamiltonian_fo_params, std::optional<double> user_defined_overrule) {
     using namespace extension::boost::stream_pragma;
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     using extension::boost::stream_pragma::RSS;
@@ -188,7 +194,13 @@ void print_theta_opt(const HamiltonianFoParams& hamiltonian_fo_params) {
     }
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)  = " << (hamiltonian_fo_params.get_theta_opt_numerical()| RSS<double>().like_python_set()) << std::endl;
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta              = " << (hamiltonian_fo_params.get_theta_opt() | RSS<double>().like_python_set() ) << std::endl;
+    const double orbital_theta_to_use = get_orbital_theta(hamiltonian_fo_params, user_defined_overrule) ; //may thorw!
+    std::cout << "[INFO   ] [THETA_OPT] used orbital theta                 = " << orbital_theta_to_use << std::endl;
 }
+
+// #######################################################################
+// ## main                                                              ##
+// #######################################################################
 
 int main(int argc, char** argv) {
     try {
@@ -199,10 +211,9 @@ int main(int argc, char** argv) {
         print_input_data(interpreted_program_options);
         // ******************************************************************
         if (interpreted_program_options.model_type == ModelType::FO) {
-            print_theta_opt(interpreted_program_options.hamiltonian_fo_params);
+            print_theta_opt(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
         }
         // ******************************************************************
-
         const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {
             const double B = interpreted_program_options.hamiltonian_af_fm_params.get_B();
             return model_monostar::prepare_hamiltonian_kernel_1_af_fm(B);
@@ -222,13 +233,6 @@ int main(int argc, char** argv) {
                 assert(false);
                 return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
             };
-            //            if (interpreted_program_options.model_type == ModelType::AF) {
-            //                return model_monostar::prepare_hamiltonian_kernel_12_af(J_classical, J_quantum);
-            //            }
-            //            if (interpreted_program_options.model_type == ModelType::FM) {
-            //                return model_monostar::prepare_hamiltonian_kernel_12_fm(J_classical, J_quantum);
-            //            }
-            //            assert(false);
         }();
         // ******************************************************************
         const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies =
@@ -309,6 +313,7 @@ int main(int argc, char** argv) {
     } catch (std::exception& e) {
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
         std::cerr << e.what() << std::endl;
-        return 1;
+        return EXIT_FAILURE;
     }
+    return EXIT_SUCCESS;
 }
