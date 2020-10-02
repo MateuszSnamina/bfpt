@@ -1,12 +1,14 @@
 #include <model_monostar/raw_program_options.hpp>
 #include <model_monostar/interpreted_program_options.hpp>
-#include <model_monostar/monostar_basis.hpp>
+
+#include <model_monostar/get_orbital_theta.hpp>
 #include <model_monostar/hamiltonian_kernel_af_fm.hpp>
 #include <model_monostar/hamiltonian_kernel_fo.hpp>
+#include <model_monostar/reference_energies_af_fm.hpp>
+#include <model_monostar/reference_energies_fo.hpp>
+#include <model_monostar/monostar_basis.hpp>
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
-#include <model_monostar/reference_energies.hpp>
-#include <model_monostar/get_orbital_theta.hpp>
 
 #include <bfpt_common/hamiltonian_kernel.hpp>
 #include <bfpt_common/generic_kstate_hamiltonian.hpp>
@@ -123,13 +125,17 @@ void print_results_tree(
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                 interpreted_program_options.es_momentum_domain,
                 interpreted_program_options.n_sites);
-    assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+    }
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         std::cout << " ├state: gs "  << std::endl;
         std::cout << " ││enery = " << *gs_energy << std::endl;
         if (reference_energies) {
-            std::cout << " ││enery (reference) = " << reference_energies->get_gs_energy() << std::endl;
+            if (const auto& gs_energy = reference_energies->get_gs_energy()){
+                std::cout << " ││enery (reference) = " << *gs_energy << std::endl;
+            }
         }
     }
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
@@ -139,8 +145,13 @@ void print_results_tree(
             std::cout << " ││abs. enery        = " << es_energy << std::endl;
             if (gs_energy) {
                 std::cout << " ││exc. enery        = " << es_energy - *gs_energy << std::endl;
-                if (reference_energies) {
-                    std::cout << " ││exc. enery (ref.) = " << reference_energies->get_es_exciation_enery(k_n) << std::endl;
+            }
+            if (reference_energies) {
+                if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
+                    std::cout << " ││abs. enery (ref.) = " << *get_es_absolute_enery << std::endl;
+                }
+                if (const auto& es_exciation_enery = reference_energies->get_es_exciation_enery(k_n)) {
+                    std::cout << " ││exc. enery (ref.) = " << *es_exciation_enery << std::endl;
                 }
             }
         }
@@ -160,7 +171,9 @@ void print_post_data(
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                 interpreted_program_options.es_momentum_domain,
                 interpreted_program_options.n_sites);
-    assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+    }
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         std::cout << "[RESULT] [POST] gs_energy: " << *gs_energy << std::endl;
     }
@@ -247,26 +260,18 @@ int main(int argc, char** argv) {
         // ******************************************************************
         const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies =
                 [&interpreted_program_options]() {
-            const auto J_classical = interpreted_program_options.hamiltonian_af_fm_params.get_J_classical();
-            const auto J_quantum = interpreted_program_options.hamiltonian_af_fm_params.get_J_quantum();
-            const auto B = interpreted_program_options.hamiltonian_af_fm_params.get_B();
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
-                if (interpreted_program_options.model_type == ModelType::AF && J_classical == J_quantum && B == 0) {
                     return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                                 std::make_shared<model_monostar::ReferenceEnergiesAf>(
-                                    interpreted_program_options.n_sites, J_classical));
-                } else {
-                    return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
-                }
-                return std::shared_ptr<model_monostar::ReferenceEnergies>(nullptr);
+                                    interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_af_fm_params));
             case ModelType::FM:
                 return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                             std::make_shared<model_monostar::ReferenceEnergiesFm>(
-                                interpreted_program_options.n_sites, J_classical, J_quantum, B));
+                                interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_af_fm_params));
             case ModelType::FO:
             {
-                //                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
+                //const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
             }
                 throw std::domain_error("FO IS NOT IMPLEMENTED.");
             default:
