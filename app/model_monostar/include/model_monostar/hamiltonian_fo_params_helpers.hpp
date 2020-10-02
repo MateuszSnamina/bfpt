@@ -22,7 +22,6 @@ public:
  * df/dθ = -A*sin(θ) + B*cos(θ) - 2*C*cos(θ)*sin(θ)
  *       = -2C * [-A'*sin(θ) -B'*cos(θ) +cos(θ)*sin(θ)]     where A'≡-A/2C, B'≡+B/2C if C≠0
  *       = -2C * [-B' + sin(θ)] * [-A' + cos(θ)] + 2*C*A'*B'
- *
  */
 
 class AcosPlusBsinPlusCsqcosPlusZ {
