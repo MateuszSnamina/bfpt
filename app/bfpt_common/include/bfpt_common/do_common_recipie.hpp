@@ -60,7 +60,7 @@ void pretty_print(
                   << "eigen vector no: " << std::setw(6) << n_eigien_vector << ", "
                   << "eigen energy: " << eigen_value
                   << "." << std::endl;
-        std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector =
+        const std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector =
                 [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
             std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
             kstateIdx_and_probability_vector_builder.resize(basis_size);
@@ -69,7 +69,13 @@ void pretty_print(
             }
             std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
             return kstateIdx_and_probability_vector_builder;
-        } ();
+        }();
+        const std::complex<double> presentation_layer_amplitude_factor = [&kstateIdx_and_probability_vector, &eigien_vector] () {
+            const unsigned print_idx = 0;
+            const unsigned idx = kstateIdx_and_probability_vector[print_idx].idx;
+            const std::complex<double> amplitude = eigien_vector(idx);
+            return 1.0 / (amplitude / std::abs(amplitude));
+        }();
         const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
         std::cout << std::fixed << std::setprecision(9);
         double accumulated_probability = 0.0;
@@ -94,7 +100,7 @@ void pretty_print(
                       << "eigen vector no: " << std::setw(6) << n_eigien_vector << ", "
                       << "kstate constribution: " << (*kstate_ptr) << ", "
                       << "probability: " << std::noshowpos << probability << ", "
-                      << "amplitude: " << std::showpos << amplitude << ", "
+                      << "amplitude: " << std::showpos << presentation_layer_amplitude_factor * amplitude << ", "
                       << "kstate basis idx: " << std::setw(6) << idx << ", "
                       << "kstate print idx: " << std::setw(6) << print_idx
                       << "." << std::endl;
