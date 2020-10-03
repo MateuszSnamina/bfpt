@@ -6,11 +6,14 @@
 #include <bfpt_common/generate_pt_basis.hpp> // TODO change to  <bfpt_common/generate_basis.hpp>
 #include <bfpt_common/generate_hamiltonian.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
+#include <bfpt_common/calculate_reduced_density_operator.hpp>
 
 #include <linear_algebra/linear_algebra.hpp>
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_concrete.hpp>
+
+#include <utility/result.hpp>
 
 #include <armadillo>
 
@@ -23,16 +26,20 @@
 #include <complex>
 #include <cmath>
 
-// #######################################################################
-// ## do_common_recipe                                                  ##
-// #######################################################################
-
 namespace bfpt_common {
 
 const std::string message_prefix = "[common-recipe] ";
 const std::string progress_tag = "[progress] ";
 const std::string data_tag = "[data    ] ";
 const std::string time_tag = "[time    ] ";
+
+}
+
+// #######################################################################
+// ## pretty_print                                                      ##
+// #######################################################################
+
+namespace bfpt_common {
 
 template<typename KstateT>
 void pretty_print(
@@ -111,14 +118,29 @@ void pretty_print(
     } // end of n_eigien_vector loop
 }
 
+}
+
+// #######################################################################
+// ## do_common_recipe                                                  ##
+// #######################################################################
+
+namespace bfpt_common {
+
+struct CommonRecipeResult {
+    double energy;
+    std::optional<arma::cx_vec> eigen_vector;
+};
+
 template<typename KstateT>
-double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
+utility::Result<CommonRecipeResult, std::runtime_error>
+do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                         const IKstateHamiltonian<KstateT>& hamiltonian,
                         kstate::Basis<KstateT>& basis,
                         const unsigned max_pt_order, const unsigned k_n,
                         CommonRecipePrintFlags print_flags,
                         std::string print_outer_prefix = "",
                         unsigned n_threads = 1) {
+    using ResultT = utility::Result<CommonRecipeResult, std::runtime_error>;
     assert(n_threads != 0);
     assert(n_threads <= 256);
     [[maybe_unused]] const size_t n_sites = basis.n_sites();
@@ -183,14 +205,13 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
         timer.tic();
         const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
         const double time_solving_eigen_problem = timer.toc();
-        if (eigs_sym_result.is_err()) {
             std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+        if (eigs_sym_result.is_err()) {
             std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
             std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
             std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
-            return arma::datum::nan;
+            return ResultT::Err(std::runtime_error(eigs_sym_result.unwrap_err().what()));
         }
-        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
         std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem (eigenvalues & eigenvectors)." << std::endl;
         const auto eigen_info = eigs_sym_result.unwrap();
         const arma::vec& eigen_values = eigen_info.eigen_values;
@@ -209,20 +230,19 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                          print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold,
                          print_outer_prefix);
         }
-        return eigen_values(0);
+        return ResultT::Ok({eigen_values(0), eigen_vectors.col(0)});
     } else {
         std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues only)." << std::endl;
         timer.tic();
         const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithoutVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
         const double time_solving_eigen_problem = timer.toc();
+        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
         if (eigs_sym_result.is_err()) {
-            std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
             std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues only)." << std::endl;
             std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
             std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
-            return arma::datum::nan;
+            return ResultT::Err(std::runtime_error(eigs_sym_result.unwrap_err().what()));
         }
-        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
         std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem (eigenvalues only)." << std::endl;
         const arma::vec& eigen_values = eigs_sym_result.unwrap();
         // --------------------------------------------------
@@ -230,7 +250,7 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
             std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
             std::cout << print_outer_prefix << message_prefix << eigen_values;
         }
-        return eigen_values(0);
+        return ResultT::Ok({eigen_values(0), std::nullopt});
     }
     // --------------------------------------------------
     assert(false);

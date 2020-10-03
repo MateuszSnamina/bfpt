@@ -31,7 +31,7 @@
 // ## main - helpers                                                    ##
 // #######################################################################
 
-double bfpt_gs(
+bfpt_common::CommonRecipeResult bfpt_gs(
         const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
         const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
@@ -46,10 +46,10 @@ double bfpt_gs(
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, 0,
                                          print_flags, "[gs] ",
-                                         n_threads);
+                                         n_threads).unwrap();
 }
 
-double bfpt_kn_es(
+bfpt_common::CommonRecipeResult bfpt_kn_es(
         const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
         const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
@@ -64,7 +64,7 @@ double bfpt_kn_es(
     return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
                                          max_pt_order, k_n,
                                          print_flags, "[es (" + std::to_string(k_n) + ")] ",
-                                         n_threads);
+                                         n_threads).unwrap();
 }
 
 // #######################################################################
@@ -120,18 +120,20 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
 void print_results_tree(
         const InterpretedProgramOptions& interpreted_program_options,
         const std::shared_ptr<model_monostar::HamiltonianReferenceEnergies> reference_energies,
-        const std::optional<double>& gs_energy,
-        const std::optional<std::vector<double>>& es_energies) {
+        const std::optional<bfpt_common::CommonRecipeResult>& gs_result_optional,
+        const std::optional<std::vector<bfpt_common::CommonRecipeResult>>& es_results_optional) {
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                 interpreted_program_options.es_momentum_domain,
                 interpreted_program_options.n_sites);
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+        assert(es_results_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     }
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+        assert(gs_result_optional);
+        const auto gs_result = *gs_result_optional;
         std::cout << " ├state: gs "  << std::endl;
-        std::cout << " ││enery = " << *gs_energy << std::endl;
+        std::cout << " ││enery = " << gs_result.energy << std::endl;
         if (reference_energies) {
             if (const auto& gs_energy = reference_energies->get_gs_energy()){
                 std::cout << " ││enery (reference) = " << *gs_energy << std::endl;
@@ -139,12 +141,16 @@ void print_results_tree(
         }
     }
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        assert(es_results_optional);
+        const auto es_results = *es_results_optional;
         for (unsigned k_n =  es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
-            const auto es_energy = (*es_energies)[k_n];
+            const auto es_result = es_results[k_n];
             std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
-            std::cout << " ││abs. enery        = " << es_energy << std::endl;
-            if (gs_energy) {
-                std::cout << " ││exc. enery        = " << es_energy - *gs_energy << std::endl;
+            std::cout << " ││abs. enery        = " << es_result.energy << std::endl;
+            if (interpreted_program_options.run_type == RunType::EG) {
+                assert(gs_result_optional);
+                const auto gs_result = *gs_result_optional;
+                std::cout << " ││exc. enery        = " << es_result.energy - gs_result.energy << std::endl;
             }
             if (reference_energies) {
                 if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
@@ -161,8 +167,8 @@ void print_results_tree(
 void print_post_data(
         const InterpretedProgramOptions& interpreted_program_options,
         /*const std::unique_ptr<model_monostar::ReferenceEnergies> reference_energies,*/
-        const std::optional<double>& gs_energy,
-        const std::optional<std::vector<double>>& es_energies) {
+        const std::optional<bfpt_common::CommonRecipeResult>& gs_result_optional,
+        const std::optional<std::vector<bfpt_common::CommonRecipeResult>>& es_results_optional) {
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     using  extension::boost::stream_pragma::RSS;
     using extension::boost::stream_pragma::operator|;
@@ -172,10 +178,12 @@ void print_post_data(
                 interpreted_program_options.es_momentum_domain,
                 interpreted_program_options.n_sites);
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        assert(es_energies->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+        assert(es_results_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     }
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-        std::cout << "[RESULT] [POST] gs_energy: " << *gs_energy << std::endl;
+        assert(gs_result_optional);
+        const auto gs_result = *gs_result_optional;
+        std::cout << "[RESULT] [POST] gs_energy: " << gs_result.energy << std::endl;
     }
     if (interpreted_program_options.run_type == RunType::EG) {
         const auto& n_sites = interpreted_program_options.n_sites;
@@ -184,13 +192,20 @@ void print_post_data(
         const auto domain = boost::irange(es_momentum_range_sapn.first, es_momentum_range_sapn.second) | transformed(nk_to_k);
         std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
     }
+    const auto common_result_to_energy = [](bfpt_common::CommonRecipeResult result)->double {return result.energy;};
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        std::cout << "[RESULT] [POST] es_absolute_energies: " << ((*es_energies) | RSS<double>().like_python_list()) << std::endl;
+        assert(es_results_optional);
+        const auto es_results = *es_results_optional;
+        std::cout << "[RESULT] [POST] es_absolute_energies: " << (es_results | transformed(common_result_to_energy) | RSS<double>().like_python_list()) << std::endl;
     }
     if (interpreted_program_options.run_type == RunType::EG) {
-        const auto absolute_energy_into_excitation_energy =
-                [gs_energy](double es_energy)->double{return es_energy - *gs_energy;};
-        const auto exciation_energies = (*es_energies) | transformed(absolute_energy_into_excitation_energy);
+        assert(es_results_optional);
+        assert(gs_result_optional);
+        const auto es_results = *es_results_optional;
+        const auto gs_result = *gs_result_optional;
+        const auto gs_energy = gs_result.energy;
+        const auto absolute_energy_into_excitation_energy = [gs_energy] (double es_energy) ->double {return es_energy - gs_energy;};
+        const auto exciation_energies = es_results | transformed(common_result_to_energy) | transformed(absolute_energy_into_excitation_energy);
         std::cout << "[RESULT] [POST] es_excitation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
     }
 }
@@ -281,8 +296,8 @@ int main(int argc, char** argv) {
             }
         }();
         // ******************************************************************
-        const std::optional<double> gs_energy =
-                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<double>{
+        const std::optional<bfpt_common::CommonRecipeResult> gs_energy =
+                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<bfpt_common::CommonRecipeResult> {
             if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
                 std::cout << "------------------------------------------" << std::endl;
                 return bfpt_gs(
@@ -296,26 +311,26 @@ int main(int argc, char** argv) {
             return std::nullopt;
         }();
         // ******************************************************************
-        const std::optional<std::vector<double>> es_energies =
-                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<std::vector<double>> {
+        const std::optional<std::vector<bfpt_common::CommonRecipeResult>> es_results =
+                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<std::vector<bfpt_common::CommonRecipeResult>> {
             std::cout << "------------------------------------------" << std::endl;
             if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
                 const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                             interpreted_program_options.es_momentum_domain,
                             interpreted_program_options.n_sites);
-                std::vector<double> es_energies;
+                std::vector<bfpt_common::CommonRecipeResult> es_results_builder;
                 for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
                     std::cout << "[PROGRESS] " << "solving n_k: " << k_n << std::endl;
-                    const double es_energy = bfpt_kn_es(
+                    const auto es_energy = bfpt_kn_es(
                                 hamiltonian_kernel_1,
                                 hamiltonian_kernel_12,
                                 interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
                                 interpreted_program_options.print_flags,
                                 interpreted_program_options.n_threads);
-                    es_energies.push_back(es_energy);
+                    es_results_builder.push_back(es_energy);
                     std::cout << "------------------------------------------" << std::endl;
                 }
-                return es_energies;
+                return es_results_builder;
             }
             return std::nullopt;
         }();
@@ -324,12 +339,13 @@ int main(int argc, char** argv) {
                     interpreted_program_options,
                     reference_energies,
                     gs_energy,
-                    es_energies);
+                    es_results);
         print_post_data(
                     interpreted_program_options,
                     /*reference_energies,*/
                     gs_energy,
-                    es_energies);
+                    es_results);
+        //TODO restore
         // ******************************************************************
     } catch (std::exception& e) {
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
