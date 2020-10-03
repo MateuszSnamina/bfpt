@@ -271,9 +271,11 @@ int main(int argc, char** argv) {
                                 interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
             case ModelType::FO:
             {
-                //const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+                return std::dynamic_pointer_cast<model_monostar::HamiltonianReferenceEnergies>(
+                            std::make_shared<model_monostar::HamiltonianReferenceEnergiesFo>(
+                                interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_fo, orbital_theta_to_use));
             }
-                throw std::domain_error("FO IS NOT IMPLEMENTED.");
             default:
                 throw std::domain_error("Invalid model_type enum value.");
             }
