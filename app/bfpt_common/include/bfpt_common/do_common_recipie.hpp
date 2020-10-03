@@ -149,7 +149,6 @@ double do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     // Generate hamiltoniam matrix:
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
-    //const auto kn_hamiltonian_matrix = hamiltonian.make_kn_hamiltonian_matrix(basis, k_n, n_threads); //TODO remove
     const auto kn_hamiltonian_matrix = generate_hamiltonian(hamiltonian, basis, k_n, n_threads);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;

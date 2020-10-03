@@ -4,8 +4,8 @@
 #include <model_monostar/get_orbital_theta.hpp>
 #include <model_monostar/hamiltonian_kernel_af_fm.hpp>
 #include <model_monostar/hamiltonian_kernel_fo.hpp>
-#include <model_monostar/reference_energies_af_fm.hpp>
-#include <model_monostar/reference_energies_fo.hpp>
+#include <model_monostar/hamiltonian_reference_energies_af_fm.hpp>
+#include <model_monostar/hamiltonian_reference_energies_fo.hpp>
 #include <model_monostar/monostar_basis.hpp>
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
@@ -81,16 +81,16 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                               = " << interpreted_program_options.n_pt << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
     if (interpreted_program_options.model_type == ModelType::AF || interpreted_program_options.model_type == ModelType::FM){
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_classical     = " << interpreted_program_options.hamiltonian_af_fm_params.get_J_classical() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_quantum       = " << interpreted_program_options.hamiltonian_af_fm_params.get_J_quantum() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_af_fm_params.get_B() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_classical     = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_classical() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_quantum       = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_quantum() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_params_af_fm.get_B() << std::endl;
     }
     if (interpreted_program_options.model_type == ModelType::FO) {
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_fo_params.get_tau_z_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_fo_params.get_tau_minus_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pzz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_fo_params.get_Pxx_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_fo.get_tau_z_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_fo.get_tau_minus_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_params_fo.get_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_params_fo.get_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_params_fo.get_Pxx_coef() << std::endl;
         if (interpreted_program_options.orbital_theta) {
             std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << *interpreted_program_options.orbital_theta << std::endl;
         } else {
@@ -195,7 +195,7 @@ void print_post_data(
     }
 }
 
-void print_theta_opt(const HamiltonianFoParams& hamiltonian_fo_params, std::optional<double> user_defined_overrule) {
+void print_theta_opt(const HamiltonianParamsFo& hamiltonian_fo_params, std::optional<double> user_defined_overrule) {
     using namespace extension::boost::stream_pragma;
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     using extension::boost::stream_pragma::RSS;
@@ -225,18 +225,18 @@ int main(int argc, char** argv) {
         print_input_data(interpreted_program_options);
         // ******************************************************************
         if (interpreted_program_options.model_type == ModelType::FO) {
-            print_theta_opt(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
+            print_theta_opt(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
         }
         // ******************************************************************
         const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
             case ModelType::FM:
-                return model_monostar::prepare_hamiltonian_kernel_1_af_fm(interpreted_program_options.hamiltonian_af_fm_params);
+                return model_monostar::prepare_hamiltonian_kernel_1_af_fm(interpreted_program_options.hamiltonian_params_af_fm);
             case ModelType::FO:
             {
-                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
-                return model_monostar::prepare_hamiltonian_kernel_1_fo(interpreted_program_options.hamiltonian_fo_params, orbital_theta_to_use);
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+                return model_monostar::prepare_hamiltonian_kernel_1_fo(interpreted_program_options.hamiltonian_params_fo, orbital_theta_to_use);
             }
             default:
                 throw std::domain_error("Invalid model_type enum value.");
@@ -245,13 +245,13 @@ int main(int argc, char** argv) {
         const auto hamiltonian_kernel_12 = [&interpreted_program_options]() {
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
-                return model_monostar::prepare_hamiltonian_kernel_12_af(interpreted_program_options.hamiltonian_af_fm_params);
+                return model_monostar::prepare_hamiltonian_kernel_12_af(interpreted_program_options.hamiltonian_params_af_fm);
             case ModelType::FM:
-                return model_monostar::prepare_hamiltonian_kernel_12_fm(interpreted_program_options.hamiltonian_af_fm_params);
+                return model_monostar::prepare_hamiltonian_kernel_12_fm(interpreted_program_options.hamiltonian_params_af_fm);
             case ModelType::FO:
             {
-                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);
-                return model_monostar::prepare_hamiltonian_kernel_12_fo(interpreted_program_options.hamiltonian_fo_params, orbital_theta_to_use);
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+                return model_monostar::prepare_hamiltonian_kernel_12_fo(interpreted_program_options.hamiltonian_params_fo, orbital_theta_to_use);
             }
             default:
                 throw std::domain_error("Invalid model_type enum value.");
@@ -264,11 +264,11 @@ int main(int argc, char** argv) {
             case ModelType::AF:
                     return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                                 std::make_shared<model_monostar::ReferenceEnergiesAf>(
-                                    interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_af_fm_params));
+                                    interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
             case ModelType::FM:
                 return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
                             std::make_shared<model_monostar::ReferenceEnergiesFm>(
-                                interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_af_fm_params));
+                                interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
             case ModelType::FO:
             {
                 //const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_fo_params, interpreted_program_options.orbital_theta);

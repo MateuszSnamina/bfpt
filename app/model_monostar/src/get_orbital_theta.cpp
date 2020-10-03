@@ -5,7 +5,7 @@
 #include <string>
 
 double get_orbital_theta(
-        const HamiltonianFoParams& hamiltonian_fo_params,
+        const HamiltonianParamsFo& hamiltonian_fo_params,
         std::optional<double> user_defined_overrule) {
     if (user_defined_overrule) {
         return *user_defined_overrule;

@@ -40,7 +40,7 @@ prepare_hamiltonian_kernel_12_fo(double Pzz_coef, double Pxz_coef, double Pxx_co
 }
 
 bfpt_common::HamiltonianKernel12<MonostarSiteState>
-prepare_hamiltonian_kernel_12_fo(const HamiltonianFoParams& params, double orbital_theta) {
+prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsFo& params, double orbital_theta) {
     return prepare_hamiltonian_kernel_12_fo(
                 params.get_Pzz_coef(),
                 params.get_Pxz_coef(),
@@ -70,7 +70,7 @@ prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double
 }
 
 bfpt_common::HamiltonianKernel1<MonostarSiteState>
-prepare_hamiltonian_kernel_1_fo(const HamiltonianFoParams& params, double orbital_theta) {
+prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsFo& params, double orbital_theta) {
     return prepare_hamiltonian_kernel_1_fo(
                 params.get_tau_z_coef(),
                 params.get_tau_minus_coef(),

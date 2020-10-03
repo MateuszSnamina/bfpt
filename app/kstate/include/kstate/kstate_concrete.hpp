@@ -3,7 +3,6 @@
 
 #include <kstate/kstate_abstract.hpp>
 
-//#include <extensions/adaptors.hpp> //TODO remove
 #include <extensions/range_streamer.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>

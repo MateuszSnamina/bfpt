@@ -1,6 +1,6 @@
 #pragma once
 
-#include<model_monostar/hamiltonian_fo_params.hpp>
+#include<model_monostar/hamiltonian_params_fo.hpp>
 
 #include<optional>
 
@@ -9,5 +9,5 @@
 // #######################################################################
 
 double get_orbital_theta(
-        const HamiltonianFoParams& hamiltonian_fo_params,
+        const HamiltonianParamsFo& hamiltonian_fo_params,
         std::optional<double> user_defined_overrule);

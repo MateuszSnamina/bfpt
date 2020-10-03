@@ -56,7 +56,7 @@ prepare_hamiltonian_kernel_12_af(double J_classical, double J_quantum) {
 }
 
 bfpt_common::HamiltonianKernel12<MonostarSiteState>
-prepare_hamiltonian_kernel_12_af(const HamiltonianAfFmParams& params) {
+prepare_hamiltonian_kernel_12_af(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_12_af(params.get_J_classical(), params.get_J_quantum());
 }
 
@@ -68,7 +68,7 @@ prepare_hamiltonian_kernel_12_fm(double J_classical, double J_quantum) {
 }
 
 bfpt_common::HamiltonianKernel12<MonostarSiteState>
-prepare_hamiltonian_kernel_12_fm(const HamiltonianAfFmParams& params) {
+prepare_hamiltonian_kernel_12_fm(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_12_fm(params.get_J_classical(), params.get_J_quantum());
 }
 
@@ -86,7 +86,7 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
 }
 
 bfpt_common::HamiltonianKernel1<MonostarSiteState>
-prepare_hamiltonian_kernel_1_af_fm(const HamiltonianAfFmParams& params) {
+prepare_hamiltonian_kernel_1_af_fm(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_1_af_fm(params.get_B());
 }
 

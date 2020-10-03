@@ -19,12 +19,12 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         const std::string message = message1 + "\n" + _.unwrap_err().what();
         throw std::runtime_error(message);
     }
-    interpreted_program_options.hamiltonian_af_fm_params = HamiltonianAfFmParams::Builder()
+    interpreted_program_options.hamiltonian_params_af_fm = HamiltonianParamsAfFm::Builder()
             .set_J_classical(raw_program_options.hamiltonian_J_classical)
             .set_J_quantum(raw_program_options.hamiltonian_J_quantum)
             .set_B(raw_program_options.hamiltonian_B)
             .build();
-    interpreted_program_options.hamiltonian_fo_params = HamiltonianFoParams::Builder()
+    interpreted_program_options.hamiltonian_params_fo = HamiltonianParamsFo::Builder()
             .set_tau_z_coef(raw_program_options.hamiltonian_tau_z_coef)
             .set_tau_minus_coef(raw_program_options.hamiltonian_tau_minus_coef)
             .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)

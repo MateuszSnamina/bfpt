@@ -1,7 +1,7 @@
 #pragma once
 
-#include<model_monostar/reference_energies.hpp>
-#include<model_monostar/hamiltonian_af_fm_params.hpp>
+#include<model_monostar/hamiltonian_reference_energies.hpp>
+#include<model_monostar/hamiltonian_params_af_fm.hpp>
 
 #include<armadillo>
 
@@ -24,7 +24,7 @@ public:
         _B(B) {
         assert(_J_classical > 0);
     }
-    ReferenceEnergiesFm(unsigned n_sites, const HamiltonianAfFmParams& params) :
+    ReferenceEnergiesFm(unsigned n_sites, const HamiltonianParamsAfFm& params) :
         ReferenceEnergies(n_sites),
         _J_classical(params.get_J_classical()),
         _J_quantum(params.get_J_quantum()),
@@ -57,7 +57,7 @@ public:
         _J(J),
         _is_applicable(true){
     }
-    ReferenceEnergiesAf(unsigned n_sites, const HamiltonianAfFmParams& params) :
+    ReferenceEnergiesAf(unsigned n_sites, const HamiltonianParamsAfFm& params) :
         ReferenceEnergies(n_sites),
         _J(params.get_J_classical()),
         _is_applicable(params.get_J_classical() == params.get_J_quantum() && params.get_B() == 0){

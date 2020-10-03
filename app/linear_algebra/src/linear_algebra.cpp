@@ -311,7 +311,7 @@ eigs_sym_impl(bool with_vectors_flag,
     // --------------------------------------------------------------
     assert(n_vectors > 0);
     assert(matrix.n_cols == matrix.n_rows);
-    const auto size = matrix.n_cols; //TODO mark UNUSED
+    [[maybe_unused]] const auto size = matrix.n_cols;
     const arma::uword n_vectors_not_reduced_to_calculate = 2 * n_vectors + n_extra_vectors;
     assert(n_vectors_not_reduced_to_calculate < 2 * size);
     // --------------------------------------------------------------

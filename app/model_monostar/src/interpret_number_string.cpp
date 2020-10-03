@@ -1,4 +1,4 @@
-//SELF:
+// SELF:
 #include <model_monostar/interpret_number_string.hpp>
 // BOOST:
 #include <boost/lexical_cast.hpp>
@@ -6,7 +6,6 @@
 #include <map>
 // STD:
 #include <optional>
-//#include <iostream> //TODO remove
 
 namespace {
 

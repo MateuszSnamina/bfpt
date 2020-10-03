@@ -1,7 +1,7 @@
 #pragma once
 
-#include<model_monostar/reference_energies.hpp>
-#include<model_monostar/hamiltonian_fo_params.hpp>
+#include<model_monostar/hamiltonian_reference_energies.hpp>
+#include<model_monostar/hamiltonian_params_fo.hpp>
 
 #include<cassert>
 

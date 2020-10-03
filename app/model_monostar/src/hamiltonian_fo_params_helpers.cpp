@@ -1,14 +1,12 @@
-#include<model_monostar/hamiltonian_fo_params_helpers.hpp>
+#include<model_monostar/hamiltonian_params_fo_helpers.hpp>
 
-#include<model_monostar/hamiltonian_fo_params_metahelpers.hpp>
+#include<model_monostar/hamiltonian_params_fo_metahelpers.hpp>
 #include<model_monostar/simple_numerical_function_analyzer.hpp>
 
 #include<utility/almost_equal.hpp>
 
 #include<cmath>
 #include<cassert>
-
-#include<iostream> //TODO remove (debug)
 
 // #######################################################################
 // ## NoKnownAnalyticalSolutionError                                    ##

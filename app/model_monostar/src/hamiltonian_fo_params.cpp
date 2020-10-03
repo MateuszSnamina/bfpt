@@ -1,13 +1,13 @@
-#include<model_monostar/hamiltonian_fo_params.hpp>
-#include<model_monostar/hamiltonian_fo_params_helpers.hpp>
+#include<model_monostar/hamiltonian_params_fo.hpp>
+#include<model_monostar/hamiltonian_params_fo_helpers.hpp>
 
 // #######################################################################
-// ## hamiltonian_fo_params_to_classic_energy_function                  ##//TODO change name: fo_params->params_fo
+// ## hamiltonian_params_fo_to_classic_energy_function                  ##
 // #######################################################################
 
 namespace {
 
-AcosPlusBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(HamiltonianFoParams params) { //TODO change name: fo_params->params_fo
+AcosPlusBsinPlusCsqcosPlusZ hamiltonian_params_fo_to_classic_energy_function(HamiltonianParamsFo params) {
     // E(θ) = + A*cos(θ) + B*sin(θ)  + C*cos⁴(θ/2) + 2*D*cos²(θ/2)sin²(θ/2) + E*sin⁴(θ/2)
     //      = + A*cos(θ) + B*sin(θ)  + C[½+½cos(θ)]² + 2*D[½*sin(θ)]² + E[½-½cos(θ)]²
     //      = + A*cos(θ) + B*sin(θ)  + ¼C[1+cos(θ)]² + ½D[sin(θ)]² + ¼E[1-cos(θ)]²
@@ -33,41 +33,41 @@ AcosPlusBsinPlusCsqcosPlusZ hamiltonian_fo_params_to_classic_energy_function(Ham
 } // end of namespace
 
 // #######################################################################
-// ## HamiltonianFoParams                                               ## //TODO change name: FoParams->ParamsFo
+// ## HamiltonianParamsFo                                               ##
 // #######################################################################
 
-HamiltonianFoParams::Builder HamiltonianFoParams::Builder::set_tau_z_coef(double tau_z_coef) {
+HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_tau_z_coef(double tau_z_coef) {
     _tau_z_coef = tau_z_coef;
     return *this;
 }
 
-HamiltonianFoParams::Builder HamiltonianFoParams::Builder::set_tau_minus_coef(double tau_minus_coef) {
+HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_tau_minus_coef(double tau_minus_coef) {
     _tau_munis_coef = tau_minus_coef;
     return *this;
 }
 
-HamiltonianFoParams::Builder HamiltonianFoParams::Builder::set_Pzz_coef(double Pzz_coef) {
+HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_Pzz_coef(double Pzz_coef) {
     _Pzz_coef = Pzz_coef;
     return *this;
 }
 
-HamiltonianFoParams::Builder HamiltonianFoParams::Builder::set_Pxz_coef(double Pxz_coef) {
+HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_Pxz_coef(double Pxz_coef) {
     _Pxz_coef = Pxz_coef;
     return *this;
 }
 
-HamiltonianFoParams::Builder HamiltonianFoParams::Builder::set_Pxx_coef(double Pxx_coef) {
+HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_Pxx_coef(double Pxx_coef) {
     _Pxx_coef = Pxx_coef;
     return *this;
 }
 
-HamiltonianFoParams HamiltonianFoParams::Builder::build() const {
-    return HamiltonianFoParams(_tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef);
+HamiltonianParamsFo HamiltonianParamsFo::Builder::build() const {
+    return HamiltonianParamsFo(_tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef);
 }
 
 // #######################################################################
 
-HamiltonianFoParams::HamiltonianFoParams(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef) :
+HamiltonianParamsFo::HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef) :
     _tau_z_coef(tau_z_coef),
     _tau_minus_coef(tau_minus_coef),
     _Pzz_coef(Pzz_coef),
@@ -75,38 +75,38 @@ HamiltonianFoParams::HamiltonianFoParams(double tau_z_coef, double tau_minus_coe
     _Pxx_coef(Pxx_coef) {
 }
 
-double HamiltonianFoParams::get_tau_z_coef() const {
+double HamiltonianParamsFo::get_tau_z_coef() const {
     return _tau_z_coef;
 }
 
-double HamiltonianFoParams::get_tau_minus_coef() const {
+double HamiltonianParamsFo::get_tau_minus_coef() const {
     return _tau_minus_coef;
 }
 
-double HamiltonianFoParams::get_Pzz_coef() const {
+double HamiltonianParamsFo::get_Pzz_coef() const {
     return _Pzz_coef;
 }
 
-double HamiltonianFoParams::get_Pxz_coef() const {
+double HamiltonianParamsFo::get_Pxz_coef() const {
     return _Pxz_coef;
 }
 
-double HamiltonianFoParams::get_Pxx_coef() const {
+double HamiltonianParamsFo::get_Pxx_coef() const {
     return _Pxx_coef;
 }
 
-double HamiltonianFoParams::get_site_energy(double theta) const {
-    return hamiltonian_fo_params_to_classic_energy_function(*this).get_value(theta);
+double HamiltonianParamsFo::get_site_energy(double theta) const {
+    return hamiltonian_params_fo_to_classic_energy_function(*this).get_value(theta);
 }
 
-std::set<double> HamiltonianFoParams::get_theta_opt() const {
-    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument();
+std::set<double> HamiltonianParamsFo::get_theta_opt() const {
+    return hamiltonian_params_fo_to_classic_energy_function(*this).get_minimum_argument();
 }
 
-std::set<double> HamiltonianFoParams::get_theta_opt_numerical() const {
-    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_numerical();
+std::set<double> HamiltonianParamsFo::get_theta_opt_numerical() const {
+    return hamiltonian_params_fo_to_classic_energy_function(*this).get_minimum_argument_numerical();
 }
 
-utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> HamiltonianFoParams::get_theta_opt_analytical() const {
-    return hamiltonian_fo_params_to_classic_energy_function(*this).get_minimum_argument_analytical();
+utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> HamiltonianParamsFo::get_theta_opt_analytical() const {
+    return hamiltonian_params_fo_to_classic_energy_function(*this).get_minimum_argument_analytical();
 }

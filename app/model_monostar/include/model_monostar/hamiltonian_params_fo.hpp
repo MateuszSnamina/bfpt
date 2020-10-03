@@ -1,14 +1,14 @@
 #pragma once
 
-#include<model_monostar/hamiltonian_fo_params_helpers.hpp>
+#include<model_monostar/hamiltonian_params_fo_helpers.hpp>
 
 #include<set>
 
 // #######################################################################
-// ## HamiltonianFoParams                                               ## //TODO change name: FoParams->ParamsFo
+// ## HamiltonianParamsFo                                               ##
 // #######################################################################
 
-class HamiltonianFoParams {
+class HamiltonianParamsFo {
 public:
     class Builder {
     public:
@@ -17,7 +17,7 @@ public:
         Builder set_Pzz_coef(double);
         Builder set_Pxz_coef(double);
         Builder set_Pxx_coef(double);
-        HamiltonianFoParams build() const;
+        HamiltonianParamsFo build() const;
     private:
         double _tau_z_coef = 0.0;
         double _tau_munis_coef = 0.0;
@@ -25,8 +25,8 @@ public:
         double _Pxz_coef = 0.0;
         double _Pxx_coef = 0.0;
     };
-    friend HamiltonianFoParams Builder::build() const;
-    HamiltonianFoParams() = default;
+    friend HamiltonianParamsFo Builder::build() const;
+    HamiltonianParamsFo() = default;
     double get_tau_z_coef() const;
     double get_tau_minus_coef() const;
     double get_Pzz_coef() const;
@@ -38,7 +38,7 @@ public:
     utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_theta_opt_analytical() const;
 
 private:
-    HamiltonianFoParams(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);
+    HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);
     double _tau_z_coef;
     double _tau_minus_coef;
     double _Pzz_coef;
