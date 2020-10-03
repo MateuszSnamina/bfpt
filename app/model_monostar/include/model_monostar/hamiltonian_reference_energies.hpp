@@ -5,14 +5,14 @@
 #include<cassert>
 
 // #######################################################################
-// ## ReferenceEnergies                                                 ##
+// ## HamiltonianReferenceEnergies                                      ##
 // #######################################################################
 
 namespace model_monostar {
 
-class ReferenceEnergies {
+class HamiltonianReferenceEnergies {
 public:
-    ReferenceEnergies(unsigned n_sites) :
+    HamiltonianReferenceEnergies(unsigned n_sites) :
         _n_sites(n_sites) {
         assert(n_sites > 0);
     }
@@ -26,7 +26,7 @@ public:
         }
         return std::nullopt;
     }
-    virtual ~ReferenceEnergies() = default;
+    virtual ~HamiltonianReferenceEnergies() = default;
 protected:
     const unsigned _n_sites;
 };

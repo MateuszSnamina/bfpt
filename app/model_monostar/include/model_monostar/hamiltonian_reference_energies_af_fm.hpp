@@ -7,35 +7,18 @@
 
 #include<optional>
 
-#include<cassert>
-
 // #######################################################################
-// ## ReferenceEnergiesFm                                               ##
+// ## HamiltonianReferenceEnergiesFm                                    ##
 // #######################################################################
 
 namespace model_monostar {
 
-class ReferenceEnergiesFm final : public ReferenceEnergies {
+class HamiltonianReferenceEnergiesFm final : public HamiltonianReferenceEnergies {
 public:
-    ReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B) :
-        ReferenceEnergies(n_sites),
-        _J_classical(J_classical),
-        _J_quantum(J_quantum),
-        _B(B) {
-        assert(_J_classical > 0);
-    }
-    ReferenceEnergiesFm(unsigned n_sites, const HamiltonianParamsAfFm& params) :
-        ReferenceEnergies(n_sites),
-        _J_classical(params.get_J_classical()),
-        _J_quantum(params.get_J_quantum()),
-        _B(params.get_B()) {
-    }
-    std::optional<double> get_gs_energy() const override {
-        return _n_sites * ((-0.25) * _J_classical + (-0.5) * _B);
-    }
-    std::optional<double> get_es_exciation_enery(unsigned n_k) const override {
-        return _J_classical + _B - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites);
-    }
+    HamiltonianReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B);
+    HamiltonianReferenceEnergiesFm(unsigned n_sites, const HamiltonianParamsAfFm& params);
+    std::optional<double> get_gs_energy() const override;
+    std::optional<double> get_es_exciation_enery(unsigned n_k) const override;
 private:
     const double _J_classical;
     const double _J_quantum;
@@ -45,37 +28,17 @@ private:
 } // end of namespace model_monostar
 
 // #######################################################################
-// ## ReferenceEnergiesAf                                               ##
+// ## HamiltonianReferenceEnergiesAf                                    ##
 // #######################################################################
 
 namespace model_monostar {
 
-class ReferenceEnergiesAf final : public ReferenceEnergies {
+class HamiltonianReferenceEnergiesAf final : public HamiltonianReferenceEnergies {
 public:
-    ReferenceEnergiesAf(unsigned n_sites, double J) :
-        ReferenceEnergies(n_sites),
-        _J(J),
-        _is_applicable(true){
-    }
-    ReferenceEnergiesAf(unsigned n_sites, const HamiltonianParamsAfFm& params) :
-        ReferenceEnergies(n_sites),
-        _J(params.get_J_classical()),
-        _is_applicable(params.get_J_classical() == params.get_J_quantum() && params.get_B() == 0){
-    }
-    std::optional<double> get_gs_energy() const override {
-        if (_is_applicable) {
-            return - _J * _n_sites * (std::log(2) - 0.25);
-        } else {
-            return std::nullopt;
-        }
-    }
-    std::optional<double> get_es_exciation_enery(unsigned n_k) const override {
-        if (_is_applicable) {
-            return _J * arma::datum::pi/2 * std::abs(std::sin(2 * arma::datum::pi * n_k / _n_sites));
-        } else {
-            return std::nullopt;
-        }
-    }
+    HamiltonianReferenceEnergiesAf(unsigned n_sites, double J);
+    HamiltonianReferenceEnergiesAf(unsigned n_sites, const HamiltonianParamsAfFm& params);
+    std::optional<double> get_gs_energy() const override;
+    std::optional<double> get_es_exciation_enery(unsigned n_k) const override;
 private:
     const double _J;
     const bool _is_applicable;

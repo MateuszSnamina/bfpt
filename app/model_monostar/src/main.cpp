@@ -119,7 +119,7 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
 
 void print_results_tree(
         const InterpretedProgramOptions& interpreted_program_options,
-        const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies,
+        const std::shared_ptr<model_monostar::HamiltonianReferenceEnergies> reference_energies,
         const std::optional<double>& gs_energy,
         const std::optional<std::vector<double>>& es_energies) {
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
@@ -258,16 +258,16 @@ int main(int argc, char** argv) {
             };
         }();
         // ******************************************************************
-        const std::shared_ptr<model_monostar::ReferenceEnergies> reference_energies =
+        const std::shared_ptr<model_monostar::HamiltonianReferenceEnergies> reference_energies =
                 [&interpreted_program_options]() {
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
-                    return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
-                                std::make_shared<model_monostar::ReferenceEnergiesAf>(
+                    return std::dynamic_pointer_cast<model_monostar::HamiltonianReferenceEnergies>(
+                                std::make_shared<model_monostar::HamiltonianReferenceEnergiesAf>(
                                     interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
             case ModelType::FM:
-                return std::dynamic_pointer_cast<model_monostar::ReferenceEnergies>(
-                            std::make_shared<model_monostar::ReferenceEnergiesFm>(
+                return std::dynamic_pointer_cast<model_monostar::HamiltonianReferenceEnergies>(
+                            std::make_shared<model_monostar::HamiltonianReferenceEnergiesFm>(
                                 interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
             case ModelType::FO:
             {
