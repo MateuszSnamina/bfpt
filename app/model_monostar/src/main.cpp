@@ -33,15 +33,14 @@
 // #######################################################################
 
 bfpt_common::CommonRecipeReceipt bfpt_gs(
-        const bfpt_common::OperatorKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
-        const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
+        const bfpt_common::OperatorKernel1<model_monostar::MonostarSiteStateTrait>& hamiltonian_kernel_1,
+        const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteStateTrait>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
-    //using SiteStateT = model_monostar::MonostarSiteState;
     using KstateT = model_monostar::DynamicMonostarKstate;
+    using KstateTraitT = model_monostar::DynamicMonostarKstateTrait;
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
-    using KstateTraitT = kstate::TraitKstate<KstateT>;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
     const bfpt_common::KernelDrivenKstateBasisPopulator<KstateTraitT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
@@ -54,15 +53,14 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
 }
 
 bfpt_common::CommonRecipeReceipt bfpt_kn_es(
-        const bfpt_common::OperatorKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
-        const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
+        const bfpt_common::OperatorKernel1<model_monostar::MonostarSiteStateTrait>& hamiltonian_kernel_1,
+        const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteStateTrait>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
-    //using SiteStateT = model_monostar::MonostarSiteState;
     using KstateT = model_monostar::DynamicMonostarKstate;
+    using KstateTraitT = model_monostar::DynamicMonostarKstateTrait;
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
-    using KstateTraitT = kstate::TraitKstate<KstateT>;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
     const bfpt_common::KernelDrivenKstateBasisPopulator<KstateTraitT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};

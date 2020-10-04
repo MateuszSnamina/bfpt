@@ -67,4 +67,12 @@ operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
 
 }  // namespace model_monostar
 
+// #######################################################################
+// ## DynamicMonostarKstate - trait                                     ##
+// #######################################################################
+
+namespace model_monostar {
+    using DynamicMonostarKstateTrait = kstate::TraitKstate<DynamicMonostarKstate>;
+}
+
 #endif

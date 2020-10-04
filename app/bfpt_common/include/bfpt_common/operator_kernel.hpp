@@ -13,63 +13,36 @@
 
 namespace bfpt_common {
 
-template<typename _SiteStateT>
+template<typename _SiteStateTrait>
 struct StateKernel1 {
-    static_assert(!std::is_array_v<_SiteStateT>);
-    static_assert(!std::is_function_v<_SiteStateT>);
-    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
-    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
-    static_assert(!std::is_const_v<_SiteStateT>);
-    static_assert(!std::is_volatile_v<_SiteStateT>);
-    static_assert(!std::is_reference_v<_SiteStateT>);
-    using SiteStateT = _SiteStateT;
+    static_assert(_SiteStateTrait::is_site_state_trait);
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteStateT = typename _SiteStateTrait::SiteStateT;
     SiteStateT state_1;
 };
 
-template<typename SiteStateT>
-bool operator<(const StateKernel1<SiteStateT>& lhs, const StateKernel1<SiteStateT>& rhs) {
+template<typename SiteStateTrait>
+bool operator<(const StateKernel1<SiteStateTrait>& lhs, const StateKernel1<SiteStateTrait>& rhs) {
     return lhs.state_1 < rhs.state_1;
 }
 
-template<typename _SiteStateT>
+template<typename _SiteStateTrait>
 struct CoupleInfoKernel1 {
-    static_assert(!std::is_array_v<_SiteStateT>);
-    static_assert(!std::is_function_v<_SiteStateT>);
-    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
-    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
-    static_assert(!std::is_const_v<_SiteStateT>);
-    static_assert(!std::is_volatile_v<_SiteStateT>);
-    static_assert(!std::is_reference_v<_SiteStateT>);
-    using SiteStateT = _SiteStateT;
-    StateKernel1<SiteStateT> kernel_state;
+    static_assert(_SiteStateTrait::is_site_state_trait);
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteStateT = typename _SiteStateTrait::SiteStateT;
+    StateKernel1<SiteStateTrait> kernel_state;
     double coef;
 };
 
-template<typename _SiteStateT>
+template<typename _SiteStateTrait>
 class OperatorKernel1 {
-    static_assert(!std::is_array_v<_SiteStateT>);
-    static_assert(!std::is_function_v<_SiteStateT>);
-    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
-    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
-    static_assert(!std::is_const_v<_SiteStateT>);
-    static_assert(!std::is_volatile_v<_SiteStateT>);
-    static_assert(!std::is_reference_v<_SiteStateT>);
+    static_assert(_SiteStateTrait::is_site_state_trait);
 public:
-    using SiteStateT = _SiteStateT;
-    using OffDiagInfoT = std::multimap<StateKernel1<SiteStateT>, CoupleInfoKernel1<SiteStateT>>;
-    using DiagInfoT = std::map<StateKernel1<SiteStateT>, double> ;
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteStateT = typename _SiteStateTrait::SiteStateT;
+    using OffDiagInfoT = std::multimap<StateKernel1<SiteStateTrait>, CoupleInfoKernel1<SiteStateTrait>>;
+    using DiagInfoT = std::map<StateKernel1<SiteStateTrait>, double> ;
 public:
     OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
@@ -77,15 +50,15 @@ public:
     const OffDiagInfoT _full_off_diag_info;
 };
 
-template<typename SiteState>
-std::multimap<StateKernel1<SiteState>, CoupleInfoKernel1<SiteState>>
+template<typename SiteStateTrait>
+std::multimap<StateKernel1<SiteStateTrait>, CoupleInfoKernel1<SiteStateTrait>>
 half_off_diag_info_to_full_off_diag_info_1(
-        const std::multimap<StateKernel1<SiteState>, CoupleInfoKernel1<SiteState>>& half_off_diag) {
-    std::multimap<StateKernel1<SiteState>, CoupleInfoKernel1<SiteState>> full_off_diag_info;
+        const std::multimap<StateKernel1<SiteStateTrait>, CoupleInfoKernel1<SiteStateTrait>>& half_off_diag) {
+    std::multimap<StateKernel1<SiteStateTrait>, CoupleInfoKernel1<SiteStateTrait>> full_off_diag_info;
     for (const auto node : half_off_diag) {
-        const StateKernel1<SiteState>& ket_1 = node.first;
-        const CoupleInfoKernel1<SiteState>& couple_info = node.second;
-        const StateKernel1<SiteState>& bra_1 = couple_info.kernel_state;
+        const StateKernel1<SiteStateTrait>& ket_1 = node.first;
+        const CoupleInfoKernel1<SiteStateTrait>& couple_info = node.second;
+        const StateKernel1<SiteStateTrait>& bra_1 = couple_info.kernel_state;
         const auto& kernel_coupling_coef = couple_info.coef;
         const auto& complementaty_ket_1 = bra_1;
         const auto& complementaty_bra_1 = ket_1;
@@ -95,8 +68,8 @@ half_off_diag_info_to_full_off_diag_info_1(
     return full_off_diag_info;
 }
 
-template<typename _SiteState>
-OperatorKernel1<_SiteState>::OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
+template<typename _SiteStateTrait>
+OperatorKernel1<_SiteStateTrait>::OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
     _diag_info(diag_info),
     _half_off_diag_info(half_off_diag_info),
     _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_1(half_off_diag_info)) {
@@ -110,64 +83,37 @@ OperatorKernel1<_SiteState>::OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT h
 
 namespace bfpt_common {
 
-template<typename _SiteStateT>
+template<typename _SiteStateTrait>
 struct StateKernel12 {
-    static_assert(!std::is_array_v<_SiteStateT>);
-    static_assert(!std::is_function_v<_SiteStateT>);
-    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
-    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
-    static_assert(!std::is_const_v<_SiteStateT>);
-    static_assert(!std::is_volatile_v<_SiteStateT>);
-    static_assert(!std::is_reference_v<_SiteStateT>);
-    using SiteStateT = _SiteStateT;
+    static_assert(_SiteStateTrait::is_site_state_trait);
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteStateT = typename _SiteStateTrait::SiteStateT;
     SiteStateT state_1;
     SiteStateT state_2;
 };
 
-template<typename SiteStateT>
-bool operator<(const StateKernel12<SiteStateT>& lhs, const StateKernel12<SiteStateT>& rhs) {
+template<typename SiteStateTrait>
+bool operator<(const StateKernel12<SiteStateTrait>& lhs, const StateKernel12<SiteStateTrait>& rhs) {
     return std::make_tuple(lhs.state_1, lhs.state_2) < std::make_tuple(rhs.state_1, rhs.state_2);
 }
 
-template<typename _SiteStateT>
+template<typename _SiteStateTrait>
 struct CoupleInfoKernel12 {
-    static_assert(!std::is_array_v<_SiteStateT>);
-    static_assert(!std::is_function_v<_SiteStateT>);
-    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
-    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
-    static_assert(!std::is_const_v<_SiteStateT>);
-    static_assert(!std::is_volatile_v<_SiteStateT>);
-    static_assert(!std::is_reference_v<_SiteStateT>);
-    using SiteStateT = _SiteStateT;
-    StateKernel12<SiteStateT> kernel_state;
+    static_assert(_SiteStateTrait::is_site_state_trait);
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteStateT = typename _SiteStateTrait::SiteStateT;
+    StateKernel12<_SiteStateTrait> kernel_state;
     double coef;
 };
 
-template<typename _SiteStateT>
+template<typename _SiteStateTrait>
 class OperatorKernel12 {
-    static_assert(!std::is_array_v<_SiteStateT>);
-    static_assert(!std::is_function_v<_SiteStateT>);
-    static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(std::is_enum_v<std::decay<_SiteStateT>> || std::is_union_v<std::decay<_SiteStateT>> || std::is_class_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_SiteStateT>>);
-    static_assert(!std::is_member_object_pointer_v<_SiteStateT>);
-    static_assert(!std::is_member_function_pointer_v<_SiteStateT>);
-    static_assert(!std::is_const_v<_SiteStateT>);
-    static_assert(!std::is_volatile_v<_SiteStateT>);
-    static_assert(!std::is_reference_v<_SiteStateT>);
+    static_assert(_SiteStateTrait::is_site_state_trait);
 public:
-    using SiteStateT = _SiteStateT;
-    using OffDiagInfoT = std::multimap<StateKernel12<SiteStateT>, CoupleInfoKernel12<SiteStateT>>;
-    using DiagInfoT = std::map<StateKernel12<SiteStateT>, double> ;
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteStateT = typename _SiteStateTrait::SiteStateT;
+    using OffDiagInfoT = std::multimap<StateKernel12<SiteStateTrait>, CoupleInfoKernel12<SiteStateTrait>>;
+    using DiagInfoT = std::map<StateKernel12<SiteStateTrait>, double> ;
 public:
     OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
@@ -175,15 +121,15 @@ public:
     const OffDiagInfoT _full_off_diag_info;
 };
 
-template<typename SiteState>
-std::multimap<StateKernel12<SiteState>, CoupleInfoKernel12<SiteState>>
+template<typename SiteStateTrait>
+std::multimap<StateKernel12<SiteStateTrait>, CoupleInfoKernel12<SiteStateTrait>>
 half_off_diag_info_to_full_off_diag_info_12(
-        const std::multimap<StateKernel12<SiteState>, CoupleInfoKernel12<SiteState>>& half_off_diag) {
-    std::multimap<StateKernel12<SiteState>, CoupleInfoKernel12<SiteState>> full_off_diag_info;
+        const std::multimap<StateKernel12<SiteStateTrait>, CoupleInfoKernel12<SiteStateTrait>>& half_off_diag) {
+    std::multimap<StateKernel12<SiteStateTrait>, CoupleInfoKernel12<SiteStateTrait>> full_off_diag_info;
     for (const auto node : half_off_diag) {
-        const StateKernel12<SiteState>& ket_12 = node.first;
-        const CoupleInfoKernel12<SiteState>& couple_info = node.second;
-        const StateKernel12<SiteState>& bra_12 = couple_info.kernel_state;
+        const StateKernel12<SiteStateTrait>& ket_12 = node.first;
+        const CoupleInfoKernel12<SiteStateTrait>& couple_info = node.second;
+        const StateKernel12<SiteStateTrait>& bra_12 = couple_info.kernel_state;
         const auto& kernel_coupling_coef = couple_info.coef;
         const auto& complementaty_ket_12 = bra_12;
         const auto& complementaty_bra_12 = ket_12;
@@ -193,8 +139,8 @@ half_off_diag_info_to_full_off_diag_info_12(
     return full_off_diag_info;
 }
 
-template<typename _SiteState>
-OperatorKernel12<_SiteState>::OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
+template<typename _SiteStateTrait>
+OperatorKernel12<_SiteStateTrait>::OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
     _diag_info(diag_info),
     _half_off_diag_info(half_off_diag_info),
     _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_12(half_off_diag_info)) {

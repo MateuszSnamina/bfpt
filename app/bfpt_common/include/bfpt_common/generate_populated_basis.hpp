@@ -5,7 +5,6 @@
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_stl.hpp>
-#include <kstate/kstate_abstract.hpp>
 
 #include <omp.h>
 
@@ -42,20 +41,6 @@ void generate_populated_basis(
         const unsigned max_pt_order,
         kstate::Basis<KstateTrait>& basis,
         unsigned n_threads = 1) {
-//    static_assert(!std::is_array_v<KstateT>);
-//    static_assert(!std::is_function_v<KstateT>);
-//    static_assert(!std::is_void_v<std::decay<KstateT>>);
-//    static_assert(!std::is_null_pointer_v<std::decay<KstateT>>);
-//    static_assert(!std::is_enum_v<std::decay<KstateT>>);
-//    static_assert(!std::is_union_v<std::decay<KstateT>>);
-//    static_assert(std::is_class_v<std::decay<KstateT>>);
-//    static_assert(!std::is_pointer_v<std::decay<KstateT>>);
-//    static_assert(!std::is_member_object_pointer_v<KstateT>);
-//    static_assert(!std::is_member_function_pointer_v<KstateT>);
-//    static_assert(!std::is_const_v<KstateT>);
-//    static_assert(!std::is_volatile_v<KstateT>);
-//    static_assert(!std::is_reference_v<KstateT>);
-//    static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);//TODO remove.
     // *********** asserts ********************************************************************
     static_assert(KstateTrait::is_kstate_trait);
     // *********** using **********************************************************************

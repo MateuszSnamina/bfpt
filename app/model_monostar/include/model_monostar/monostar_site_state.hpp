@@ -68,5 +68,12 @@ struct TraitSiteState<model_monostar::MonostarSiteState> {
 
 } // end of namespace kstate
 
+namespace model_monostar {
+
+using MonostarSiteStateTrait = kstate::TraitSiteState<model_monostar::MonostarSiteState>;
+
+} // end of namespace model_monostar
+
+
 
 #endif
