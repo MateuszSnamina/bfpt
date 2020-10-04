@@ -1,7 +1,7 @@
 #ifndef BFPT_COMMON_CALCULATE_REDUCED_DENSITY_OPERATOR_HPP
 #define BFPT_COMMON_CALCULATE_REDUCED_DENSITY_OPERATOR_HPP
 
-#include <bfpt_common/hamiltonian_kernel.hpp>
+#include <bfpt_common/operator_kernel.hpp>
 
 #include <kstate/basis.hpp>
 

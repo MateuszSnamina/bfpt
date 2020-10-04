@@ -1,7 +1,7 @@
-#ifndef KSTATE_GENERATE_HAMILTONIAN_HPP
-#define KSTATE_GENERATE_HAMILTONIAN_HPP
+#ifndef KSTATE_GENERATE_OPERATOR_MATRIX_HPP
+#define KSTATE_GENERATE_OPERATOR_MATRIX_HPP
 
-#include <bfpt_common/i_kstate_hamiltonian.hpp>
+#include <bfpt_common/i_kstate_operator.hpp>
 
 #include <kstate/basis.hpp>
 
@@ -15,8 +15,8 @@ namespace bfpt_common {
 
 template<typename KstateT>
 arma::sp_cx_mat
-generate_hamiltonian(
-        const IKstateHamiltonian<KstateT>& hamiltoniam_interface,
+generate_operator_matrix(
+        const IKstateOperator<KstateT>& hamiltoniam_interface,
         const kstate::Basis<KstateT>& basis,
         const unsigned k_n,
         unsigned n_threads) {

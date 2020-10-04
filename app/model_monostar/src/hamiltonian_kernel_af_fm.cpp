@@ -48,31 +48,31 @@ prepare_half_off_diag_info_for_fm(double J) {
 
 namespace model_monostar {
 
-bfpt_common::HamiltonianKernel12<MonostarSiteState>
+bfpt_common::OperatorKernel12<MonostarSiteState>
 prepare_hamiltonian_kernel_12_af(double J_classical, double J_quantum) {
     const auto diag_info = prepare_diag_info(J_classical);
     const auto half_off_diag_info = prepare_half_off_diag_info_for_af(J_quantum);
-    return bfpt_common::HamiltonianKernel12<MonostarSiteState>{diag_info, half_off_diag_info};
+    return bfpt_common::OperatorKernel12<MonostarSiteState>{diag_info, half_off_diag_info};
 }
 
-bfpt_common::HamiltonianKernel12<MonostarSiteState>
+bfpt_common::OperatorKernel12<MonostarSiteState>
 prepare_hamiltonian_kernel_12_af(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_12_af(params.get_J_classical(), params.get_J_quantum());
 }
 
-bfpt_common::HamiltonianKernel12<MonostarSiteState>
+bfpt_common::OperatorKernel12<MonostarSiteState>
 prepare_hamiltonian_kernel_12_fm(double J_classical, double J_quantum) {
     const auto diag_info = prepare_diag_info(J_classical);
     const auto half_off_diag_info = prepare_half_off_diag_info_for_fm(J_quantum);
-    return bfpt_common::HamiltonianKernel12<MonostarSiteState>{diag_info, half_off_diag_info};
+    return bfpt_common::OperatorKernel12<MonostarSiteState>{diag_info, half_off_diag_info};
 }
 
-bfpt_common::HamiltonianKernel12<MonostarSiteState>
+bfpt_common::OperatorKernel12<MonostarSiteState>
 prepare_hamiltonian_kernel_12_fm(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_12_fm(params.get_J_classical(), params.get_J_quantum());
 }
 
-bfpt_common::HamiltonianKernel1<MonostarSiteState>
+bfpt_common::OperatorKernel1<MonostarSiteState>
 prepare_hamiltonian_kernel_1_af_fm(double B) {
     using OnDiagInfoType = std::map<bfpt_common::StateKernel1<MonostarSiteState>, double>;
     using OffDiagInfoType = std::multimap<bfpt_common::StateKernel1<MonostarSiteState>, bfpt_common::CoupleInfoKernel1<MonostarSiteState>>;
@@ -82,10 +82,10 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
     };
     OffDiagInfoType half_off_diag_info{
     };
-    return bfpt_common::HamiltonianKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
+    return bfpt_common::OperatorKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
 }
 
-bfpt_common::HamiltonianKernel1<MonostarSiteState>
+bfpt_common::OperatorKernel1<MonostarSiteState>
 prepare_hamiltonian_kernel_1_af_fm(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_1_af_fm(params.get_B());
 }

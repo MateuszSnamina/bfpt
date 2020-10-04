@@ -1,5 +1,5 @@
-#ifndef BFPT_COMMON_I_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
-#define BFPT_COMMON_I_DYNAMIC_UNIQUE_KSTATE_HAMILTONIAN_HPP
+#ifndef BFPT_COMMON_I_KSTATE_OPERATOR_HPP
+#define BFPT_COMMON_I_KSTATE_OPERATOR_HPP
 
 #include <kstate/remove_cvref.hpp>
 #include <kstate/kstate_abstract.hpp>
@@ -8,7 +8,7 @@
 #include <armadillo>
 
 // #######################################################################
-// ## IKstateHamiltonian                                                ##
+// ## IKstateOperator                                                   ##
 // #######################################################################
 
 namespace bfpt_common {
@@ -24,7 +24,7 @@ namespace bfpt_common {
  */
 
 template<typename _KstateT>
-class IKstateHamiltonian {
+class IKstateOperator {
     static_assert(!std::is_array_v<_KstateT>);
     static_assert(!std::is_function_v<_KstateT>);
     static_assert(!std::is_void_v<std::decay<_KstateT>>);

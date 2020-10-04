@@ -10,8 +10,9 @@
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
 
-#include <bfpt_common/hamiltonian_kernel.hpp>
+#include <bfpt_common/operator_kernel.hpp>
 #include <bfpt_common/generic_kstate_hamiltonian.hpp>
+#include <bfpt_common/generic_kstate_operator.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
 
 #include <extensions/range_streamer.hpp>
@@ -32,8 +33,8 @@
 // #######################################################################
 
 bfpt_common::CommonRecipeReceipt bfpt_gs(
-        const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
-        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
+        const bfpt_common::OperatorKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
+        const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
@@ -42,16 +43,18 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
-    const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
-                                         max_pt_order, 0,
+    const bfpt_common::GenericKstatePopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::GenericKstateOperator<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    return bfpt_common::do_common_recipe(kstate_populator, kstate_hamiltonian,
+                                         basis, max_pt_order,
+                                         0,
                                          print_flags, "[gs] ",
                                          n_threads).unwrap();
 }
 
 bfpt_common::CommonRecipeReceipt bfpt_kn_es(
-        const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
-        const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
+        const bfpt_common::OperatorKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
+        const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         unsigned n_threads) {
@@ -60,9 +63,11 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
-    const bfpt_common::GenericKstateHamiltonian<KstateT> hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe(hamiltonian, hamiltonian, basis,
-                                         max_pt_order, k_n,
+    const bfpt_common::GenericKstatePopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::GenericKstateOperator<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    return bfpt_common::do_common_recipe(kstate_populator, kstate_hamiltonian,
+                                         basis, max_pt_order,
+                                         k_n,
                                          print_flags, "[es (" + std::to_string(k_n) + ")] ",
                                          n_threads).unwrap();
 }

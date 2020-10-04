@@ -8,7 +8,7 @@
 
 namespace model_monostar {
 
-bfpt_common::HamiltonianKernel12<MonostarSiteState>
+bfpt_common::OperatorKernel12<MonostarSiteState>
 prepare_hamiltonian_kernel_12_fo(double Pzz_coef, double Pxz_coef, double Pxx_coef, double orbital_theta) {
     using OnDiagInfoType = std::map<bfpt_common::StateKernel12<MonostarSiteState>, double>;
     using OffDiagInfoType = std::multimap<bfpt_common::StateKernel12<MonostarSiteState>, bfpt_common::CoupleInfoKernel12<MonostarSiteState>>;
@@ -36,10 +36,10 @@ prepare_hamiltonian_kernel_12_fo(double Pzz_coef, double Pxz_coef, double Pxx_co
         {{gs, es}, {{es, es}, +Pzz_coef * Pz_ge * Pz_ee + Pxz_coef * Px_ge * Pz_ee + Pxz_coef * Pz_ge * Px_ee + Pxx_coef * Px_ge * Px_ee}},
         {{es, gs}, {{es, es}, +Pzz_coef * Pz_ee * Pz_ge + Pxz_coef * Px_ee * Pz_ge + Pxz_coef * Pz_ee * Px_ge + Pxx_coef * Px_ee * Px_ge}},
     };
-    return bfpt_common::HamiltonianKernel12<MonostarSiteState>{on_diag_info, half_off_diag_info};
+    return bfpt_common::OperatorKernel12<MonostarSiteState>{on_diag_info, half_off_diag_info};
 }
 
-bfpt_common::HamiltonianKernel12<MonostarSiteState>
+bfpt_common::OperatorKernel12<MonostarSiteState>
 prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsFo& params, double orbital_theta) {
     return prepare_hamiltonian_kernel_12_fo(
                 params.get_Pzz_coef(),
@@ -48,7 +48,7 @@ prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsFo& params, double orbit
                 orbital_theta);
 }
 
-bfpt_common::HamiltonianKernel1<MonostarSiteState>
+bfpt_common::OperatorKernel1<MonostarSiteState>
 prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double orbital_theta) {
     using OnDiagInfoType = std::map<bfpt_common::StateKernel1<MonostarSiteState>, double>;
     using OffDiagInfoType = std::multimap<bfpt_common::StateKernel1<MonostarSiteState>, bfpt_common::CoupleInfoKernel1<MonostarSiteState>>;
@@ -66,10 +66,10 @@ prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double
     OffDiagInfoType half_off_diag_info {
         {{gs}, {{es}, tau_z_coef * tau_z_ge + tau_minus_coef * tau_minus_ge}},
     };
-    return bfpt_common::HamiltonianKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
+    return bfpt_common::OperatorKernel1<MonostarSiteState>{on_diag_info, half_off_diag_info};
 }
 
-bfpt_common::HamiltonianKernel1<MonostarSiteState>
+bfpt_common::OperatorKernel1<MonostarSiteState>
 prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsFo& params, double orbital_theta) {
     return prepare_hamiltonian_kernel_1_fo(
                 params.get_tau_z_coef(),

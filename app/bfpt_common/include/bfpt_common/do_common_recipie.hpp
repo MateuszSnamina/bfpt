@@ -1,10 +1,10 @@
 #ifndef BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 #define BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 
-#include <bfpt_common/i_kstate_hamiltonian.hpp>
+#include <bfpt_common/i_kstate_operator.hpp>
 #include <bfpt_common/i_kstate_populator.hpp>
 #include <bfpt_common/generate_pt_basis.hpp> // TODO change to  <bfpt_common/generate_basis.hpp>
-#include <bfpt_common/generate_hamiltonian.hpp>
+#include <bfpt_common/generate_operator_matrix.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
 #include <bfpt_common/calculate_reduced_density_operator.hpp>
 
@@ -134,12 +134,13 @@ struct CommonRecipeReceipt {
 template<typename KstateT>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
 do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
-                        const IKstateHamiltonian<KstateT>& hamiltonian,
-                        kstate::Basis<KstateT>& basis,
-                        const unsigned max_pt_order, const unsigned k_n,
-                        CommonRecipePrintFlags print_flags,
-                        std::string print_outer_prefix = "",
-                        unsigned n_threads = 1) {
+                 const IKstateOperator<KstateT>& hamiltonian,
+                 kstate::Basis<KstateT>& basis,
+                 const unsigned max_pt_order,
+                 const unsigned k_n,
+                 CommonRecipePrintFlags print_flags,
+                 std::string print_outer_prefix = "",
+                 unsigned n_threads = 1) {
     using ResultT = utility::Result<CommonRecipeReceipt, std::runtime_error>;
     assert(n_threads != 0);
     assert(n_threads <= 256);
@@ -177,7 +178,7 @@ do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     // Generate hamiltoniam matrix:
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
-    const auto kn_hamiltonian_matrix = generate_hamiltonian(hamiltonian, basis, k_n, n_threads);
+    const auto kn_hamiltonian_matrix = generate_operator_matrix(hamiltonian, basis, k_n, n_threads);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
@@ -205,7 +206,7 @@ do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
         timer.tic();
         const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
         const double time_solving_eigen_problem = timer.toc();
-            std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
+        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
         if (eigs_sym_result.is_err()) {
             std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
             std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;

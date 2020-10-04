@@ -8,7 +8,7 @@
 #include<type_traits>
 
 // #######################################################################
-// ## HamiltonianKernel1                                                ##
+// ## OperatorKernel1                                                   ##
 // #######################################################################
 
 namespace bfpt_common {
@@ -54,7 +54,7 @@ struct CoupleInfoKernel1 {
 };
 
 template<typename _SiteStateT>
-class HamiltonianKernel1 {
+class OperatorKernel1 {
     static_assert(!std::is_array_v<_SiteStateT>);
     static_assert(!std::is_function_v<_SiteStateT>);
     static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
@@ -71,7 +71,7 @@ public:
     using OffDiagInfoT = std::multimap<StateKernel1<SiteStateT>, CoupleInfoKernel1<SiteStateT>>;
     using DiagInfoT = std::map<StateKernel1<SiteStateT>, double> ;
 public:
-    HamiltonianKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
+    OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
     const OffDiagInfoT _half_off_diag_info;
     const OffDiagInfoT _full_off_diag_info;
@@ -96,7 +96,7 @@ half_off_diag_info_to_full_off_diag_info_1(
 }
 
 template<typename _SiteState>
-HamiltonianKernel1<_SiteState>::HamiltonianKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
+OperatorKernel1<_SiteState>::OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
     _diag_info(diag_info),
     _half_off_diag_info(half_off_diag_info),
     _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_1(half_off_diag_info)) {
@@ -105,7 +105,7 @@ HamiltonianKernel1<_SiteState>::HamiltonianKernel1(DiagInfoT diag_info, OffDiagI
 }
 
 // #######################################################################
-// ## HamiltonianKernel12                                               ##
+// ## OperatorKernel12                                                  ##
 // #######################################################################
 
 namespace bfpt_common {
@@ -152,7 +152,7 @@ struct CoupleInfoKernel12 {
 };
 
 template<typename _SiteStateT>
-class HamiltonianKernel12 {
+class OperatorKernel12 {
     static_assert(!std::is_array_v<_SiteStateT>);
     static_assert(!std::is_function_v<_SiteStateT>);
     static_assert(!std::is_void_v<std::decay<_SiteStateT>>);
@@ -169,7 +169,7 @@ public:
     using OffDiagInfoT = std::multimap<StateKernel12<SiteStateT>, CoupleInfoKernel12<SiteStateT>>;
     using DiagInfoT = std::map<StateKernel12<SiteStateT>, double> ;
 public:
-    HamiltonianKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
+    OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
     const OffDiagInfoT _half_off_diag_info;
     const OffDiagInfoT _full_off_diag_info;
@@ -194,7 +194,7 @@ half_off_diag_info_to_full_off_diag_info_12(
 }
 
 template<typename _SiteState>
-HamiltonianKernel12<_SiteState>::HamiltonianKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
+OperatorKernel12<_SiteState>::OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) :
     _diag_info(diag_info),
     _half_off_diag_info(half_off_diag_info),
     _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_12(half_off_diag_info)) {
