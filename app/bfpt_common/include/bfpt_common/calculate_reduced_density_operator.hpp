@@ -21,11 +21,12 @@ namespace bfpt_common {
 //template<typename KstateT>
 //using DensityOperator12 = std::map<std::pair<StateKernel12<KstateT>, StateKernel12<KstateT>>, std::complex<double>>;
 
-template<typename SiteStateT>
-DensityOperator12<SiteStateT>
+template<typename KstateT>
+DensityOperator12<typename KstateT::SiteType>
 calculate_reduced_density_operator_12(
-        kstate::Basis<SiteStateT>& basis,
+        kstate::Basis<KstateT>& basis,
         const arma::cx_vec& eigen_vector) {
+    using SiteStateT = typename KstateT::SiteType;
     DensityOperator12<SiteStateT> result;
     const auto n_sites = basis.n_sites();
     assert(eigen_vector.n_rows == basis.size());
@@ -50,23 +51,21 @@ calculate_reduced_density_operator_12(
                         const auto bra_site_1 = *std::next(std::begin(bra_kstate_range_rotated), 1);
                         const auto ket_site_0 = *std::next(std::begin(ket_kstate_range_rotated), 0);
                         const auto ket_site_1 = *std::next(std::begin(ket_kstate_range_rotated), 1);
-                        const StateKernel12 bra_kenrel{bra_site_0, bra_site_1};
-                        const StateKernel12 ket_kenrel{ket_site_0, ket_site_1};
+                        const StateKernel12<SiteStateT> bra_kenrel{bra_site_0, bra_site_1};
+                        const StateKernel12<SiteStateT> ket_kenrel{ket_site_0, ket_site_1};
                         const std::pair<StateKernel12<SiteStateT>, StateKernel12<SiteStateT>> density_matrix_indices{bra_kenrel, ket_kenrel};
-                        const std::complex<double> value = eigen_vector(bra_kstate_idx) * eigen_vector(ket_kstate_idx);
-                        //TODO miltiply the states norm!!!
-                        //double pre_norm = bra_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
+                        const std::complex<double> value = std::conj(eigen_vector(bra_kstate_idx)) * eigen_vector(ket_kstate_idx);
+                        const double pre_norm = bra_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
                         if (result.count(density_matrix_indices)) {
-                            result[density_matrix_indices] += value;
+                            result[density_matrix_indices] += pre_norm * value;
                         } else {
-                            result[density_matrix_indices] = value;
+                            result[density_matrix_indices] = pre_norm * value;
                         }
                     }
                 } // end of ket_shift loop
             } // end of bra_shift loop
         } // end of ket_kstate_idx loop
     } // end of bra_kstate_idx loop
-    assert(false); //TODO finish implementation! => finish the norm factor part.
     return result;
 }
 

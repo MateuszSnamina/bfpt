@@ -26,6 +26,7 @@ struct RawProgramOptions {
   bool print_eigen_values_flag;
   bool print_eigen_vectors_flag;
   bool print_pretty_vectors_flag;
+  bool print_density_operator_flag;
   unsigned print_pretty_min_n_kstates;
   unsigned print_pretty_max_n_kstates;
   double print_pretty_probability_treshold;

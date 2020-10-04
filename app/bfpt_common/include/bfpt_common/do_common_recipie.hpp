@@ -7,6 +7,7 @@
 #include <bfpt_common/generate_operator_matrix.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
 #include <bfpt_common/calculate_reduced_density_operator.hpp>
+#include <bfpt_common/density_operator.hpp>
 
 #include <linear_algebra/linear_algebra.hpp>
 
@@ -14,6 +15,8 @@
 #include <kstate/kstate_concrete.hpp>
 
 #include <utility/result.hpp>
+
+#include <extensions/stream_fromat_stacker.hpp>
 
 #include <armadillo>
 
@@ -36,6 +39,39 @@ const std::string time_tag = "[time    ] ";
 }
 
 // #######################################################################
+// ## print_density_operator                                            ##
+// #######################################################################
+
+namespace bfpt_common {
+
+template<typename SiteStateT>
+void pretty_density_operator_12(
+        const DensityOperator12<SiteStateT>& density_operator,
+        std::string print_outer_prefix = "") {
+    // Stream RAII:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    // Print:
+    std::cout << print_outer_prefix << message_prefix << data_tag
+              << "density operator 12:" << std::endl;
+    for (const auto& _ : density_operator) {
+        const std::pair<StateKernel12<SiteStateT>, StateKernel12<SiteStateT>> density_matrix_indices = _.first;
+        const std::complex<double> value = _.second;
+        const StateKernel12<SiteStateT> bra_kenrel = density_matrix_indices.first;
+        const StateKernel12<SiteStateT> ket_kenrel = density_matrix_indices.second;
+        const auto bra_site_0 = bra_kenrel.state_1;
+        const auto bra_site_1 = bra_kenrel.state_2;
+        const auto ket_site_0 = ket_kenrel.state_1;
+        const auto ket_site_1 = ket_kenrel.state_2;
+        std::cout << print_outer_prefix << message_prefix << data_tag
+                  << "(" << bra_site_0 << "⊗" << bra_site_1 << ")" << " "
+                  << "(" << ket_site_0 << "⊗" << ket_site_1 << ")" << " "
+                  << std::showpos << value << std::endl;
+    }
+}
+
+}
+
+// #######################################################################
 // ## pretty_print                                                      ##
 // #######################################################################
 
@@ -49,8 +85,10 @@ void pretty_print(
         std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
         double print_pretty_probability_treshold,
         std::string print_outer_prefix = "") {
+    // [[expect]]:
     assert(eigen_vectors.n_cols == eigen_values.n_rows);
     assert(basis.size() == eigen_vectors.n_rows);
+    // helpers:
     const auto basis_size = basis.size();
     struct KstateIdxAndProbability {
         unsigned idx;
@@ -60,6 +98,9 @@ void pretty_print(
             (const KstateIdxAndProbability& lhs, const KstateIdxAndProbability& rhs) -> bool {
         return lhs.probability > rhs.probability;
     };
+    // Stream RAII:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    // Print:
     for (unsigned n_eigien_vector = 0; n_eigien_vector < eigen_vectors.n_cols; n_eigien_vector++) {
         const auto eigen_value = eigen_values(n_eigien_vector);
         const auto eigien_vector = eigen_vectors.col(n_eigien_vector);
@@ -142,6 +183,7 @@ do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
                  std::string print_outer_prefix = "",
                  unsigned n_threads = 1) {
     using ResultT = utility::Result<CommonRecipeReceipt, std::runtime_error>;
+    using SiteStateT = typename KstateT::SiteType;
     assert(n_threads != 0);
     assert(n_threads <= 256);
     [[maybe_unused]] const size_t n_sites = basis.n_sites();
@@ -199,7 +241,7 @@ do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
         std::cout << arma::cx_mat(kn_hamiltonian_matrix);
     }
     // --------------------------------------------------
-    const bool should_calculate_eigenvectors = print_flags.print_eigen_vectors_flag || print_flags.print_pretty_vectors_flag;
+    const bool should_calculate_eigenvectors = print_flags.print_eigen_vectors_flag || print_flags.print_pretty_vectors_flag || print_flags.print_density_operator_flag;
     // --------------------------------------------------
     if (should_calculate_eigenvectors) {
         std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
@@ -231,6 +273,12 @@ do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
                          print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold,
                          print_outer_prefix);
         }
+        // --------------------------------------------------
+        if (print_flags.print_density_operator_flag) {
+            const DensityOperator12<SiteStateT> density_operator_12 = calculate_reduced_density_operator_12<KstateT>(basis, eigen_vectors.col(0));
+            pretty_density_operator_12(density_operator_12, print_outer_prefix);
+        }
+        // --------------------------------------------------
         return ResultT::Ok({eigen_values(0), eigen_vectors.col(0)});
     } else {
         std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues only)." << std::endl;

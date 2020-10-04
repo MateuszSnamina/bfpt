@@ -111,6 +111,9 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
             // --print_pretty_vectors_flag,-i:
             ("print_pretty_vectors_flag,i",
              boost::program_options::bool_switch(&program_options.print_pretty_vectors_flag)->default_value(false))
+            // --print_density_operator_matrix,-a:
+            ("print_density_operator_matrix,a",
+             boost::program_options::bool_switch(&program_options.print_density_operator_flag)->default_value(false))
             // --print_pretty_min_n_kstates:
             ("print_pretty_min_n_kstates",
              boost::program_options::value<unsigned>(&program_options.print_pretty_min_n_kstates)->default_value(5))

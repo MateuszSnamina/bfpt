@@ -115,6 +115,7 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::density_operator_flag       = " << interpreted_program_options.print_flags.print_density_operator_flag << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_min_max_n_kstates    = " << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_threads                          = " << interpreted_program_options.n_threads << std::endl;
@@ -347,6 +348,9 @@ int main(int argc, char** argv) {
             }
             return std::nullopt;
         }();
+        // ******************************************************************
+//        const bool print_density_operator_matrix = true;//TODO remove
+
         // ******************************************************************
         print_results_tree(
                     interpreted_program_options,
