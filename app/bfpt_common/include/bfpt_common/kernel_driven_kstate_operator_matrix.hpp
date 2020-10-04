@@ -25,18 +25,19 @@ namespace bfpt_common {
 
 template<typename _KstateTraitT>
 class KernelDrivenKstateOperatorMatrix : public bfpt_common::IKstateOperatorMatrix<_KstateTraitT> {
+    static_assert(kstate::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
 public:
     using KstateTraitT = _KstateTraitT;
     using KstateT = typename _KstateTraitT::KstateT;
-    using SiteStateTrait = typename KstateT::SiteStateTrait;
+    using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     using SiteStateT = typename KstateT::SiteStateT;
     using BasisT = kstate::Basis<KstateTraitT>;
 public:
     KernelDrivenKstateOperatorMatrix(
             const size_t n_sites,
-            OperatorKernel1<SiteStateTrait> operator_kernel_1,
-            OperatorKernel12<SiteStateTrait> operator_kernel_12);
+            OperatorKernel1<SiteStateTraitT> operator_kernel_1,
+            OperatorKernel12<SiteStateTraitT> operator_kernel_12);
     void fill_kn_operator_builder_matrix_coll(
             const BasisT& basis,
             size_t n_col,
@@ -44,8 +45,8 @@ public:
             const unsigned k_n) const override;
 private:
     const size_t _n_sites;
-    const OperatorKernel1<SiteStateTrait> _operator_kernel_1;
-    const OperatorKernel12<SiteStateTrait> _operator_kernel_12;
+    const OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
+    const OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
 };
 
 }  // namespace bfpt_common
@@ -60,8 +61,8 @@ namespace bfpt_common {
 template<typename _KstateTraitT>
 KernelDrivenKstateOperatorMatrix<_KstateTraitT>::KernelDrivenKstateOperatorMatrix(
         const size_t n_sites,
-        OperatorKernel1<SiteStateTrait> operator_kernel_1,
-        OperatorKernel12<SiteStateTrait> operator_kernel_12)
+        OperatorKernel1<SiteStateTraitT> operator_kernel_1,
+        OperatorKernel12<SiteStateTraitT> operator_kernel_12)
     : _n_sites(n_sites),
       _operator_kernel_1(operator_kernel_1),
       _operator_kernel_12(operator_kernel_12) {
@@ -87,7 +88,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     // ********** OFF-DIAG, KERNEL1 *********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
-        const StateKernel1<SiteStateTrait> ket_kernel{ket_kernel_site_1};
+        const StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         const auto equal_range = _operator_kernel_1._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_kernel_re = off_diag_node_it->first;
@@ -124,7 +125,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const StateKernel12<SiteStateTrait> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
+        const StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         const auto equal_range = _operator_kernel_12._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_kernel_re = off_diag_node_it->first;
@@ -172,7 +173,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     // ********** ON-DIAG, KERNEL1 **********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
-        const StateKernel1<SiteStateTrait> ket_kernel{ket_kernel_site_1};
+        const StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         if (_operator_kernel_1._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_1._diag_info.at(ket_kernel);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
@@ -185,7 +186,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
-        const StateKernel12<SiteStateTrait> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
+        const StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         if (_operator_kernel_12._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();

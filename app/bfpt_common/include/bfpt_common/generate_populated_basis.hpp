@@ -35,16 +35,17 @@
 
 namespace bfpt_common {
 
-template<typename KstateTrait>
+template<typename KstateTraitT>
 void generate_populated_basis(
-        const IKstateBasisPopulator<KstateTrait>& basis_populator,
+        const IKstateBasisPopulator<KstateTraitT>& basis_populator,
         const unsigned max_pt_order,
-        kstate::Basis<KstateTrait>& basis,
+        kstate::Basis<KstateTraitT>& basis,
         unsigned n_threads = 1) {
     // *********** asserts ********************************************************************
-    static_assert(KstateTrait::is_kstate_trait);
+    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(KstateTraitT::is_kstate_trait);
     // *********** using **********************************************************************
-    using KstateT = typename KstateTrait::KstateT;
+    using KstateT = typename KstateTraitT::KstateT;
     // *********** pt orders loop  ************************************************************
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {

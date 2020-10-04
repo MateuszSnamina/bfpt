@@ -1,6 +1,8 @@
 #ifndef KSTATE_KSTATE_ABSTRACT_HPP
 #define KSTATE_KSTATE_ABSTRACT_HPP
 
+#include <kstate/trait_site_state.hpp>
+
 #include <extensions/adaptors.hpp>
 #include <extensions/range_streamer.hpp>
 
@@ -60,6 +62,7 @@ namespace kstate {
 
 template <typename _SiteStateTraitT, typename _TraversalTagT = boost::random_access_traversal_tag>
 class Kstate {
+    static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     static_assert(std::is_same_v<_TraversalTagT, boost::random_access_traversal_tag> || std::is_same_v<_TraversalTagT, boost::forward_traversal_tag>);
 public: // Helper types:
@@ -263,6 +266,7 @@ template <typename _SiteStateTraitT, typename _ConstRangeType>
 class SpeedyKstate : public Kstate<
         _SiteStateTraitT,
         typename boost::range_traversal<_ConstRangeType>::type> {
+    static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     static_assert(std::is_same_v<typename _SiteStateTraitT::SiteStateT, typename boost::range_value<_ConstRangeType>::type>);
 public:  // Helper types:

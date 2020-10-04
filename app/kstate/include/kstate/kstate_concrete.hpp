@@ -1,8 +1,9 @@
 #ifndef KSTATE_KSTATE_CONCRETE_HPP
 #define KSTATE_KSTATE_CONCRETE_HPP
 
-#include <kstate/kstate_abstract.hpp>
+#include <kstate/trait_site_state.hpp>
 #include <kstate/trait_kstate.hpp>
+#include <kstate/kstate_abstract.hpp>
 
 #include <extensions/range_streamer.hpp>
 
@@ -56,11 +57,12 @@ init_vector_from_range(
 
 // ***********************************************************************
 
-template <typename _SiteStateTrait>
+template <typename _SiteStateTraitT>
 struct DynamicKstateTypes {
-    static_assert(_SiteStateTrait::is_site_state_trait);
-    using SiteStateTrait = _SiteStateTrait;
-    using SiteStateT = typename _SiteStateTrait::SiteStateT;
+    static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(_SiteStateTraitT::is_site_state_trait);
+    using SiteStateTraitT = _SiteStateTraitT;
+    using SiteStateT = typename _SiteStateTraitT::SiteStateT;
     //    static_assert(!std::is_const<_SiteStateT>::value);
     //    static_assert(!std::is_volatile<_SiteStateT>::value);
     //    static_assert(!std::is_reference<_SiteStateT>::value);//TODO remove
@@ -74,22 +76,20 @@ struct DynamicKstateTypes {
     using ConstAnyRangeType = typename boost::any_range<const SiteStateT, boost::random_access_traversal_tag>;
 };
 
-template <typename _SiteStateTrait>
-class DynamicKstate : public SpeedyKstate<_SiteStateTrait, typename DynamicKstateTypes<_SiteStateTrait>::ConstRangeType> {
-    //    static_assert(!std::is_const<_SiteStateT>::value);
-    //    static_assert(!std::is_volatile<_SiteStateT>::value);
-    //    static_assert(!std::is_reference<_SiteStateT>::value);//TODO remove
-
+template <typename _SiteStateTraitT>
+class DynamicKstate : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeType> {
+    static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
-    using SiteStateTrait = _SiteStateTrait;
-    using SiteStateT = typename _SiteStateTrait::SiteStateT;
-    using BufferType = typename DynamicKstateTypes<SiteStateTrait>::BufferType;
-    using IteratorType = typename DynamicKstateTypes<SiteStateTrait>::IteratorType;
-    using ConstIteratorType = typename DynamicKstateTypes<SiteStateTrait>::ConstIteratorType;
-    using RangeType = typename DynamicKstateTypes<SiteStateTrait>::RangeType;
-    using ConstRangeType = typename DynamicKstateTypes<SiteStateTrait>::ConstRangeType;
-    using AnyRangeType = typename DynamicKstateTypes<SiteStateTrait>::AnyRangeType;
-    using ConstAnyRangeType = typename DynamicKstateTypes<SiteStateTrait>::ConstAnyRangeType;
+    using SiteStateTraitT = _SiteStateTraitT;
+    using SiteStateT = typename _SiteStateTraitT::SiteStateT;
+    using BufferType = typename DynamicKstateTypes<SiteStateTraitT>::BufferType;
+    using IteratorType = typename DynamicKstateTypes<SiteStateTraitT>::IteratorType;
+    using ConstIteratorType = typename DynamicKstateTypes<SiteStateTraitT>::ConstIteratorType;
+    using RangeType = typename DynamicKstateTypes<SiteStateTraitT>::RangeType;
+    using ConstRangeType = typename DynamicKstateTypes<SiteStateTraitT>::ConstRangeType;
+    using AnyRangeType = typename DynamicKstateTypes<SiteStateTraitT>::AnyRangeType;
+    using ConstAnyRangeType = typename DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeType;
 
 public:
     DynamicKstate(BufferType&&, CtrFromBuffer);
@@ -106,30 +106,30 @@ protected:
 
 // ***********************************************************************
 
-template <typename _SiteStateTrait>
-DynamicKstate<_SiteStateTrait>::DynamicKstate(
-        DynamicKstate<_SiteStateTrait>::BufferType&& v,
+template <typename _SiteStateTraitT>
+DynamicKstate<_SiteStateTraitT>::DynamicKstate(
+        DynamicKstate<_SiteStateTraitT>::BufferType&& v,
         CtrFromBuffer) :
     _v(std::move(v)) {
 }
 
-template <typename _SiteStateTrait>
+template <typename _SiteStateTraitT>
 template <typename OtherRangeType>
-DynamicKstate<_SiteStateTrait>::DynamicKstate(const OtherRangeType& r, CtrFromRange) :
+DynamicKstate<_SiteStateTraitT>::DynamicKstate(const OtherRangeType& r, CtrFromRange) :
     _v(init_vector_from_range(r)) {
 }
 
 // ***********************************************************************
 
-template <typename _SiteStateTrait>
-typename DynamicKstate<_SiteStateTrait>::ConstRangeType
-DynamicKstate<_SiteStateTrait>::to_range() const {
+template <typename _SiteStateTraitT>
+typename DynamicKstate<_SiteStateTraitT>::ConstRangeType
+DynamicKstate<_SiteStateTraitT>::to_range() const {
     return _v;
 }
 
-template <typename _SiteStateTrait>
+template <typename _SiteStateTraitT>
 size_t
-DynamicKstate<_SiteStateTrait>::n_sites() const {
+DynamicKstate<_SiteStateTraitT>::n_sites() const {
     return _v.size();
 }
 
@@ -141,10 +141,10 @@ DynamicKstate<_SiteStateTrait>::n_sites() const {
 
 namespace kstate {
 
-template<typename _SiteStateTrait>
-struct TraitKstate<DynamicKstate<_SiteStateTrait>> {
+template<typename _SiteStateTraitT>
+struct TraitKstate<DynamicKstate<_SiteStateTraitT>> {
     static constexpr bool is_kstate_trait = true;
-    using KstateT = DynamicKstate<_SiteStateTrait>;
+    using KstateT = DynamicKstate<_SiteStateTraitT>;
 };
 
 }
