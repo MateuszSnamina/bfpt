@@ -126,13 +126,13 @@ void pretty_print(
 
 namespace bfpt_common {
 
-struct CommonRecipeResult {
+struct CommonRecipeReceipt {
     double energy;
     std::optional<arma::cx_vec> eigen_vector;
 };
 
 template<typename KstateT>
-utility::Result<CommonRecipeResult, std::runtime_error>
+utility::Result<CommonRecipeReceipt, std::runtime_error>
 do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                         const IKstateHamiltonian<KstateT>& hamiltonian,
                         kstate::Basis<KstateT>& basis,
@@ -140,7 +140,7 @@ do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
                         CommonRecipePrintFlags print_flags,
                         std::string print_outer_prefix = "",
                         unsigned n_threads = 1) {
-    using ResultT = utility::Result<CommonRecipeResult, std::runtime_error>;
+    using ResultT = utility::Result<CommonRecipeReceipt, std::runtime_error>;
     assert(n_threads != 0);
     assert(n_threads <= 256);
     [[maybe_unused]] const size_t n_sites = basis.n_sites();

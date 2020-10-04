@@ -31,7 +31,7 @@
 // ## main - helpers                                                    ##
 // #######################################################################
 
-bfpt_common::CommonRecipeResult bfpt_gs(
+bfpt_common::CommonRecipeReceipt bfpt_gs(
         const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
         const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
@@ -49,7 +49,7 @@ bfpt_common::CommonRecipeResult bfpt_gs(
                                          n_threads).unwrap();
 }
 
-bfpt_common::CommonRecipeResult bfpt_kn_es(
+bfpt_common::CommonRecipeReceipt bfpt_kn_es(
         const bfpt_common::HamiltonianKernel1<model_monostar::MonostarSiteState>& hamiltonian_kernel_1,
         const bfpt_common::HamiltonianKernel12<model_monostar::MonostarSiteState>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
@@ -119,26 +119,26 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
 void print_results_tree(
         const InterpretedProgramOptions& interpreted_program_options,
         const std::shared_ptr<model_monostar::HamiltonianReferenceEnergies> reference_energies,
-        const std::optional<bfpt_common::CommonRecipeResult>& gs_result_optional,
-        const std::optional<std::vector<bfpt_common::CommonRecipeResult>>& es_results_optional) {
+        const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional) {
     // Helpers:
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                 interpreted_program_options.es_momentum_domain,
                 interpreted_program_options.n_sites);
     // [[expect]]:
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-        assert(gs_result_optional);
+        assert(gs_receipt_optional);
     }
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        assert(es_results_optional);
-        assert(es_results_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+        assert(es_receipts_optional);
+        assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     }
     // Print gs:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-        const auto gs_result = gs_result_optional.value();
+        const auto gs_receipt = gs_receipt_optional.value();
         std::cout << " ├state: gs "  << std::endl;
-        std::cout << " ││enery = " << gs_result.energy << std::endl;
+        std::cout << " ││enery = " << gs_receipt.energy << std::endl;
         if (reference_energies) {
             if (const auto& gs_energy = reference_energies->get_gs_energy()){
                 std::cout << " ││enery (reference) = " << *gs_energy << std::endl;
@@ -147,14 +147,14 @@ void print_results_tree(
     }
     // Print es:
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        const auto es_results = es_results_optional.value();
+        const auto es_receipts = es_receipts_optional.value();
         for (unsigned k_n =  es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
-            const auto es_result = es_results[k_n];
+            const auto es_result = es_receipts[k_n];
             std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
             std::cout << " ││abs. enery        = " << es_result.energy << std::endl;
             if (interpreted_program_options.run_type == RunType::EG) {
-                const auto gs_result = gs_result_optional.value();
-                std::cout << " ││exc. enery        = " << es_result.energy - gs_result.energy << std::endl;
+                const auto gs_receipt = gs_receipt_optional.value();
+                std::cout << " ││exc. enery        = " << es_result.energy - gs_receipt.energy << std::endl;
             }
             if (reference_energies) {
                 if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
@@ -171,15 +171,15 @@ void print_results_tree(
 void print_post_data(
         const InterpretedProgramOptions& interpreted_program_options,
         /*const std::unique_ptr<model_monostar::ReferenceEnergies> reference_energies,*/
-        const std::optional<bfpt_common::CommonRecipeResult>& gs_result_optional,
-        const std::optional<std::vector<bfpt_common::CommonRecipeResult>>& es_results_optional) {
+        const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional) {
     // Helpers:
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                 interpreted_program_options.es_momentum_domain,
                 interpreted_program_options.n_sites);
     // [[expect]]:
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        assert(es_results_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+        assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     }
     // Stream RAII:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
@@ -190,8 +190,8 @@ void print_post_data(
     using namespace boost::adaptors;
     // Print gs:
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-        const auto gs_result = gs_result_optional.value();
-        std::cout << "[RESULT] [POST] gs_energy: " << gs_result.energy << std::endl;
+        const auto gs_receipt = gs_receipt_optional.value();
+        std::cout << "[RESULT] [POST] gs_energy: " << gs_receipt.energy << std::endl;
     }
     // Print es -- domain:
     if (interpreted_program_options.run_type == RunType::EG) {
@@ -201,19 +201,19 @@ void print_post_data(
         std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
     }
     // Print es -- helpers:
-    const auto common_result_to_energy = [](bfpt_common::CommonRecipeResult result)->double {return result.energy;};
+    const auto receipt_to_energy = [](bfpt_common::CommonRecipeReceipt result)->double {return result.energy;};
     // Print es -- absolute energies:
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        const auto es_results = es_results_optional.value();
-        std::cout << "[RESULT] [POST] es_absolute_energies: " << (es_results | transformed(common_result_to_energy) | RSS<double>().like_python_list()) << std::endl;
+        const auto es_receipt = es_receipts_optional.value();
+        std::cout << "[RESULT] [POST] es_absolute_energies: " << (es_receipt | transformed(receipt_to_energy) | RSS<double>().like_python_list()) << std::endl;
     }
     // Print es -- excitation energies:
     if (interpreted_program_options.run_type == RunType::EG) {
-        const auto es_results = es_results_optional.value();
-        const auto gs_result = gs_result_optional.value();
-        const auto gs_energy = gs_result.energy;
+        const auto gs_receipt = gs_receipt_optional.value();
+        const auto es_receipts = es_receipts_optional.value();
+        const auto gs_energy = gs_receipt.energy;
         const auto absolute_energy_into_excitation_energy = [gs_energy] (double es_energy) ->double {return es_energy - gs_energy;};
-        const auto exciation_energies = es_results | transformed(common_result_to_energy) | transformed(absolute_energy_into_excitation_energy);
+        const auto exciation_energies = es_receipts | transformed(receipt_to_energy) | transformed(absolute_energy_into_excitation_energy);
         std::cout << "[RESULT] [POST] es_excitation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
     }
 }
@@ -304,8 +304,8 @@ int main(int argc, char** argv) {
             }
         }();
         // ******************************************************************
-        const std::optional<bfpt_common::CommonRecipeResult> gs_energy =
-                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<bfpt_common::CommonRecipeResult> {
+        const std::optional<bfpt_common::CommonRecipeReceipt> gs_receipt =
+                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<bfpt_common::CommonRecipeReceipt> {
             if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
                 std::cout << "------------------------------------------" << std::endl;
                 return bfpt_gs(
@@ -319,14 +319,14 @@ int main(int argc, char** argv) {
             return std::nullopt;
         }();
         // ******************************************************************
-        const std::optional<std::vector<bfpt_common::CommonRecipeResult>> es_results =
-                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<std::vector<bfpt_common::CommonRecipeResult>> {
+        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> es_receipts =
+                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> {
             std::cout << "------------------------------------------" << std::endl;
             if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
                 const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                             interpreted_program_options.es_momentum_domain,
                             interpreted_program_options.n_sites);
-                std::vector<bfpt_common::CommonRecipeResult> es_results_builder;
+                std::vector<bfpt_common::CommonRecipeReceipt> es_receipts_builder;
                 for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
                     std::cout << "[PROGRESS] " << "solving n_k: " << k_n << std::endl;
                     const auto es_energy = bfpt_kn_es(
@@ -335,10 +335,10 @@ int main(int argc, char** argv) {
                                 interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
                                 interpreted_program_options.print_flags,
                                 interpreted_program_options.n_threads);
-                    es_results_builder.push_back(es_energy);
+                    es_receipts_builder.push_back(es_energy);
                     std::cout << "------------------------------------------" << std::endl;
                 }
-                return es_results_builder;
+                return es_receipts_builder;
             }
             return std::nullopt;
         }();
@@ -346,13 +346,13 @@ int main(int argc, char** argv) {
         print_results_tree(
                     interpreted_program_options,
                     reference_energies,
-                    gs_energy,
-                    es_results);
+                    gs_receipt,
+                    es_receipts);
         print_post_data(
                     interpreted_program_options,
                     /*reference_energies,*/
-                    gs_energy,
-                    es_results);
+                    gs_receipt,
+                    es_receipts);
         // ******************************************************************
     } catch (std::exception& e) {
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
