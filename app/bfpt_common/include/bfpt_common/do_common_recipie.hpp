@@ -3,7 +3,7 @@
 
 #include <bfpt_common/i_kstate_operator_matrix.hpp>
 #include <bfpt_common/i_kstate_basis_populator.hpp>
-#include <bfpt_common/generate_populated_basis.hpp> // TODO change to  <bfpt_common/generate_basis.hpp>
+#include <bfpt_common/generate_populated_basis.hpp>
 #include <bfpt_common/generate_operator_matrix.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
 #include <bfpt_common/calculate_reduced_density_operator.hpp>
@@ -45,6 +45,29 @@ const std::string time_tag = "[time    ] ";
 namespace bfpt_common {
 
 template<typename SiteStateT>
+void pretty_density_operator_1(
+        const DensityOperator1<SiteStateT>& density_operator,
+        std::string print_outer_prefix = "") {
+    // Stream RAII:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    // Print:
+    std::cout << print_outer_prefix << message_prefix << data_tag
+              << "density operator 1:" << std::endl;
+    for (const auto& _ : density_operator) {
+        const std::pair<StateKernel1<SiteStateT>, StateKernel1<SiteStateT>> density_matrix_indices = _.first;
+        const std::complex<double> value = _.second;
+        const StateKernel1<SiteStateT> bra_kenrel = density_matrix_indices.first;
+        const StateKernel1<SiteStateT> ket_kenrel = density_matrix_indices.second;
+        const auto bra_site_0 = bra_kenrel.state_1;
+        const auto ket_site_0 = ket_kenrel.state_1;
+        std::cout << print_outer_prefix << message_prefix << data_tag
+                  << "(" << bra_site_0 << ")" << " "
+                  << "(" << ket_site_0 << ")" << " "
+                  << std::showpos << value << std::endl;
+    }
+}
+
+template<typename SiteStateT>
 void pretty_density_operator_12(
         const DensityOperator12<SiteStateT>& density_operator,
         std::string print_outer_prefix = "") {
@@ -69,7 +92,7 @@ void pretty_density_operator_12(
     }
 }
 
-}
+}  // namespace bfpt_common
 
 // #######################################################################
 // ## pretty_print                                                      ##
@@ -159,7 +182,7 @@ void pretty_print(
     } // end of n_eigien_vector loop
 }
 
-}
+}  // namespace bfpt_common
 
 // #######################################################################
 // ## do_common_recipe                                                  ##
@@ -275,6 +298,8 @@ do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
         }
         // --------------------------------------------------
         if (print_flags.print_density_operator_flag) {
+            const DensityOperator1<SiteStateT> density_operator_1 = calculate_reduced_density_operator_1<KstateT>(basis, eigen_vectors.col(0));
+            pretty_density_operator_1(density_operator_1, print_outer_prefix);
             const DensityOperator12<SiteStateT> density_operator_12 = calculate_reduced_density_operator_12<KstateT>(basis, eigen_vectors.col(0));
             pretty_density_operator_12(density_operator_12, print_outer_prefix);
         }
