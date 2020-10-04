@@ -163,52 +163,6 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
 }  // namespace kstate
 
 // #######################################################################
-// ## KstateUniqueView                                                  ##
-// #######################################################################
-
-// template <typename _SiteStateT, typename _TraversalTagT = boost::random_access_traversal_tag>
-// class KstateUniqueView : public Kstate<_SiteStateT, _TraversalTagT> {
-//    public:  // Helper types:
-//    using SiteStateT = _SiteState;
-//    using TraversalTagT = _TraversalTagT;
-//    using AnyRangeType = typename boost::any_range<SiteStateT, TraversalTagT>;
-//    using ConstAnyRangeType = typename boost::any_range<const SiteStateT, TraversalTagT>;
-
-//    public:
-//     KstateUniqueView(const Kstate<SiteStateT, TraversalTagT>&);
-
-//    public:
-//     ConstAnyRangeType to_range() const override;
-//     size_t n_sites() const override;
-
-//    private:
-//     const Kstate<SiteStateT, TraversalTagT>& _r;
-//     const size_t _n_unique_shift;
-// };
-
-// // ***********************************************************************
-
-// template <typename _SiteStateT, typename _TraversalTagT>
-// KstateUniqueView<_SiteStateT, _TraversalTagT>::KstateUniqueView(const Kstate<SiteStateT, TraversalTagT>& r)
-//     : _r(r),
-//       _n_unique_shift(n_unique_shift(r.to_range())) {
-// }
-
-// // ***********************************************************************
-
-// template <typename _SiteStateT, typename _TraversalTagT>
-// typename KstateUniqueView<_SiteStateT, _TraversalTagT>::ConstAnyRangeType
-// KstateUniqueView<_SiteStateT, _TraversalTagT>::to_range() const {
-//     return _r.to_range() | extension::boost::adaptors::rotated(_n_unique_shift);
-// }
-
-// template <typename _SiteStateT, typename _TraversalTagT>
-// size_t
-// KstateUniqueView<_SiteStateT, _TraversalTagT>::n_sites() const {
-//     return _r.n_sites();
-// }
-
-// #######################################################################
 // ## SpeedyKstate                                                      ##
 // #######################################################################
 
