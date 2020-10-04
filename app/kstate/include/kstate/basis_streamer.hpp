@@ -27,7 +27,7 @@ template <typename BasisT>
 BasisStreamer<BasisT>
 make_basis_streamer(
         BasisT&&,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::ElementT>);
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::KstateT>);
 
 // ***********************************************************************
 
@@ -52,18 +52,18 @@ class BasisStreamer {
     "remove_cvref_t<BasisT> must be derived from Basis");
 public: // Helper types:
     using BasisT = _BasisT;
-    using ElementT = typename remove_cvref_t<BasisT>::ElementT;
+    using KstateT = typename remove_cvref_t<BasisT>::KstateT;
 public: // Factory function:
     friend
-    BasisStreamer<BasisT> make_basis_streamer<BasisT>(BasisT&&, const extension::boost::RangeStreamerSettings<ElementT>);
+    BasisStreamer<BasisT> make_basis_streamer<BasisT>(BasisT&&, const extension::boost::RangeStreamerSettings<KstateT>);
 public: // API:
     ::std::ostream& stream(std::ostream&) const;
     std::string str() const;
 private:
-    BasisStreamer(std::add_lvalue_reference_t<BasisT>, extension::boost::RangeStreamerSettings<ElementT>);
+    BasisStreamer(std::add_lvalue_reference_t<BasisT>, extension::boost::RangeStreamerSettings<KstateT>);
 private:
     const _BasisT _basis;
-    const extension::boost::RangeStreamerSettings<ElementT> _range_streamer_settings;
+    const extension::boost::RangeStreamerSettings<KstateT> _range_streamer_settings;
 };
 
 // ***********************************************************************
@@ -71,7 +71,7 @@ private:
 template<typename _BasisT>
 BasisStreamer<_BasisT>::BasisStreamer(
         std::add_lvalue_reference_t<_BasisT> basis,
-        extension::boost::RangeStreamerSettings<ElementT> range_streamer_settings) :
+        extension::boost::RangeStreamerSettings<KstateT> range_streamer_settings) :
     _basis(std::forward<_BasisT>(basis)),
     _range_streamer_settings(range_streamer_settings) {
 }
@@ -86,8 +86,8 @@ BasisStreamer<_BasisT>::stream(std::ostream& os) const {
             [](std::ostream& s) { s << "𝔹𝔸𝕊𝕀𝕊-BEGIN" << std::endl; };
     const ::std::function<void(::std::ostream&, size_t)> default_stream_sustainer =
             [](std::ostream& s, size_t i) { s << " - " << std::right << std::setw(8) << i << " : "; };
-    const ::std::function<void(::std::ostream&, ElementT)> default_stream_value_putter =
-            [](::std::ostream& s, ElementT) { s << "[PLACE-FOR-KSTATE]"; };
+    const ::std::function<void(::std::ostream&, KstateT)> default_stream_value_putter =
+            [](::std::ostream& s, KstateT) { s << "[PLACE-FOR-KSTATE]"; };
     const ::std::function<void(::std::ostream&)> default_stream_separer =
             [](std::ostream& s) { s << std::endl; };
     const ::std::function<void(::std::ostream&)> default_stream_finisher =
@@ -147,7 +147,7 @@ BasisStreamer<_BasisT>::str() const {
 template<typename BasisT>
 BasisStreamer<BasisT> make_basis_streamer(
         BasisT&& basis,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::ElementT> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::KstateT> range_streamer_settings) {
     return BasisStreamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 
@@ -163,7 +163,7 @@ template<typename BasisT>
 BasisStreamer<BasisT>
 operator&&(
         BasisT&& basis,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::ElementT> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::KstateT> range_streamer_settings) {
     return make_basis_streamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 

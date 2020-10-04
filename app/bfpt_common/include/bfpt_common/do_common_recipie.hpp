@@ -13,6 +13,7 @@
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_concrete.hpp>
+#include <kstate/trait_site_state.hpp>
 
 #include <utility/result.hpp>
 
@@ -44,20 +45,22 @@ const std::string time_tag = "[time    ] ";
 
 namespace bfpt_common {
 
-template<typename SiteStateT>
-void pretty_density_operator_1(
-        const DensityOperator1<SiteStateT>& density_operator,
+template<typename SiteStateTraitT>
+void print_density_operator_1(
+        const DensityOperator1<SiteStateTraitT>& density_operator,
         std::string print_outer_prefix = "") {
+    static_assert(kstate::IsTraitSiteState<SiteStateTraitT>::value);
+    static_assert(SiteStateTraitT::is_site_state_trait);
     // Stream RAII:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     // Print:
     std::cout << print_outer_prefix << message_prefix << data_tag
               << "density operator 1:" << std::endl;
     for (const auto& _ : density_operator) {
-        const std::pair<StateKernel1<SiteStateT>, StateKernel1<SiteStateT>> density_matrix_indices = _.first;
+        const std::pair<StateKernel1<SiteStateTraitT>, StateKernel1<SiteStateTraitT>> density_matrix_indices = _.first;
         const std::complex<double> value = _.second;
-        const StateKernel1<SiteStateT> bra_kenrel = density_matrix_indices.first;
-        const StateKernel1<SiteStateT> ket_kenrel = density_matrix_indices.second;
+        const StateKernel1<SiteStateTraitT> bra_kenrel = density_matrix_indices.first;
+        const StateKernel1<SiteStateTraitT> ket_kenrel = density_matrix_indices.second;
         const auto bra_site_0 = bra_kenrel.state_1;
         const auto ket_site_0 = ket_kenrel.state_1;
         std::cout << print_outer_prefix << message_prefix << data_tag
@@ -67,20 +70,22 @@ void pretty_density_operator_1(
     }
 }
 
-template<typename SiteStateT>
-void pretty_density_operator_12(
-        const DensityOperator12<SiteStateT>& density_operator,
+template<typename SiteStateTraitT>
+void print_density_operator_12(
+        const DensityOperator12<SiteStateTraitT>& density_operator,
         std::string print_outer_prefix = "") {
+    static_assert(kstate::IsTraitSiteState<SiteStateTraitT>::value);
+    static_assert(SiteStateTraitT::is_site_state_trait);
     // Stream RAII:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     // Print:
     std::cout << print_outer_prefix << message_prefix << data_tag
               << "density operator 12:" << std::endl;
     for (const auto& _ : density_operator) {
-        const std::pair<StateKernel12<SiteStateT>, StateKernel12<SiteStateT>> density_matrix_indices = _.first;
+        const std::pair<StateKernel12<SiteStateTraitT>, StateKernel12<SiteStateTraitT>> density_matrix_indices = _.first;
         const std::complex<double> value = _.second;
-        const StateKernel12<SiteStateT> bra_kenrel = density_matrix_indices.first;
-        const StateKernel12<SiteStateT> ket_kenrel = density_matrix_indices.second;
+        const StateKernel12<SiteStateTraitT> bra_kenrel = density_matrix_indices.first;
+        const StateKernel12<SiteStateTraitT> ket_kenrel = density_matrix_indices.second;
         const auto bra_site_0 = bra_kenrel.state_1;
         const auto bra_site_1 = bra_kenrel.state_2;
         const auto ket_site_0 = ket_kenrel.state_1;
@@ -195,18 +200,26 @@ struct CommonRecipeReceipt {
     std::optional<arma::cx_vec> eigen_vector;
 };
 
-template<typename KstateT>
+template<typename KstateTraitT>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
-do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
-                 const IKstateOperatorMatrix<KstateT>& hamiltonian,
-                 kstate::Basis<KstateT>& basis,
+do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
+                 const IKstateOperatorMatrix<KstateTraitT>& hamiltonian,
+                 kstate::Basis<KstateTraitT>& basis,
                  const unsigned max_pt_order,
                  const unsigned k_n,
                  CommonRecipePrintFlags print_flags,
                  std::string print_outer_prefix = "",
                  unsigned n_threads = 1) {
+    // --------------------------------------------------
+    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(KstateTraitT::is_kstate_trait);
+    // --------------------------------------------------
+    using KstateT = typename KstateTraitT::KstateT;
+    using SiteStateTraitT = typename KstateT::SiteStateTraitT;
+    //using SiteStateT = typename KstateT::SiteStateT;
+    //using BasisT = kstate::Basis<KstateTraitT>;
     using ResultT = utility::Result<CommonRecipeReceipt, std::runtime_error>;
-    using SiteStateT = typename KstateT::SiteType;
+    // --------------------------------------------------
     assert(n_threads != 0);
     assert(n_threads <= 256);
     [[maybe_unused]] const size_t n_sites = basis.n_sites();
@@ -298,10 +311,10 @@ do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
         }
         // --------------------------------------------------
         if (print_flags.print_density_operator_flag) {
-            const DensityOperator1<SiteStateT> density_operator_1 = calculate_reduced_density_operator_1<KstateT>(basis, eigen_vectors.col(0));
-            pretty_density_operator_1(density_operator_1, print_outer_prefix);
-            const DensityOperator12<SiteStateT> density_operator_12 = calculate_reduced_density_operator_12<KstateT>(basis, eigen_vectors.col(0));
-            pretty_density_operator_12(density_operator_12, print_outer_prefix);
+            const DensityOperator1<SiteStateTraitT> density_operator_1 = calculate_reduced_density_operator_1<KstateTraitT>(basis, eigen_vectors.col(0));
+            print_density_operator_1(density_operator_1, print_outer_prefix);
+            const DensityOperator12<SiteStateTraitT> density_operator_12 = calculate_reduced_density_operator_12<KstateTraitT>(basis, eigen_vectors.col(0));
+            print_density_operator_12(density_operator_12, print_outer_prefix);
         }
         // --------------------------------------------------
         return ResultT::Ok({eigen_values(0), eigen_vectors.col(0)});

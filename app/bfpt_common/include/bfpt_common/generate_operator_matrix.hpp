@@ -13,28 +13,16 @@
 
 namespace bfpt_common {
 
-template<typename KstateT>
+template<typename KstateTraitT>
 arma::sp_cx_mat
 generate_operator_matrix(
-        const IKstateOperatorMatrix<KstateT>& operator_matrix_interface,
-        const kstate::Basis<KstateT>& basis,
+        const IKstateOperatorMatrix<KstateTraitT>& operator_matrix_interface,
+        const kstate::Basis<KstateTraitT>& basis,
         const unsigned k_n,
         unsigned n_threads) {
-    // *********** asserts ****************
-    static_assert(!std::is_array_v<KstateT>);
-    static_assert(!std::is_function_v<KstateT>);
-    static_assert(!std::is_void_v<std::decay<KstateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<KstateT>>);
-    static_assert(!std::is_enum_v<std::decay<KstateT>>);
-    static_assert(!std::is_union_v<std::decay<KstateT>>);
-    static_assert(std::is_class_v<std::decay<KstateT>>);
-    static_assert(!std::is_pointer_v<std::decay<KstateT>>);
-    static_assert(!std::is_member_object_pointer_v<KstateT>);
-    static_assert(!std::is_member_function_pointer_v<KstateT>);
-    static_assert(!std::is_const_v<KstateT>);
-    static_assert(!std::is_volatile_v<KstateT>);
-    static_assert(!std::is_reference_v<KstateT>);
-    static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);
+    // *********** asserts ****************************************************************
+    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(KstateTraitT::is_kstate_trait);
     // *********** prepare ****************************************************************
     std::vector<arma::sp_cx_mat> kn_operator_builder_matrix_all(n_threads);
     for (unsigned i = 0; i < n_threads; i++) {

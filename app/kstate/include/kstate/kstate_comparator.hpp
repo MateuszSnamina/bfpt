@@ -1,6 +1,8 @@
 #ifndef KSTATE_KSTATE_COMPARATOR_HPP
 #define KSTATE_KSTATE_COMPARATOR_HPP
 
+#include <kstate/trait_kstate.hpp>
+
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <memory>
@@ -28,9 +30,12 @@ struct RangeComparator {
 
 namespace kstate {
 
-template<typename _KstateT>
+template<typename _KstateTraitT>
 struct KstateComparator {
-    using KstateT = _KstateT;
+    static_assert(kstate::IsTraitKstate<_KstateTraitT>::value);
+    static_assert(_KstateTraitT::is_kstate_trait);
+    using KstateTraitT = _KstateTraitT;
+    using KstateT = typename _KstateTraitT::KstateT;
 
     using is_transparent = std::true_type;
 

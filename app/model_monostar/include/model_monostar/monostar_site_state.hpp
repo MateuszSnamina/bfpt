@@ -1,6 +1,8 @@
 #ifndef MODEL_MONOSTAR_MONOSTAR_SITE_STATE_HPP
 #define MODEL_MONOSTAR_MONOSTAR_SITE_STATE_HPP
 
+#include <kstate/trait_site_state.hpp>
+
 #include <boost/operators.hpp>
 
 #include <iostream>
@@ -51,5 +53,27 @@ extern const MonostarSiteState es;  // excited-state (there is a star)
 extern const std::vector<MonostarSiteState> ordered_site_states;
 
 }  // namespace model_monostar
+
+// #######################################################################
+// ## MonostarSiteState -- implement trait                              ##
+// #######################################################################
+
+namespace kstate {
+
+template<>
+struct TraitSiteState<model_monostar::MonostarSiteState> {
+    static constexpr bool is_site_state_trait = true;
+    using SiteStateT = model_monostar::MonostarSiteState;
+};
+
+} // end of namespace kstate
+
+namespace model_monostar {
+
+using MonostarSiteStateTrait = kstate::TraitSiteState<model_monostar::MonostarSiteState>;
+
+} // end of namespace model_monostar
+
+
 
 #endif

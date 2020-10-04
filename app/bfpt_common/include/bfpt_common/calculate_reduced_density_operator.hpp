@@ -4,6 +4,7 @@
 #include <bfpt_common/density_operator.hpp>
 
 #include <kstate/basis.hpp>
+#include <kstate/trait_kstate.hpp>
 
 #include <boost/range/adaptor/sliced.hpp>
 #include <boost/range/algorithm/equal.hpp>
@@ -18,13 +19,17 @@
 
 namespace bfpt_common {
 
-template<typename KstateT>
-DensityOperator12<typename KstateT::SiteType>
+template<typename KstateTraitT>
+DensityOperator12<typename KstateTraitT::KstateT::SiteStateTraitT>
 calculate_reduced_density_operator_12(
-        kstate::Basis<KstateT>& basis,
+        kstate::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector) {
-    using SiteStateT = typename KstateT::SiteType;
-    DensityOperator12<SiteStateT> result;
+    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(KstateTraitT::is_kstate_trait);
+    using KstateT = typename KstateTraitT::KstateT;
+    using SiteStateTraitT = typename KstateT::SiteStateTraitT;
+    //using SiteStateT = typename KstateT::SiteStateT;
+    DensityOperator12<SiteStateTraitT> result;
     const auto n_sites = basis.n_sites();
     assert(eigen_vector.n_rows == basis.size());
     for (arma::uword bra_kstate_idx = 0; bra_kstate_idx < eigen_vector.n_rows; bra_kstate_idx++) {
@@ -48,9 +53,9 @@ calculate_reduced_density_operator_12(
                         const auto bra_site_1 = *std::next(std::begin(bra_kstate_range_rotated), 1);
                         const auto ket_site_0 = *std::next(std::begin(ket_kstate_range_rotated), 0);
                         const auto ket_site_1 = *std::next(std::begin(ket_kstate_range_rotated), 1);
-                        const StateKernel12<SiteStateT> bra_kenrel{bra_site_0, bra_site_1};
-                        const StateKernel12<SiteStateT> ket_kenrel{ket_site_0, ket_site_1};
-                        const std::pair<StateKernel12<SiteStateT>, StateKernel12<SiteStateT>> density_matrix_indices{bra_kenrel, ket_kenrel};
+                        const StateKernel12<SiteStateTraitT> bra_kenrel{bra_site_0, bra_site_1};
+                        const StateKernel12<SiteStateTraitT> ket_kenrel{ket_site_0, ket_site_1};
+                        const std::pair<StateKernel12<SiteStateTraitT>, StateKernel12<SiteStateTraitT>> density_matrix_indices{bra_kenrel, ket_kenrel};
                         const std::complex<double> value = std::conj(eigen_vector(bra_kstate_idx)) * eigen_vector(ket_kstate_idx);
                         const double pre_norm = bra_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
                         if (result.count(density_matrix_indices)) {
@@ -74,13 +79,17 @@ calculate_reduced_density_operator_12(
 
 namespace bfpt_common {
 
-template<typename KstateT>
-DensityOperator1<typename KstateT::SiteType>
+template<typename KstateTraitT>
+DensityOperator1<typename KstateTraitT::KstateT::SiteStateTraitT>
 calculate_reduced_density_operator_1(
-        kstate::Basis<KstateT>& basis,
+        kstate::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector) {
-    using SiteStateT = typename KstateT::SiteType;
-    DensityOperator1<SiteStateT> result;
+    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(KstateTraitT::is_kstate_trait);
+    using KstateT = typename KstateTraitT::KstateT;
+    using SiteStateTraitT = typename KstateT::SiteStateTraitT;
+    //using SiteStateT = typename KstateT::SiteStateT;
+    DensityOperator1<SiteStateTraitT> result;
     const auto n_sites = basis.n_sites();
     assert(eigen_vector.n_rows == basis.size());
     for (arma::uword bra_kstate_idx = 0; bra_kstate_idx < eigen_vector.n_rows; bra_kstate_idx++) {
@@ -102,9 +111,9 @@ calculate_reduced_density_operator_1(
                     if (boost::equal(bra_kstate_range_rotated_rest, ket_kstate_range_rotated_rest)) {
                         const auto bra_site_0 = *std::next(std::begin(bra_kstate_range_rotated), 0);
                         const auto ket_site_0 = *std::next(std::begin(ket_kstate_range_rotated), 0);
-                        const StateKernel1<SiteStateT> bra_kenrel{bra_site_0};
-                        const StateKernel1<SiteStateT> ket_kenrel{ket_site_0};
-                        const std::pair<StateKernel1<SiteStateT>, StateKernel1<SiteStateT>> density_matrix_indices{bra_kenrel, ket_kenrel};
+                        const StateKernel1<SiteStateTraitT> bra_kenrel{bra_site_0};
+                        const StateKernel1<SiteStateTraitT> ket_kenrel{ket_site_0};
+                        const std::pair<StateKernel1<SiteStateTraitT>, StateKernel1<SiteStateTraitT>> density_matrix_indices{bra_kenrel, ket_kenrel};
                         const std::complex<double> value = std::conj(eigen_vector(bra_kstate_idx)) * eigen_vector(ket_kstate_idx);
                         const double pre_norm = bra_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
                         if (result.count(density_matrix_indices)) {
@@ -119,14 +128,6 @@ calculate_reduced_density_operator_1(
     } // end of bra_kstate_idx loop
     return result;
 }
-
-//template<typename SiteStateT>
-//DensityOperator1<SiteStateT>
-//calculate_reduced_density_operator_1(
-//        kstate::Basis<SiteStateT>& basis,
-//        const arma::cx_vec& eigen_vector) {
-////TODO: implement!
-//}
 
 } // end of namespace bfpt_common;
 

@@ -12,7 +12,7 @@
 
 namespace model_monostar {
 
-using DynamicMonostarKstateBasis = kstate::Basis<DynamicMonostarKstate>;
+using DynamicMonostarKstateBasis = kstate::Basis<kstate::TraitKstate<DynamicMonostarKstate>>;
 
 }  // namespace model_monostar
 

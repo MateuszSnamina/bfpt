@@ -5,7 +5,6 @@
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_stl.hpp>
-#include <kstate/kstate_abstract.hpp>
 
 #include <omp.h>
 
@@ -36,34 +35,22 @@
 
 namespace bfpt_common {
 
-//template <typename SiteType>
-template<typename KstateT>
+template<typename KstateTraitT>
 void generate_populated_basis(
-        const IKstateBasisPopulator<KstateT>& basis_populator,
+        const IKstateBasisPopulator<KstateTraitT>& basis_populator,
         const unsigned max_pt_order,
-        kstate::Basis<KstateT>& basis,
+        kstate::Basis<KstateTraitT>& basis,
         unsigned n_threads = 1) {
-    static_assert(!std::is_array_v<KstateT>);
-    static_assert(!std::is_function_v<KstateT>);
-    static_assert(!std::is_void_v<std::decay<KstateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<KstateT>>);
-    static_assert(!std::is_enum_v<std::decay<KstateT>>);
-    static_assert(!std::is_union_v<std::decay<KstateT>>);
-    static_assert(std::is_class_v<std::decay<KstateT>>);
-    static_assert(!std::is_pointer_v<std::decay<KstateT>>);
-    static_assert(!std::is_member_object_pointer_v<KstateT>);
-    static_assert(!std::is_member_function_pointer_v<KstateT>);
-    static_assert(!std::is_const_v<KstateT>);
-    static_assert(!std::is_volatile_v<KstateT>);
-    static_assert(!std::is_reference_v<KstateT>);
-    static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);
+    // *********** asserts ********************************************************************
+    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(KstateTraitT::is_kstate_trait);
     // *********** pt orders loop  ************************************************************
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();
         assert(last_chunk_size <= old_size);
         // *********** prepare ****************************************************************
-        std::vector<kstate::KstateSet<KstateT>> kstate_set_all(n_threads);
+        std::vector<kstate::KstateSet<KstateTraitT>> kstate_set_all(n_threads);
         // *********** filling ****************************************************************
         //const auto tp_fill_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
 #pragma omp parallel for num_threads(n_threads)
@@ -71,7 +58,7 @@ void generate_populated_basis(
             const auto tid = omp_get_thread_num();
             const auto el = basis.vec_index()[idx];
             assert(el);
-            const kstate::KstateSet<KstateT> newely_generated_states = basis_populator.get_coupled_states(*el);
+            const kstate::KstateSet<KstateTraitT> newely_generated_states = basis_populator.get_coupled_states(*el);
             kstate_set_all[tid].insert(std::begin(newely_generated_states), std::end(newely_generated_states));
         }
         //const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake

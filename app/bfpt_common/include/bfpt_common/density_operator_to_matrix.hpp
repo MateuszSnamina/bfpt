@@ -11,11 +11,13 @@
 
 namespace bfpt_common {
 
-template<typename SiteStateT>
+template<typename SiteStateTraitT>
 arma::cx_mat
 density_operator_1_to_matrix(
-        const DensityOperator12<SiteStateT>& density_operator,
-        std::vector<SiteStateT> ordered_site_states) {
+        const DensityOperator12<SiteStateTraitT>& density_operator,
+        std::vector<SiteStateTraitT> ordered_site_states) {
+    static_assert(kstate::IsTraitSiteState<SiteStateTraitT>::value);
+    static_assert(SiteStateTraitT::is_site_state_trait);
     const arma::uword n_possible_site_states = ordered_site_states.size();
     arma::cx_mat rho(n_possible_site_states, n_possible_site_states, arma::fill::zeros);
     for (arma::uword idx_bra_site_0 = 0; idx_bra_site_0 < n_possible_site_states; idx_bra_site_0++) {
@@ -24,7 +26,7 @@ density_operator_1_to_matrix(
             const auto ket_site_0 = ordered_site_states[idx_ket_site_0];
             const StateKernel12 bra_kenrel{bra_site_0};
             const StateKernel12 ket_kenrel{ket_site_0};
-            const std::pair<StateKernel1<SiteStateT>, StateKernel1<SiteStateT>> density_matrix_indices{bra_kenrel, ket_kenrel};
+            const std::pair<StateKernel1<SiteStateTraitT>, StateKernel1<SiteStateTraitT>> density_matrix_indices{bra_kenrel, ket_kenrel};
             const std::complex<double> value = (density_operator.count(density_matrix_indices) ? density_operator.at(density_matrix_indices) : 0.0);
             rho(idx_bra_site_0, idx_ket_site_0) = value;
         }
@@ -32,11 +34,13 @@ density_operator_1_to_matrix(
     return rho;
 }
 
-template<typename SiteStateT>
+template<typename SiteStateTraitT>
 arma::cx_mat
 density_operator_12_to_matrix(
-        const DensityOperator12<SiteStateT>& density_operator,
-        std::vector<SiteStateT> ordered_site_states) {
+        const DensityOperator12<SiteStateTraitT>& density_operator,
+        std::vector<SiteStateTraitT> ordered_site_states) {
+    static_assert(kstate::IsTraitSiteState<SiteStateTraitT>::value);
+    static_assert(SiteStateTraitT::is_site_state_trait);
     const arma::uword n_possible_site_states = ordered_site_states.size();
     arma::cx_mat rho(n_possible_site_states * n_possible_site_states, n_possible_site_states * n_possible_site_states, arma::fill::zeros);
     for (arma::uword idx_bra_site_0 = 0; idx_bra_site_0 < n_possible_site_states; idx_bra_site_0++) {
@@ -49,7 +53,7 @@ density_operator_12_to_matrix(
                     const auto ket_site_1 = ordered_site_states[idx_ket_site_1];
                     const StateKernel12 bra_kenrel{bra_site_0, bra_site_1};
                     const StateKernel12 ket_kenrel{ket_site_0, ket_site_1};
-                    const std::pair<StateKernel12<SiteStateT>, StateKernel12<SiteStateT>> density_matrix_indices{bra_kenrel, ket_kenrel};
+                    const std::pair<StateKernel12<SiteStateTraitT>, StateKernel12<SiteStateTraitT>> density_matrix_indices{bra_kenrel, ket_kenrel};
                     const std::complex<double> value = (density_operator.count(density_matrix_indices) ? density_operator.at(density_matrix_indices) : 0.0);
                     arma::uword idx_bra = n_possible_site_states * idx_bra_site_0 + idx_bra_site_1;
                     arma::uword idx_ket = n_possible_site_states * idx_ket_site_0 + idx_ket_site_1;

@@ -12,11 +12,11 @@
 
 namespace bfpt_common {
 
-template<typename SiteState>
-using DensityOperator1 = std::map<std::pair<StateKernel1<SiteState>, StateKernel1<SiteState>>, std::complex<double>>;
+template<typename SiteStateTraitT>
+using DensityOperator1 = std::map<std::pair<StateKernel1<SiteStateTraitT>, StateKernel1<SiteStateTraitT>>, std::complex<double>>;
 
-template<typename SiteStateT>
-using DensityOperator12 = std::map<std::pair<StateKernel12<SiteStateT>, StateKernel12<SiteStateT>>, std::complex<double>>;
+template<typename SiteStateTraitT>
+using DensityOperator12 = std::map<std::pair<StateKernel12<SiteStateTraitT>, StateKernel12<SiteStateTraitT>>, std::complex<double>>;
 
 } // end of namespace bfpt_common
 
