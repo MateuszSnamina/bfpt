@@ -1,3 +1,5 @@
+#include <kstate_tests/site_state_trait_for_int.hpp>
+
 #include <kstate/vec_map.hpp>
 
 #include <kstate/kstate_concrete.hpp>
@@ -12,22 +14,22 @@
 using kstate::ctr_from_range;
 
 TEST(VecMap, Empty) {
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     // test vec_map size:
     ASSERT_EQ(vec_map.size(), 0);
     ASSERT_TRUE(vec_map.vec_index().begin() == vec_map.vec_index().end());
     ASSERT_TRUE(vec_map.map_index().begin() == vec_map.map_index().end());
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(VecMap, OneElement) {
     const int v1[3] = {11, 12, 13};
-    const auto k1 = std::make_shared<kstate::DynamicKstate<int>>(v1, ctr_from_range);
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v1, ctr_from_range);
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     vec_map.add_element(k1);
     // test vec_map size:
     ASSERT_EQ(vec_map.size(), 1);
@@ -42,12 +44,12 @@ TEST(VecMap, OneElement) {
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(k1->to_range()), 0);
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(v1), 0);
     const int v10[3] = {11, 12, 113};
-    const auto k10 = std::make_shared<kstate::DynamicKstate<int>>(v10, ctr_from_range);
+    const auto k10 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v10, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k10->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v10));
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 }
@@ -55,9 +57,9 @@ TEST(VecMap, OneElement) {
 TEST(VecMap, TwoDifferentElementsTest0) {
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
-    const auto k1 = std::make_shared<kstate::DynamicKstate<int>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate::DynamicKstate<int>>(v2, ctr_from_range);
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v2, ctr_from_range);
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     vec_map.add_element(k1);
     vec_map.add_element(k2);
     // test vec_map size:
@@ -80,7 +82,7 @@ TEST(VecMap, TwoDifferentElementsTest0) {
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(v2), 1);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 }
@@ -88,9 +90,9 @@ TEST(VecMap, TwoDifferentElementsTest0) {
 TEST(VecMap, TwoDifferentElementsTest1) {
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
-    const auto k1 = std::make_shared<kstate::DynamicKstate<int>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate::DynamicKstate<int>>(v2, ctr_from_range);
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v2, ctr_from_range);
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     vec_map.add_element(k2);
     vec_map.add_element(k1);
     // test vec_map size:
@@ -113,7 +115,7 @@ TEST(VecMap, TwoDifferentElementsTest1) {
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(v2), 0);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 }
@@ -121,9 +123,9 @@ TEST(VecMap, TwoDifferentElementsTest1) {
 TEST(VecMap, TwoSameElementsTest0) {
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {11, 12, 13};
-    const auto k1 = std::make_shared<kstate::DynamicKstate<int>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate::DynamicKstate<int>>(v2, ctr_from_range);
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v2, ctr_from_range);
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     vec_map.add_element(k1);
     vec_map.add_element(k2);
     // test vec_map size:
@@ -146,7 +148,7 @@ TEST(VecMap, TwoSameElementsTest0) {
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(v2), 0);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 }
@@ -164,19 +166,19 @@ TEST(VecMap, BigTest) {
     const int v9[3] = {3, 20, 18};
     const int v10[3] = {3, 21, 15};
     const int v11[3] = {3, 21, 10};
-    const auto k0 = std::make_shared<kstate::DynamicKstate<int>>(v0, ctr_from_range);
-    const auto k1 = std::make_shared<kstate::DynamicKstate<int>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate::DynamicKstate<int>>(v2, ctr_from_range);
-    const auto k3 = std::make_shared<kstate::DynamicKstate<int>>(v3, ctr_from_range);
-    const auto k4 = std::make_shared<kstate::DynamicKstate<int>>(v4, ctr_from_range);
-    const auto k5 = std::make_shared<kstate::DynamicKstate<int>>(v5, ctr_from_range);
-    const auto k6 = std::make_shared<kstate::DynamicKstate<int>>(v6, ctr_from_range);
-    const auto k7 = std::make_shared<kstate::DynamicKstate<int>>(v7, ctr_from_range);
-    const auto k8 = std::make_shared<kstate::DynamicKstate<int>>(v8, ctr_from_range);
-    const auto k9 = std::make_shared<kstate::DynamicKstate<int>>(v9, ctr_from_range);
-    const auto k10 = std::make_shared<kstate::DynamicKstate<int>>(v10, ctr_from_range);
-    const auto k11 = std::make_shared<kstate::DynamicKstate<int>>(v11, ctr_from_range);
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    const auto k0 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v0, ctr_from_range);
+    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v2, ctr_from_range);
+    const auto k3 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v3, ctr_from_range);
+    const auto k4 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v4, ctr_from_range);
+    const auto k5 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v5, ctr_from_range);
+    const auto k6 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v6, ctr_from_range);
+    const auto k7 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v7, ctr_from_range);
+    const auto k8 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v8, ctr_from_range);
+    const auto k9 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v9, ctr_from_range);
+    const auto k10 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v10, ctr_from_range);
+    const auto k11 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v11, ctr_from_range);
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     vec_map.add_element(k0);
     vec_map.add_element(k1);
     vec_map.add_element(k2);
@@ -263,7 +265,7 @@ TEST(VecMap, BigTest) {
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(v11), 8);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 
@@ -287,16 +289,16 @@ TEST(VecMap, BigTestWithUniqueStates) {
     const int v6[3] = {1, 14, 15};
     const int v7[3] = {20, 15, 1};  // (equivalent) replica of v5
     const int v8[3] = {3, 20, 15};
-    const auto k0 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v0), ctr_from_range);
-    const auto k1 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v1), ctr_from_range);
-    const auto k2 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v2), ctr_from_range);
-    const auto k3 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v3), ctr_from_range);
-    const auto k4 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v4), ctr_from_range);
-    const auto k5 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v5), ctr_from_range);
-    const auto k6 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v6), ctr_from_range);
-    const auto k7 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v7), ctr_from_range);
-    const auto k8 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v8), ctr_from_range);
-    kstate::VecMap<kstate::DynamicKstate<int>> vec_map;
+    const auto k0 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v0), ctr_from_range);
+    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v1), ctr_from_range);
+    const auto k2 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v2), ctr_from_range);
+    const auto k3 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v3), ctr_from_range);
+    const auto k4 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v4), ctr_from_range);
+    const auto k5 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v5), ctr_from_range);
+    const auto k6 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v6), ctr_from_range);
+    const auto k7 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v7), ctr_from_range);
+    const auto k8 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v8), ctr_from_range);
+    kstate::VecMap<kstate::DynamicKstate<kstate::TraitSiteState<int>>> vec_map;
     vec_map.add_element(k0);
     vec_map.add_element(k1);
     vec_map.add_element(k2);
@@ -371,7 +373,7 @@ TEST(VecMap, BigTestWithUniqueStates) {
     EXPECT_EQ(*vec_map.find_element_and_get_its_ra_index(k8->to_range()), 5);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate::DynamicKstate<int>>(kstate::make_unique_shift(v100), ctr_from_range);
+    const auto k100 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(kstate::make_unique_shift(v100), ctr_from_range);
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(v100));
 

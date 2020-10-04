@@ -24,26 +24,28 @@
 
 namespace bfpt_common {
 
-template<typename _KstateT>
-class KernelDrivenKstateBasisPopulator : public bfpt_common::IKstateBasisPopulator<_KstateT> {
-    static_assert(!std::is_array_v<_KstateT>);
-    static_assert(!std::is_function_v<_KstateT>);
-    static_assert(!std::is_void_v<std::decay<_KstateT>>);
-    static_assert(!std::is_null_pointer_v<std::decay<_KstateT>>);
-    static_assert(!std::is_enum_v<std::decay<_KstateT>>);
-    static_assert(!std::is_union_v<std::decay<_KstateT>>);
-    static_assert(std::is_class_v<std::decay<_KstateT>>);
-    static_assert(!std::is_pointer_v<std::decay<_KstateT>>);
-    static_assert(!std::is_member_object_pointer_v<_KstateT>);
-    static_assert(!std::is_member_function_pointer_v<_KstateT>);
-    static_assert(!std::is_const_v<_KstateT>);
-    static_assert(!std::is_volatile_v<_KstateT>);
-    static_assert(!std::is_reference_v<_KstateT>);
-    static_assert(kstate::is_base_of_template_v<_KstateT, kstate::Kstate>);
+template<typename _KstateTrait>
+class KernelDrivenKstateBasisPopulator : public bfpt_common::IKstateBasisPopulator<_KstateTrait> {
+//    static_assert(!std::is_array_v<_KstateT>);
+//    static_assert(!std::is_function_v<_KstateT>);
+//    static_assert(!std::is_void_v<std::decay<_KstateT>>);
+//    static_assert(!std::is_null_pointer_v<std::decay<_KstateT>>);
+//    static_assert(!std::is_enum_v<std::decay<_KstateT>>);
+//    static_assert(!std::is_union_v<std::decay<_KstateT>>);
+//    static_assert(std::is_class_v<std::decay<_KstateT>>);
+//    static_assert(!std::is_pointer_v<std::decay<_KstateT>>);
+//    static_assert(!std::is_member_object_pointer_v<_KstateT>);
+//    static_assert(!std::is_member_function_pointer_v<_KstateT>);
+//    static_assert(!std::is_const_v<_KstateT>);
+//    static_assert(!std::is_volatile_v<_KstateT>);
+//    static_assert(!std::is_reference_v<_KstateT>);
+//    static_assert(kstate::is_base_of_template_v<_KstateT, kstate::Kstate>);//TODO remove
+    static_assert(_KstateTrait::is_kstate_trait);
 public:
-    using KstateT = _KstateT;
-    using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteType;
-    using BasisT = kstate::Basis<KstateT>;
+    using KstateTrait = _KstateTrait;
+    using KstateT = typename _KstateTrait::KstateT;
+    using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteState;
+    using BasisT = kstate::Basis<KstateTrait>;
 public:
     KernelDrivenKstateBasisPopulator(
             const size_t n_sites,
@@ -65,8 +67,8 @@ private:
 
 namespace bfpt_common {
 
-template<typename _SiteStateT>
-KernelDrivenKstateBasisPopulator<_SiteStateT>::KernelDrivenKstateBasisPopulator(
+template<typename _KstateTrait>
+KernelDrivenKstateBasisPopulator<_KstateTrait>::KernelDrivenKstateBasisPopulator(
         const size_t n_sites,
         OperatorKernel1<SiteStateT> operator_kernel_1,
         OperatorKernel12<SiteStateT> operator_kernel_12)
@@ -75,9 +77,9 @@ KernelDrivenKstateBasisPopulator<_SiteStateT>::KernelDrivenKstateBasisPopulator(
       _operator_kernel_12(operator_kernel_12) {
 }
 
-template<typename _SiteStateT>
-kstate::KstateSet<typename KernelDrivenKstateBasisPopulator<_SiteStateT>::KstateT>
-KernelDrivenKstateBasisPopulator<_SiteStateT>::get_coupled_states(
+template<typename _KstateTrait>
+kstate::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTrait>::KstateT>
+KernelDrivenKstateBasisPopulator<_KstateTrait>::get_coupled_states(
         const KstateT& generator) const {
     kstate::KstateSet<KstateT> result;
     assert(generator.n_sites() == _n_sites);

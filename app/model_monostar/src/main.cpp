@@ -41,15 +41,16 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     //using SiteStateT = model_monostar::MonostarSiteState;
     using KstateT = model_monostar::DynamicMonostarKstate;
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
+    using KstateTraitT = kstate::TraitKstate<KstateT>;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
-    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe(kstate_populator, kstate_hamiltonian,
-                                         basis, max_pt_order,
-                                         0,
-                                         print_flags, "[gs] ",
-                                         n_threads).unwrap();
+    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateTraitT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateTraitT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    return bfpt_common::do_common_recipe<KstateTraitT>(kstate_populator, kstate_hamiltonian,
+                                                       basis, max_pt_order,
+                                                       0,
+                                                       print_flags, "[gs] ",
+                                                       n_threads).unwrap();
 }
 
 bfpt_common::CommonRecipeReceipt bfpt_kn_es(
@@ -61,15 +62,16 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     //using SiteStateT = model_monostar::MonostarSiteState;
     using KstateT = model_monostar::DynamicMonostarKstate;
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
+    using KstateTraitT = kstate::TraitKstate<KstateT>;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
-    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe(kstate_populator, kstate_hamiltonian,
-                                         basis, max_pt_order,
-                                         k_n,
-                                         print_flags, "[es (" + std::to_string(k_n) + ")] ",
-                                         n_threads).unwrap();
+    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateTraitT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateTraitT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    return bfpt_common::do_common_recipe<KstateTraitT>(kstate_populator, kstate_hamiltonian,
+                                                       basis, max_pt_order,
+                                                       k_n,
+                                                       print_flags, "[es (" + std::to_string(k_n) + ")] ",
+                                                       n_threads).unwrap();
 }
 
 // #######################################################################
@@ -291,9 +293,9 @@ int main(int argc, char** argv) {
                 [&interpreted_program_options]() {
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
-                    return std::dynamic_pointer_cast<model_monostar::HamiltonianReferenceEnergies>(
-                                std::make_shared<model_monostar::HamiltonianReferenceEnergiesAf>(
-                                    interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
+                return std::dynamic_pointer_cast<model_monostar::HamiltonianReferenceEnergies>(
+                            std::make_shared<model_monostar::HamiltonianReferenceEnergiesAf>(
+                                interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_af_fm));
             case ModelType::FM:
                 return std::dynamic_pointer_cast<model_monostar::HamiltonianReferenceEnergies>(
                             std::make_shared<model_monostar::HamiltonianReferenceEnergiesFm>(
@@ -349,7 +351,7 @@ int main(int argc, char** argv) {
             return std::nullopt;
         }();
         // ******************************************************************
-//        const bool print_density_operator_matrix = true;//TODO remove
+        //        const bool print_density_operator_matrix = true;//TODO remove
 
         // ******************************************************************
         print_results_tree(

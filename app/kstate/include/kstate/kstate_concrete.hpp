@@ -2,6 +2,7 @@
 #define KSTATE_KSTATE_CONCRETE_HPP
 
 #include <kstate/kstate_abstract.hpp>
+#include <kstate/trait_kstate.hpp>
 
 #include <extensions/range_streamer.hpp>
 
@@ -24,8 +25,8 @@
 // #######################################################################
 
 /*
- * DynamicKstate<SiteType> is a concrete subclass of
- * Kstate<SiteType, boost::random_access_traversal_tag>
+ * DynamicKstate<SiteState> is a concrete subclass of
+ * Kstate<SiteState, boost::random_access_traversal_tag>
  * that uses std::vector as an internal buffer.
  */
 
@@ -55,36 +56,40 @@ init_vector_from_range(
 
 // ***********************************************************************
 
-template <typename _SiteType>
+template <typename _SiteStateTrait>
 struct DynamicKstateTypes {
-    static_assert(!std::is_const<_SiteType>::value);
-    static_assert(!std::is_volatile<_SiteType>::value);
-    static_assert(!std::is_reference<_SiteType>::value);
-    using SiteType = _SiteType;
-    using BufferType = typename std::vector<SiteType>;
+    static_assert(_SiteStateTrait::is_site_state_trait);
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteState = typename _SiteStateTrait::SiteStateT;
+    //    static_assert(!std::is_const<_SiteState>::value);
+    //    static_assert(!std::is_volatile<_SiteState>::value);
+    //    static_assert(!std::is_reference<_SiteState>::value);//TODO remove
+    //    using SiteState = _SiteState;
+    using BufferType = typename std::vector<SiteState>;
     using IteratorType = typename BufferType::iterator;
     using ConstIteratorType = typename BufferType::const_iterator;
     using RangeType = typename boost::iterator_range<IteratorType>;
     using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
-    using AnyRangeType = typename boost::any_range<SiteType, boost::random_access_traversal_tag>;
-    using ConstAnyRangeType = typename boost::any_range<const SiteType, boost::random_access_traversal_tag>;
+    using AnyRangeType = typename boost::any_range<SiteState, boost::random_access_traversal_tag>;
+    using ConstAnyRangeType = typename boost::any_range<const SiteState, boost::random_access_traversal_tag>;
 };
 
-template <typename _SiteType>
-class DynamicKstate : public SpeedyKstate<typename DynamicKstateTypes<_SiteType>::ConstRangeType> {
-    static_assert(!std::is_const<_SiteType>::value);
-    static_assert(!std::is_volatile<_SiteType>::value);
-    static_assert(!std::is_reference<_SiteType>::value);
+template <typename _SiteStateTrait>
+class DynamicKstate : public SpeedyKstate<_SiteStateTrait, typename DynamicKstateTypes<_SiteStateTrait>::ConstRangeType> {
+    //    static_assert(!std::is_const<_SiteState>::value);
+    //    static_assert(!std::is_volatile<_SiteState>::value);
+    //    static_assert(!std::is_reference<_SiteState>::value);//TODO remove
 
 public:
-    using SiteType = _SiteType;
-    using BufferType = typename DynamicKstateTypes<SiteType>::BufferType;
-    using IteratorType = typename DynamicKstateTypes<SiteType>::IteratorType;
-    using ConstIteratorType = typename DynamicKstateTypes<SiteType>::ConstIteratorType;
-    using RangeType = typename DynamicKstateTypes<SiteType>::RangeType;
-    using ConstRangeType = typename DynamicKstateTypes<SiteType>::ConstRangeType;
-    using AnyRangeType = typename DynamicKstateTypes<SiteType>::AnyRangeType;
-    using ConstAnyRangeType = typename DynamicKstateTypes<SiteType>::ConstAnyRangeType;
+    using SiteStateTrait = _SiteStateTrait;
+    using SiteState = typename _SiteStateTrait::SiteStateT;
+    using BufferType = typename DynamicKstateTypes<SiteStateTrait>::BufferType;
+    using IteratorType = typename DynamicKstateTypes<SiteStateTrait>::IteratorType;
+    using ConstIteratorType = typename DynamicKstateTypes<SiteStateTrait>::ConstIteratorType;
+    using RangeType = typename DynamicKstateTypes<SiteStateTrait>::RangeType;
+    using ConstRangeType = typename DynamicKstateTypes<SiteStateTrait>::ConstRangeType;
+    using AnyRangeType = typename DynamicKstateTypes<SiteStateTrait>::AnyRangeType;
+    using ConstAnyRangeType = typename DynamicKstateTypes<SiteStateTrait>::ConstAnyRangeType;
 
 public:
     DynamicKstate(BufferType&&, CtrFromBuffer);
@@ -101,42 +106,56 @@ protected:
 
 // ***********************************************************************
 
-template <typename _SiteType>
-DynamicKstate<_SiteType>::DynamicKstate(
-        DynamicKstate<SiteType>::BufferType&& v,
+template <typename _SiteStateTrait>
+DynamicKstate<_SiteStateTrait>::DynamicKstate(
+        DynamicKstate<_SiteStateTrait>::BufferType&& v,
         CtrFromBuffer) :
     _v(std::move(v)) {
 }
 
-template <typename _SiteType>
+template <typename _SiteStateTrait>
 template <typename OtherRangeType>
-DynamicKstate<_SiteType>::DynamicKstate(const OtherRangeType& r, CtrFromRange) :
+DynamicKstate<_SiteStateTrait>::DynamicKstate(const OtherRangeType& r, CtrFromRange) :
     _v(init_vector_from_range(r)) {
 }
 
 // ***********************************************************************
 
-template <typename _SiteType>
-typename DynamicKstate<_SiteType>::ConstRangeType
-DynamicKstate<_SiteType>::to_range() const {
+template <typename _SiteStateTrait>
+typename DynamicKstate<_SiteStateTrait>::ConstRangeType
+DynamicKstate<_SiteStateTrait>::to_range() const {
     return _v;
 }
 
-template <typename _SiteType>
+template <typename _SiteStateTrait>
 size_t
-DynamicKstate<_SiteType>::n_sites() const {
+DynamicKstate<_SiteStateTrait>::n_sites() const {
     return _v.size();
 }
 
 }  // namespace kstate
 
 // #######################################################################
+// ## TraitsFor DynamicKstate                                           ##
+// #######################################################################
+
+namespace kstate {
+
+template<typename _SiteStateTrait>
+struct TraitKstate<DynamicKstate<_SiteStateTrait>> {
+    static constexpr bool is_kstate_trait = true;
+    using KstateT = DynamicKstate<_SiteStateTrait>;
+};
+
+}
+
+// #######################################################################
 // ## StaticKstate                                                      ##
 // #######################################################################
 
 /*
- * DynamicKstate<SiteType, N> is a concrete subclass of
- * Kstate<SiteType, boost::random_access_traversal_tag>
+ * DynamicKstate<SiteState, N> is a concrete subclass of
+ * Kstate<SiteState, boost::random_access_traversal_tag>
  * that uses std::array as an internal buffer.
  */
 

@@ -27,7 +27,7 @@ extern const extension::boost::RangeStreamerSettings<MonostarSiteState> monostar
 
 namespace model_monostar {
 
-using DynamicMonostarKstate = kstate::DynamicKstate<MonostarSiteState>;
+using DynamicMonostarKstate = kstate::DynamicKstate<kstate::TraitSiteState<MonostarSiteState>>;
 
 }  // namespace model_monostar
 
