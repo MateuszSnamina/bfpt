@@ -8,23 +8,24 @@
 #include <armadillo>
 
 // #######################################################################
-// ## IKstateOperator                                                   ##
+// ## IKstateOperatorMatrix                                             ##
 // #######################################################################
 
 namespace bfpt_common {
 
 /*
- * This inteface is to providing k-hamiltonian builder.
- * Technically, the hamiltonian is build from matrix G
- * such as H = G + G^\dagger.
+ * This inteface is to providing kstate operator matrix builder.
+ * Technically, the operator is build from matrix `G`
+ * such as `H = G + G^\dagger`.
  *
- * The class provides method for filling a single column in the matrix G.
- * (The arg name `kn_hamiltonian_matrix` is for the matrix G).
+ * The class provides a member function
+ * for filling a single column in `G` matrix.
+ * (The arg name `kn_operator_builder_matrix` is for the matrix G).
  *
  */
 
 template<typename _KstateT>
-class IKstateOperator {
+class IKstateOperatorMatrix {
     static_assert(!std::is_array_v<_KstateT>);
     static_assert(!std::is_function_v<_KstateT>);
     static_assert(!std::is_void_v<std::decay<_KstateT>>);
@@ -45,10 +46,10 @@ public:
     using BasisT = kstate::Basis<KstateT>;
 
 public:
-    virtual void fill_kn_hamiltonian_matrix_coll(
+    virtual void fill_kn_operator_builder_matrix_coll(
             const BasisT& basis,
             size_t n_col,
-            arma::sp_cx_mat& kn_hamiltonian_matrix,
+            arma::sp_cx_mat& kn_operator_builder_matrix,
             const unsigned k_n) const = 0;
 };
 

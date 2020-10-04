@@ -1,7 +1,7 @@
 #ifndef KSTATE_GENERATE_OPERATOR_MATRIX_HPP
 #define KSTATE_GENERATE_OPERATOR_MATRIX_HPP
 
-#include <bfpt_common/i_kstate_operator.hpp>
+#include <bfpt_common/i_kstate_operator_matrix.hpp>
 
 #include <kstate/basis.hpp>
 
@@ -16,7 +16,7 @@ namespace bfpt_common {
 template<typename KstateT>
 arma::sp_cx_mat
 generate_operator_matrix(
-        const IKstateOperator<KstateT>& hamiltoniam_interface,
+        const IKstateOperatorMatrix<KstateT>& operator_matrix_interface,
         const kstate::Basis<KstateT>& basis,
         const unsigned k_n,
         unsigned n_threads) {
@@ -36,16 +36,16 @@ generate_operator_matrix(
     static_assert(!std::is_reference_v<KstateT>);
     static_assert(kstate::is_base_of_template_v<KstateT, kstate::Kstate>);
     // *********** prepare ****************************************************************
-    std::vector<arma::sp_cx_mat> kn_hamiltonian_matrix_all(n_threads);
+    std::vector<arma::sp_cx_mat> kn_operator_builder_matrix_all(n_threads);
     for (unsigned i = 0; i < n_threads; i++) {
-        kn_hamiltonian_matrix_all[i] = arma::sp_cx_mat(basis.size(), basis.size());
+        kn_operator_builder_matrix_all[i] = arma::sp_cx_mat(basis.size(), basis.size());
     }
     // *********** filling ****************************************************************
     //const auto tp_fill_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
 #pragma omp parallel for num_threads(n_threads) schedule(guided)
     for (arma::uword ket_kstate_idx = 0; ket_kstate_idx < basis.size(); ket_kstate_idx++) {
         const auto tid = omp_get_thread_num();
-        hamiltoniam_interface.fill_kn_hamiltonian_matrix_coll(basis, ket_kstate_idx, kn_hamiltonian_matrix_all[tid], k_n);
+        operator_matrix_interface.fill_kn_operator_builder_matrix_coll(basis, ket_kstate_idx, kn_operator_builder_matrix_all[tid], k_n);
     }
     // const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //std::cout << "fill took     : " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
@@ -59,7 +59,7 @@ generate_operator_matrix(
                 const auto idx1 = tid;
                 const auto idx2 = tid + d;
                 if (idx2 < n_threads) {
-                    kn_hamiltonian_matrix_all[idx1] += kn_hamiltonian_matrix_all[idx2];
+                    kn_operator_builder_matrix_all[idx1] += kn_operator_builder_matrix_all[idx2];
                 }
             }
         }
@@ -68,11 +68,11 @@ generate_operator_matrix(
     //std::cout << "reduce took   : " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_reduce_2 - tp_reduce_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
     // *********** add transpose **********************************************************
     //const auto tp_trans_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
-    kn_hamiltonian_matrix_all[0] += kn_hamiltonian_matrix_all[0].t();
+    kn_operator_builder_matrix_all[0] += kn_operator_builder_matrix_all[0].t();
     //const auto tp_trans_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //std::cout << "transpose took: " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_trans_2 - tp_trans_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
     // *********** return *****************************************************************
-    return kn_hamiltonian_matrix_all[0];
+    return kn_operator_builder_matrix_all[0];
 }
 
 }  // namespace bfpt_common

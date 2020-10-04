@@ -1,9 +1,9 @@
 #ifndef BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 #define BFPT_COMMON_DO_COMMON_RECIPIE_HPP
 
-#include <bfpt_common/i_kstate_operator.hpp>
-#include <bfpt_common/i_kstate_populator.hpp>
-#include <bfpt_common/generate_pt_basis.hpp> // TODO change to  <bfpt_common/generate_basis.hpp>
+#include <bfpt_common/i_kstate_operator_matrix.hpp>
+#include <bfpt_common/i_kstate_basis_populator.hpp>
+#include <bfpt_common/generate_populated_basis.hpp> // TODO change to  <bfpt_common/generate_basis.hpp>
 #include <bfpt_common/generate_operator_matrix.hpp>
 #include <bfpt_common/common_recipe_print_flags.hpp>
 #include <bfpt_common/calculate_reduced_density_operator.hpp>
@@ -133,8 +133,8 @@ struct CommonRecipeReceipt {
 
 template<typename KstateT>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
-do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
-                 const IKstateOperator<KstateT>& hamiltonian,
+do_common_recipe(const IKstateBasisPopulator<KstateT>& bais_populator,
+                 const IKstateOperatorMatrix<KstateT>& hamiltonian,
                  kstate::Basis<KstateT>& basis,
                  const unsigned max_pt_order,
                  const unsigned k_n,
@@ -161,7 +161,7 @@ do_common_recipe(const IKstatePopulator<KstateT>& bais_populator,
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    generate_pt_basis(bais_populator, max_pt_order, basis, n_threads);
+    generate_populated_basis(bais_populator, max_pt_order, basis, n_threads);
     const double time_populating_pt_basis = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;

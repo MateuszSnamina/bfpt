@@ -1,7 +1,7 @@
-#ifndef BFPT_COMMON_POPULATE_PT_BASIS_HPP
-#define BFPT_COMMON_POPULATE_PT_BASIS_HPP
+#ifndef BFPT_COMMON_GENERATE_POPULATED_BASIS_HPP
+#define BFPT_COMMON_GENERATE_POPULATED_BASIS_HPP
 
-#include <bfpt_common/i_kstate_populator.hpp>
+#include <bfpt_common/i_kstate_basis_populator.hpp>
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_stl.hpp>
@@ -38,8 +38,8 @@ namespace bfpt_common {
 
 //template <typename SiteType>
 template<typename KstateT>
-void generate_pt_basis(
-        const IKstatePopulator<KstateT>& populator,
+void generate_populated_basis(
+        const IKstateBasisPopulator<KstateT>& basis_populator,
         const unsigned max_pt_order,
         kstate::Basis<KstateT>& basis,
         unsigned n_threads = 1) {
@@ -71,7 +71,7 @@ void generate_pt_basis(
             const auto tid = omp_get_thread_num();
             const auto el = basis.vec_index()[idx];
             assert(el);
-            const kstate::KstateSet<KstateT> newely_generated_states = populator.get_coupled_states(*el);
+            const kstate::KstateSet<KstateT> newely_generated_states = basis_populator.get_coupled_states(*el);
             kstate_set_all[tid].insert(std::begin(newely_generated_states), std::end(newely_generated_states));
         }
         //const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake

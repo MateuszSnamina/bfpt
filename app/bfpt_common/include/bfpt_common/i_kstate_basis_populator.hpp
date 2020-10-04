@@ -1,5 +1,5 @@
-#ifndef BFPT_COMMON_I_POPULATOR_HPP
-#define BFPT_COMMON_I_POPULATOR_HPP
+#ifndef BFPT_COMMON_I_KSTATE_BASIS_POPULATOR_HPP
+#define BFPT_COMMON_I_KSTATE_BASIS_POPULATOR_HPP
 
 #include <kstate/remove_cvref.hpp>
 #include <kstate/is_base_of_template.hpp>
@@ -8,13 +8,13 @@
 #include <kstate/kstate_stl.hpp>
 
 // #######################################################################
-// ##  IKstatePopulator                                                 ##
+// ##  IKstateBasisPopulator                                            ##
 // #######################################################################
 
 namespace bfpt_common {
 
 template<typename _KstateT>
-class IKstatePopulator {
+class IKstateBasisPopulator {
     static_assert(!std::is_array_v<_KstateT>);
     static_assert(!std::is_function_v<_KstateT>);
     static_assert(!std::is_void_v<std::decay<_KstateT>>);

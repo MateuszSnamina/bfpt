@@ -11,8 +11,8 @@
 #include <model_monostar/monostar_site_state.hpp>
 
 #include <bfpt_common/operator_kernel.hpp>
-#include <bfpt_common/generic_kstate_hamiltonian.hpp>
-#include <bfpt_common/generic_kstate_operator.hpp>
+#include <bfpt_common/kernel_driven_kstate_basis_populator.hpp>
+#include <bfpt_common/kernel_driven_kstate_operator_matrix.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
 
 #include <extensions/range_streamer.hpp>
@@ -43,8 +43,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_gs_kstate(n_sites)));
-    const bfpt_common::GenericKstatePopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const bfpt_common::GenericKstateOperator<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe(kstate_populator, kstate_hamiltonian,
                                          basis, max_pt_order,
                                          0,
@@ -63,8 +63,8 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = model_monostar::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(model_monostar::classical_es_kstate(n_sites)));
-    const bfpt_common::GenericKstatePopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const bfpt_common::GenericKstateOperator<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe(kstate_populator, kstate_hamiltonian,
                                          basis, max_pt_order,
                                          k_n,

@@ -1,8 +1,8 @@
-#ifndef BFPT_COMMON_GENERIC_KSTATE_OPERATOR_HPP
-#define BFPT_COMMON_GENERIC_KSTATE_OPERATOR_HPP
+#ifndef BFPT_COMMON_KERNEL_DRIVEN_KSTATE_OPERATOR_HPP
+#define BFPT_COMMON_KERNEL_DRIVEN_KSTATE_OPERATOR_HPP
 
 #include <bfpt_common/operator_kernel.hpp>
-#include <bfpt_common/i_kstate_operator.hpp>
+#include <bfpt_common/i_kstate_operator_matrix.hpp>
 
 #include <kstate/unique_shift.hpp>
 #include <kstate/kstate_abstract.hpp>
@@ -20,13 +20,13 @@
 //#include<chrono> // performance debug sake
 
 // #######################################################################
-// ## GenericKstateOperator                                             ##
+// ## KernelDrivenKstateOperatorMatrix                                  ##
 // #######################################################################
 
 namespace bfpt_common {
 
 template<typename _KstateT>
-class GenericKstateOperator : public bfpt_common::IKstateOperator<_KstateT> {
+class KernelDrivenKstateOperatorMatrix : public bfpt_common::IKstateOperatorMatrix<_KstateT> {
     static_assert(!std::is_array_v<_KstateT>);
     static_assert(!std::is_function_v<_KstateT>);
     static_assert(!std::is_void_v<std::decay<_KstateT>>);
@@ -46,40 +46,38 @@ public:
     using SiteStateT = typename kstate::remove_cvref_t<KstateT>::SiteType;
     using BasisT = kstate::Basis<KstateT>;
 public:
-    GenericKstateOperator(
+    KernelDrivenKstateOperatorMatrix(
             const size_t n_sites,
-            OperatorKernel1<SiteStateT> hamiltonian_kernel_1,
-            OperatorKernel12<SiteStateT> hamiltonian_kernel_12);
-    void fill_kn_hamiltonian_matrix_coll(
+            OperatorKernel1<SiteStateT> operator_kernel_1,
+            OperatorKernel12<SiteStateT> operator_kernel_12);
+    void fill_kn_operator_builder_matrix_coll(
             const BasisT& basis,
             size_t n_col,
-            arma::sp_cx_mat& kn_hamiltonian_matrix,
+            arma::sp_cx_mat& kn_operator_builder_matrix,
             const unsigned k_n) const override;
 private:
     const size_t _n_sites;
-    const OperatorKernel1<SiteStateT> _hamiltonian_kernel_1;
-    const OperatorKernel12<SiteStateT> _hamiltonian_kernel_12;
+    const OperatorKernel1<SiteStateT> _operator_kernel_1;
+    const OperatorKernel12<SiteStateT> _operator_kernel_12;
 };
 
 }  // namespace bfpt_common
 
 
 // #######################################################################
-// ## GenericKstateOperator -- impl                                     ##
+// ## KernelDrivenKstateOperatorMatrix -- impl                          ##
 // #######################################################################
-
-using namespace std::complex_literals; // TODO remove from global scope
 
 namespace bfpt_common {
 
 template<typename _SiteStateT>
-GenericKstateOperator<_SiteStateT>::GenericKstateOperator(
+KernelDrivenKstateOperatorMatrix<_SiteStateT>::KernelDrivenKstateOperatorMatrix(
         const size_t n_sites,
-        OperatorKernel1<SiteStateT> hamiltonian_kernel_1,
-        OperatorKernel12<SiteStateT> hamiltonian_kernel_12)
+        OperatorKernel1<SiteStateT> operator_kernel_1,
+        OperatorKernel12<SiteStateT> operator_kernel_12)
     : _n_sites(n_sites),
-      _hamiltonian_kernel_1(hamiltonian_kernel_1),
-      _hamiltonian_kernel_12(hamiltonian_kernel_12) {
+      _operator_kernel_1(operator_kernel_1),
+      _operator_kernel_12(operator_kernel_12) {
 }
 
 /*
@@ -88,21 +86,22 @@ GenericKstateOperator<_SiteStateT>::GenericKstateOperator(
  */
 template<typename _SiteStateT>
 void
-GenericKstateOperator<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
+KernelDrivenKstateOperatorMatrix<_SiteStateT>::fill_kn_operator_builder_matrix_coll(
         const BasisT& basis,
         const size_t ket_kstate_idx,
-        arma::sp_cx_mat& kn_hamiltonian_matrix,
+        arma::sp_cx_mat& kn_operator_builder_matrix,
         const unsigned k_n) const {
-    assert(kn_hamiltonian_matrix.n_cols == kn_hamiltonian_matrix.n_rows);
-    assert(kn_hamiltonian_matrix.n_rows == basis.size());
+    using namespace std::complex_literals;
+    assert(kn_operator_builder_matrix.n_cols == kn_operator_builder_matrix.n_rows);
+    assert(kn_operator_builder_matrix.n_rows == basis.size());
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
     const auto& ket_kstate = (*ket_kstate_ptr).to_range();
-    // ********** OFF-DIAG, HAMILTONIAN1 *********************************************
+    // ********** OFF-DIAG, KERNEL1 *********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const StateKernel1<SiteStateT> ket_kernel{ket_kernel_site_1};
-        const auto equal_range = _hamiltonian_kernel_1._half_off_diag_info.equal_range(ket_kernel);
+        const auto equal_range = _operator_kernel_1._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_kernel_re = off_diag_node_it->first;
             [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_kernel_re.state_1;
@@ -125,11 +124,11 @@ GenericKstateOperator<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
-                kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
+                kn_operator_builder_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
             }
         } // end of `_half_off_diag_info` equal_range loop
     } // end of `Delta` loop
-    // ********** OFF-DIAG, HAMILTONIAN12 ********************************************
+    // ********** OFF-DIAG, KERNEL12 ********************************************
     //std::chrono::high_resolution_clock::time_point tp_u_1, tp_u_2; // performance debug sake
     //std::chrono::high_resolution_clock::time_point tp_nu_1, tp_nu_2; // performance debug sake
     //double unique_shift_time = 0.0, not_unique_shift_time = 0.0; // performance debug sake
@@ -139,7 +138,7 @@ GenericKstateOperator<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
         const StateKernel12<SiteStateT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
-        const auto equal_range = _hamiltonian_kernel_12._half_off_diag_info.equal_range(ket_kernel);
+        const auto equal_range = _operator_kernel_12._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
             const auto& ket_kernel_re = off_diag_node_it->first;
             [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_kernel_re.state_1;
@@ -172,7 +171,7 @@ GenericKstateOperator<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
-                kn_hamiltonian_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
+                kn_operator_builder_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
             }
         } // end of `_half_off_diag_info` equal_range loop
     } // end of `Delta` loop
@@ -183,29 +182,29 @@ GenericKstateOperator<_SiteStateT>::fill_kn_hamiltonian_matrix_coll(
     //std::cout << "[OFF-DIAG] [TIMING]: offdiag_time          : " << offdiag_time << std::endl; // performance debug sake
     //std::cout << "[OFF-DIAG] [TIMING]: unique_shift_time     : " << unique_shift_time << std::endl; // performance debug sake
     //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
-    // ********** ON-DIAG, HAMILTONIAN1 **********************************************
+    // ********** ON-DIAG, KERNEL1 **********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const StateKernel1<SiteStateT> ket_kernel{ket_kernel_site_1};
-        if (_hamiltonian_kernel_1._diag_info.count(ket_kernel)) {
-            const auto kernel_diag_coef = _hamiltonian_kernel_1._diag_info.at(ket_kernel);
+        if (_operator_kernel_1._diag_info.count(ket_kernel)) {
+            const auto kernel_diag_coef = _operator_kernel_1._diag_info.at(ket_kernel);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
             //TODO is not pre_norm_2 ALWAYS equal to 1.0?
-            kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
-    // ********** ON-DIAG, HAMILTONIAN12 *********************************************
+    // ********** ON-DIAG, KERNEL12 *********************************************
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
         const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
         const StateKernel12<SiteStateT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
-        if (_hamiltonian_kernel_12._diag_info.count(ket_kernel)) {
-            const auto kernel_diag_coef = _hamiltonian_kernel_12._diag_info.at(ket_kernel);
+        if (_operator_kernel_12._diag_info.count(ket_kernel)) {
+            const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);
             const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
             const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
             //TODO is not pre_norm_2 ALWAYS equal to 1.0?
-            kn_hamiltonian_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
 }
