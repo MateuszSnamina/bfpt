@@ -35,7 +35,7 @@ public:
             const size_t n_sites,
             OperatorKernel1<SiteStateTraitT> operator_kernel_1,
             OperatorKernel12<SiteStateTraitT> operator_kernel_12);
-    kstate::KstateSet<KstateT> get_coupled_states(
+    kstate::KstateSet<KstateTraitT> get_coupled_states(
             const KstateT& generator) const override;
 private:
     const size_t _n_sites;
@@ -62,10 +62,10 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulato
 }
 
 template<typename _KstateTraitT>
-kstate::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateT>
+kstate::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
         const KstateT& generator) const {
-    kstate::KstateSet<KstateT> result;
+    kstate::KstateSet<KstateTraitT> result;
     assert(generator.n_sites() == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
     const auto generator_range = generator.to_range();

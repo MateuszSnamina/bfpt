@@ -21,7 +21,7 @@ class IKstateBasisPopulator {
     using SiteStateT = typename KstateT::SiteStateT;
     using BasisT = kstate::Basis<KstateTraitT>;
    public:
-    virtual kstate::KstateSet<KstateT> get_coupled_states(
+    virtual kstate::KstateSet<KstateTraitT> get_coupled_states(
         const KstateT& generator) const = 0;
 };
 

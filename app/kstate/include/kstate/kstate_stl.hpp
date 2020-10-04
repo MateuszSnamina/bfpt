@@ -13,11 +13,11 @@
 
 namespace kstate {
 
-template<class KstateT>
-using KstateSet = std::set<std::shared_ptr<KstateT>, KstateComparator<KstateT>>;
+template<class KstateTraitT>
+using KstateSet = std::set<std::shared_ptr<typename KstateTraitT::KstateT>, KstateComparator<KstateTraitT>>;
 
-template<class KstateT, typename T>
-using KstateMap = std::map<std::shared_ptr<KstateT>, T, KstateComparator<KstateT>>;
+template<class KstateTraitT, typename T>
+using KstateMap = std::map<std::shared_ptr<typename KstateTraitT::KstateT>, T, KstateComparator<KstateTraitT>>;
 
 }
 

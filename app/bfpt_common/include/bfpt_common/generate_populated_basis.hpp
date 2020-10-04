@@ -44,15 +44,13 @@ void generate_populated_basis(
     // *********** asserts ********************************************************************
     static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
-    // *********** using **********************************************************************
-    using KstateT = typename KstateTraitT::KstateT;
     // *********** pt orders loop  ************************************************************
     unsigned last_chunk_size = basis.size();
     for (unsigned pt_order = 0; pt_order < max_pt_order; pt_order++) {
         const unsigned old_size = basis.size();
         assert(last_chunk_size <= old_size);
         // *********** prepare ****************************************************************
-        std::vector<kstate::KstateSet<KstateT>> kstate_set_all(n_threads);
+        std::vector<kstate::KstateSet<KstateTraitT>> kstate_set_all(n_threads);
         // *********** filling ****************************************************************
         //const auto tp_fill_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
 #pragma omp parallel for num_threads(n_threads)
@@ -60,7 +58,7 @@ void generate_populated_basis(
             const auto tid = omp_get_thread_num();
             const auto el = basis.vec_index()[idx];
             assert(el);
-            const kstate::KstateSet<KstateT> newely_generated_states = basis_populator.get_coupled_states(*el);
+            const kstate::KstateSet<KstateTraitT> newely_generated_states = basis_populator.get_coupled_states(*el);
             kstate_set_all[tid].insert(std::begin(newely_generated_states), std::end(newely_generated_states));
         }
         //const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
