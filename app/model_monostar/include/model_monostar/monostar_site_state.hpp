@@ -2,7 +2,9 @@
 #define MODEL_MONOSTAR_MONOSTAR_SITE_STATE_HPP
 
 #include <boost/operators.hpp>
+
 #include <iostream>
+#include <vector>
 
 // #######################################################################
 // ## MonostarSiteState -- class                                        ##
@@ -46,6 +48,7 @@ namespace model_monostar {
 
 extern const MonostarSiteState gs;  // ground-state (there is no star)
 extern const MonostarSiteState es;  // excited-state (there is a star)
+extern const std::vector<MonostarSiteState> ordered_site_states;
 
 }  // namespace model_monostar
 

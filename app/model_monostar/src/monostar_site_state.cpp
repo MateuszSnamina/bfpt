@@ -8,5 +8,6 @@ namespace model_monostar {
 
 const MonostarSiteState gs{false};
 const MonostarSiteState es{true};
+const std::vector<MonostarSiteState> ordered_site_states{gs, es};
 
 }  // namespace model_monostar
