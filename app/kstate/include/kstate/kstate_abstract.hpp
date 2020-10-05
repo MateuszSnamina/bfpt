@@ -48,8 +48,8 @@
  * as well the following member functions allowing the states comparison:
  *   - compare_kstate(const Kstate<SiteStateT>& other) const
  *   - translational_compare_kstate(const Kstate<SiteStateT>& other) const.
- *   - compare_any_range(const ConstAnyRangeType& other) const;
- *   - translational_compare_any_range(const ConstAnyRangeType& other) const;
+ *   - compare_any_range(const ConstAnyRangeT& other) const;
+ *   - translational_compare_any_range(const ConstAnyRangeT& other) const;
  *
  * The class may be fancy-formatted using KstateStreamer helper class.
  *
@@ -69,10 +69,10 @@ public: // Helper types:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
     using TraversalTagT = _TraversalTagT;
-    using AnyRangeType = typename boost::any_range<SiteStateT, TraversalTagT>;
-    using ConstAnyRangeType = typename boost::any_range<const SiteStateT, TraversalTagT>;
+    using AnyRangeT = typename boost::any_range<SiteStateT, TraversalTagT>;
+    using ConstAnyRangeT = typename boost::any_range<const SiteStateT, TraversalTagT>;
 public:
-    virtual ConstAnyRangeType to_any_range() const = 0;
+    virtual ConstAnyRangeT to_any_range() const = 0;
     virtual size_t n_sites() const = 0;
 public:  // Kstate descriptors:
     virtual size_t n_least_replication_shift() const;
@@ -82,8 +82,8 @@ public:  // Kstate descriptors:
 public:  // Convenient binary functions:
     bool compare_kstate(const Kstate<SiteStateTraitT, TraversalTagT>& other) const;
     std::optional<size_t> translational_compare_kstate(const Kstate<SiteStateTraitT, TraversalTagT>& other) const;
-    bool compare_any_range(const ConstAnyRangeType& other) const;
-    std::optional<size_t> translational_compare_any_range(const ConstAnyRangeType& other) const;
+    bool compare_any_range(const ConstAnyRangeT& other) const;
+    std::optional<size_t> translational_compare_any_range(const ConstAnyRangeT& other) const;
 public:
     virtual ~Kstate() = default;
 };
@@ -130,14 +130,14 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::translational_compare_kstate(const Kst
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 bool
-Kstate<_SiteStateTraitT, _TraversalTagT>::compare_any_range(const ConstAnyRangeType& other) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::compare_any_range(const ConstAnyRangeT& other) const {
     assert(n_sites() == boost::size(other));
     return boost::range::equal(to_any_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 std::optional<size_t>
-Kstate<_SiteStateTraitT, _TraversalTagT>::translational_compare_any_range(const ConstAnyRangeType& other) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::translational_compare_any_range(const ConstAnyRangeT& other) const {
     assert(n_sites() == boost::size(other));
     const auto& r1 = to_any_range();
     const auto& r2 = other;
@@ -167,7 +167,7 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
 // #######################################################################
 
 /*
- * SpeedyKstate<ConstRangeType> class is to model the same physical
+ * SpeedyKstate<ConstRangeT> class is to model the same physical
  * abstraction as Kstate<SiteStateT> class does. The two classes provide
  * alternative APIs and alternative implementations for a similar
  * functionality.
@@ -177,36 +177,36 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
  * class). The implementation may not be a desirable when execution speed
  * is the top priority.
  *
- * SpeedyKstate<ConstRangeType> is to take advantage of a polymorphic-less
+ * SpeedyKstate<ConstRangeT> is to take advantage of a polymorphic-less
  * API allowing high-speed implementations. The used approach relies
  * on ranges being treated as instances of template parameter classes,
  * rather than instances of boost::any_range class. Within the framework
  * more efficient implementations are possible.
  *
- * As the template-only approach used in SpeedyKstate<ConstRangeType>
+ * As the template-only approach used in SpeedyKstate<ConstRangeT>
  * may be perceived as a tuned alternative for the polymorphic approach
  * used in Kstate<SiteStateT> then the former is formally treated
  * as subclass of the latter.
  *
- * SpeedyKstate<ConstRangeType> overrides the following descriptor-type
+ * SpeedyKstate<ConstRangeT> overrides the following descriptor-type
  * member functions:
  *  - n_least_replication_shift() const,
  *  - norm_factor() const,
  *  - is_prolific(int n_k) const,
  *  - to_str() const.
  * And provides the following two member functions:
- *  - compare_range(const OtherConstRangeType& other) const,
- *  - translational_compare_range(const OtherConstRangeType& other) const,
+ *  - compare_range(const OtherConstRangeT& other) const,
+ *  - translational_compare_range(const OtherConstRangeT& other) const,
  * being alternatives to:
  *   - compare_kstate(const Kstate<OtherSiteStateT>& other) const,
  *   - translational_compare_kstate(const Kstate<OtherSiteStateT>& other) const.
  *
- * Member function implementations defined in SpeedyKstate<ConstRangeType>
+ * Member function implementations defined in SpeedyKstate<ConstRangeT>
  * are based on to_range() member function. This is the origin of differences
  * between the implementations and their counterparts from Kstate<SiteStateT>,
  * as the latter may use only to_any_range() member function.
  *
- * The SpeedyKstate<ConstRangeType> is conceived to being the layer between
+ * The SpeedyKstate<ConstRangeT> is conceived to being the layer between
  * Kstate<SiteStateT> abstract base class and its concrete sub-classes, like
  *  - DynamicKstate<SiteStateT>, and
  *  - StaticKstate<SiteStateT, N>
@@ -216,38 +216,38 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
 
 namespace kstate {
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
 class SpeedyKstate : public Kstate<
         _SiteStateTraitT,
-        typename boost::range_traversal<_ConstRangeType>::type> {
+        typename boost::range_traversal<_ConstRangeT>::type> {
     static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
-    static_assert(std::is_same_v<typename _SiteStateTraitT::SiteStateT, typename boost::range_value<_ConstRangeType>::type>);
+    static_assert(std::is_same_v<typename _SiteStateTraitT::SiteStateT, typename boost::range_value<_ConstRangeT>::type>);
 public:  // Helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using ConstRangeType = _ConstRangeType;
-    using SiteStateT = typename boost::range_value<ConstRangeType>::type;
-    using TraversalTagT = typename boost::range_traversal<ConstRangeType>::type;
+    using ConstRangeT = _ConstRangeT;
+    using SiteStateT = typename boost::range_value<ConstRangeT>::type;
+    using TraversalTagT = typename boost::range_traversal<ConstRangeT>::type;
     static_assert(!std::is_const<SiteStateT>::value);
     static_assert(!std::is_volatile<SiteStateT>::value);
     static_assert(!std::is_reference<SiteStateT>::value);
     static_assert(std::is_same<TraversalTagT, boost::random_access_traversal_tag>::value ||
     std::is_same<TraversalTagT, boost::forward_traversal_tag>::value);
-    using AnyRangeType = typename Kstate<SiteStateTraitT, TraversalTagT>::AnyRangeType;
-    using ConstAnyRangeType = typename Kstate<SiteStateTraitT, TraversalTagT>::ConstAnyRangeType;
+    using AnyRangeT = typename Kstate<SiteStateTraitT, TraversalTagT>::AnyRangeT;
+    using ConstAnyRangeT = typename Kstate<SiteStateTraitT, TraversalTagT>::ConstAnyRangeT;
 public:  // Base on the two functions:
-    virtual ConstRangeType to_range() const = 0;
+    virtual ConstRangeT to_range() const = 0;
     virtual size_t n_sites() const = 0;
 public:  // SpeedyKstate implements pure virtual base class function:
-    virtual ConstAnyRangeType to_any_range() const override;
+    virtual ConstAnyRangeT to_any_range() const override;
 public:  // SpeedyKstate overrides for fast implementations:
     size_t n_least_replication_shift() const override;
     double norm_factor() const override;
     bool is_prolific(int n_k) const override;
-    template <typename OtherConstRangeType>
-    bool compare_range(const OtherConstRangeType& other) const;
-    template <typename OtherConstRangeType>
-    std::optional<size_t> translational_compare_range(const OtherConstRangeType& other) const;
+    template <typename OtherConstRangeT>
+    bool compare_range(const OtherConstRangeT& other) const;
+    template <typename OtherConstRangeT>
+    std::optional<size_t> translational_compare_range(const OtherConstRangeT& other) const;
     std::string to_str() const override;
 public:
     virtual ~SpeedyKstate() = default;
@@ -255,15 +255,15 @@ public:
 
 // ***********************************************************************
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
-typename SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::ConstAnyRangeType
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::to_any_range() const {
+template <typename _SiteStateTraitT, typename _ConstRangeT>
+typename SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::ConstAnyRangeT
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_any_range() const {
     return to_range();
 }
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
 size_t
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::n_least_replication_shift() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::n_least_replication_shift() const {
     assert(this->n_sites() > 0);
     const auto r = to_range();
     const auto rdr = r | extension::boost::adaptors::doubled | extension::boost::adaptors::rotated(1);
@@ -273,30 +273,30 @@ SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::n_least_replication_shift() con
     return static_cast<size_t>(_ + 1);
 }
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
 double
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::norm_factor() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::norm_factor() const {
     return std::sqrt(n_least_replication_shift()) / n_sites();
 }
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
 bool
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::is_prolific(int n_k) const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::is_prolific(int n_k) const {
     return !((n_least_replication_shift() * n_k) % this->n_sites());
 }
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
-template <typename OtherConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
+template <typename OtherConstRangeT>
 bool
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::compare_range(const OtherConstRangeType& other) const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_range(const OtherConstRangeT& other) const {
     assert(this->n_sites() == boost::size(other));
     return boost::range::equal(to_range(), other);
 }
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
-template <typename OtherConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
+template <typename OtherConstRangeT>
 std::optional<size_t>
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::translational_compare_range(const OtherConstRangeType& other) const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::translational_compare_range(const OtherConstRangeT& other) const {
     assert(this->n_sites() == boost::size(other));
     const auto r1 = to_range();
     const auto r2 = other;
@@ -307,9 +307,9 @@ SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::translational_compare_range(con
             : static_cast<size_t>(std::distance(std::begin(r2d), it));
 }
 
-template <typename _SiteStateTraitT, typename _ConstRangeType>
+template <typename _SiteStateTraitT, typename _ConstRangeT>
 std::string
-SpeedyKstate<_SiteStateTraitT, _ConstRangeType>::to_str() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_str() const {
     using namespace extension::boost::stream_pragma;
     const auto range_stream_settings = RSS<SiteStateT>()
             .set_string_preparer("⦃")

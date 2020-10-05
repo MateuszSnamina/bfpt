@@ -8,7 +8,6 @@
 
 #include <memory>
 
-
 // #######################################################################
 // ## VecMap                                                            ##
 // #######################################################################
@@ -17,11 +16,6 @@ namespace kstate {
 /*
  * VecMap<Element> is a map-like container and is a vec-like container
  * (simultaneously) for objects of class Element.
- *
- * The class Element has to implament a member function:
- * SomeRangeType Element::to_range() const.
- * The VecMap containers uses above member function
- * as a key extractor for the map.
  *
  * In the container objects are storred as shared_ptr to the objecs.
  */
@@ -62,8 +56,8 @@ class VecMap {
     const VecIndex& vec_index() const;
     const MapIndex& map_index() const;
     // Container Member functions -- accesors:
-    template <typename OtherRangeType>
-    boost::optional<unsigned> find_element_and_get_its_ra_index(const OtherRangeType& v) const;
+    template <typename KeyComparableT>
+    boost::optional<unsigned> find_element_and_get_its_ra_index(const KeyComparableT& v) const;
     // Container Member functions -- modifiers:
     void add_element(ElementPtrT c);
 };
@@ -109,9 +103,9 @@ VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::map_index() const {
 }
 
 template <typename _ElementT, typename _KeyExtractorT, typename _ComparisonPredicateT>
-template <typename OtherRangeType>
+template <typename KeyComparableT>
 boost::optional<unsigned>
-VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::find_element_and_get_its_ra_index(const OtherRangeType& v) const {
+VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::find_element_and_get_its_ra_index(const KeyComparableT& v) const {
     auto search_iter = map_index().find(v);
     if (search_iter == map_index().end()) return boost::optional<unsigned>();
     auto ra_iter = container.template project<Vec>(search_iter);

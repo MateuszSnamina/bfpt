@@ -38,8 +38,8 @@ calculate_reduced_density_operator_12(
             const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
             assert(bra_kstate_ptr);
             assert(ket_kstate_ptr);
-            const auto bra_kstate_range = (*bra_kstate_ptr).to_range();
-            const auto ket_kstate_range = (*ket_kstate_ptr).to_range();
+            const auto bra_kstate_range = KstateTraitT::to_range(*bra_kstate_ptr);
+            const auto ket_kstate_range = KstateTraitT::to_range(*ket_kstate_ptr);
             assert(boost::size(bra_kstate_range) == n_sites);
             assert(boost::size(ket_kstate_range) == n_sites);
             for (unsigned bra_shift = 0; bra_shift < n_sites; bra_shift++) {

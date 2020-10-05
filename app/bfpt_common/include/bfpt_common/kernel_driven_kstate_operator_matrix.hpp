@@ -5,8 +5,6 @@
 #include <bfpt_common/i_kstate_operator_matrix.hpp>
 
 #include <kstate/unique_shift.hpp>
-#include <kstate/kstate_abstract.hpp>
-#include <kstate/kstate_abstract.hpp>
 #include <extensions/adaptors.hpp>
 
 #include <armadillo>
@@ -84,7 +82,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     assert(kn_operator_builder_matrix.n_rows == basis.size());
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
-    const auto& ket_kstate = (*ket_kstate_ptr).to_range();
+    const auto& ket_kstate = KstateTraitT::to_range(*ket_kstate_ptr);
     // ********** OFF-DIAG, KERNEL1 *********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
         const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
@@ -104,8 +102,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto bra_kstate_unique_shifted = bra_kstate | extension::boost::adaptors::rotated(bra_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
-                double pre_norm_1 = _n_sites * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
-                const size_t bra_n_least_replication_shift = basis.vec_index()[bra_kstate_idx]->n_least_replication_shift();
+                double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
+                const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 const int exponent_n = (int)bra_n_unique_shift;
                 const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
@@ -151,8 +149,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
-                double pre_norm_1 = _n_sites * basis.vec_index()[bra_kstate_idx]->norm_factor() * basis.vec_index()[ket_kstate_idx]->norm_factor();
-                const size_t bra_n_least_replication_shift = basis.vec_index()[bra_kstate_idx]->n_least_replication_shift();
+                double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
+                const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
                 const int exponent_n = (int)bra_n_unique_shift;
                 const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
@@ -176,10 +174,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
         const StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         if (_operator_kernel_1._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_1._diag_info.at(ket_kernel);
-            const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
-            const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
-            //TODO is not pre_norm_2 ALWAYS equal to 1.0?
-            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
     // ********** ON-DIAG, KERNEL12 *********************************************
@@ -189,10 +184,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
         const StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         if (_operator_kernel_12._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);
-            const double pre_norm_1 = _n_sites * ket_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
-            const double pre_norm_2 = pre_norm_1 * (_n_sites / ket_kstate_ptr->n_least_replication_shift());
-            //TODO is not pre_norm_2 ALWAYS equal to 1.0?
-            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
 }

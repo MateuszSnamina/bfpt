@@ -20,6 +20,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <memory>
 
 // #######################################################################
 // ## DynamicKstate                                                     ##
@@ -67,62 +68,62 @@ struct DynamicKstateTypes {
     //    static_assert(!std::is_volatile<_SiteStateT>::value);
     //    static_assert(!std::is_reference<_SiteStateT>::value);//TODO remove
     //    using SiteStateT = _SiteState;
-    using BufferType = typename std::vector<SiteStateT>;
-    using IteratorType = typename BufferType::iterator;
-    using ConstIteratorType = typename BufferType::const_iterator;
-    using RangeType = typename boost::iterator_range<IteratorType>;
-    using ConstRangeType = typename boost::iterator_range<ConstIteratorType>;
-    using AnyRangeType = typename boost::any_range<SiteStateT, boost::random_access_traversal_tag>;
-    using ConstAnyRangeType = typename boost::any_range<const SiteStateT, boost::random_access_traversal_tag>;
+    using BufferT = typename std::vector<SiteStateT>;
+    using IteratorT = typename BufferT::iterator;
+    using ConstIteratorT = typename BufferT::const_iterator;
+    using RangeT = typename boost::iterator_range<IteratorT>;
+    using ConstRangeT = typename boost::iterator_range<ConstIteratorT>;
+    using AnyRangeT = typename boost::any_range<SiteStateT, boost::random_access_traversal_tag>;
+    using ConstAnyRangeT = typename boost::any_range<const SiteStateT, boost::random_access_traversal_tag>;
 };
 
 template <typename _SiteStateTraitT>
-class DynamicKstate : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeType> {
+class DynamicKstate : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeT> {
     static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
-    using BufferType = typename DynamicKstateTypes<SiteStateTraitT>::BufferType;
-    using IteratorType = typename DynamicKstateTypes<SiteStateTraitT>::IteratorType;
-    using ConstIteratorType = typename DynamicKstateTypes<SiteStateTraitT>::ConstIteratorType;
-    using RangeType = typename DynamicKstateTypes<SiteStateTraitT>::RangeType;
-    using ConstRangeType = typename DynamicKstateTypes<SiteStateTraitT>::ConstRangeType;
-    using AnyRangeType = typename DynamicKstateTypes<SiteStateTraitT>::AnyRangeType;
-    using ConstAnyRangeType = typename DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeType;
+    using BufferT = typename DynamicKstateTypes<SiteStateTraitT>::BufferT;
+    using IteratorT = typename DynamicKstateTypes<SiteStateTraitT>::IteratorT;
+    using ConstIteratorT = typename DynamicKstateTypes<SiteStateTraitT>::ConstIteratorT;
+    using RangeT = typename DynamicKstateTypes<SiteStateTraitT>::RangeT;
+    using ConstRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
+    using AnyRangeT = typename DynamicKstateTypes<SiteStateTraitT>::AnyRangeT;
+    using ConstAnyRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
 
 public:
-    DynamicKstate(BufferType&&, CtrFromBuffer);
-    template <typename OtherRangeType>
-    DynamicKstate(const OtherRangeType&, CtrFromRange);
+    DynamicKstate(BufferT&&, CtrFromBuffer);
+    template <typename OtherRangeT>
+    DynamicKstate(const OtherRangeT&, CtrFromRange);
 
 public:
-    ConstRangeType to_range() const override;
+    ConstRangeT to_range() const override;
     size_t n_sites() const override;
 
 protected:
-    const BufferType _v;
+    const BufferT _v;
 };
 
 // ***********************************************************************
 
 template <typename _SiteStateTraitT>
 DynamicKstate<_SiteStateTraitT>::DynamicKstate(
-        DynamicKstate<_SiteStateTraitT>::BufferType&& v,
+        DynamicKstate<_SiteStateTraitT>::BufferT&& v,
         CtrFromBuffer) :
     _v(std::move(v)) {
 }
 
 template <typename _SiteStateTraitT>
-template <typename OtherRangeType>
-DynamicKstate<_SiteStateTraitT>::DynamicKstate(const OtherRangeType& r, CtrFromRange) :
+template <typename OtherRangeT>
+DynamicKstate<_SiteStateTraitT>::DynamicKstate(const OtherRangeT& r, CtrFromRange) :
     _v(init_vector_from_range(r)) {
 }
 
 // ***********************************************************************
 
 template <typename _SiteStateTraitT>
-typename DynamicKstate<_SiteStateTraitT>::ConstRangeType
+typename DynamicKstate<_SiteStateTraitT>::ConstRangeT
 DynamicKstate<_SiteStateTraitT>::to_range() const {
     return _v;
 }
@@ -143,8 +144,40 @@ namespace kstate {
 
 template<typename _SiteStateTraitT>
 struct TraitKstate<DynamicKstate<_SiteStateTraitT>> {
+    // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
+    // helper types:
+    using SiteStateTraitT = _SiteStateTraitT;
     using KstateT = DynamicKstate<_SiteStateTraitT>;
+    using ConstRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
+    using ConstAnyRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+    // function being the public API:
+    template <typename OtherRangeT>
+    static KstateT from_range(const OtherRangeT& range) {
+        return KstateT(range, CtrFromRange{});
+    }
+    template <typename OtherRangeT>
+    static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
+        return std::make_shared<KstateT>(range, CtrFromRange{});
+    }
+    static ConstRangeT to_range(const KstateT& kstate) {
+        return kstate.to_range();
+    }
+    static ConstAnyRangeT to_any_range(const KstateT& kstate) {
+        return kstate.to_any_range();
+    }
+    static size_t n_sites(const KstateT& kstate){
+        return kstate.is_prolific();
+    }
+    static size_t n_least_replication_shift(const KstateT& kstate) {
+        return kstate.n_least_replication_shift();
+    }
+    static double norm_factor(const KstateT& kstate) {
+        return kstate.norm_factor();
+    }
+    static bool is_prolific(const KstateT& kstate, int n_k) {
+        return kstate.is_prolific(n_k);
+    }
 };
 
 }

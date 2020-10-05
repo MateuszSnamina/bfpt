@@ -5,8 +5,6 @@
 #include <bfpt_common/i_kstate_basis_populator.hpp>
 
 #include <kstate/unique_shift.hpp>
-#include <kstate/kstate_abstract.hpp>
-#include <kstate/kstate_concrete.hpp>
 #include <extensions/adaptors.hpp>
 
 #include <type_traits>
@@ -68,7 +66,7 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
     kstate::KstateSet<KstateTraitT> result;
     assert(generator.n_sites() == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
-    const auto generator_range = generator.to_range();
+    const auto generator_range = KstateTraitT::to_range(generator);
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto ket_kernel_site_1 = *std::next(std::begin(generator_range), n_delta);
         const auto ket_kernel_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
@@ -91,7 +89,7 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
                     extension::boost::adaptors::refined(n_delta, bra_kernel_site_1) |
                     extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2);
             const auto conjugated_range_unique_shifted = kstate::make_unique_shift(conjugated_range);
-            const auto conjugated_kstate_ptr = std::make_shared<KstateT>(conjugated_range_unique_shifted, kstate::ctr_from_range);
+            const auto conjugated_kstate_ptr = KstateTraitT::shared_from_range(conjugated_range_unique_shifted);
             result.insert(conjugated_kstate_ptr);
         } // end of `_full_off_diag_info` equal_range loop
     }  // end of `Delta` loop

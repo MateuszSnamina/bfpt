@@ -6,7 +6,7 @@
 #include <kstate/trait_kstate.hpp>
 #include <kstate/kstate_comparator.hpp>
 
-#include <boost/multi_index/mem_fun.hpp>
+//#include <boost/multi_index/mem_fun.hpp>
 
 // #######################################################################
 // ## Basis                                                             ##
@@ -14,19 +14,33 @@
 
 namespace kstate {
 
+template <typename _KstateTraitT>
+struct BasisKeyExtractor {
+    // helper types:
+    using KstateTraitT = _KstateTraitT;
+    using KstateT = typename KstateTraitT::KstateT;
+    using ConstRangeT = typename KstateTraitT::ConstRangeT;
+    // api needed by boost::multiindex:
+    using result_type = ConstRangeT;
+    result_type operator()(const std::shared_ptr<KstateT>& kstate_ptr) const{
+        return KstateTraitT::to_range(*kstate_ptr);
+    }
+};
 
-template <typename _KstateTrait>
+
+template <typename _KstateTraitT>
 class Basis {
-    static_assert(IsTraitKstate<_KstateTrait>::value);
-    static_assert(_KstateTrait::is_kstate_trait);
+    static_assert(IsTraitKstate<_KstateTraitT>::value);
+    static_assert(_KstateTraitT::is_kstate_trait);
 public:
     // Helper types:
-    using KstateTrait = _KstateTrait;
-    using KstateT = typename _KstateTrait::KstateT;
+    using KstateTraitT = _KstateTraitT;
+    using KstateT = typename _KstateTraitT::KstateT;
     using KstatePtrT = std::shared_ptr<KstateT>;
 private:
-    using Key = decltype(std::declval<KstateT>().to_range());
-    using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
+    //using Key = decltype(std::declval<KstateT>().to_range());
+    //using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
+    using KeyExtractorT = BasisKeyExtractor<KstateTraitT>;
     using ComparisonPredicateT = RangeComparator;
 public:
     using VecIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::VecIndex;
@@ -56,58 +70,58 @@ private:
 
 // *************************************************************************
 
-template <typename _KstateTrait>
-Basis<_KstateTrait>::Basis(size_t n_sites)
+template <typename _KstateTraitT>
+Basis<_KstateTraitT>::Basis(size_t n_sites)
     : _n_sites(n_sites) {
 }
 
 // *************************************************************************
 
-template <typename _KstateTrait>
+template <typename _KstateTraitT>
 size_t
-Basis<_KstateTrait>::n_sites() const {
+Basis<_KstateTraitT>::n_sites() const {
     return _n_sites;
 }
 
-template <typename _KstateTrait>
+template <typename _KstateTraitT>
 unsigned
-Basis<_KstateTrait>::size() const {
+Basis<_KstateTraitT>::size() const {
     return _vec_map.size();
 }
 
-template <typename _KstateTrait>
-typename Basis<_KstateTrait>::VecIndexT&
-Basis<_KstateTrait>::vec_index() {
+template <typename _KstateTraitT>
+typename Basis<_KstateTraitT>::VecIndexT&
+Basis<_KstateTraitT>::vec_index() {
     return _vec_map.vec_index();
 }
 
-template <typename _KstateTrait>
-typename Basis<_KstateTrait>::MapIndexT&
-Basis<_KstateTrait>::map_index() {
+template <typename _KstateTraitT>
+typename Basis<_KstateTraitT>::MapIndexT&
+Basis<_KstateTraitT>::map_index() {
     return _vec_map.map_index();
 }
 
-template <typename _KstateTrait>
-const typename Basis<_KstateTrait>::VecIndexT&
-Basis<_KstateTrait>::vec_index() const {
+template <typename _KstateTraitT>
+const typename Basis<_KstateTraitT>::VecIndexT&
+Basis<_KstateTraitT>::vec_index() const {
     return _vec_map.vec_index();
 }
 
-template <typename _KstateTrait>
-const typename Basis<_KstateTrait>::MapIndexT&
-Basis<_KstateTrait>::map_index() const {
+template <typename _KstateTraitT>
+const typename Basis<_KstateTraitT>::MapIndexT&
+Basis<_KstateTraitT>::map_index() const {
     return _vec_map.map_index();
 }
 
-template <typename _KstateTrait>
+template <typename _KstateTraitT>
 template <typename OtherRangeType>
 boost::optional<unsigned>
-Basis<_KstateTrait>::find_element_and_get_its_ra_index(const OtherRangeType& v) const {
+Basis<_KstateTraitT>::find_element_and_get_its_ra_index(const OtherRangeType& v) const {
     return _vec_map.find_element_and_get_its_ra_index(v);
 }
 
-template <typename _KstateTrait>
-void Basis<_KstateTrait>::add_element(KstatePtrT c) {
+template <typename _KstateTraitT>
+void Basis<_KstateTraitT>::add_element(KstatePtrT c) {
     assert(c);
     assert(c->n_sites() == n_sites());
     _vec_map.vec_index().push_back(c);
