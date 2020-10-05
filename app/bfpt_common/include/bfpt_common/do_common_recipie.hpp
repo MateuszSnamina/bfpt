@@ -315,6 +315,8 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
             print_density_operator_1(density_operator_1, print_outer_prefix);
             const DensityOperator12<SiteStateTraitT> density_operator_12 = calculate_reduced_density_operator_12<KstateTraitT>(basis, eigen_vectors.col(0));
             print_density_operator_12(density_operator_12, print_outer_prefix);
+            const arma::cx_mat density_operator_12_NEWIMPLEMENTATION = calculate_reduced_density_operator_12_NEWIMPLEMENTATION(basis, eigen_vectors.col(0));
+            std::cout << density_operator_12_NEWIMPLEMENTATION << std::endl;
         }
         // --------------------------------------------------
         return ResultT::Ok({eigen_values(0), eigen_vectors.col(0)});

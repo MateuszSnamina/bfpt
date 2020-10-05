@@ -31,7 +31,7 @@ inline bool MonostarSiteState::operator<(const MonostarSiteState& other) const {
 }
 
 inline bool MonostarSiteState::operator==(const MonostarSiteState& other) const {
-    return static_cast<int>(this->_is_excited) == static_cast<int>(other._is_excited);
+    return this->_is_excited == other._is_excited;
 }
 
 inline std::ostream&
@@ -64,6 +64,30 @@ template<>
 struct TraitSiteState<model_monostar::MonostarSiteState> {
     static constexpr bool is_site_state_trait = true;
     using SiteStateT = model_monostar::MonostarSiteState;
+
+    static unsigned site_basis_dim() {
+        return 2u;
+    }
+
+    static unsigned get_index(const SiteStateT& state) {
+        if (state == model_monostar::gs) {
+            return 0u;
+        } else if (state == model_monostar::es) {
+            return 1u;
+        } else {
+            throw std::domain_error("Not a valid state.");
+        }
+    }
+
+    static SiteStateT from_index(unsigned idx) {
+        if (idx == 0u) {
+            return model_monostar::gs;
+        } else if (idx == 1u) {
+            return model_monostar::es;
+        } else {
+            throw std::domain_error("Index out of range.");
+        }
+    }
 };
 
 } // end of namespace kstate
