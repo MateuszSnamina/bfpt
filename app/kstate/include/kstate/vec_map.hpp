@@ -14,10 +14,21 @@
 
 namespace kstate {
 /*
- * VecMap<Element> is a map-like container and is a vec-like container
+ * VecMap<ElementT,...> is a map-like container and is a vec-like container
  * (simultaneously) for objects of class Element.
  *
  * In the container objects are storred as shared_ptr to the objecs.
+ *
+ * Provide `KeyExtractorT` do define unary functor:
+ * `std::shared_ptr<ElementT> -> KeyT`
+ * (where: `KeyT` is defined as `result_type` type in `KeyExtractorT`)
+ *
+ * Provide `ComparisonPredicateT` do define (possibly overload) binary functor(s):
+ * `KeyT, KeyT -> bool`
+ * `KeyT, AnyOtherTypeYouWant -> bool`
+ * `AnyOtherTypeYouWant, KeyT -> bool`
+ * For transparent comparator.
+ *
  */
 
 template <typename _ElementT, typename _KeyExtractorT, typename _ComparisonPredicateT>
@@ -27,8 +38,6 @@ class VecMap {
     using ElementPtrT = std::shared_ptr<ElementT>;
     using KeyExtractorT = _KeyExtractorT;
     using ComparisonPredicateT = _ComparisonPredicateT;
-
-
    private:
     // Tags for random-access-index and search-index;
     struct Vec;
@@ -43,7 +52,6 @@ class VecMap {
     using Container = boost::multi_index::multi_index_container<ElementPtrT, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>;
     // The container:
     Container container;
-
    public:
     // Container type definition -- index typedefs:
     using VecIndex = typename Container::template index<Vec>::type;
