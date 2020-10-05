@@ -57,7 +57,7 @@ calculate_reduced_density_operator_12(
                         const StateKernel12<SiteStateTraitT> ket_kenrel{ket_site_0, ket_site_1};
                         const std::pair<StateKernel12<SiteStateTraitT>, StateKernel12<SiteStateTraitT>> density_matrix_indices{bra_kenrel, ket_kenrel};
                         const std::complex<double> value = std::conj(eigen_vector(bra_kstate_idx)) * eigen_vector(ket_kstate_idx);
-                        const double pre_norm = bra_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
+                        const double pre_norm = KstateTraitT::norm_factor(*bra_kstate_ptr) * KstateTraitT::norm_factor(*ket_kstate_ptr);
                         if (result.count(density_matrix_indices)) {
                             result[density_matrix_indices] += pre_norm * value;
                         } else {
@@ -115,7 +115,7 @@ calculate_reduced_density_operator_1(
                         const StateKernel1<SiteStateTraitT> ket_kenrel{ket_site_0};
                         const std::pair<StateKernel1<SiteStateTraitT>, StateKernel1<SiteStateTraitT>> density_matrix_indices{bra_kenrel, ket_kenrel};
                         const std::complex<double> value = std::conj(eigen_vector(bra_kstate_idx)) * eigen_vector(ket_kstate_idx);
-                        const double pre_norm = bra_kstate_ptr->norm_factor() * ket_kstate_ptr->norm_factor();
+                        const double pre_norm = KstateTraitT::norm_factor(*bra_kstate_ptr) * KstateTraitT::norm_factor(*ket_kstate_ptr);
                         if (result.count(density_matrix_indices)) {
                             result[density_matrix_indices] += pre_norm * value;
                         } else {
