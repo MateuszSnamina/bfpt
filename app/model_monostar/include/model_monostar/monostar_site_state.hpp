@@ -20,7 +20,7 @@ class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
     bool operator<(const MonostarSiteState& other) const;
     bool operator==(const MonostarSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
-   private:
+   //private://RESTORE
     bool _is_excited;
 };
 
@@ -50,7 +50,7 @@ namespace model_monostar {
 
 extern const MonostarSiteState gs;  // ground-state (there is no star)
 extern const MonostarSiteState es;  // excited-state (there is a star)
-extern const std::vector<MonostarSiteState> ordered_site_states;
+extern const std::vector<MonostarSiteState> ordered_site_states;//TODO remove
 
 }  // namespace model_monostar
 
@@ -75,7 +75,8 @@ struct TraitSiteState<model_monostar::MonostarSiteState> {
         } else if (state == model_monostar::es) {
             return 1u;
         } else {
-            throw std::domain_error("Not a valid state.");
+            //throw std::domain_error("Not a valid state."); //TODO restore
+            throw std::domain_error("Not a valid state.NNNN"); //TODO remove
         }
     }
 
@@ -101,3 +102,4 @@ using MonostarSiteStateTrait = kstate::TraitSiteState<model_monostar::MonostarSi
 
 
 #endif
+

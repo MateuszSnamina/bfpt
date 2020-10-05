@@ -83,10 +83,10 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     assert(kn_operator_builder_matrix.n_rows == basis.size());
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
-    const auto& ket_kstate = KstateTraitT::to_range(*ket_kstate_ptr); //TODO: change name to: ket_kstate_range
+    const auto& ket_kstate_range = KstateTraitT::to_range(*ket_kstate_ptr);
     // ********** OFF-DIAG, KERNEL1 *********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_range), n_delta);
         const StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         const auto equal_range = _operator_kernel_1._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
@@ -97,16 +97,16 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& kernel_coupling_coef = couple_info.coef;
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
-            const auto bra_kstate = ket_kstate
-                    | extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); //TODO: change name to: bra_kstate_range
-            const size_t bra_n_unique_shift = kstate::n_unique_shift(bra_kstate); //TODO: change name to: bra_kstate_range_unique_shifted
-            const auto bra_kstate_unique_shifted = bra_kstate | extension::boost::adaptors::rotated(bra_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
-            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_unique_shifted)) {
+            const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
+            const auto bra_kstate_range = ket_kstate_range | refined_holder_1;
+            const size_t bra_kstate_n_unique_shift = kstate::n_unique_shift(bra_kstate_range);
+            const auto bra_kstate_range_unique_shifted = bra_kstate_range | extension::boost::adaptors::rotated(bra_kstate_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
                 const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
-                const int exponent_n = (int)bra_n_unique_shift;
+                const int exponent_n = (int)bra_kstate_n_unique_shift;
                 const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
@@ -122,8 +122,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     //const auto tp_offdiag_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
-        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_range), n_delta);
+        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate_range), n_delta_p1);
         const StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         const auto equal_range = _operator_kernel_12._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
@@ -137,23 +137,23 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
-            const auto bra_kstate = ket_kstate
-                    | extension::boost::adaptors::refined(n_delta, bra_kernel_site_1)
-                    | extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2); //TODO: change name to: bra_kstate_range
+            const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
+            const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2); // Must outlive bra_kstate_range.
+            const auto bra_kstate_range = ket_kstate_range | refined_holder_1 | refined_holder_2;
             //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
             //tp_u_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
-            const size_t bra_n_unique_shift = kstate::n_unique_shift(bra_kstate);
-            const auto bra_kstate_unique_shifted = bra_kstate | extension::boost::adaptors::rotated(bra_n_unique_shift); //TODO: change name to: bra_kstate_range_unique_shifted // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const size_t bra_kstate_n_unique_shift = kstate::n_unique_shift(bra_kstate_range);
+            const auto bra_kstate_range_unique_shifted = bra_kstate_range | extension::boost::adaptors::rotated(bra_kstate_n_unique_shift); //TODO: change name to: bra_kstate_range_unique_shifted // equivalent to `kstate::make_unique_shift(bra_kstate)`
             //tp_u_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_u_2 - tp_u_1).count(); // performance debug sake
             //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
-            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_unique_shifted)) {
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
                 const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
                 const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
-                const int exponent_n = (int)bra_n_unique_shift;
+                const int exponent_n = (int)bra_kstate_n_unique_shift;
                 const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
                 assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
                 const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
@@ -171,7 +171,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
     // ********** ON-DIAG, KERNEL1 **********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_range), n_delta);
         const StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         if (_operator_kernel_1._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_1._diag_info.at(ket_kernel);
@@ -180,8 +180,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     }  // end of `Delta` loop
     // ********** ON-DIAG, KERNEL12 *********************************************
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate), n_delta);
-        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate), n_delta_p1);
+        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_range), n_delta);
+        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate_range), n_delta_p1);
         const StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         if (_operator_kernel_12._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);
