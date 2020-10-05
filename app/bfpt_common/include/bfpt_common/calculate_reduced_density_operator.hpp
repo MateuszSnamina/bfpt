@@ -66,11 +66,12 @@ calculate_reduced_density_operator_12_impl(
                 if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                     const auto bra_kstate_idx = *bra_kstate_optional_idx;
                     const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
-                    const double pre_norm_2 = n_sites / KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
+                    const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
+                    const size_t bra_n_replicas = n_sites / bra_n_least_replication_shift;
                     const std::complex<double> value = std::conj(eigen_vector(bra_kstate_idx)) * eigen_vector(ket_kstate_idx);
                     const auto ket_kstate_matrix_idx = site_basis_dim * ket_kernel_site_1_idx + ket_kernel_site_2_idx;
                     const auto bra_kstate_matrix_idx = site_basis_dim * bra_kernel_site_1_idx + bra_kernel_site_2_idx;
-                    result_accumulator(bra_kstate_matrix_idx, ket_kstate_matrix_idx) += pre_norm_1 * pre_norm_2 * value;
+                    result_accumulator(bra_kstate_matrix_idx, ket_kstate_matrix_idx) += pre_norm_1 * bra_n_replicas * value;
                 }
             } // end of bra_kernel_site_1_idx loop
         } // end of bra_kernel_site_1_idx loop
