@@ -10,6 +10,10 @@ using kstate::ctr_from_range;
 
 kstate::Basis<kstate::TraitKstate<kstate::DynamicKstate<kstate::TraitSiteState<int>>>>
 get_testet_filled_basis() {
+    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using Kstate = kstate::DynamicKstate<SiteStateTrait>;
+    using KStateTrait = kstate::TraitKstate<Kstate>;
+    kstate::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
@@ -22,19 +26,18 @@ get_testet_filled_basis() {
     const int v9[3] = {3, 20, 18};
     const int v10[3] = {3, 21, 15};
     const int v11[3] = {3, 21, 10};
-    const auto k0 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v0, ctr_from_range);
-    const auto k1 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v2, ctr_from_range);
-    const auto k3 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v3, ctr_from_range);
-    const auto k4 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v4, ctr_from_range);
-    const auto k5 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v5, ctr_from_range);
-    const auto k6 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v6, ctr_from_range);
-    const auto k7 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v7, ctr_from_range);
-    const auto k8 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v8, ctr_from_range);
-    const auto k9 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v9, ctr_from_range);
-    const auto k10 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v10, ctr_from_range);
-    const auto k11 = std::make_shared<kstate::DynamicKstate<kstate::TraitSiteState<int>>>(v11, ctr_from_range);
-    kstate::Basis<kstate::TraitKstate<kstate::DynamicKstate<kstate::TraitSiteState<int>>>> basis(3);
+    const auto k0 = std::make_shared<Kstate>(v0, ctr_from_range);
+    const auto k1 = std::make_shared<Kstate>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<Kstate>(v2, ctr_from_range);
+    const auto k3 = std::make_shared<Kstate>(v3, ctr_from_range);
+    const auto k4 = std::make_shared<Kstate>(v4, ctr_from_range);
+    const auto k5 = std::make_shared<Kstate>(v5, ctr_from_range);
+    const auto k6 = std::make_shared<Kstate>(v6, ctr_from_range);
+    const auto k7 = std::make_shared<Kstate>(v7, ctr_from_range);
+    const auto k8 = std::make_shared<Kstate>(v8, ctr_from_range);
+    const auto k9 = std::make_shared<Kstate>(v9, ctr_from_range);
+    const auto k10 = std::make_shared<Kstate>(v10, ctr_from_range);
+    const auto k11 = std::make_shared<Kstate>(v11, ctr_from_range);
     basis.add_element(k0);
     basis.add_element(k1);
     basis.add_element(k2);
@@ -51,17 +54,20 @@ get_testet_filled_basis() {
 }
 
 TEST(BasisStreamer, BasicTest) {
+    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using Kstate = kstate::DynamicKstate<SiteStateTrait>;
+
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator&&;
 
     const auto& basis = get_testet_filled_basis();
-    const auto kstate_value_putter = [](std::ostream& os, kstate::DynamicKstate<kstate::TraitSiteState<int>> kstate) {
+    const auto kstate_value_putter = [](std::ostream& os, Kstate kstate) {
         using extension::boost::stream_pragma::RSS;
         using kstate::pramga::operator||;
         using kstate::pramga::operator<<;
         os << ( kstate || RSS<int>());
     };
-    const auto range_streamer_settings_for_basis = RSS<kstate::DynamicKstate<kstate::TraitSiteState<int>>>().set_stream_value_putter(kstate_value_putter);
+    const auto range_streamer_settings_for_basis = RSS<Kstate>().set_stream_value_putter(kstate_value_putter);
     const auto basis_streamer = basis && range_streamer_settings_for_basis;
     std::string expected_string =
             "𝔹𝔸𝕊𝕀𝕊-BEGIN\n"

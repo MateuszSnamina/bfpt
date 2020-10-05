@@ -1,11 +1,12 @@
 #ifndef KSTATE_BASIS_HPP
 #define KSTATE_BASIS_HPP
 
+#include <kstate/trait_kstate.hpp>
 #include <kstate/vec_map.hpp>
 #include <kstate/trait_kstate.hpp>
+#include <kstate/kstate_comparator.hpp>
 
-#include <kstate/is_base_of_template.hpp> // needed only for static assert.//TODO remove
-#include <kstate/kstate_abstract.hpp> // needed only for static assert.//TODO remove
+#include <boost/multi_index/mem_fun.hpp>
 
 // #######################################################################
 // ## Basis                                                             ##
@@ -13,26 +14,24 @@
 
 namespace kstate {
 
+
 template <typename _KstateTrait>
 class Basis {
-//    static_assert(!std::is_array_v<_KstateT>);
-//    static_assert(!std::is_function_v<_KstateT>);
-//    static_assert(!std::is_void_v<std::decay<_KstateT>>);
-//    static_assert(!std::is_null_pointer_v<std::decay<_KstateT>>);
-//    static_assert(!std::is_pointer_v<std::decay<_KstateT>>);
-//    static_assert(!std::is_member_object_pointer_v<_KstateT>);
-//    static_assert(!std::is_member_function_pointer_v<_KstateT>);
-//    static_assert(!std::is_const_v<_KstateT>);
-//    static_assert(!std::is_volatile_v<_KstateT>);
-//    static_assert(!std::is_reference_v<_KstateT>);
-//    static_assert(std::is_enum_v<std::decay<_KstateT>> || std::is_union_v<std::decay<_KstateT>> || std::is_class_v<std::decay<_KstateT>>);//TODO remove
+    static_assert(IsTraitKstate<_KstateTrait>::value);
     static_assert(_KstateTrait::is_kstate_trait);
 public:
     // Helper types:
     using KstateTrait = _KstateTrait;
     using KstateT = typename _KstateTrait::KstateT;
-    using KStatePtrT = typename VecMap<KstateT>::ElementPtr;
-    using VecIndexT = typename VecMap<KstateT>::VecIndex;
+    using KstatePtrT = std::shared_ptr<KstateT>;
+private:
+    using Key = decltype(std::declval<KstateT>().to_range());
+    using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
+    using ComparisonPredicateT = RangeComparator;
+public:
+    using VecIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::VecIndex;
+    using MapIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::MapIndex;
+
 public:
     // Constructors:
     Basis(size_t n_sites);
@@ -42,15 +41,17 @@ public:
     unsigned size() const;
     // Container index interfaces:
     VecIndexT& vec_index();
+    MapIndexT& map_index();
     const VecIndexT& vec_index() const;
+    const MapIndexT& map_index() const;
     // Container Member functions -- accesors:
     template <typename OtherRangeType>
     boost::optional<unsigned> find_element_and_get_its_ra_index(const OtherRangeType& v) const;
     // Container Member functions -- modifiers:
-    void add_element(KStatePtrT c);
+    void add_element(KstatePtrT c);
 private:
     size_t _n_sites;
-    VecMap<KstateT> _vec_map;
+    VecMap<KstateT, KeyExtractorT, ComparisonPredicateT> _vec_map;
 };
 
 // *************************************************************************
@@ -81,9 +82,21 @@ Basis<_KstateTrait>::vec_index() {
 }
 
 template <typename _KstateTrait>
+typename Basis<_KstateTrait>::MapIndexT&
+Basis<_KstateTrait>::map_index() {
+    return _vec_map.map_index();
+}
+
+template <typename _KstateTrait>
 const typename Basis<_KstateTrait>::VecIndexT&
 Basis<_KstateTrait>::vec_index() const {
     return _vec_map.vec_index();
+}
+
+template <typename _KstateTrait>
+const typename Basis<_KstateTrait>::MapIndexT&
+Basis<_KstateTrait>::map_index() const {
+    return _vec_map.map_index();
 }
 
 template <typename _KstateTrait>
@@ -94,7 +107,7 @@ Basis<_KstateTrait>::find_element_and_get_its_ra_index(const OtherRangeType& v) 
 }
 
 template <typename _KstateTrait>
-void Basis<_KstateTrait>::add_element(KStatePtrT c) {
+void Basis<_KstateTrait>::add_element(KstatePtrT c) {
     assert(c);
     assert(c->n_sites() == n_sites());
     _vec_map.vec_index().push_back(c);
