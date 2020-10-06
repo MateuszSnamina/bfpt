@@ -144,7 +144,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
             //tp_u_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
             const size_t bra_kstate_n_unique_shift = kstate::n_unique_shift(bra_kstate_range);
-            const auto bra_kstate_range_unique_shifted = bra_kstate_range | extension::boost::adaptors::rotated(bra_kstate_n_unique_shift); //TODO: change name to: bra_kstate_range_unique_shifted // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto bra_kstate_range_unique_shifted = bra_kstate_range | extension::boost::adaptors::rotated(bra_kstate_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
             //tp_u_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_u_2 - tp_u_1).count(); // performance debug sake
             //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
