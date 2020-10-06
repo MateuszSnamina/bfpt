@@ -28,6 +28,8 @@
 #include <cassert>
 #include <cstdlib>
 
+#include<model_monostar/hamiltonian_params_fo_site_matrices.hpp> //TODO remove, debug sake
+
 // #######################################################################
 // ## main - helpers                                                    ##
 // #######################################################################
@@ -246,6 +248,29 @@ void print_theta_opt(const HamiltonianParamsFo& hamiltonian_fo_params, std::opti
 // #######################################################################
 
 int main(int argc, char** argv) {
+
+//    {
+//        arma::cx_mat22 P_z_in_zx_basis = OrbitalSiteMatrices::get_P_z_in_zx_basis();
+//        arma::cx_mat22 P_x_in_zx_basis = OrbitalSiteMatrices::get_P_x_in_zx_basis();
+//        arma::cx_mat22 P_plus_in_zx_basis = OrbitalSiteMatrices::get_P_plus_in_zx_basis();
+//        arma::cx_mat22 P_minus_in_zx_basis = OrbitalSiteMatrices::get_P_minus_in_zx_basis();
+//        arma::cx_mat22 tau_z_in_zx_basis = OrbitalSiteMatrices::get_tau_z_in_zx_basis();
+//        arma::cx_mat22 tau_x_in_zx_basis = OrbitalSiteMatrices::get_tau_x_in_zx_basis();
+//        arma::cx_mat22 tau_plus_in_zx_basis = OrbitalSiteMatrices::get_tau_plus_in_zx_basis();
+//        arma::cx_mat22 tau_minus_in_zx_basis = OrbitalSiteMatrices::get_tau_minus_in_zx_basis();
+
+//        arma::cx_mat22 beta_from_zx_to_ge = OrbitalSiteMatrices::get_beta_from_zx_to_ge(0.253585);
+
+//        arma::cx_mat22 P_z_in_ge_basis = OrbitalSiteMatrices::get_P_z_in_ge_basis(0.253585);
+//        arma::cx_mat22 P_x_in_ge_basis = OrbitalSiteMatrices::get_P_x_in_ge_basis(0.253585);
+//        arma::cx_mat22 P_plus_in_ge_basis = OrbitalSiteMatrices::get_P_plus_in_ge_basis(0.253585);
+//        arma::cx_mat22 P_minus_in_ge_basis = OrbitalSiteMatrices::get_P_minus_in_ge_basis(0.253585);
+//        arma::cx_mat22 tau_z_in_ge_basis = OrbitalSiteMatrices::get_tau_z_in_ge_basis(0.253585);
+//        arma::cx_mat22 tau_x_in_ge_basis = OrbitalSiteMatrices::get_tau_x_in_ge_basis(0.253585);
+//        arma::cx_mat22 tau_plus_in_ge_basis = OrbitalSiteMatrices::get_tau_plus_in_ge_basis(0.253585);
+//        arma::cx_mat22 tau_minus_in_ge_basis = OrbitalSiteMatrices::get_tau_minus_in_ge_basis(0.253585);
+//    }
+
     try {
         // ******************************************************************
         const RawProgramOptions raw_program_options = grep_program_options(argc, argv);
