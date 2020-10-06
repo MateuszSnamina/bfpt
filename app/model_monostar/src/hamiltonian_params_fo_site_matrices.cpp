@@ -3,6 +3,11 @@
 #include<cmath>
 #include<cassert>
 
+
+// #######################################################################
+// ## OrbitalSiteMatrices                                               ##
+// #######################################################################
+
 arma::cx_mat22 OrbitalSiteMatrices::get_P_z_in_zx_basis() {
     const arma::mat22 P_z_in_zx_basis_re = {
         {1.0, 0.0},
@@ -240,4 +245,186 @@ arma::cx_mat22 OrbitalSiteMatrices::get_tau_minus_in_ge_basis(double orbital_the
     assert(arma::norm(tau_minus_in_ge - beta.t() * tau_minus_in_zx * beta) < 1e-4);
 #endif
     return tau_minus_in_ge;
+}
+
+
+// #######################################################################
+// ## OrbitalSiteNamedMatrices                                          ##
+// #######################################################################
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_z_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_z_in_zx_basis(), "Pᶻ_in_zx");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_x_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_x_in_zx_basis(), "Pˣ_in_zx");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_plus_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_plus_in_zx_basis(), "P⁺ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_minus_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_minus_in_zx_basis(), "P⁻ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_z_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_z_in_zx_basis(), "τᶻ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_x_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_x_in_zx_basis(), "τˣ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_plus_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_plus_in_zx_basis(), "τ⁺ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_minus_in_zx_basis() {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_minus_in_zx_basis(), "τ⁻ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_z_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_z_in_ge_basis(orbital_theta), "Pᶻ [in ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_x_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_x_in_ge_basis(orbital_theta), "Pˣ[in ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_plus_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_plus_in_ge_basis(orbital_theta), "P⁺ [in_ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_P_minus_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_P_minus_in_ge_basis(orbital_theta), "P⁻ [in ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_z_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_z_in_ge_basis(orbital_theta), "τᶻ [in ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_x_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_x_in_ge_basis(orbital_theta), "τˣ [in ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_plus_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_plus_in_ge_basis(orbital_theta), "τ⁺ [in ge]");
+}
+
+
+utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_minus_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_minus_in_ge_basis(orbital_theta), "τ⁻ [in ge]");
+}
+
+// #######################################################################
+// ## OrbitalSiteNamedMatricesAverageCalculations                       ##
+// #######################################################################
+
+std::vector<utility::Named<arma::cx_mat22>> orbital_site_matrices_for_average_calculations(double orbital_theta) {
+    return {
+        OrbitalSiteNamedMatrices::get_tau_z_in_ge_basis(orbital_theta),
+                OrbitalSiteNamedMatrices::get_tau_minus_in_ge_basis(orbital_theta),
+    };
+}
+
+// #######################################################################
+// ## OrbitalTwoSiteMatrices                                            ##
+// #######################################################################
+
+arma::cx_mat44 OrbitalTwoSiteMatrices::get_P_zz_in_zx_basis() {
+    const auto& P_z_in_zx_basis = OrbitalSiteMatrices::get_P_z_in_zx_basis();
+    return arma::kron(P_z_in_zx_basis, P_z_in_zx_basis);
+}
+
+
+arma::cx_mat44 OrbitalTwoSiteMatrices::get_P_zx_sum_P_xz_in_zx_basis() {
+    const auto& P_z_in_zx_basis = OrbitalSiteMatrices::get_P_z_in_zx_basis();
+    const auto& P_x_in_zx_basis = OrbitalSiteMatrices::get_P_x_in_zx_basis();
+    return arma::kron(P_z_in_zx_basis, P_x_in_zx_basis) + arma::kron(P_x_in_zx_basis, P_z_in_zx_basis);
+}
+
+
+arma::cx_mat44 OrbitalTwoSiteMatrices::get_P_xx_in_zx_basis() {
+    const auto& P_x_in_zx_basis = OrbitalSiteMatrices::get_P_x_in_zx_basis();
+    return arma::kron(P_x_in_zx_basis, P_x_in_zx_basis);
+}
+
+
+arma::cx_mat44 OrbitalTwoSiteMatrices::get_P_zz_in_ge_basis(double orbital_theta) {
+    const auto& P_z_in_ge_basis = OrbitalSiteMatrices::get_P_z_in_ge_basis(orbital_theta);
+    return arma::kron(P_z_in_ge_basis, P_z_in_ge_basis);
+}
+
+
+arma::cx_mat44 OrbitalTwoSiteMatrices::get_P_zx_sum_P_xz_in_ge_basis(double orbital_theta) {
+    const auto& P_z_in_ge_basis = OrbitalSiteMatrices::get_P_z_in_ge_basis(orbital_theta);
+    const auto& P_x_in_ge_basis = OrbitalSiteMatrices::get_P_x_in_ge_basis(orbital_theta);
+    return arma::kron(P_z_in_ge_basis, P_x_in_ge_basis) + arma::kron(P_x_in_ge_basis, P_z_in_ge_basis);
+}
+
+
+arma::cx_mat44 OrbitalTwoSiteMatrices::get_P_xx_in_ge_basis(double orbital_theta) {
+    const auto& P_x_in_ge_basis = OrbitalSiteMatrices::get_P_x_in_ge_basis(orbital_theta);
+    return arma::kron(P_x_in_ge_basis, P_x_in_ge_basis);
+}
+
+// #######################################################################
+// ## OrbitalTwoSiteNamedMatrices                                       ##
+// #######################################################################
+
+utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_zz_in_zx_basis() {
+    return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_zz_in_zx_basis(), "Pᶻᶻ [in zx]");
+}
+
+
+utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_zx_sum_P_xz_in_zx_basis() {
+    return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_zx_sum_P_xz_in_zx_basis(), "(Pᶻˣ+Pˣᶻ) [in zx]");
+}
+
+
+utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_xx_in_zx_basis() {
+    return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_xx_in_zx_basis(), "Pˣˣ [in_zx]");
+}
+
+
+utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_zz_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_zz_in_ge_basis(orbital_theta), "Pᶻᶻ [in ge]");
+}
+
+
+utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_zx_sum_P_xz_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta), "(Pᶻˣ+Pˣᶻ) [in ge]");
+}
+
+
+utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_xx_in_ge_basis(double orbital_theta) {
+    return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_xx_in_ge_basis(orbital_theta), "Pˣˣ [in ge]");
+}
+
+// #######################################################################
+// ## OrbitalTwoSiteNamedMatricesForAverageCalculations                 ##
+// #######################################################################
+
+std::vector<utility::Named<arma::cx_mat44>> orbital_two_site_matrices_for_average_calculations(double orbital_theta) {
+    return {
+        OrbitalTwoSiteNamedMatrices::get_P_zz_in_ge_basis(orbital_theta),
+                OrbitalTwoSiteNamedMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta),
+                OrbitalTwoSiteNamedMatrices::get_P_xx_in_ge_basis(orbital_theta)
+    };
 }
