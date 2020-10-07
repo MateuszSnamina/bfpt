@@ -29,7 +29,7 @@
 #include <cstdlib>
 
 #include<model_monostar/hamiltonian_params_fo_site_matrices.hpp> //TODO remove, debug sake
-
+#include<model_monostar/hamiltonian_params_af_fm_site_matrices.hpp> //TODO move to the right place
 // #######################################################################
 // ## main - helpers                                                    ##
 // #######################################################################
@@ -39,6 +39,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
         const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteStateTrait>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
+        const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
+        const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
         unsigned n_threads) {
     using KstateT = model_monostar::DynamicMonostarKstate;
     using KstateTraitT = model_monostar::DynamicMonostarKstateTrait;
@@ -50,7 +52,10 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     return bfpt_common::do_common_recipe<KstateTraitT>(kstate_populator, kstate_hamiltonian,
                                                        basis, max_pt_order,
                                                        0,
-                                                       print_flags, "[gs] ",
+                                                       print_flags,
+                                                       one_site_metrices_for_average_calculation,
+                                                       two_sites_metrices_for_average_calculation,
+                                                       "[gs] ",
                                                        n_threads).unwrap();
 }
 
@@ -59,6 +64,8 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
         const bfpt_common::OperatorKernel12<model_monostar::MonostarSiteStateTrait>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
+        const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
+        const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
         unsigned n_threads) {
     using KstateT = model_monostar::DynamicMonostarKstate;
     using KstateTraitT = model_monostar::DynamicMonostarKstateTrait;
@@ -70,7 +77,10 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     return bfpt_common::do_common_recipe<KstateTraitT>(kstate_populator, kstate_hamiltonian,
                                                        basis, max_pt_order,
                                                        k_n,
-                                                       print_flags, "[es (" + std::to_string(k_n) + ")] ",
+                                                       print_flags,
+                                                       one_site_metrices_for_average_calculation,
+                                                       two_sites_metrices_for_average_calculation,
+                                                       "[es (" + std::to_string(k_n) + ")] ",
                                                        n_threads).unwrap();
 }
 
@@ -241,6 +251,8 @@ void print_theta_opt(const HamiltonianParamsFo& hamiltonian_fo_params, std::opti
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta              = " << (hamiltonian_fo_params.get_theta_opt() | RSS<double>().like_python_set() ) << std::endl;
     const double orbital_theta_to_use = get_orbital_theta(hamiltonian_fo_params, user_defined_overrule) ; //may thorw!
     std::cout << "[INFO   ] [THETA_OPT] used orbital theta                 = " << orbital_theta_to_use << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] cos, sin of used orbital theta     = " << std::cos(orbital_theta_to_use) << "," << std::sin(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] cos², sin² of used orbital theta   = " << std::pow(std::cos(orbital_theta_to_use), 2) << ", " << std::pow(std::sin(orbital_theta_to_use), 2) << std::endl;
 }
 
 // #######################################################################
@@ -249,27 +261,27 @@ void print_theta_opt(const HamiltonianParamsFo& hamiltonian_fo_params, std::opti
 
 int main(int argc, char** argv) {
 
-//    {
-//        arma::cx_mat22 P_z_in_zx_basis = OrbitalSiteMatrices::get_P_z_in_zx_basis();
-//        arma::cx_mat22 P_x_in_zx_basis = OrbitalSiteMatrices::get_P_x_in_zx_basis();
-//        arma::cx_mat22 P_plus_in_zx_basis = OrbitalSiteMatrices::get_P_plus_in_zx_basis();
-//        arma::cx_mat22 P_minus_in_zx_basis = OrbitalSiteMatrices::get_P_minus_in_zx_basis();
-//        arma::cx_mat22 tau_z_in_zx_basis = OrbitalSiteMatrices::get_tau_z_in_zx_basis();
-//        arma::cx_mat22 tau_x_in_zx_basis = OrbitalSiteMatrices::get_tau_x_in_zx_basis();
-//        arma::cx_mat22 tau_plus_in_zx_basis = OrbitalSiteMatrices::get_tau_plus_in_zx_basis();
-//        arma::cx_mat22 tau_minus_in_zx_basis = OrbitalSiteMatrices::get_tau_minus_in_zx_basis();
+    //    {
+    //        arma::cx_mat22 P_z_in_zx_basis = OrbitalSiteMatrices::get_P_z_in_zx_basis();
+    //        arma::cx_mat22 P_x_in_zx_basis = OrbitalSiteMatrices::get_P_x_in_zx_basis();
+    //        arma::cx_mat22 P_plus_in_zx_basis = OrbitalSiteMatrices::get_P_plus_in_zx_basis();
+    //        arma::cx_mat22 P_minus_in_zx_basis = OrbitalSiteMatrices::get_P_minus_in_zx_basis();
+    //        arma::cx_mat22 tau_z_in_zx_basis = OrbitalSiteMatrices::get_tau_z_in_zx_basis();
+    //        arma::cx_mat22 tau_x_in_zx_basis = OrbitalSiteMatrices::get_tau_x_in_zx_basis();
+    //        arma::cx_mat22 tau_plus_in_zx_basis = OrbitalSiteMatrices::get_tau_plus_in_zx_basis();
+    //        arma::cx_mat22 tau_minus_in_zx_basis = OrbitalSiteMatrices::get_tau_minus_in_zx_basis();
 
-//        arma::cx_mat22 beta_from_zx_to_ge = OrbitalSiteMatrices::get_beta_from_zx_to_ge(0.253585);
+    //        arma::cx_mat22 beta_from_zx_to_ge = OrbitalSiteMatrices::get_beta_from_zx_to_ge(0.253585);
 
-//        arma::cx_mat22 P_z_in_ge_basis = OrbitalSiteMatrices::get_P_z_in_ge_basis(0.253585);
-//        arma::cx_mat22 P_x_in_ge_basis = OrbitalSiteMatrices::get_P_x_in_ge_basis(0.253585);
-//        arma::cx_mat22 P_plus_in_ge_basis = OrbitalSiteMatrices::get_P_plus_in_ge_basis(0.253585);
-//        arma::cx_mat22 P_minus_in_ge_basis = OrbitalSiteMatrices::get_P_minus_in_ge_basis(0.253585);
-//        arma::cx_mat22 tau_z_in_ge_basis = OrbitalSiteMatrices::get_tau_z_in_ge_basis(0.253585);
-//        arma::cx_mat22 tau_x_in_ge_basis = OrbitalSiteMatrices::get_tau_x_in_ge_basis(0.253585);
-//        arma::cx_mat22 tau_plus_in_ge_basis = OrbitalSiteMatrices::get_tau_plus_in_ge_basis(0.253585);
-//        arma::cx_mat22 tau_minus_in_ge_basis = OrbitalSiteMatrices::get_tau_minus_in_ge_basis(0.253585);
-//    }
+    //        arma::cx_mat22 P_z_in_ge_basis = OrbitalSiteMatrices::get_P_z_in_ge_basis(0.253585);
+    //        arma::cx_mat22 P_x_in_ge_basis = OrbitalSiteMatrices::get_P_x_in_ge_basis(0.253585);
+    //        arma::cx_mat22 P_plus_in_ge_basis = OrbitalSiteMatrices::get_P_plus_in_ge_basis(0.253585);
+    //        arma::cx_mat22 P_minus_in_ge_basis = OrbitalSiteMatrices::get_P_minus_in_ge_basis(0.253585);
+    //        arma::cx_mat22 tau_z_in_ge_basis = OrbitalSiteMatrices::get_tau_z_in_ge_basis(0.253585);
+    //        arma::cx_mat22 tau_x_in_ge_basis = OrbitalSiteMatrices::get_tau_x_in_ge_basis(0.253585);
+    //        arma::cx_mat22 tau_plus_in_ge_basis = OrbitalSiteMatrices::get_tau_plus_in_ge_basis(0.253585);
+    //        arma::cx_mat22 tau_minus_in_ge_basis = OrbitalSiteMatrices::get_tau_minus_in_ge_basis(0.253585);
+    //    }
 
     try {
         // ******************************************************************
@@ -311,6 +323,36 @@ int main(int argc, char** argv) {
                 throw std::domain_error("Invalid model_type enum value.");
             };
         }();
+        const auto one_site_metrices_for_average_calculation =  [&interpreted_program_options]() {
+            switch (interpreted_program_options.model_type) {
+            case ModelType::AF:
+            case ModelType::FM:
+                return SpinSiteNamedMatrices::site_matrices_for_average_calculations_af_fm();
+            case ModelType::FO:
+            {
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+                return OrbitalSiteNamedMatrices::site_matrices_for_average_calculations(orbital_theta_to_use);
+            }
+            default:
+                throw std::domain_error("Invalid model_type enum value.");
+            };
+        }();
+        const auto two_sites_metrices_for_average_calculation =  [&interpreted_program_options]() {
+            switch (interpreted_program_options.model_type) {
+            case ModelType::AF:
+                return SpinTwoSiteNamedMatrices::two_site_matrices_for_average_calculations_af();
+            case ModelType::FM:
+                return SpinTwoSiteNamedMatrices::two_site_matrices_for_average_calculations_fm();
+            case ModelType::FO:
+            {
+                const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+                return OrbitalTwoSiteNamedMatrices::two_site_matrices_for_average_calculations(orbital_theta_to_use);
+            }
+            default:
+                throw std::domain_error("Invalid model_type enum value.");
+            };
+        }();
+
         // ******************************************************************
         const std::shared_ptr<model_monostar::HamiltonianReferenceEnergies> reference_energies =
                 [&interpreted_program_options]() {
@@ -336,62 +378,66 @@ int main(int argc, char** argv) {
         }();
         // ******************************************************************
         const std::optional<bfpt_common::CommonRecipeReceipt> gs_receipt =
-                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<bfpt_common::CommonRecipeReceipt> {
-            if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+                [&]() -> std::optional<bfpt_common::CommonRecipeReceipt> {
+                if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
                 std::cout << "------------------------------------------" << std::endl;
                 return bfpt_gs(
-                            hamiltonian_kernel_1,
-                            hamiltonian_kernel_12,
-                            interpreted_program_options.n_sites, interpreted_program_options.n_pt,
-                            interpreted_program_options.print_flags,
-                            interpreted_program_options.n_threads);
+                    hamiltonian_kernel_1,
+                    hamiltonian_kernel_12,
+                    interpreted_program_options.n_sites, interpreted_program_options.n_pt,
+                    interpreted_program_options.print_flags,
+                    one_site_metrices_for_average_calculation,
+                    two_sites_metrices_for_average_calculation,
+                    interpreted_program_options.n_threads);
                 std::cout << "------------------------------------------" << std::endl;
-            }
-            return std::nullopt;
-        }();
+    }
+                return std::nullopt;
+    }();
         // ******************************************************************
         const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> es_receipts =
-                [&interpreted_program_options, &hamiltonian_kernel_1, &hamiltonian_kernel_12]() -> std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> {
+                [&]() -> std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> {
+                                                                                      std::cout << "------------------------------------------" << std::endl;
+                                                                                      if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+                                                                                      const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+                    interpreted_program_options.es_momentum_domain,
+                    interpreted_program_options.n_sites);
+                                                                                      std::vector<bfpt_common::CommonRecipeReceipt> es_receipts_builder;
+                                                                                      for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
+            std::cout << "[PROGRESS] " << "solving n_k: " << k_n << std::endl;
+            const auto es_energy = bfpt_kn_es(
+                        hamiltonian_kernel_1,
+                        hamiltonian_kernel_12,
+                        interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
+                        interpreted_program_options.print_flags,
+                        one_site_metrices_for_average_calculation,
+                        two_sites_metrices_for_average_calculation,
+                        interpreted_program_options.n_threads);
+            es_receipts_builder.push_back(es_energy);
             std::cout << "------------------------------------------" << std::endl;
-            if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-                const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
-                            interpreted_program_options.es_momentum_domain,
-                            interpreted_program_options.n_sites);
-                std::vector<bfpt_common::CommonRecipeReceipt> es_receipts_builder;
-                for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
-                    std::cout << "[PROGRESS] " << "solving n_k: " << k_n << std::endl;
-                    const auto es_energy = bfpt_kn_es(
-                                hamiltonian_kernel_1,
-                                hamiltonian_kernel_12,
-                                interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
-                                interpreted_program_options.print_flags,
-                                interpreted_program_options.n_threads);
-                    es_receipts_builder.push_back(es_energy);
-                    std::cout << "------------------------------------------" << std::endl;
-                }
-                return es_receipts_builder;
-            }
-            return std::nullopt;
-        }();
-        // ******************************************************************
-        //        const bool print_density_operator_matrix = true;//TODO remove
-
-        // ******************************************************************
-        print_results_tree(
-                    interpreted_program_options,
-                    reference_energies,
-                    gs_receipt,
-                    es_receipts);
-        print_post_data(
-                    interpreted_program_options,
-                    /*reference_energies,*/
-                    gs_receipt,
-                    es_receipts);
-        // ******************************************************************
-    } catch (std::exception& e) {
-        std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
+        }
+        return es_receipts_builder;
     }
-    return EXIT_SUCCESS;
+    return std::nullopt;
+}();
+// ******************************************************************
+//        const bool print_density_operator_matrix = true;//TODO remove
+
+// ******************************************************************
+print_results_tree(
+        interpreted_program_options,
+        reference_energies,
+        gs_receipt,
+        es_receipts);
+print_post_data(
+        interpreted_program_options,
+        /*reference_energies,*/
+        gs_receipt,
+        es_receipts);
+// ******************************************************************
+} catch (std::exception& e) {
+    std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+}
+return EXIT_SUCCESS;
 }

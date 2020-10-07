@@ -332,11 +332,8 @@ utility::Named<arma::cx_mat22> OrbitalSiteNamedMatrices::get_tau_minus_in_ge_bas
     return utility::Named<arma::cx_mat22>(OrbitalSiteMatrices::get_tau_minus_in_ge_basis(orbital_theta), "τ⁻ [in ge]");
 }
 
-// #######################################################################
-// ## OrbitalSiteNamedMatricesAverageCalculations                       ##
-// #######################################################################
 
-std::vector<utility::Named<arma::cx_mat22>> orbital_site_matrices_for_average_calculations(double orbital_theta) {
+std::vector<utility::Named<arma::cx_mat22>> OrbitalSiteNamedMatrices::site_matrices_for_average_calculations(double orbital_theta) {
     return {
         OrbitalSiteNamedMatrices::get_tau_z_in_ge_basis(orbital_theta),
                 OrbitalSiteNamedMatrices::get_tau_minus_in_ge_basis(orbital_theta),
@@ -417,11 +414,8 @@ utility::Named<arma::cx_mat44> OrbitalTwoSiteNamedMatrices::get_P_xx_in_ge_basis
     return utility::Named<arma::cx_mat44>(OrbitalTwoSiteMatrices::get_P_xx_in_ge_basis(orbital_theta), "Pˣˣ [in ge]");
 }
 
-// #######################################################################
-// ## OrbitalTwoSiteNamedMatricesForAverageCalculations                 ##
-// #######################################################################
 
-std::vector<utility::Named<arma::cx_mat44>> orbital_two_site_matrices_for_average_calculations(double orbital_theta) {
+std::vector<utility::Named<arma::cx_mat44>> OrbitalTwoSiteNamedMatrices::two_site_matrices_for_average_calculations(double orbital_theta) {
     return {
         OrbitalTwoSiteNamedMatrices::get_P_zz_in_ge_basis(orbital_theta),
                 OrbitalTwoSiteNamedMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta),

@@ -51,13 +51,9 @@ struct OrbitalSiteNamedMatrices {
     static utility::Named<arma::cx_mat22> get_tau_x_in_ge_basis(double orbital_theta);
     static utility::Named<arma::cx_mat22> get_tau_plus_in_ge_basis(double orbital_theta);
     static utility::Named<arma::cx_mat22> get_tau_minus_in_ge_basis(double orbital_theta);
+    static std::vector<utility::Named<arma::cx_mat22>> site_matrices_for_average_calculations(double orbital_theta);
+
 };
-
-// #######################################################################
-// ## OrbitalSiteNamedMatricesAverageCalculations                       ##
-// #######################################################################
-
-std::vector<utility::Named<arma::cx_mat22>> orbital_site_matrices_for_average_calculations(double orbital_theta);
 
 // #######################################################################
 // ## OrbitalTwoSiteMatrices                                            ##
@@ -83,10 +79,5 @@ struct OrbitalTwoSiteNamedMatrices {
     static utility::Named<arma::cx_mat44> get_P_zz_in_ge_basis(double orbital_theta);
     static utility::Named<arma::cx_mat44> get_P_zx_sum_P_xz_in_ge_basis(double orbital_theta);
     static utility::Named<arma::cx_mat44> get_P_xx_in_ge_basis(double orbital_theta);
+    static std::vector<utility::Named<arma::cx_mat44>> two_site_matrices_for_average_calculations(double orbital_theta);
 };
-
-// #######################################################################
-// ## OrbitalTwoSiteNamedMatricesForAverageCalculations                 ##
-// #######################################################################
-
-std::vector<utility::Named<arma::cx_mat44>> orbital_two_site_matrices_for_average_calculations(double orbital_theta);

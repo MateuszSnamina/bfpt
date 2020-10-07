@@ -14,9 +14,10 @@
 #include <kstate/kstate_concrete.hpp>
 #include <kstate/trait_site_state.hpp>
 
-#include <utility/result.hpp>
-
 #include <extensions/stream_fromat_stacker.hpp>
+
+#include <utility/result.hpp>
+#include <utility/named.hpp>
 
 #include <armadillo>
 
@@ -146,7 +147,9 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                  kstate::Basis<KstateTraitT>& basis,
                  const unsigned max_pt_order,
                  const unsigned k_n,
-                 CommonRecipePrintFlags print_flags,
+                 const CommonRecipePrintFlags& print_flags,
+                 const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
+                 const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
                  std::string print_outer_prefix = "",
                  unsigned n_threads = 1) {
     // --------------------------------------------------
@@ -259,9 +262,21 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                 std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated one-site density matrix." << std::endl;
                 std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix:" << std::endl;
                 std::cout << density_operator_1;
-                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix tr, det: "
-                          << arma::trace(density_operator_1) << ", " << arma::det(density_operator_1)
+                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix tr: "
+                          << arma::trace(density_operator_1)
                           << std::endl;
+                for (const auto& metrices_for_average_calculation : one_site_metrices_for_average_calculation) {
+                    const auto average = arma::trace(metrices_for_average_calculation.value * density_operator_1);
+                    if ((std::abs(std::imag(average)) < 1e-10) ) {
+                        std::cout << print_outer_prefix << message_prefix << data_tag
+                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
+                                  << ": " << std::real(average) << std::endl;
+                    } else {
+                        std::cout << print_outer_prefix << message_prefix << data_tag
+                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
+                                  << ": " << average << std::endl;
+                    }
+                }
             }
             {
                 std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate two-site density matrix." << std::endl;
@@ -272,9 +287,21 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                 std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated two-site density matrix." << std::endl;
                 std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix:" << std::endl;
                 std::cout << density_operator_12;
-                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix tr, det: "
-                          << arma::trace(density_operator_12) << ", " << arma::det(density_operator_12)
+                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix tr: "
+                          << arma::trace(density_operator_12)
                           << std::endl;
+                for (const auto& metrices_for_average_calculation : two_sites_metrices_for_average_calculation) {
+                    const auto average = arma::trace(metrices_for_average_calculation.value * density_operator_12);
+                    if ((std::abs(std::imag(average)) < 1e-10) ) {
+                        std::cout << print_outer_prefix << message_prefix << data_tag
+                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
+                                  << ": " << std::real(average) << std::endl;
+                    } else {
+                        std::cout << print_outer_prefix << message_prefix << data_tag
+                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
+                                  << ": " << average << std::endl;
+                    }
+                }
             }
         }
         // --------------------------------------------------
