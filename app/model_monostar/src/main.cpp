@@ -1,14 +1,15 @@
 #include <model_monostar/raw_program_options.hpp>
 #include <model_monostar/interpreted_program_options.hpp>
-
-#include <model_monostar/get_orbital_theta.hpp>
-#include <model_monostar/hamiltonian_kernel_af_fm.hpp>
-#include <model_monostar/hamiltonian_kernel_fo.hpp>
-#include <model_monostar/hamiltonian_reference_energies_af_fm.hpp>
-#include <model_monostar/hamiltonian_reference_energies_fo.hpp>
 #include <model_monostar/monostar_basis.hpp>
 #include <model_monostar/monostar_kstate.hpp>
 #include <model_monostar/monostar_site_state.hpp>
+#include <model_monostar/hamiltonian_kernel_af_fm.hpp>
+#include <model_monostar/hamiltonian_params_af_fm_site_matrices.hpp>
+#include <model_monostar/hamiltonian_reference_energies_af_fm.hpp>
+#include <model_monostar/hamiltonian_kernel_fo.hpp>
+#include <model_monostar/hamiltonian_params_fo_site_matrices.hpp>
+#include <model_monostar/hamiltonian_reference_energies_fo.hpp>
+#include <model_monostar/get_orbital_theta.hpp>
 
 #include <bfpt_common/operator_kernel.hpp>
 #include <bfpt_common/kernel_driven_kstate_basis_populator.hpp>
@@ -24,12 +25,11 @@
 #include <boost/range/irange.hpp>
 
 #include <iostream>
+#include <iomanip>
 
 #include <cassert>
 #include <cstdlib>
 
-#include<model_monostar/hamiltonian_params_fo_site_matrices.hpp> //TODO remove, debug sake
-#include<model_monostar/hamiltonian_params_af_fm_site_matrices.hpp> //TODO move to the right place
 // #######################################################################
 // ## main - helpers                                                    ##
 // #######################################################################
@@ -138,7 +138,8 @@ void print_results_tree(
         const InterpretedProgramOptions& interpreted_program_options,
         const std::shared_ptr<model_monostar::HamiltonianReferenceEnergies> reference_energies,
         const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
-        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional) {
+        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional,
+        const unsigned n_sites) {
     // Helpers:
     const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
                 interpreted_program_options.es_momentum_domain,
@@ -151,15 +152,23 @@ void print_results_tree(
         assert(es_receipts_optional);
         assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
     }
-    // Print gs:
+    // Print:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    std::cout << std::showpos << std::setprecision(10) << std::left;
+    // Print gs:
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         const auto gs_receipt = gs_receipt_optional.value();
         std::cout << " ├state: gs "  << std::endl;
-        std::cout << " ││enery = " << gs_receipt.energy << std::endl;
+        std::cout << " ││enery             = "
+                  << std::setw(16) << gs_receipt.energy << " = "
+                  << std::setw(16) << gs_receipt.energy / n_sites << " * n_sites"
+                  << std::endl;
         if (reference_energies) {
             if (const auto& gs_energy = reference_energies->get_gs_energy()){
-                std::cout << " ││enery (reference) = " << *gs_energy << std::endl;
+                std::cout << " ││enery (reference) = "
+                          << std::setw(16) << *gs_energy << " = "
+                          << std::setw(16) << *gs_energy / n_sites << " * n_sites"
+                          << std::endl;
             }
         }
     }
@@ -169,17 +178,29 @@ void print_results_tree(
         for (unsigned k_n =  es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
             const auto es_result = es_receipts[k_n];
             std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
-            std::cout << " ││abs. enery        = " << es_result.energy << std::endl;
+            std::cout << " ││abs. enery        = "
+                      << std::setw(16) << es_result.energy << " = "
+                      << std::setw(16) << es_result.energy / n_sites << " * n_sites"
+                      << std::endl;
             if (interpreted_program_options.run_type == RunType::EG) {
                 const auto gs_receipt = gs_receipt_optional.value();
-                std::cout << " ││exc. enery        = " << es_result.energy - gs_receipt.energy << std::endl;
+                std::cout << " ││exc. enery        = "
+                          << std::setw(16) << es_result.energy - gs_receipt.energy << " = "
+                          << std::setw(16) << (es_result.energy - gs_receipt.energy) / n_sites << " * n_sites"
+                          << std::endl;
             }
             if (reference_energies) {
                 if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
-                    std::cout << " ││abs. enery (ref.) = " << *get_es_absolute_enery << std::endl;
+                    std::cout << " ││abs. enery (ref.) = "
+                              << std::setw(16) <<  *get_es_absolute_enery << " = "
+                              << std::setw(16) << (*get_es_absolute_enery) / n_sites << " * n_sites"
+                              << std::endl;
                 }
                 if (const auto& es_exciation_enery = reference_energies->get_es_exciation_enery(k_n)) {
-                    std::cout << " ││exc. enery (ref.) = " << *es_exciation_enery << std::endl;
+                    std::cout << " ││exc. enery (ref.) = "
+                              << std::setw(16) << *es_exciation_enery << " = "
+                              << std::setw(16) << (*es_exciation_enery) / n_sites << " * n_sites"
+                              << std::endl;
                 }
             }
         }
@@ -237,22 +258,46 @@ void print_post_data(
 }
 
 void print_theta_opt(const HamiltonianParamsFo& hamiltonian_fo_params, std::optional<double> user_defined_overrule) {
+    // Using:
     using namespace extension::boost::stream_pragma;
-    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     using extension::boost::stream_pragma::RSS;
     using extension::boost::stream_pragma::operator|;
     using extension::boost::stream_pragma::operator<<;
+    // Print:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    std::cout << std::showpos;
     if (const auto & _ = hamiltonian_fo_params.get_theta_opt_analytical()) {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
     } else {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << "<no known analicycal solution solver>" << std::endl;
     }
-    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)  = " << (hamiltonian_fo_params.get_theta_opt_numerical()| RSS<double>().like_python_set()) << std::endl;
-    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta              = " << (hamiltonian_fo_params.get_theta_opt() | RSS<double>().like_python_set() ) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)        = "
+              << (hamiltonian_fo_params.get_theta_opt_numerical()| RSS<double>().like_python_set()) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta                    = "
+              << (hamiltonian_fo_params.get_theta_opt() | RSS<double>().like_python_set() ) << std::endl;
     const double orbital_theta_to_use = get_orbital_theta(hamiltonian_fo_params, user_defined_overrule) ; //may thorw!
-    std::cout << "[INFO   ] [THETA_OPT] used orbital theta                 = " << orbital_theta_to_use << std::endl;
-    std::cout << "[INFO   ] [THETA_OPT] cos, sin of used orbital theta     = " << std::cos(orbital_theta_to_use) << "," << std::sin(orbital_theta_to_use) << std::endl;
-    std::cout << "[INFO   ] [THETA_OPT] cos², sin² of used orbital theta   = " << std::pow(std::cos(orbital_theta_to_use), 2) << ", " << std::pow(std::sin(orbital_theta_to_use), 2) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] used orbital theta                       = "
+              << orbital_theta_to_use << " = "
+              << orbital_theta_to_use / M_PI << " π" << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] cos, sin [used orbital theta]            = "
+              << std::cos(orbital_theta_to_use) << ", "
+              << std::sin(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] cos², sin² [used orbital theta]          = "
+              << std::pow(std::cos(orbital_theta_to_use), 2) << ", "
+              << std::pow(std::sin(orbital_theta_to_use), 2) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] τᶻ, τˣ, τ⁻, τ⁺ [used orbital theta]      = "
+              << +std::cos(orbital_theta_to_use) << ", "
+              << -std::cos(orbital_theta_to_use) << ", "
+              << -std::sin(orbital_theta_to_use) << ", "
+              << +std::sin(orbital_theta_to_use)
+              << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] Pᶻ, Pˣ [used orbital theta]              = "
+              << (0.5 + 0.5 * std::cos(orbital_theta_to_use)) << ", "
+              << (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] Pᶻᶻ, (Pᶻˣ+Pˣᶻ), Pˣˣ [used orbital theta] = "
+              << std::pow(0.5 + 0.5 * std::cos(orbital_theta_to_use), 2) << ", "
+              << 2 * (0.5 + 0.5 * std::cos(orbital_theta_to_use)) * (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << ", "
+              << std::pow(0.5 - 0.5 * std::cos(orbital_theta_to_use), 2) << std::endl;
 }
 
 // #######################################################################
@@ -420,14 +465,12 @@ int main(int argc, char** argv) {
     return std::nullopt;
 }();
 // ******************************************************************
-//        const bool print_density_operator_matrix = true;//TODO remove
-
-// ******************************************************************
 print_results_tree(
         interpreted_program_options,
         reference_energies,
         gs_receipt,
-        es_receipts);
+        es_receipts,
+        interpreted_program_options.n_sites);
 print_post_data(
         interpreted_program_options,
         /*reference_energies,*/
