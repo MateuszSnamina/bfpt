@@ -219,12 +219,12 @@ utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_offdiag_af() {
 
 
 utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_fm() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_fm(), " ⃗S⋅ ⃗S"); //TODO unicode
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_fm(), "S⋅S");
 }
 
 
 utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_af() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_af(), " ⃗S⋅ ⃗S"); //TODO unicode
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_af(), "S⋅S");
 }
 
 

@@ -254,82 +254,82 @@ arma::cx_mat22 OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(double orbital_
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_z_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_z_in_zx_basis(), "Pᶻ_in_zx");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_z_in_zx_basis(), "Pᶻ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_x_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_x_in_zx_basis(), "Pˣ_in_zx");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_x_in_zx_basis(), "Pˣ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_plus_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_plus_in_zx_basis(), "P⁺ [in zx]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_plus_in_zx_basis(), "P⁺");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_minus_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_minus_in_zx_basis(), "P⁻ [in zx]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_minus_in_zx_basis(), "P⁻");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_z_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_z_in_zx_basis(), "τᶻ [in zx]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_z_in_zx_basis(), "τᶻ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_x_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_x_in_zx_basis(), "τˣ [in zx]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_x_in_zx_basis(), "τˣ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_plus_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_plus_in_zx_basis(), "τ⁺ [in zx]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_plus_in_zx_basis(), "τ⁺");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_minus_in_zx_basis() {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_minus_in_zx_basis(), "τ⁻ [in zx]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_minus_in_zx_basis(), "τ⁻");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_z_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta), "Pᶻ [in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta), "Pᶻ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_x_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta), "Pˣ[in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta), "Pˣ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_plus_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_plus_in_ge_basis(orbital_theta), "P⁺ [in_ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_plus_in_ge_basis(orbital_theta), "P⁺");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_P_minus_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_minus_in_ge_basis(orbital_theta), "P⁻ [in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_P_minus_in_ge_basis(orbital_theta), "P⁻");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_z_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta), "τᶻ [in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta), "τᶻ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_x_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_x_in_ge_basis(orbital_theta), "τˣ [in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_x_in_ge_basis(orbital_theta), "τˣ");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_plus_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_plus_in_ge_basis(orbital_theta), "τ⁺ [in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_plus_in_ge_basis(orbital_theta), "τ⁺");
 }
 
 
 utility::Named<arma::cx_mat22> OneSiteOrbitalNamedMatrices::get_tau_minus_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta), "τ⁻ [in ge]");
+    return utility::Named<arma::cx_mat22>(OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta), "τ⁻");
 }
 
 
@@ -386,32 +386,32 @@ arma::cx_mat44 TwoSitesOrbitalMatrices::get_P_xx_in_ge_basis(double orbital_thet
 // #######################################################################
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_zz_in_zx_basis() {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zz_in_zx_basis(), "Pᶻᶻ [in zx]");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zz_in_zx_basis(), "Pᶻᶻ");
 }
 
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_zx_sum_P_xz_in_zx_basis() {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_zx_basis(), "(Pᶻˣ+Pˣᶻ) [in zx]");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_zx_basis(), "(Pᶻˣ+Pˣᶻ)");
 }
 
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_xx_in_zx_basis() {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_xx_in_zx_basis(), "Pˣˣ [in_zx]");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_xx_in_zx_basis(), "Pˣˣ");
 }
 
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_zz_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zz_in_ge_basis(orbital_theta), "Pᶻᶻ [in ge]");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zz_in_ge_basis(orbital_theta), "Pᶻᶻ");
 }
 
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_zx_sum_P_xz_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta), "(Pᶻˣ+Pˣᶻ) [in ge]");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta), "(Pᶻˣ+Pˣᶻ)");
 }
 
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_xx_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_xx_in_ge_basis(orbital_theta), "Pˣˣ [in ge]");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_xx_in_ge_basis(orbital_theta), "Pˣˣ");
 }
 
 
