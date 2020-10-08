@@ -372,11 +372,11 @@ int main(int argc, char** argv) {
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
             case ModelType::FM:
-                return SpinSiteNamedMatrices::site_matrices_for_average_calculations_af_fm();
+                return OneSiteSpinNamedMatrices::site_matrices_for_average_calculations_af_fm();
             case ModelType::FO:
             {
                 const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
-                return OrbitalSiteNamedMatrices::site_matrices_for_average_calculations(orbital_theta_to_use);
+                return OneSiteOrbitalNamedMatrices::matrices_for_average_calculations(orbital_theta_to_use);
             }
             default:
                 throw std::domain_error("Invalid model_type enum value.");
@@ -385,13 +385,13 @@ int main(int argc, char** argv) {
         const auto two_sites_metrices_for_average_calculation =  [&interpreted_program_options]() {
             switch (interpreted_program_options.model_type) {
             case ModelType::AF:
-                return SpinTwoSiteNamedMatrices::two_site_matrices_for_average_calculations_af();
+                return TwoSitesSpinNamedMatrices::matrices_for_average_calculations_af();
             case ModelType::FM:
-                return SpinTwoSiteNamedMatrices::two_site_matrices_for_average_calculations_fm();
+                return TwoSitesSpinNamedMatrices::matrices_for_average_calculations_fm();
             case ModelType::FO:
             {
                 const double orbital_theta_to_use = get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
-                return OrbitalTwoSiteNamedMatrices::two_site_matrices_for_average_calculations(orbital_theta_to_use);
+                return TwoSitesOrbitalNamedMatrices::matrices_for_average_calculations(orbital_theta_to_use);
             }
             default:
                 throw std::domain_error("Invalid model_type enum value.");

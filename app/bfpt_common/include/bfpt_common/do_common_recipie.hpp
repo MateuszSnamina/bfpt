@@ -37,7 +37,34 @@ const std::string progress_tag = "[progress] ";
 const std::string data_tag = "[data    ] ";
 const std::string time_tag = "[time    ] ";
 
+} // end of namespace bfpt_common
+
+// #######################################################################
+// ## print avarages                                                    ##
+// #######################################################################
+
+namespace bfpt_common {
+
+template<arma::uword N>
+void print_averages(
+        const arma::cx_mat& density_matrix,
+        const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
+        const std::string& print_outer_prefix) {
+    assert(density_matrix.n_rows == N);
+    assert(density_matrix.n_cols == N);
+    for (const auto& matrix_for_average_calculation : metrices_for_average_calculation) {
+        const auto average = arma::trace(matrix_for_average_calculation.value * density_matrix);
+            std::cout << print_outer_prefix << message_prefix << data_tag
+                      << "⟨" << matrix_for_average_calculation.name   << "⟩" << ": ";
+        if (std::abs(std::imag(average)) < 1e-10) {
+            std::cout  << std::real(average) << std::endl;
+        } else {
+           std::cout << ": " << average << std::endl;
+        }
+    }
 }
+
+} // end of namespace bfpt_common
 
 // #######################################################################
 // ## pretty_print                                                      ##
@@ -265,18 +292,7 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                 std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix tr: "
                           << arma::trace(density_operator_1)
                           << std::endl;
-                for (const auto& metrices_for_average_calculation : one_site_metrices_for_average_calculation) {
-                    const auto average = arma::trace(metrices_for_average_calculation.value * density_operator_1);
-                    if ((std::abs(std::imag(average)) < 1e-10) ) {
-                        std::cout << print_outer_prefix << message_prefix << data_tag
-                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
-                                  << ": " << std::real(average) << std::endl;
-                    } else {
-                        std::cout << print_outer_prefix << message_prefix << data_tag
-                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
-                                  << ": " << average << std::endl;
-                    }
-                }
+                print_averages(density_operator_1, one_site_metrices_for_average_calculation, print_outer_prefix);
             }
             {
                 std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate two-site density matrix." << std::endl;
@@ -290,18 +306,7 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                 std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix tr: "
                           << arma::trace(density_operator_12)
                           << std::endl;
-                for (const auto& metrices_for_average_calculation : two_sites_metrices_for_average_calculation) {
-                    const auto average = arma::trace(metrices_for_average_calculation.value * density_operator_12);
-                    if ((std::abs(std::imag(average)) < 1e-10) ) {
-                        std::cout << print_outer_prefix << message_prefix << data_tag
-                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
-                                  << ": " << std::real(average) << std::endl;
-                    } else {
-                        std::cout << print_outer_prefix << message_prefix << data_tag
-                                  << "⟨" << metrices_for_average_calculation.name   << "⟩"
-                                  << ": " << average << std::endl;
-                    }
-                }
+                print_averages(density_operator_12, two_sites_metrices_for_average_calculation, print_outer_prefix);
             }
         }
         // --------------------------------------------------

@@ -7,10 +7,10 @@
 #include<vector>
 
 // #######################################################################
-// ## SpinSiteMatrices                                                  ##
+// ## OneSiteSpinMatrices                                               ##
 // #######################################################################
 
-struct SpinSiteMatrices {
+struct OneSiteSpinMatrices {
     static arma::cx_mat22 get_S_z_fm();
     static arma::cx_mat22 get_S_z_af_latticeA();
     static arma::cx_mat22 get_S_z_af_latticeB();
@@ -23,10 +23,10 @@ struct SpinSiteMatrices {
 };
 
 // #######################################################################
-// ## SpinSiteNamedMatrices                                             ##
+// ## OneSiteSpinNamedMatrices                                          ##
 // #######################################################################
 
-struct SpinSiteNamedMatrices {
+struct OneSiteSpinNamedMatrices {
     static utility::Named<arma::cx_mat22> get_S_z_fm();
     static utility::Named<arma::cx_mat22> get_S_z_af_latticeA();
     static utility::Named<arma::cx_mat22> get_S_z_af_latticeB();
@@ -40,10 +40,10 @@ struct SpinSiteNamedMatrices {
 };
 
 // #######################################################################
-// ## SpinTwoSiteMatrices                                               ##
+// ## TwoSitesSpinMatrices                                              ##
 // #######################################################################
 
-struct SpinTwoSiteMatrices {
+struct TwoSitesSpinMatrices {
     static arma::cx_mat44 get_S_S_ondiag_fm();
     static arma::cx_mat44 get_S_S_ondiag_af();
     static arma::cx_mat44 get_S_S_offdiag_fm();
@@ -53,16 +53,16 @@ struct SpinTwoSiteMatrices {
 };
 
 // #######################################################################
-// ## SpinTwoSiteNamedMatrices                                          ##
+// ## TwoSitesSpinNamedMatrices                                         ##
 // #######################################################################
 
-struct SpinTwoSiteNamedMatrices {
+struct TwoSitesSpinNamedMatrices {
     static utility::Named<arma::cx_mat44> get_S_S_ondiag_fm();
     static utility::Named<arma::cx_mat44> get_S_S_ondiag_af();
     static utility::Named<arma::cx_mat44> get_S_S_offdiag_fm();
     static utility::Named<arma::cx_mat44> get_S_S_offdiag_af();
     static utility::Named<arma::cx_mat44> get_S_S_fm();
     static utility::Named<arma::cx_mat44> get_S_S_af();
-    static std::vector<utility::Named<arma::cx_mat44>> two_site_matrices_for_average_calculations_fm();
-    static std::vector<utility::Named<arma::cx_mat44>> two_site_matrices_for_average_calculations_af();
+    static std::vector<utility::Named<arma::cx_mat44>> matrices_for_average_calculations_fm();
+    static std::vector<utility::Named<arma::cx_mat44>> matrices_for_average_calculations_af();
 };
