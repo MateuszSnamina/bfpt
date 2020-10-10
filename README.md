@@ -41,22 +41,28 @@ build_release/bin/model_monostar # try it!
 ```
 
 # Simple example -- model monostar
- 
+
 The project contains an executable (`model_monostar`) showing
 how to use the solver for models like 1D Heisenberg (anti)ferromagnet.
  
 ## Model defintion
 
-Monostar model is defined for quantum systems made of replicas of a two-level subsystem.
+**Hilbert space** Monostar model is defined for quantum systems made of replicas of a two-level subsystem.
 The replicas are arranged in a way they form a chain (and here will be called chain nodes); 
 The nodes interactions are assumed to be restricted to the nearest neighbors.
 
-A chain node quantum levels are denoted: `gs` and `es` (like ground state and excited state).
+**Interactions pattern** A chain node quantum levels are denoted: `gs` and `es` (like ground state and excited state).
 The system Hamiltonian `H` is translationally invariant (with periodic boundary conditions)
 and is prescribed by two-nodes kernel Hamiltionian `H_12` (`H = \sum_{<ij>} H_12(i,j)` with the summation over pairs of adjacent nodes).
 `H_12` is further decomposed into `H_12_diag` and `H_12_off_diag` parts;
 `H_12_diag` defines diagonal energies for `(gs, gs)`, `(gs, es)`, `(es, gs)`, `(es, es)` nodes pairs,
 whereas `H_12_off_diag` describes couplings between the pairs.
+
+**Considered Hamiltonians** Model monostar is a framework that 
+
+TODO
+
+## Model monostat with `af` and `fm` Hamiltonians
 
 The model goes in two flavors: `fm` and `af`, each parameterized with two real values `J_classical` and `J_quantum`.
 The `H_12_diag` does not depend on the `fm`/`af` variant and is governed by `J_classical`:
