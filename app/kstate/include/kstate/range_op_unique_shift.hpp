@@ -1,5 +1,4 @@
-#ifndef KSTATE_UNIQUE_SHIFT_HPP
-#define KSTATE_UNIQUE_SHIFT_HPP
+#pragma once
 
 #include <extensions/adaptors.hpp>
 
@@ -44,5 +43,3 @@ extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(con
 }
 
 }  // namespace kstate
-
-#endif

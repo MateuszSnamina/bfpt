@@ -1,7 +1,7 @@
-#ifndef KSTATE_BASIS_STREAMER_HPP
-#define KSTATE_BASIS_STREAMER_HPP
+#pragma once
 
-#include <kstate/basis.hpp>
+#include <kbasis/basis.hpp>
+
 #include <kstate/kstate_streamer.hpp>
 
 #include <utility/is_base_of_template.hpp>
@@ -15,7 +15,7 @@
 // ##  BasisStreamer                                                    ##
 // #######################################################################
 
-namespace kstate {
+namespace kbasis {
 
 // ***********************************************************************
 
@@ -152,13 +152,13 @@ BasisStreamer<BasisT> make_basis_streamer(
     return BasisStreamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 
-} // end of namespace kstate
+} // end of namespace kbasis
 
 // #######################################################################
 // ##  pragma: operator||, operator<<                                   ##
 // #######################################################################
 
-namespace kstate::pramga {
+namespace kbasis::pramga {
 
 template<typename BasisT>
 BasisStreamer<BasisT>
@@ -176,6 +176,4 @@ std::ostream& operator<<(
     return os;
 }
 
-}  // namespace kstate::pramga
-
-#endif
+}  // namespace kbasis::pramga

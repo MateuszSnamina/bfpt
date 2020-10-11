@@ -1,7 +1,6 @@
-#ifndef BFPT_COMMON_I_KSTATE_OPERATOR_HPP
-#define BFPT_COMMON_I_KSTATE_OPERATOR_HPP
+#pragma once
 
-#include <kstate/basis.hpp>
+#include <kbasis/basis.hpp>
 
 #include <armadillo>
 
@@ -31,7 +30,7 @@ public:
     using KstateT = typename _KstateTraitT::KstateT;
     using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     using SiteStateT = typename KstateT::SiteStateT;
-    using BasisT = kstate::Basis<KstateTraitT>;
+    using BasisT = kbasis::Basis<KstateTraitT>;
 public:
     virtual void fill_kn_operator_builder_matrix_coll(
             const BasisT& basis,
@@ -41,5 +40,3 @@ public:
 };
 
 }  // namespace bfpt_common
-
-#endif

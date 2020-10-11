@@ -1,12 +1,12 @@
-#ifndef BFPT_COMMON_CALCULATE_REDUCED_DENSITY_OPERATOR_HPP
-#define BFPT_COMMON_CALCULATE_REDUCED_DENSITY_OPERATOR_HPP
+#pragma once
 
 #include <bfpt_common/density_operator.hpp>
 
-#include <kstate_trait/trait_kstate.hpp>
+#include <kbasis/basis.hpp>
 
-#include <kstate/basis.hpp>
-#include <kstate/unique_shift.hpp>
+#include <kstate/range_op_unique_shift.hpp>
+
+#include <kstate_trait/trait_kstate.hpp>
 
 #include <extensions/adaptors.hpp>
 
@@ -29,7 +29,7 @@ namespace bfpt_common {
 template<typename KstateTraitT>
 void
 calculate_reduced_density_operator_12_impl(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
@@ -81,7 +81,7 @@ calculate_reduced_density_operator_12_impl(
 template<typename KstateTraitT>
 arma::cx_mat
 calculate_reduced_density_operator_12(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
@@ -140,7 +140,7 @@ namespace bfpt_common {
 template<typename KstateTraitT>
 void
 calculate_reduced_density_operator_1_impl(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
@@ -184,7 +184,7 @@ calculate_reduced_density_operator_1_impl(
 template<typename KstateTraitT>
 arma::cx_mat
 calculate_reduced_density_operator_1(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
@@ -233,5 +233,3 @@ calculate_reduced_density_operator_1(
 }
 
 } // end of namespace bfpt_common;
-
-#endif // CALCULATE_REDUCED_DENSITY_OPERATOR_HPP

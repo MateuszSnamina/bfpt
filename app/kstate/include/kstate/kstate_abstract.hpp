@@ -1,5 +1,4 @@
-#ifndef KSTATE_KSTATE_ABSTRACT_HPP
-#define KSTATE_KSTATE_ABSTRACT_HPP
+#pragma once
 
 #include <kstate_trait/trait_site_state.hpp>
 
@@ -320,5 +319,3 @@ SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_str() const {
 }
 
 }  // namespace kstate
-
-#endif

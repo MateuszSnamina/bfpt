@@ -1,7 +1,7 @@
 #include <kstate_tests/site_state_trait_for_int.hpp>
 
 #include <kstate/kstate_concrete.hpp>
-#include <kstate/unique_shift.hpp>
+#include <kstate/range_op_unique_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 

@@ -1,9 +1,8 @@
-#ifndef KSTATE_GENERATE_OPERATOR_MATRIX_HPP
-#define KSTATE_GENERATE_OPERATOR_MATRIX_HPP
+#pragma once
 
 #include <bfpt_common/i_kstate_operator_matrix.hpp>
 
-#include <kstate/basis.hpp>
+#include <kbasis/basis.hpp>
 
 #include <armadillo>
 
@@ -17,7 +16,7 @@ template<typename KstateTraitT>
 arma::sp_cx_mat
 generate_operator_matrix(
         const IKstateOperatorMatrix<KstateTraitT>& operator_matrix_interface,
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const unsigned k_n,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
@@ -64,5 +63,3 @@ generate_operator_matrix(
 }
 
 }  // namespace bfpt_common
-
-#endif // KSTATE_GENERATE_HAMILTONIAN_HPP

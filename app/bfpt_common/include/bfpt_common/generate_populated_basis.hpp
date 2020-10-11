@@ -1,12 +1,10 @@
-#ifndef BFPT_COMMON_GENERATE_POPULATED_BASIS_HPP
-#define BFPT_COMMON_GENERATE_POPULATED_BASIS_HPP
+#pragma once
 
 #include <bfpt_common/i_kstate_basis_populator.hpp>
 
+#include <kbasis/basis.hpp>
+
 #include <kstate_trait/kstate_stl.hpp>
-
-#include <kstate/basis.hpp>
-
 
 #include <omp.h>
 
@@ -41,7 +39,7 @@ template<typename KstateTraitT>
 void generate_populated_basis(
         const IKstateBasisPopulator<KstateTraitT>& basis_populator,
         const unsigned max_pt_order,
-        kstate::Basis<KstateTraitT>& basis,
+        kbasis::Basis<KstateTraitT>& basis,
         unsigned n_threads = 1) {
     // *********** asserts ********************************************************************
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
@@ -93,5 +91,3 @@ void generate_populated_basis(
 }
 
 }  // namespace bfpt_common
-
-#endif

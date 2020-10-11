@@ -1,5 +1,4 @@
-#ifndef KSTATE_VEC_MAP_HPP
-#define KSTATE_VEC_MAP_HPP
+#pragma once
 
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/random_access_index.hpp>
@@ -12,7 +11,7 @@
 // ## VecMap                                                            ##
 // #######################################################################
 
-namespace kstate {
+namespace kbasis {
 /*
  * VecMap<ElementT,...> is a map-like container and is a vec-like container
  * (simultaneously) for objects of class Element.
@@ -125,6 +124,4 @@ void VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::add_element(Eleme
     vec_index().push_back(c);
 }
 
-}  // namespace kstate
-
-#endif
+}  // namespace kbasis

@@ -1,12 +1,12 @@
-#include <kstate_tests/site_state_trait_for_int.hpp>
+#include <kbasis_tests/site_state_trait_for_int.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
 
-#include <kstate/basis.hpp>
+#include <kbasis/basis.hpp>
 
 #include <kstate/kstate_concrete.hpp>
-#include <kstate/unique_shift.hpp>
+#include <kstate/range_op_unique_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 
@@ -20,7 +20,7 @@ TEST(Basis, Empty) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     // test basis size:
     ASSERT_EQ(basis.size(), 0);
     ASSERT_TRUE(basis.vec_index().begin() == basis.vec_index().end());
@@ -36,7 +36,7 @@ TEST(Basis, OneElement) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const auto k1 = std::make_shared<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
     basis.add_element(k1);
@@ -67,7 +67,7 @@ TEST(Basis, TwoDifferentElementsTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
     const auto k1 = std::make_shared<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
@@ -103,7 +103,7 @@ TEST(Basis, TwoDifferentElementsTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
     const auto k1 = std::make_shared<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
@@ -139,7 +139,7 @@ TEST(Basis, TwoSameElementsTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {11, 12, 13};
     const auto k1 = std::make_shared<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
@@ -175,7 +175,7 @@ TEST(Basis, BigTest) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
@@ -304,7 +304,7 @@ TEST(Basis, BigTestWithUniqueStates) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};

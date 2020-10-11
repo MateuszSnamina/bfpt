@@ -1,10 +1,9 @@
-#ifndef BFPT_COMMON_KERNEL_DRIVEN_KSTATE_BASIS_POPULATOR_HPP
-#define BFPT_COMMON_KERNEL_DRIVEN_KSTATE_BASIS_POPULATOR_HPP
+#pragma once
 
 #include <bfpt_common/operator_kernel.hpp>
 #include <bfpt_common/i_kstate_basis_populator.hpp>
 
-#include <kstate/unique_shift.hpp>
+#include <kstate/range_op_unique_shift.hpp>
 #include <extensions/adaptors.hpp>
 
 #include <type_traits>
@@ -27,7 +26,7 @@ public:
     using KstateT = typename _KstateTraitT::KstateT;
     using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     using SiteStateT = typename KstateT::SiteStateT;
-    using BasisT = kstate::Basis<KstateTraitT>;
+    using BasisT = kbasis::Basis<KstateTraitT>;
 public:
     KernelDrivenKstateBasisPopulator(
             const size_t n_sites,
@@ -99,5 +98,3 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
 }
 
 }  // namespace bfpt_common
-
-#endif

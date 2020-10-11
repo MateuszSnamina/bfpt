@@ -1,5 +1,4 @@
-#ifndef KSTATE_KSTATE_STREAMER_HPP
-#define KSTATE_KSTATE_STREAMER_HPP
+#pragma once
 
 #include <kstate/kstate_abstract.hpp>
 
@@ -181,5 +180,3 @@ std::ostream& operator<<(
 }
 
 }  // namespace kstate::pramga
-
-#endif

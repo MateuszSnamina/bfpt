@@ -1,10 +1,9 @@
-#ifndef BFPT_COMMON_KERNEL_DRIVEN_KSTATE_OPERATOR_HPP
-#define BFPT_COMMON_KERNEL_DRIVEN_KSTATE_OPERATOR_HPP
+#pragma once
 
 #include <bfpt_common/operator_kernel.hpp>
 #include <bfpt_common/i_kstate_operator_matrix.hpp>
 
-#include <kstate/unique_shift.hpp>
+#include <kstate/range_op_unique_shift.hpp>
 
 #include <extensions/adaptors.hpp>
 
@@ -31,7 +30,7 @@ public:
     using KstateT = typename _KstateTraitT::KstateT;
     using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     using SiteStateT = typename KstateT::SiteStateT;
-    using BasisT = kstate::Basis<KstateTraitT>;
+    using BasisT = kbasis::Basis<KstateTraitT>;
 public:
     KernelDrivenKstateOperatorMatrix(
             const size_t n_sites,
@@ -191,5 +190,3 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
 }
 
 }  // namespace bfpt_common
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef BFPT_COMMON_DENSITY_OPERATOR_HPP
-#define BFPT_COMMON_DENSITY_OPERATOR_HPP
+#pragma once
 
 #include <bfpt_common/operator_kernel.hpp>
 
@@ -19,5 +18,3 @@ template<typename SiteStateTraitT>
 using DensityOperator12 = std::map<std::pair<StateKernel12<SiteStateTraitT>, StateKernel12<SiteStateTraitT>>, std::complex<double>>;
 
 } // end of namespace bfpt_common
-
-#endif

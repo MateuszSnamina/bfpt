@@ -1,5 +1,4 @@
-#ifndef BFPT_COMMON_DO_COMMON_RECIPIE_HPP
-#define BFPT_COMMON_DO_COMMON_RECIPIE_HPP
+#pragma once
 
 #include <bfpt_common/i_kstate_operator_matrix.hpp>
 #include <bfpt_common/i_kstate_basis_populator.hpp>
@@ -10,10 +9,11 @@
 
 #include <linear_algebra/linear_algebra.hpp>
 
+#include <kstate/kstate_concrete.hpp>
+
 #include <kstate_trait/trait_site_state.hpp>
 
-#include <kstate/basis.hpp>
-#include <kstate/kstate_concrete.hpp>
+#include <kbasis/basis.hpp>
 
 #include <extensions/stream_fromat_stacker.hpp>
 
@@ -75,7 +75,7 @@ namespace bfpt_common {
 
 template<typename KstateT>
 void pretty_print(
-        kstate::Basis<KstateT>& basis,
+        kbasis::Basis<KstateT>& basis,
         const arma::vec& eigen_values,
         const arma::cx_mat& eigen_vectors,
         std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
@@ -172,7 +172,7 @@ template<typename KstateTraitT>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
 do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                  const IKstateOperatorMatrix<KstateTraitT>& hamiltonian,
-                 kstate::Basis<KstateTraitT>& basis,
+                 kbasis::Basis<KstateTraitT>& basis,
                  const unsigned max_pt_order,
                  const unsigned k_n,
                  const CommonRecipePrintFlags& print_flags,
@@ -187,7 +187,7 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
     //using KstateT = typename KstateTraitT::KstateT;
     //using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     //using SiteStateT = typename KstateT::SiteStateT;
-    //using BasisT = kstate::Basis<KstateTraitT>;
+    //using BasisT = kbasis::Basis<KstateTraitT>;
     using ResultT = utility::Result<CommonRecipeReceipt, std::runtime_error>;
     // --------------------------------------------------
     assert(n_threads != 0);
@@ -338,5 +338,3 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
 }
 
 }  // namespace bfpt_common
-
-#endif

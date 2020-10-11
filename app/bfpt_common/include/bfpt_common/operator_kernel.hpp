@@ -1,5 +1,4 @@
-#ifndef BFPT_COMMON_HAMILTONIAN_KERNEL_HPP
-#define BFPT_COMMON_HAMILTONIAN_KERNEL_HPP
+#pragma once
 
 #include<kstate_trait/trait_site_state.hpp>
 
@@ -155,5 +154,3 @@ OperatorKernel12<_SiteStateTraitT>::OperatorKernel12(DiagInfoT diag_info, OffDia
 }
 
 }
-
-#endif

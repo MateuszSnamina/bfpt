@@ -1,6 +1,6 @@
-#include <kstate_tests/site_state_trait_for_int.hpp>
+#include <kbasis_tests/site_state_trait_for_int.hpp>
 
-#include <kstate/basis_streamer.hpp>
+#include <kbasis/basis_streamer.hpp>
 
 #include <kstate/kstate_concrete.hpp>
 
@@ -8,12 +8,12 @@
 
 using kstate::ctr_from_range;
 
-kstate::Basis<kstate_trait::TraitKstate<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>>
+kbasis::Basis<kstate_trait::TraitKstate<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>>
 get_testet_filled_basis() {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
-    kstate::Basis<KStateTrait> basis(3);
+    kbasis::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
@@ -58,7 +58,7 @@ TEST(BasisStreamer, BasicTest) {
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
 
     using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator&&;
+    using kbasis::pramga::operator&&;
 
     const auto& basis = get_testet_filled_basis();
     const auto kstate_value_putter = [](std::ostream& os, Kstate kstate) {

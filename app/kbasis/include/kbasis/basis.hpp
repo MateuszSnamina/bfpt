@@ -1,12 +1,10 @@
-#ifndef KSTATE_BASIS_HPP
-#define KSTATE_BASIS_HPP
+#pragma once
+
+#include <kbasis/vec_map.hpp>
 
 #include <kstate_trait/trait_kstate.hpp>
 
-#include <kstate_trait/trait_kstate.hpp>
 #include <kstate_trait/kstate_comparator.hpp>
-
-#include <kstate/vec_map.hpp>
 
 //#include <boost/multi_index/mem_fun.hpp>
 
@@ -14,7 +12,7 @@
 // ## Basis                                                             ##
 // #######################################################################
 
-namespace kstate {
+namespace kbasis {
 
 template <typename _KstateTraitT>
 struct BasisKeyExtractor {
@@ -129,6 +127,4 @@ void Basis<_KstateTraitT>::add_element(KstatePtrT c) {
     _vec_map.vec_index().push_back(c);
 }
 
-}  // namespace kstate
-
-#endif
+}  // namespace kbasis

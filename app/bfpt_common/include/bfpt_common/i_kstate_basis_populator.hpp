@@ -1,9 +1,8 @@
-#ifndef BFPT_COMMON_I_KSTATE_BASIS_POPULATOR_HPP
-#define BFPT_COMMON_I_KSTATE_BASIS_POPULATOR_HPP
+#pragma once
+
+#include <kbasis/basis.hpp>
 
 #include <kstate_trait/kstate_stl.hpp>
-
-#include <kstate/basis.hpp>
 
 // #######################################################################
 // ##  IKstateBasisPopulator                                            ##
@@ -20,12 +19,10 @@ class IKstateBasisPopulator {
     using KstateT = typename _KstateTraitT::KstateT;
     using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     using SiteStateT = typename KstateT::SiteStateT;
-    using BasisT = kstate::Basis<KstateTraitT>;
+    using BasisT = kbasis::Basis<KstateTraitT>;
    public:
     virtual kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
         const KstateT& generator) const = 0;
 };
 
 }  // namespace bfpt_common
-
-#endif

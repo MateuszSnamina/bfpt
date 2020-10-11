@@ -40,17 +40,17 @@ struct KstateComparator {
     using is_transparent = std::true_type;
 
     bool operator()(std::shared_ptr<KstateT> lhs, std::shared_ptr<KstateT> rhs) const {
-            return kstate_trait::RangeComparator()(lhs->to_range(), rhs->to_range());
+            return kstate_trait::RangeComparator()(KstateTraitT::to_range(*lhs), KstateTraitT::to_range(*rhs));
     }
 
     template<typename ForwardRangeT>
     bool operator()(std::shared_ptr<KstateT> lhs, ForwardRangeT rhs) const {
-            return kstate_trait::RangeComparator()(lhs->to_range(), rhs);
+            return kstate_trait::RangeComparator()(KstateTraitT::to_range(*lhs), rhs);
     }
 
     template<typename ForwardRangeT>
     bool operator()(ForwardRangeT lhs, std::shared_ptr<KstateT> rhs) const {
-            return kstate_trait::RangeComparator()(lhs, rhs->to_range());
+            return kstate_trait::RangeComparator()(lhs, KstateTraitT::to_range(*rhs));
     }
 
 };

@@ -1,11 +1,11 @@
-#include <kstate/vec_map.hpp>
+#include <kbasis/vec_map.hpp>
 
 #include <memory>
 #include <string>
 
 #include <gtest/gtest.h>
 
-namespace  {
+namespace {
 struct Person {
     Person(std::string county, std::string given_name, std::string family_name) :
         county(county),
@@ -35,7 +35,7 @@ struct PersonComparisonPredicate {
 }
 
 TEST(VecMap, Empty) {
-    kstate::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
+    kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     // test vec_map size:
     ASSERT_EQ(vec_map.size(), 0);
     ASSERT_TRUE(vec_map.vec_index().begin() == vec_map.vec_index().end());
@@ -47,7 +47,7 @@ TEST(VecMap, Empty) {
 }
 
 TEST(VecMap, OneElement) {
-    kstate::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
+    kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     const auto k1 = std::make_shared<Person>("usa", "aaa", "bbb");
     vec_map.add_element(k1);
     // test vec_map size:
@@ -70,7 +70,7 @@ TEST(VecMap, OneElement) {
 TEST(VecMap, TwoDifferentElementsTest0) {
     const auto k1 = std::make_shared<Person>("usa", "aaa", "ccc");
     const auto k2 = std::make_shared<Person>("usa", "aaa", "bbb");
-    kstate::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
+    kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     vec_map.add_element(k1);
     vec_map.add_element(k2);
     // test vec_map size:
@@ -95,7 +95,7 @@ TEST(VecMap, TwoDifferentElementsTest0) {
 TEST(VecMap, TwoDifferentElementsTest1) {
     const auto k1 = std::make_shared<Person>("usa", "aaa", "ccc");
     const auto k2 = std::make_shared<Person>("usa", "aaa", "bbb");
-    kstate::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
+    kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     vec_map.add_element(k2);
     vec_map.add_element(k1);
     // test vec_map size:
@@ -120,7 +120,7 @@ TEST(VecMap, TwoDifferentElementsTest1) {
 TEST(VecMap, TwoSameElementsTest0) {
     const auto k1 = std::make_shared<Person>("usa", "aaa", "ccc");
     const auto k2 = std::make_shared<Person>("usa", "aaa", "ccc");
-    kstate::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
+    kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     vec_map.add_element(k1);
     vec_map.add_element(k2);
     // test vec_map size:
@@ -153,7 +153,7 @@ TEST(VecMap, BigTest) {
     const auto k8 = std::make_shared<Person>("pl", "aaa", "ddd"); // key: "dddaaa" // is same as for k3
     const auto k9 = std::make_shared<Person>("pl", "aaa", "mmm"); // key: "mmmaaa"
 
-    kstate::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
+    kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     vec_map.add_element(k1);
     vec_map.add_element(k2);
     vec_map.add_element(k3);

@@ -10,12 +10,9 @@ add_library("${TARGET_NAME}" INTERFACE)
 target_sources("${TARGET_NAME}" INTERFACE ${inc})
 target_include_directories("${TARGET_NAME}" INTERFACE include)
 target_link_libraries("${TARGET_NAME}" INTERFACE
-  kstate
-  kbasis
-  armadillo
-  linear_algebra
+  kstate_trait
+  extensions
+  utility
 )
-
-target_link_libraries("${TARGET_NAME}" INTERFACE OpenMP::OpenMP_CXX)
 
 message("CMake has processed: ${TARGET_NAME}")
