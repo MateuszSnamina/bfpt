@@ -15,7 +15,7 @@ using kstate::ctr_from_range;
 
 
 TEST(DynamicKstate, ConstructorFromRange) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
@@ -24,7 +24,7 @@ TEST(DynamicKstate, ConstructorFromRange) {
 }
 
 TEST(DynamicKstate, CompareTest0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
@@ -41,7 +41,7 @@ TEST(DynamicKstate, CompareTest0) {
 }
 
 TEST(DynamicKstate, TranlationalCompareTest0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
@@ -105,84 +105,84 @@ TEST(DynamicKstate, TranlationalCompareTest0) {
 }
 
 TEST(DynamicKstate, LeastReplicationShiftTest0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     EXPECT_EQ(k1.n_least_replication_shift(), 6);
-    EXPECT_EQ((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 6);
+    EXPECT_EQ((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 6);
 }
 
 TEST(DynamicKstate, LeastReplicationShiftTest1) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v2 = {11, 12, 13, 11, 12, 13};
     const Kstate k2(v2, ctr_from_range);
     EXPECT_EQ(k2.n_least_replication_shift(), 3);
-    EXPECT_EQ((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 3);
+    EXPECT_EQ((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 3);
 }
 
 TEST(DynamicKstate, LeastReplicationShiftTest2) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v3 = {11, 12, 11, 12, 11, 12};
     const Kstate k3(v3, ctr_from_range);
     EXPECT_EQ(k3.n_least_replication_shift(), 2);
-    EXPECT_EQ((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 2);
+    EXPECT_EQ((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 2);
 }
 
 TEST(DynamicKstate, LeastReplicationShiftTest3) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v4 = {11, 11, 11, 11, 11, 11};
     const Kstate k4(v4, ctr_from_range);
     EXPECT_EQ(k4.n_least_replication_shift(), 1);
-    EXPECT_EQ((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 1);
+    EXPECT_EQ((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 1);
 }
 
 //---
 TEST(DynamicKstate, NormFactor0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     double expected_norm = 1.0 / std::sqrt(6);
     EXPECT_DOUBLE_EQ(k1.norm_factor(), expected_norm);
-    // EXPECT_DOUBLE_EQ((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+    // EXPECT_DOUBLE_EQ((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
 TEST(DynamicKstate, NormFactor1) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v2 = {11, 12, 13, 11, 12, 13};
     const Kstate k2(v2, ctr_from_range);
     double expected_norm = 1.0 / std::sqrt(3) / 2;
     EXPECT_DOUBLE_EQ(k2.norm_factor(), expected_norm);
-    // EXPECT_DOUBLE_EQ((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+    // EXPECT_DOUBLE_EQ((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
 TEST(DynamicKstate, NormFactor2) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v3 = {11, 12, 11, 12, 11, 12};
     const Kstate k3(v3, ctr_from_range);
     double expected_norm = 1.0 / std::sqrt(2) / 3;
     EXPECT_DOUBLE_EQ(k3.norm_factor(), expected_norm);
-    // EXPECT_DOUBLE_EQ((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+    // EXPECT_DOUBLE_EQ((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
 TEST(DynamicKstate, NormFactor3) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v4 = {11, 11, 11, 11, 11, 11};
     const Kstate k4(v4, ctr_from_range);
     double expected_norm = 1.0 / 6.0;
     EXPECT_DOUBLE_EQ(k4.norm_factor(), expected_norm);
-    // EXPECT_DOUBLE_EQ((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
+    // EXPECT_DOUBLE_EQ((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
 TEST(DynamicKstate, IsProlificTest0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
@@ -192,16 +192,16 @@ TEST(DynamicKstate, IsProlificTest0) {
     EXPECT_TRUE(k1.is_prolific(3));
     EXPECT_TRUE(k1.is_prolific(4));
     EXPECT_TRUE(k1.is_prolific(5));
-    EXPECT_TRUE((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
-    EXPECT_TRUE((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
-    EXPECT_TRUE((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
-    EXPECT_TRUE((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
-    EXPECT_TRUE((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
-    EXPECT_TRUE((k1.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
+    EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
+    EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
+    EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
+    EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
+    EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
+    EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
 TEST(DynamicKstate, IsProlificTest1) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v2 = {11, 11, 11, 11, 11, 11};
     const Kstate k2(v2, ctr_from_range);
@@ -211,16 +211,16 @@ TEST(DynamicKstate, IsProlificTest1) {
     EXPECT_FALSE(k2.is_prolific(3));
     EXPECT_FALSE(k2.is_prolific(4));
     EXPECT_FALSE(k2.is_prolific(5));
-    EXPECT_TRUE((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
-    EXPECT_FALSE((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
-    EXPECT_FALSE((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
-    EXPECT_FALSE((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
-    EXPECT_FALSE((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
-    EXPECT_FALSE((k2.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
+    EXPECT_TRUE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
+    EXPECT_FALSE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
+    EXPECT_FALSE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
+    EXPECT_FALSE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
+    EXPECT_FALSE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
+    EXPECT_FALSE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
 TEST(DynamicKstate, IsProlificTest2) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v3 = {11, 12, 13, 11, 12, 13};
     const Kstate k3(v3, ctr_from_range);
@@ -230,16 +230,16 @@ TEST(DynamicKstate, IsProlificTest2) {
     EXPECT_FALSE(k3.is_prolific(3));
     EXPECT_TRUE(k3.is_prolific(4));
     EXPECT_FALSE(k3.is_prolific(5));
-    EXPECT_TRUE((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
-    EXPECT_FALSE((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
-    EXPECT_TRUE((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
-    EXPECT_FALSE((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
-    EXPECT_TRUE((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
-    EXPECT_FALSE((k3.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
+    EXPECT_TRUE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
+    EXPECT_FALSE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
+    EXPECT_TRUE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
+    EXPECT_FALSE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
+    EXPECT_TRUE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
+    EXPECT_FALSE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
 TEST(DynamicKstate, IsProlificTest3) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v4 = {11, 12, 11, 12, 11, 12};
     const Kstate k4(v4, ctr_from_range);
@@ -249,16 +249,16 @@ TEST(DynamicKstate, IsProlificTest3) {
     EXPECT_TRUE(k4.is_prolific(3));
     EXPECT_FALSE(k4.is_prolific(4));
     EXPECT_FALSE(k4.is_prolific(5));
-    EXPECT_TRUE((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
-    EXPECT_FALSE((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
-    EXPECT_FALSE((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
-    EXPECT_TRUE((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
-    EXPECT_FALSE((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
-    EXPECT_FALSE((k4.template Kstate<kstate::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
+    EXPECT_TRUE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(0)));
+    EXPECT_FALSE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(1)));
+    EXPECT_FALSE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(2)));
+    EXPECT_TRUE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(3)));
+    EXPECT_FALSE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(4)));
+    EXPECT_FALSE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
 TEST(DynamicKstate, ToStrTest0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
@@ -266,7 +266,7 @@ TEST(DynamicKstate, ToStrTest0) {
 }
 
 TEST(DynamicKstate, ToStrTest1) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 1> v2 = {11};
     const Kstate k2(v2, ctr_from_range);
@@ -278,7 +278,7 @@ TEST(DynamicKstate, ToStrTest1) {
 // #######################################################################
 
 TEST(DynamicUniqueKstate, CtrTest0) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 1> v2 = {11};
     const Kstate k2(kstate::make_unique_shift(v2), ctr_from_range);
@@ -286,7 +286,7 @@ TEST(DynamicUniqueKstate, CtrTest0) {
 }
 
 TEST(DynamicUniqueKstate, CtrTest1) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 2> v2 = {11, 12};
     const Kstate k2(kstate::make_unique_shift(v2), ctr_from_range);
@@ -294,7 +294,7 @@ TEST(DynamicUniqueKstate, CtrTest1) {
 }
 
 TEST(DynamicUniqueKstate, CtrTest2) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 2> v2 = {12, 11};
     const Kstate k2(kstate::make_unique_shift(v2), ctr_from_range);
@@ -302,7 +302,7 @@ TEST(DynamicUniqueKstate, CtrTest2) {
 }
 
 TEST(DynamicUniqueKstate, CtrTest3) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};
     const Kstate k2(kstate::make_unique_shift(v2), ctr_from_range);

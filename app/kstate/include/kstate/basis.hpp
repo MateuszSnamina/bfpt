@@ -1,10 +1,12 @@
 #ifndef KSTATE_BASIS_HPP
 #define KSTATE_BASIS_HPP
 
-#include <kstate/trait_kstate.hpp>
+#include <kstate_trait/trait_kstate.hpp>
+
+#include <kstate_trait/trait_kstate.hpp>
+#include <kstate_trait/kstate_comparator.hpp>
+
 #include <kstate/vec_map.hpp>
-#include <kstate/trait_kstate.hpp>
-#include <kstate/kstate_comparator.hpp>
 
 //#include <boost/multi_index/mem_fun.hpp>
 
@@ -30,7 +32,7 @@ struct BasisKeyExtractor {
 
 template <typename _KstateTraitT>
 class Basis {
-    static_assert(IsTraitKstate<_KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
 public:
     // Helper types:
@@ -41,7 +43,7 @@ private:
     //using Key = decltype(std::declval<KstateT>().to_range());
     //using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
     using KeyExtractorT = BasisKeyExtractor<KstateTraitT>;
-    using ComparisonPredicateT = RangeComparator;
+    using ComparisonPredicateT = kstate_trait::RangeComparator;
 public:
     using VecIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::VecIndex;
     using MapIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::MapIndex;

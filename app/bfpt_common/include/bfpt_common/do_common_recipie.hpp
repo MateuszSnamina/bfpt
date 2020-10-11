@@ -10,9 +10,10 @@
 
 #include <linear_algebra/linear_algebra.hpp>
 
+#include <kstate_trait/trait_site_state.hpp>
+
 #include <kstate/basis.hpp>
 #include <kstate/kstate_concrete.hpp>
-#include <kstate/trait_site_state.hpp>
 
 #include <extensions/stream_fromat_stacker.hpp>
 
@@ -180,7 +181,7 @@ do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
                  std::string print_outer_prefix = "",
                  unsigned n_threads = 1) {
     // --------------------------------------------------
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // --------------------------------------------------
     //using KstateT = typename KstateTraitT::KstateT;

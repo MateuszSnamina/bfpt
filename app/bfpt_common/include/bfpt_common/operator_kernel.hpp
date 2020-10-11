@@ -1,7 +1,7 @@
 #ifndef BFPT_COMMON_HAMILTONIAN_KERNEL_HPP
 #define BFPT_COMMON_HAMILTONIAN_KERNEL_HPP
 
-#include<kstate/trait_site_state.hpp>
+#include<kstate_trait/trait_site_state.hpp>
 
 #include<type_traits>
 #include<map>
@@ -17,7 +17,7 @@ namespace bfpt_common {
 
 template<typename _SiteStateTraitT>
 struct StateKernel1 {
-    static_assert(kstate::IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -31,7 +31,7 @@ bool operator<(const StateKernel1<SiteStateTraitT>& lhs, const StateKernel1<Site
 
 template<typename _SiteStateTraitT>
 struct CoupleInfoKernel1 {
-    static_assert(kstate::IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -41,7 +41,7 @@ struct CoupleInfoKernel1 {
 
 template<typename _SiteStateTraitT>
 class OperatorKernel1 {
-    static_assert(kstate::IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
@@ -90,7 +90,7 @@ namespace bfpt_common {
 
 template<typename _SiteStateTraitT>
 struct StateKernel12 {
-    static_assert(kstate::IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -105,7 +105,7 @@ bool operator<(const StateKernel12<SiteStateTraitT>& lhs, const StateKernel12<Si
 
 template<typename _SiteStateTraitT>
 struct CoupleInfoKernel12 {
-    static_assert(kstate::IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -115,7 +115,7 @@ struct CoupleInfoKernel12 {
 
 template<typename _SiteStateTraitT>
 class OperatorKernel12 {
-    static_assert(kstate::IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
     using SiteStateTraitT = _SiteStateTraitT;

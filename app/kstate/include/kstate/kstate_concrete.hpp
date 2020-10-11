@@ -1,7 +1,8 @@
 #pragma once
 
-#include <kstate/trait_site_state.hpp>
-#include <kstate/trait_kstate.hpp>
+#include <kstate_trait/trait_site_state.hpp>
+#include <kstate_trait/trait_kstate.hpp>
+
 #include <kstate/kstate_abstract.hpp>
 
 #include <extensions/range_streamer.hpp>
@@ -59,7 +60,7 @@ init_vector_from_range(
 
 template <typename _SiteStateTraitT>
 struct DynamicKstateTypes {
-    static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -78,7 +79,7 @@ struct DynamicKstateTypes {
 
 template <typename _SiteStateTraitT>
 class DynamicKstate : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeT> {
-    static_assert(IsTraitSiteState<_SiteStateTraitT>::value);
+    static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
@@ -139,25 +140,25 @@ DynamicKstate<_SiteStateTraitT>::n_sites() const {
 // ## TraitsFor DynamicKstate                                           ##
 // #######################################################################
 
-namespace kstate {
+namespace kstate_trait {
 
 template<typename _SiteStateTraitT>
-struct TraitKstate<DynamicKstate<_SiteStateTraitT>> {
+struct TraitKstate<kstate::DynamicKstate<_SiteStateTraitT>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
     // helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using KstateT = DynamicKstate<_SiteStateTraitT>;
-    using ConstRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using ConstAnyRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+    using KstateT = kstate::DynamicKstate<_SiteStateTraitT>;
+    using ConstRangeT = typename kstate::DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
+    using ConstAnyRangeT = typename kstate::DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
-        return KstateT(range, CtrFromRange{});
+        return KstateT(range, kstate::CtrFromRange{});
     }
     template <typename OtherRangeT>
     static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
-        return std::make_shared<KstateT>(range, CtrFromRange{});
+        return std::make_shared<KstateT>(range, kstate::CtrFromRange{});
     }
     static ConstRangeT to_range(const KstateT& kstate) {
         return kstate.to_range();

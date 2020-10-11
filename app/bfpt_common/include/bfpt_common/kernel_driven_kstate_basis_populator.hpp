@@ -20,7 +20,7 @@ namespace bfpt_common {
 
 template<typename _KstateTraitT>
 class KernelDrivenKstateBasisPopulator : public bfpt_common::IKstateBasisPopulator<_KstateTraitT> {
-    static_assert(kstate::IsTraitKstate<_KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
 public:
     using KstateTraitT = _KstateTraitT;
@@ -33,7 +33,7 @@ public:
             const size_t n_sites,
             OperatorKernel1<SiteStateTraitT> operator_kernel_1,
             OperatorKernel12<SiteStateTraitT> operator_kernel_12);
-    kstate::KstateSet<KstateTraitT> get_coupled_states(
+    kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
             const KstateT& generator) const override;
 private:
     const size_t _n_sites;
@@ -60,10 +60,10 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulato
 }
 
 template<typename _KstateTraitT>
-kstate::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateTraitT>
+kstate_trait::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
         const KstateT& generator) const {
-    kstate::KstateSet<KstateTraitT> result;
+    kstate_trait::KstateSet<KstateTraitT> result;
     assert(generator.n_sites() == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
     const auto generator_range = KstateTraitT::to_range(generator);

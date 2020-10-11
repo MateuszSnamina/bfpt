@@ -3,8 +3,10 @@
 
 #include <bfpt_common/i_kstate_basis_populator.hpp>
 
+#include <kstate_trait/kstate_stl.hpp>
+
 #include <kstate/basis.hpp>
-#include <kstate/kstate_stl.hpp>
+
 
 #include <omp.h>
 
@@ -42,7 +44,7 @@ void generate_populated_basis(
         kstate::Basis<KstateTraitT>& basis,
         unsigned n_threads = 1) {
     // *********** asserts ********************************************************************
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // *********** pt orders loop  ************************************************************
     unsigned last_chunk_size = basis.size();
@@ -50,7 +52,7 @@ void generate_populated_basis(
         const unsigned old_size = basis.size();
         assert(last_chunk_size <= old_size);
         // *********** prepare ****************************************************************
-        std::vector<kstate::KstateSet<KstateTraitT>> kstate_set_all(n_threads);
+        std::vector<kstate_trait::KstateSet<KstateTraitT>> kstate_set_all(n_threads);
         // *********** filling ****************************************************************
         //const auto tp_fill_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
 #pragma omp parallel for num_threads(n_threads)
@@ -58,7 +60,7 @@ void generate_populated_basis(
             const auto tid = omp_get_thread_num();
             const auto el = basis.vec_index()[idx];
             assert(el);
-            const kstate::KstateSet<KstateTraitT> newely_generated_states = basis_populator.get_coupled_states(*el);
+            const kstate_trait::KstateSet<KstateTraitT> newely_generated_states = basis_populator.get_coupled_states(*el);
             kstate_set_all[tid].insert(std::begin(newely_generated_states), std::end(newely_generated_states));
         }
         //const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake

@@ -3,8 +3,9 @@
 
 #include <bfpt_common/density_operator.hpp>
 
+#include <kstate_trait/trait_kstate.hpp>
+
 #include <kstate/basis.hpp>
-#include <kstate/trait_kstate.hpp>
 #include <kstate/unique_shift.hpp>
 
 #include <extensions/adaptors.hpp>
@@ -33,7 +34,7 @@ calculate_reduced_density_operator_12_impl(
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
     // static asserts:
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // helper types:
     using KstateT = typename KstateTraitT::KstateT;
@@ -84,7 +85,7 @@ calculate_reduced_density_operator_12(
         const arma::cx_vec& eigen_vector,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // *********** helper types ***********************************************************
     using KstateT = typename KstateTraitT::KstateT;
@@ -144,7 +145,7 @@ calculate_reduced_density_operator_1_impl(
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
     // static asserts:
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // helper types:
     using KstateT = typename KstateTraitT::KstateT;
@@ -187,7 +188,7 @@ calculate_reduced_density_operator_1(
         const arma::cx_vec& eigen_vector,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // *********** helper types ***********************************************************
     using KstateT = typename KstateTraitT::KstateT;

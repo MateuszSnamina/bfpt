@@ -24,7 +24,7 @@ namespace bfpt_common {
 
 template<typename _KstateTraitT>
 class KernelDrivenKstateOperatorMatrix : public bfpt_common::IKstateOperatorMatrix<_KstateTraitT> {
-    static_assert(kstate::IsTraitKstate<_KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
 public:
     using KstateTraitT = _KstateTraitT;

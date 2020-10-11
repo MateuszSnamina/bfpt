@@ -6,7 +6,7 @@
 
 #include<bfpt_common/operator_kernel.hpp>
 
-#include<kstate/trait_site_state.hpp>
+#include<kstate_trait/trait_site_state.hpp>
 
 #include<map>
 

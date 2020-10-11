@@ -14,7 +14,7 @@ using kstate::ctr_from_range;
 // #######################################################################
 
 TEST(KstateStringStreamer, SixElements) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
@@ -26,7 +26,7 @@ TEST(KstateStringStreamer, SixElements) {
 }
 
 TEST(KstateStringStreamer, OneElement) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
@@ -37,7 +37,7 @@ TEST(KstateStringStreamer, OneElement) {
 }
 
 TEST(KstateStringStreamer, Empty) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;
@@ -48,7 +48,7 @@ TEST(KstateStringStreamer, Empty) {
 }
 
 TEST(KstateStringStreamer, Fancy) {
-    using SiteStateTrait = kstate::TraitSiteState<double>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<double>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
     using kstate::pramga::operator||;

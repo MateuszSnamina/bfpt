@@ -8,11 +8,11 @@
 
 using kstate::ctr_from_range;
 
-kstate::Basis<kstate::TraitKstate<kstate::DynamicKstate<kstate::TraitSiteState<int>>>>
+kstate::Basis<kstate_trait::TraitKstate<kstate::DynamicKstate<kstate_trait::TraitSiteState<int>>>>
 get_testet_filled_basis() {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
-    using KStateTrait = kstate::TraitKstate<Kstate>;
+    using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kstate::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
     const int v1[3] = {11, 12, 13};
@@ -54,7 +54,7 @@ get_testet_filled_basis() {
 }
 
 TEST(BasisStreamer, BasicTest) {
-    using SiteStateTrait = kstate::TraitSiteState<int>;
+    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate::DynamicKstate<SiteStateTrait>;
 
     using extension::boost::stream_pragma::RSS;

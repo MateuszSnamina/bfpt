@@ -21,7 +21,7 @@ generate_operator_matrix(
         const unsigned k_n,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // *********** prepare ****************************************************************
     std::vector<arma::sp_cx_mat> kn_operator_builder_matrix_all(n_threads);

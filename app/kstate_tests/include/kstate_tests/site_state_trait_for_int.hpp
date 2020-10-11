@@ -1,8 +1,8 @@
 #pragma once
 
-#include <kstate/trait_site_state.hpp>
+#include <kstate_trait/trait_site_state.hpp>
 
-namespace kstate {
+namespace kstate_trait {
 
 template<>
 struct TraitSiteState<int> {
