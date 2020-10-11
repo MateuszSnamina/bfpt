@@ -6,7 +6,7 @@
 
 #include <kbasis/basis.hpp>
 
-#include <kstate/range_op_unique_shift.hpp>
+#include <kstate_impl/range_op_unique_shift.hpp>
 
 #include <chainkernel/operator_kernel.hpp>
 

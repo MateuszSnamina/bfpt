@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kstate/kstate_abstract.hpp>
+#include <kstate_impl/kstate_abstract.hpp>
 
 #include <utility/remove_cvref.hpp>
 #include <utility/is_base_of_template.hpp>

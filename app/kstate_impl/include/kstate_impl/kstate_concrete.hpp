@@ -1,9 +1,9 @@
 #pragma once
 
+#include <kstate_impl/kstate_abstract.hpp>
+
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
-
-#include <kstate/kstate_abstract.hpp>
 
 #include <extensions/range_streamer.hpp>
 

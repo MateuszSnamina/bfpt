@@ -14,9 +14,8 @@ target_link_libraries("${TARGET_NAME}" INTERFACE
   koperator_trait
   kpopulator_trait
   kbasis
-  armadillo
   linear_algebra
-  chainkernel #TODO remove, added temporarly
+  armadillo
 )
 
 target_link_libraries("${TARGET_NAME}" INTERFACE OpenMP::OpenMP_CXX)

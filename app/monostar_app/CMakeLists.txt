@@ -17,9 +17,12 @@ target_link_libraries("${TARGET_NAME}"
   monostar_hamiltonians
   monostar_system
   bfpt_common
-  kstate
-  koperator_impl
+  kstate_trait
+  kstate_impl
+  kpopulator_trait
   kpopulator_impl
+  koperator_trait
+  koperator_impl
   utility
   armadillo
   linear_algebra

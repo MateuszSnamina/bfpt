@@ -2,7 +2,7 @@
 
 #include <kbasis/basis_streamer.hpp>
 
-#include <kstate/kstate_concrete.hpp>
+#include <kstate_impl/kstate_concrete.hpp>
 
 #include <gtest/gtest.h>
 

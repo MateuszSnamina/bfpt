@@ -2,7 +2,7 @@
 
 #include <kbasis/basis.hpp>
 
-#include <kstate/kstate_streamer.hpp>
+#include <kstate_impl/kstate_streamer.hpp>
 
 #include <utility/is_base_of_template.hpp>
 #include <utility/remove_cvref.hpp>

@@ -5,8 +5,8 @@
 
 #include <kbasis/basis.hpp>
 
-#include <kstate/kstate_concrete.hpp>
-#include <kstate/range_op_unique_shift.hpp>
+#include <kstate_impl/kstate_concrete.hpp>
+#include <kstate_impl/range_op_unique_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 

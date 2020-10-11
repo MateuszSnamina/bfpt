@@ -1,9 +1,8 @@
 #include <kstate_tests/site_state_trait_for_int.hpp>
 #include <kstate_tests/site_state_trait_for_double.hpp>
 
-#include <kstate/kstate_streamer.hpp>
-
-#include <kstate/kstate_concrete.hpp>
+#include <kstate_impl/kstate_streamer.hpp>
+#include <kstate_impl/kstate_concrete.hpp>
 
 #include <gtest/gtest.h>
 
