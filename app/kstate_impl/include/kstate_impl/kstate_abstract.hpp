@@ -57,7 +57,7 @@
  * polymorphic-less framework check SpeedyKstate class.
  */
 
-namespace kstate {
+namespace kstate_impl {
 
 template <typename _SiteStateTraitT, typename _TraversalTagT = boost::random_access_traversal_tag>
 class Kstate {
@@ -159,7 +159,7 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
     return (to_any_range() | range_stream_settings).str();
 }
 
-}  // namespace kstate
+}  // namespace kstate_impl
 
 // #######################################################################
 // ## SpeedyKstate                                                      ##
@@ -213,7 +213,7 @@ Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
  *
  */
 
-namespace kstate {
+namespace kstate_impl {
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 class SpeedyKstate : public Kstate<
@@ -318,4 +318,4 @@ SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_str() const {
     return (to_range() | range_stream_settings).str();
 }
 
-}  // namespace kstate
+}  // namespace kstate_impl

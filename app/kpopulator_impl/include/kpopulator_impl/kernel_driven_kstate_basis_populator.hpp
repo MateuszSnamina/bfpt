@@ -92,7 +92,7 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive conjugated_range.
             const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2); // Must outlive conjugated_range.
             const auto conjugated_range = generator_range | refined_holder_1 | refined_holder_2;
-            const auto conjugated_range_unique_shifted = kstate::make_unique_shift(conjugated_range);
+            const auto conjugated_range_unique_shifted = kstate_impl::make_unique_shift(conjugated_range);
             const auto conjugated_kstate_ptr = KstateTraitT::shared_from_range(conjugated_range_unique_shifted);
             result.insert(conjugated_kstate_ptr);
         } // end of `_full_off_diag_info` equal_range loop

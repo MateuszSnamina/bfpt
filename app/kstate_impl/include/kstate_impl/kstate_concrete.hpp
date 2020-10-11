@@ -32,7 +32,7 @@
  * that uses std::vector as an internal buffer.
  */
 
-namespace kstate {
+namespace kstate_impl {
 
 // Helper tag classes:
 struct CtrFromRange {};
@@ -134,7 +134,7 @@ DynamicKstate<_SiteStateTraitT>::n_sites() const {
     return _v.size();
 }
 
-}  // namespace kstate
+}  // namespace kstate_impl
 
 // #######################################################################
 // ## TraitsFor kstate_impl::DynamicKstate                              ##
@@ -143,22 +143,22 @@ DynamicKstate<_SiteStateTraitT>::n_sites() const {
 namespace kstate_trait {
 
 template<typename _SiteStateTraitT>
-struct TraitKstate<kstate::DynamicKstate<_SiteStateTraitT>> {
+struct TraitKstate<kstate_impl::DynamicKstate<_SiteStateTraitT>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
     // helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using KstateT = kstate::DynamicKstate<_SiteStateTraitT>;
-    using ConstRangeT = typename kstate::DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using ConstAnyRangeT = typename kstate::DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+    using KstateT = kstate_impl::DynamicKstate<_SiteStateTraitT>;
+    using ConstRangeT = typename kstate_impl::DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
+    using ConstAnyRangeT = typename kstate_impl::DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
-        return KstateT(range, kstate::CtrFromRange{});
+        return KstateT(range, kstate_impl::CtrFromRange{});
     }
     template <typename OtherRangeT>
     static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
-        return std::make_shared<KstateT>(range, kstate::CtrFromRange{});
+        return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
     }
     static ConstRangeT to_range(const KstateT& kstate) {
         return kstate.to_range();

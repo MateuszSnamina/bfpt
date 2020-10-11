@@ -22,7 +22,7 @@
 // ##  RangeStreamer                                                    ##
 // #######################################################################
 
-namespace kstate {
+namespace kstate_impl {
 
 // ***********************************************************************
 
@@ -155,13 +155,13 @@ KstateStreamer<KstateT> make_kstate_streamer(
     return KstateStreamer<KstateT>(std::forward<KstateT>(kstate), range_streamer_settings);
 }
 
-}  // namespace kstate
+}  // namespace kstate_impl
 
 // #######################################################################
 // ##  pragma: operator||, operator<<                                   ##
 // #######################################################################
 
-namespace kstate::pramga {
+namespace kstate_impl::pramga {
 
 template<typename KstateT>
 KstateStreamer<KstateT>
@@ -179,4 +179,4 @@ std::ostream& operator<<(
     return os;
 }
 
-}  // namespace kstate::pramga
+}  // namespace kstate_impl::pramga

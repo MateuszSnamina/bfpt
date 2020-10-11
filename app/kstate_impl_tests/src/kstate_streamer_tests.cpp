@@ -6,7 +6,7 @@
 
 #include <gtest/gtest.h>
 
-using kstate::ctr_from_range;
+using kstate_impl::ctr_from_range;
 
 // #######################################################################
 // ## KstateStringStreamer                                              ##
@@ -14,11 +14,11 @@ using kstate::ctr_from_range;
 
 TEST(KstateStringStreamer, SixElements) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator||;
-    using kstate::pramga::operator<<;
-    using kstate::pramga::operator||;
+    using kstate_impl::pramga::operator||;
+    using kstate_impl::pramga::operator<<;
+    using kstate_impl::pramga::operator||;
     const int v1[6] = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     ASSERT_EQ((k1 || RSS<int>()).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃11∙12∙13∙14∙15∙16⦄");
@@ -26,10 +26,10 @@ TEST(KstateStringStreamer, SixElements) {
 
 TEST(KstateStringStreamer, OneElement) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator||;
-    using kstate::pramga::operator<<;
+    using kstate_impl::pramga::operator||;
+    using kstate_impl::pramga::operator<<;
     const int v1[1] = {11};
     const Kstate k1(v1, ctr_from_range);
     ASSERT_EQ((k1 || RSS<int>()).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃11⦄");
@@ -37,10 +37,10 @@ TEST(KstateStringStreamer, OneElement) {
 
 TEST(KstateStringStreamer, Empty) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator||;
-    using kstate::pramga::operator<<;
+    using kstate_impl::pramga::operator||;
+    using kstate_impl::pramga::operator<<;
     std::vector<int> v1;
     const Kstate k1(v1, ctr_from_range);
     ASSERT_EQ((k1 || RSS<int>()).str(), "𝕂𝕤𝕥𝕒𝕥𝕖⦃⦄");
@@ -48,10 +48,10 @@ TEST(KstateStringStreamer, Empty) {
 
 TEST(KstateStringStreamer, Fancy) {
     using SiteStateTrait = kstate_trait::TraitSiteState<double>;
-    using Kstate = kstate::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator||;
-    using kstate::pramga::operator<<;
+    using kstate_impl::pramga::operator||;
+    using kstate_impl::pramga::operator<<;
     double v1[3] = {1.1, 1.2, 1.3};
     const Kstate k1(v1, ctr_from_range);
     const auto kstate_stream_settings = RSS<double>()
