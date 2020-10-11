@@ -1,5 +1,4 @@
-#ifndef KSTATE_KSTATE_STL_HPP
-#define KSTATE_KSTATE_STL_HPP
+#pragma once
 
 #include<kstate_trait/kstate_comparator.hpp>
 
@@ -20,6 +19,3 @@ template<class KstateTraitT, typename T>
 using KstateMap = std::map<std::shared_ptr<typename KstateTraitT::KstateT>, T, KstateComparator<KstateTraitT>>;
 
 }
-
-
-#endif // KSTATE_KSTATE_STL_HPP

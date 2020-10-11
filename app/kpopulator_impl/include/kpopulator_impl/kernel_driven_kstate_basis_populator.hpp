@@ -1,15 +1,16 @@
 #pragma once
 
-#include <bfpt_common/i_kstate_basis_populator.hpp>
+#include <kpopulator_trait/trait_kpopulator.hpp>
+
+#include <kstate_trait/trait_kstate.hpp>
+#include <kstate_trait/kstate_stl.hpp>
+
+#include <kbasis/basis.hpp>
 
 #include <chainkernel/operator_kernel.hpp>
 
 #include <kstate/range_op_unique_shift.hpp>
-
-#include <chainkernel/operator_kernel.hpp>
-
 #include <extensions/adaptors.hpp>
-
 
 #include <type_traits>
 #include <cassert>
@@ -20,10 +21,10 @@
 // ## KernelDrivenKstateBasisPopulator                                  ##
 // #######################################################################
 
-namespace bfpt_common {
+namespace kpopulator_impl {
 
 template<typename _KstateTraitT>
-class KernelDrivenKstateBasisPopulator : public bfpt_common::IKstateBasisPopulator<_KstateTraitT> {
+class KernelDrivenKstateBasisPopulator {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
 public:
@@ -38,20 +39,20 @@ public:
             chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
             chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
     kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
-            const KstateT& generator) const override;
+            const KstateT& generator) const;
 private:
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
 };
 
-}  // namespace bfpt_common
+}  // namespace kpopulator_impl
 
 // #######################################################################
 // ## KernelDrivenKstateBasisPopulator -- impl                          ##
 // #######################################################################
 
-namespace bfpt_common {
+namespace kpopulator_impl {
 
 template<typename _KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulator(
@@ -102,4 +103,33 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
     return result;
 }
 
-}  // namespace bfpt_common
+}  // namespace kpopulator_impl
+
+
+// #######################################################################
+// ## TraitsFor kpopulator_impl::KernelDrivenKstateBasisPopulator       ##
+// #######################################################################
+
+namespace kpopulator_trait {
+
+template<typename _KstateTraitT>
+struct TraitKpopulator<kpopulator_impl::KernelDrivenKstateBasisPopulator<_KstateTraitT>> {
+    static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
+    static_assert(_KstateTraitT::is_kstate_trait);
+    // the is_kstate_trait flag:
+    static constexpr bool is_kpopulator_trait = true;
+    // helper types:
+    using KstateTraitT = _KstateTraitT;
+    using KstateT = typename KstateTraitT::KstateT;
+    using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<_KstateTraitT>;
+    using BasisT = kbasis::Basis<KstateTraitT>;
+    // function being the public API:
+    kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
+            const KpopulatorT& kpopulator,
+            const KstateT& generator) {
+        return kpopulator.get_coupled_states(generator);
+    }
+
+};
+
+}

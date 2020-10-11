@@ -18,6 +18,8 @@ target_link_libraries("${TARGET_NAME}"
   monostar_system
   bfpt_common
   kstate
+  koperator_impl
+  kpopulator_impl
   utility
   armadillo
   linear_algebra

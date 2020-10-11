@@ -1,6 +1,10 @@
 #pragma once
 
-#include <bfpt_common/i_kstate_operator_matrix.hpp>
+#include <koperator_trait/trait_koperator.hpp>
+
+#include <kstate_trait/trait_kstate.hpp>
+
+#include <kbasis/basis.hpp>
 
 #include <kstate/range_op_unique_shift.hpp>
 
@@ -20,10 +24,10 @@
 // ## KernelDrivenKstateOperatorMatrix                                  ##
 // #######################################################################
 
-namespace bfpt_common {
+namespace koperator_impl {
 
 template<typename _KstateTraitT>
-class KernelDrivenKstateOperatorMatrix : public bfpt_common::IKstateOperatorMatrix<_KstateTraitT> {
+class KernelDrivenKstateOperatorMatrix {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
 public:
@@ -41,21 +45,21 @@ public:
             const BasisT& basis,
             size_t n_col,
             arma::sp_cx_mat& kn_operator_builder_matrix,
-            const unsigned k_n) const override;
+            const unsigned k_n) const;
 private:
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
 };
 
-}  // namespace bfpt_common
+}  // namespace koperator_impl
 
 
 // #######################################################################
 // ## KernelDrivenKstateOperatorMatrix -- impl                          ##
 // #######################################################################
 
-namespace bfpt_common {
+namespace koperator_impl {
 
 template<typename _KstateTraitT>
 KernelDrivenKstateOperatorMatrix<_KstateTraitT>::KernelDrivenKstateOperatorMatrix(
@@ -190,4 +194,37 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     }  // end of `Delta` loop
 }
 
-}  // namespace bfpt_common
+}  // namespace koperator_impl
+
+// #######################################################################
+// ## TraitsFor koperator_impl::KernelDrivenKstateOperatorMatrix        ##
+// #######################################################################
+
+namespace koperator_trait {
+
+template<typename _KstateTraitT>
+struct TraitKoperator<koperator_impl::KernelDrivenKstateOperatorMatrix<_KstateTraitT>> {
+    static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
+    static_assert(_KstateTraitT::is_kstate_trait);
+    // the is_kstate_trait flag:
+    static constexpr bool is_koperator_trait = true;
+    // helper types:
+    using KstateTraitT = _KstateTraitT;
+    using KoperatorT = koperator_impl::KernelDrivenKstateOperatorMatrix<_KstateTraitT>;
+    using BasisT = kbasis::Basis<KstateTraitT>;
+    // function being the public API:
+    static void fill_kn_operator_builder_matrix_coll(
+            const KoperatorT& koperator,
+            const BasisT& basis,
+            size_t n_col,
+            arma::sp_cx_mat& kn_operator_builder_matrix,
+            const unsigned k_n) {
+        koperator.fill_kn_operator_builder_matrix_coll(basis,
+                                                       n_col,
+                                                       kn_operator_builder_matrix,
+                                                       k_n);
+    }
+
+};
+
+}

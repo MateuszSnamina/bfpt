@@ -1,5 +1,4 @@
-#ifndef KSTATE_KSTATE_COMPARATOR_HPP
-#define KSTATE_KSTATE_COMPARATOR_HPP
+#pragma once
 
 #include <kstate_trait/trait_kstate.hpp>
 
@@ -56,5 +55,3 @@ struct KstateComparator {
 };
 
 }  // namespace kstate
-
-#endif // KSTATE_KSTATE_COMPARATOR_HPP

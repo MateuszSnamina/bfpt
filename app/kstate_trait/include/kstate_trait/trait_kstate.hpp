@@ -1,5 +1,4 @@
-#ifndef KSTATE_TRAIT_KSTATE_HPP
-#define KSTATE_TRAIT_KSTATE_HPP
+#pragma once
 
 #include <type_traits>
 
@@ -12,13 +11,11 @@ struct TraitKstate {
 };
 
 template<typename T>
-struct IsTraitKstate : std::false_type{
+struct IsTraitKstate : std::false_type {
 };
 
 template<typename T>
-struct IsTraitKstate<TraitKstate<T>> : std::true_type{
+struct IsTraitKstate<TraitKstate<T>> : std::true_type {
 };
 
 } // end of namespace kstate
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef KSTATE_TRAIT_SITE_STATE_HPP
-#define KSTATE_TRAIT_SITE_STATE_HPP
+#pragma once
 
 #include <type_traits>
 
@@ -20,5 +19,3 @@ struct IsTraitSiteState<TraitSiteState<T>> : std::true_type {
 };
 
 }
-
-#endif

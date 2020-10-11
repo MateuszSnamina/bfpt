@@ -137,7 +137,7 @@ DynamicKstate<_SiteStateTraitT>::n_sites() const {
 }  // namespace kstate
 
 // #######################################################################
-// ## TraitsFor DynamicKstate                                           ##
+// ## TraitsFor kstate_impl::DynamicKstate                              ##
 // #######################################################################
 
 namespace kstate_trait {

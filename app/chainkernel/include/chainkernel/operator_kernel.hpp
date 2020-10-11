@@ -12,7 +12,7 @@
 // ## OperatorKernel1                                                   ##
 // #######################################################################
 
-namespace bfpt_common {
+namespace chainkernel {
 
 template<typename _SiteStateTraitT>
 struct StateKernel1 {
@@ -85,7 +85,7 @@ OperatorKernel1<_SiteStateTraitT>::OperatorKernel1(DiagInfoT diag_info, OffDiagI
 // ## OperatorKernel12                                                  ##
 // #######################################################################
 
-namespace bfpt_common {
+namespace chainkernel {
 
 template<typename _SiteStateTraitT>
 struct StateKernel12 {

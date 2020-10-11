@@ -8,11 +8,11 @@
 
 namespace monostar_hamiltonians {
 
-bfpt_common::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
+chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_12_fo(double Pzz_coef, double Pxz_coef, double Pxx_coef, double orbital_theta) {
     using namespace monostar_system;
-    using OnDiagInfoType = std::map<bfpt_common::StateKernel12<monostar_system::MonostarSiteStateTrait>, double>;
-    using OffDiagInfoType = std::multimap<bfpt_common::StateKernel12<monostar_system::MonostarSiteStateTrait>, bfpt_common::CoupleInfoKernel12<MonostarSiteStateTrait>>;
+    using OnDiagInfoType = std::map<chainkernel::StateKernel12<monostar_system::MonostarSiteStateTrait>, double>;
+    using OffDiagInfoType = std::multimap<chainkernel::StateKernel12<monostar_system::MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
     const double s2 = std::sin(orbital_theta/2);
     const double c2 = std::cos(orbital_theta/2);
     const double Pz_gg = +c2 * c2;
@@ -37,10 +37,10 @@ prepare_hamiltonian_kernel_12_fo(double Pzz_coef, double Pxz_coef, double Pxx_co
         {{gs, es}, {{es, es}, +Pzz_coef * Pz_ge * Pz_ee + Pxz_coef * Px_ge * Pz_ee + Pxz_coef * Pz_ge * Px_ee + Pxx_coef * Px_ge * Px_ee}},
         {{es, gs}, {{es, es}, +Pzz_coef * Pz_ee * Pz_ge + Pxz_coef * Px_ee * Pz_ge + Pxz_coef * Pz_ee * Px_ge + Pxx_coef * Px_ee * Px_ge}},
     };
-    return bfpt_common::OperatorKernel12<MonostarSiteStateTrait>{on_diag_info, half_off_diag_info};
+    return chainkernel::OperatorKernel12<MonostarSiteStateTrait>{on_diag_info, half_off_diag_info};
 }
 
-bfpt_common::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
+chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsFo& params, double orbital_theta) {
     using namespace monostar_system;
     return prepare_hamiltonian_kernel_12_fo(
@@ -50,11 +50,11 @@ prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsFo& params, double orbit
                 orbital_theta);
 }
 
-bfpt_common::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
+chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double orbital_theta) {
     using namespace monostar_system;
-    using OnDiagInfoType = std::map<bfpt_common::StateKernel1<MonostarSiteStateTrait>, double>;
-    using OffDiagInfoType = std::multimap<bfpt_common::StateKernel1<MonostarSiteStateTrait>, bfpt_common::CoupleInfoKernel1<MonostarSiteStateTrait>>;
+    using OnDiagInfoType = std::map<chainkernel::StateKernel1<MonostarSiteStateTrait>, double>;
+    using OffDiagInfoType = std::multimap<chainkernel::StateKernel1<MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel1<MonostarSiteStateTrait>>;
     const double s1 = std::sin(orbital_theta), c1 = std::cos(orbital_theta);
     const double tau_z_gg = +c1;
     const double tau_z_ge = -s1;
@@ -69,10 +69,10 @@ prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double
     OffDiagInfoType half_off_diag_info {
         {{gs}, {{es}, tau_z_coef * tau_z_ge + tau_minus_coef * tau_minus_ge}},
     };
-    return bfpt_common::OperatorKernel1<MonostarSiteStateTrait>{on_diag_info, half_off_diag_info};
+    return chainkernel::OperatorKernel1<MonostarSiteStateTrait>{on_diag_info, half_off_diag_info};
 }
 
-bfpt_common::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
+chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsFo& params, double orbital_theta) {
     using namespace monostar_system;
     return prepare_hamiltonian_kernel_1_fo(

@@ -14,10 +14,11 @@
 #include <monostar_system/monostar_kstate.hpp>
 #include <monostar_system/monostar_site_state.hpp>
 
-#include <bfpt_common/operator_kernel.hpp>
 #include <bfpt_common/kernel_driven_kstate_basis_populator.hpp>
 #include <bfpt_common/kernel_driven_kstate_operator_matrix.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
+
+#include<chainkernel/operator_kernel.hpp>
 
 #include <armadillo>
 
@@ -27,13 +28,16 @@
 #include <cassert>
 #include <cstdlib>
 
+#include <koperator_impl/kernel_driven_kstate_operator_matrix.hpp> //TODO: experimental -- remove
+#include <kpopulator_impl/kernel_driven_kstate_basis_populator.hpp> //TODO: experimental -- remove
+
 // #######################################################################
 // ## main - helpers                                                    ##
 // #######################################################################
 
 bfpt_common::CommonRecipeReceipt bfpt_gs(
-        const bfpt_common::OperatorKernel1<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1,
-        const bfpt_common::OperatorKernel12<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_12,
+        const chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1,
+        const chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
@@ -57,8 +61,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
 }
 
 bfpt_common::CommonRecipeReceipt bfpt_kn_es(
-        const bfpt_common::OperatorKernel1<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1,
-        const bfpt_common::OperatorKernel12<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_12,
+        const chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1,
+        const chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_12,
         const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
         const bfpt_common::CommonRecipePrintFlags& print_flags,
         const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
