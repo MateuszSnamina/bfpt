@@ -1,7 +1,10 @@
 # Bfpt
 
 ## What it is
-Bfpt (Brute Force Perturbation Theory) is a numeric solver of quantum Hamiltonian eigenproblem for finite discrete one dimensional periodic systems.
+
+# Bfpt solver
+
+`Bfpt` (Brute Force Perturbation Theory) is a numeric solver of quantum Hamiltonian eigenproblem for finite discrete one dimensional periodic systems.
 
 The solver performs exact denationalization (ED) in a subspace of the system Hilbert space. The subspace is constructed in a spirit of perturbation calculus. The construction starts with the `0`-th order subspace filled exclusively with quantum states provded (as an input) by the solver user. Then the next order subspaces are constructed iteratively: The `(n+1)`-th order subspace is the `n`-th order subspace extended by the Hamiltonian image of the `n`-th order subspace. The solver user defines the target subspace order. Having the desired subspace constructed, Hamiltonian restricted to the subspace is diagonalized using a spare matrices numeric method.
 
@@ -10,7 +13,11 @@ the solver performs ED.
 
 All calculations (both at the subspace generation stage and the diagonalization stage) are performed in the 'inverse space' (or 'momentum space') -- in the realm of quantum states with given Bloch's theorem pseudo-momentum.
 
-The archetype problem fitting the solver domain is one dimensional Heisenberg antiferromagnet. Even though the Heisenberg model is a lighthouse for development, the author's original motivation is to address spin-orbital Kugel–Khomskii models (like the one described for copper fluoride KCuF3).
+The archetype problem fitting the solver domain is one dimensional Heisenberg antiferromagnet. Even though the Heisenberg model is a lighthouse for development, the author's original motivation is to address spin-orbital Kugel–Khomskii models (like the one described for copper fluoride KCuF₃).
+
+# Bfpt project
+
+The project provides codebase for the `bfpt` solver components libraries as well as codebase of applications that integrates the solver soluton for real physical problem analysis.
 
 The solver is conceived to be general and easily extensible so to encore further experimenting. The project tries to achieve the objectives by involving easy to play modern C++ with balanced static and dynamic polymorphism, limited usage of external libraries focusing only on battle-tested ones: `boost C++` libraries for general purposes and `Armadillo`, `LAPACK`, `ARPACK`, `BLAS` libraries stack for linear algebra.
 
@@ -37,32 +44,105 @@ pushd build_release
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make "-j$(nproc)"
 popd
-build_release/bin/model_monostar # try it!
+build_release/bin/monostar_app # try it!
 ```
 
-# Simple example -- model monostar
+# `bfpt` solver problem definition:
 
-The project contains an executable (`model_monostar`) showing
+`bfpt` solver is a collection of small software libraries intended to work together,
+(rathr than a monolyth solver library).
+
+The problem to solve is defined programmatically.
+
+**Physical problem definition** 
+For conveniance `bfpt` splits the physical problem definition into two separate definition layers:
+- in the first layer relevant Hilbert space is concretized,
+- in the second layer relevant Hamiltonian operator is concretized.
+
+Both of the layers are defined by defining a correspongind type (type here means: "C++ class").
+Many Hilbert space types may be defined, as well many Hamiltonian operator types may be defined.
+Each type of Hamiltonian operator type fits only one type of Hilber space type,
+but for one Hilbert space type many Hamiltonians types are applicable.
+
+**Approximation definition** 
+[TODO]
+
+## Bfpt Systems -- Hilbert space definition layer
+
+`Bfpt` solver may be applied to any finite discrete one dimensional periodic systems.
+Any such system may be perceived as a chain made of replicas of a node subsystem.
+`Bfpt Systems` is to concretize the node subsystem. The concretization covers:
+- The total number of possible node states.
+- String representation of the node states.
+
+At this layer of abstraction _system definition_ to _real physical system_ association is not demanded.
+One may define a `bfpt` system for a specyfic physical system (aka: `strong typing` system definition),
+but is free to left the association unstated (aka `weak typing`).
+
+The pros of `strong typing` system definitions:
+- the node states string representation may be as accurate/precise as possible;
+- it makes the _system definition_-to-applicable-_Hamiltonian definitions_ relationship more explicit at type theory level.
+- one may add a domain specific functionality so to make the solve results posprocesing easier.
+
+The pros of `weak typing` system definitions:
+- useful when relevant methematic descrition is "physical system independent",
+- when one wants to reuse a simple system defintion many times.
+
+**Implemented system types** The project provides two system types:
+- `monostar system`, and
+- `spin-orbit system` [TODO].
+It is an easy task to define a new system type concretization.
+
+`monostar system` is defined as a quantum systems made of replicas of a two-level subsystem.
+The replicas are arranged in a way they form a chain (and here will be called chain nodes).
+A chain node quantum levels are denoted: `gs` and `es` (like ground state and excited state);
+although there is no implied states non-degeneracy condition.
+
+`spin-orbit system` is defined as a quantum systems made of replicas of a spin-orbit subsystem.
+for spin dublets and `e_g` orbitals.
+A chain node quantum levels are denoted by two-letters strings: `gg`, `ge`, `eg`, `gg`,
+where the first letter codes the spin state and the second codes the orbital state.
+(More about the codding convention below.)
+
+At this level of abstraction _system definition_ to _real physical system_ association is not demanded.
+In case of `monostar system` the concete physical realization is left unspecified.
+It makes it unversal and ready to use in many contexts.
+One may take advantage of it when analyzing spin dublets, system of `e_g` orbitals, or any other two-level system.
+
+The specyfic meaning of "two-level subsystem" is not relevant at the system level definition.
+
+## Physical interactions -- Hamiltonian operator definition layer
+
+`Bfpt` solver performs all the calculations in Bloch space.
+`Bfpt Hamiltonian` is to concretize the energies and the couplings.
+
+**Implemented system types** The project provides one hamiltonian type:
+- `kerneled Hamiltonian`
+
+`kerneled Hamiltonian` is for hamiltonians defined by _on-site_ interactions and _nearest neighbors_ interactions.
+In this case the chain Hamiltonian `ℋ` is expressed as `ℋ = ℋ_1 + ℋ_12`, where
+- `ℋ_1 = \sum_{<i>} H_1(i)`,
+- `ℋ_12 = \sum_{<ij>} H_12(i,j)` (with the summation over pairs of adjacent nodes);
+and thus prescribed by two-nodes kernel Hamiltionians
+- one-node kernel Hamiltionian `H_1`,
+- two-nodes kernel Hamiltionian `H_12`.
+
+The hamiltonian type is parametrized by `H_1` and `H_12`.
+The type is a template type and may be instantiated for any _ststem type_.
+
+## Approximation specification -- Basis populator definition layer
+
+[TODO]
+
+
+# Usage examples: `monostar_app`
+
+The project contains an executable (`monostar_app`) showing
 how to use the solver for models like 1D Heisenberg (anti)ferromagnet.
- 
-## Model defintion
 
-**Hilbert space** Monostar model is defined for quantum systems made of replicas of a two-level subsystem.
-The replicas are arranged in a way they form a chain (and here will be called chain nodes); 
-The nodes interactions are assumed to be restricted to the nearest neighbors.
+## 1D Heisenberg (anti)ferromagnet
 
-**Interactions pattern** A chain node quantum levels are denoted: `gs` and `es` (like ground state and excited state).
-The system Hamiltonian `H` is translationally invariant (with periodic boundary conditions)
-and is prescribed by two-nodes kernel Hamiltionian `H_12` (`H = \sum_{<ij>} H_12(i,j)` with the summation over pairs of adjacent nodes).
-`H_12` is further decomposed into `H_12_diag` and `H_12_off_diag` parts;
-`H_12_diag` defines diagonal energies for `(gs, gs)`, `(gs, es)`, `(es, gs)`, `(es, es)` nodes pairs,
-whereas `H_12_off_diag` describes couplings between the pairs.
-
-**Considered Hamiltonians** Model monostar is a framework that 
-
-TODO
-
-## Model monostat with `af` and `fm` Hamiltonians
+** Model monostat with `af` and `fm` Hamiltonians **
 
 The model goes in two flavors: `fm` and `af`, each parameterized with two real values `J_classical` and `J_quantum`.
 The `H_12_diag` does not depend on the `fm`/`af` variant and is governed by `J_classical`:
@@ -86,7 +166,7 @@ The `H_12_diag` does not depend on the `fm`/`af` variant and is governed by `J_c
 `fm` monostar model is trivially equivalent to Heisenberg ferromagnet model with `gs` translated into `spin down` and `es` translated into `spin up`. `af` monostar model is equivalent to Heisenberg antiferromagnet with the monostar states to spin states association given by `gs`≡`down`, `es`≡`up` for nodes on one magnetic sub-lattice, and `gs`≡`up`, `es`≡`down` on the other.
 To keep the equivalence explicit, here term "monostar model" is used instead of "Heisenberg (anti)ferromagnet mode" to avoid confusion.
 
-## Results from bftp solver
+** Results from bftp solver **
 
 The plot below presents the system Hamiltonian eigenenergies for `af` monostar system of 20 nodes calculated with `bfpt` at different levels of approximation. The considered system states are: the system ground state (horizontal lines on the plot) and system states from the first excited band (the curves on the plot). Result obtained in calculations with the Hilbert space subspaces of orders from 1 to 8 (inclusive) are represented by lines with colors going from red to blue. In addition exact results for infinite chain was included for reference; the reference energies are represented by gray lines. (The ground state energy was scaled so to preserve the quantum correlation energy per node.)
 

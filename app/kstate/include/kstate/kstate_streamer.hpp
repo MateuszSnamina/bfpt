@@ -2,8 +2,9 @@
 #define KSTATE_KSTATE_STREAMER_HPP
 
 #include <kstate/kstate_abstract.hpp>
-#include <kstate/remove_cvref.hpp>
-#include <kstate/is_base_of_template.hpp> // needed only for static assert.
+
+#include <utility/remove_cvref.hpp>
+#include <utility/is_base_of_template.hpp>
 
 #include <extensions/range_streamer.hpp>
 
@@ -35,7 +36,7 @@ template <typename KstateT>
 KstateStreamer<KstateT>
 make_kstate_streamer(
         KstateT&&,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<KstateT>::SiteStateT>);
+        const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT>);
 
 // ***********************************************************************
 
@@ -56,11 +57,11 @@ class KstateStreamer {
     "KstateT must not be a rvalue reference.");
     static_assert(::std::is_lvalue_reference_v<_KstateT> || (!::std::is_reference_v<_KstateT> && !::std::is_const_v<_KstateT>),
     "KstateT must be of form: `T`, `T&` or `const T&`.");
-    static_assert(is_base_of_template_v<remove_cvref_t<_KstateT>, Kstate>,
+    static_assert(utility::is_base_of_template_v<utility::remove_cvref_t<_KstateT>, Kstate>,
     "remove_cvref_t<KstateT> must be derived from Kstate");
 public: // Helper types:
     using KstateT = _KstateT;
-    using SiteStateT = typename remove_cvref_t<KstateT>::SiteStateT;
+    using SiteStateT = typename utility::remove_cvref_t<KstateT>::SiteStateT;
 public: // Factory function:
     friend
     KstateStreamer<KstateT>
@@ -72,7 +73,7 @@ private:
     KstateStreamer(std::add_rvalue_reference_t<KstateT>, const extension::boost::RangeStreamerSettings<SiteStateT>);
 private:
     const KstateT _kstate;
-    const extension::boost::RangeStreamerSettings<typename remove_cvref_t<KstateT>::SiteStateT> _range_streamer_settings;
+    const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT> _range_streamer_settings;
 };
 
 // ***********************************************************************
@@ -123,7 +124,7 @@ KstateStreamer<_KstateT>::stream(std::ostream& os) const{
                     *_range_streamer_settings._format_independence_flag :
                     default_format_independence_flag);
     // Stream:
-    extension::boost::stream_range_impl<typename remove_cvref_t<KstateT>::ConstAnyRangeT>(
+    extension::boost::stream_range_impl<typename utility::remove_cvref_t<KstateT>::ConstAnyRangeT>(
                 _kstate.to_any_range(),
                 os,
                 stream_preparer,
@@ -151,7 +152,7 @@ KstateStreamer<_KstateT>::str() const {
 template<typename KstateT>
 KstateStreamer<KstateT> make_kstate_streamer(
         KstateT&& kstate,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<KstateT>::SiteStateT> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT> range_streamer_settings) {
     return KstateStreamer<KstateT>(std::forward<KstateT>(kstate), range_streamer_settings);
 }
 
@@ -167,7 +168,7 @@ template<typename KstateT>
 KstateStreamer<KstateT>
 operator||(
         KstateT&& kstate,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<KstateT>::SiteStateT> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT> range_streamer_settings) {
     return make_kstate_streamer<KstateT>(std::forward<KstateT>(kstate), range_streamer_settings);
 }
 

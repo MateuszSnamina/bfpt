@@ -3,8 +3,9 @@
 
 #include <kstate/basis.hpp>
 #include <kstate/kstate_streamer.hpp>
-#include <kstate/is_base_of_template.hpp>
-#include <kstate/remove_cvref.hpp>
+
+#include <utility/is_base_of_template.hpp>
+#include <utility/remove_cvref.hpp>
 
 #include <boost/range/adaptor/indirected.hpp>
 
@@ -27,7 +28,7 @@ template <typename BasisT>
 BasisStreamer<BasisT>
 make_basis_streamer(
         BasisT&&,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::KstateT>);
+        const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<BasisT>::KstateT>);
 
 // ***********************************************************************
 
@@ -48,11 +49,11 @@ class BasisStreamer {
     "BasisT must not be a rvalue reference.");
     static_assert(std::is_lvalue_reference_v<_BasisT> || (!std::is_reference_v<_BasisT> && !std::is_const_v<_BasisT>),
     "BasisT must be of form: `T`, `T&` or `const T&`.");
-    static_assert(is_base_of_template_v<remove_cvref_t<_BasisT>, Basis>,
+    static_assert(utility::is_base_of_template_v<utility::remove_cvref_t<_BasisT>, Basis>,
     "remove_cvref_t<BasisT> must be derived from Basis");
 public: // Helper types:
     using BasisT = _BasisT;
-    using KstateT = typename remove_cvref_t<BasisT>::KstateT;
+    using KstateT = typename utility::remove_cvref_t<BasisT>::KstateT;
 public: // Factory function:
     friend
     BasisStreamer<BasisT> make_basis_streamer<BasisT>(BasisT&&, const extension::boost::RangeStreamerSettings<KstateT>);
@@ -147,7 +148,7 @@ BasisStreamer<_BasisT>::str() const {
 template<typename BasisT>
 BasisStreamer<BasisT> make_basis_streamer(
         BasisT&& basis,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::KstateT> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<BasisT>::KstateT> range_streamer_settings) {
     return BasisStreamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 
@@ -163,7 +164,7 @@ template<typename BasisT>
 BasisStreamer<BasisT>
 operator&&(
         BasisT&& basis,
-        const extension::boost::RangeStreamerSettings<typename remove_cvref_t<BasisT>::KstateT> range_streamer_settings) {
+        const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<BasisT>::KstateT> range_streamer_settings) {
     return make_basis_streamer<BasisT>(std::forward<BasisT>(basis), range_streamer_settings);
 }
 

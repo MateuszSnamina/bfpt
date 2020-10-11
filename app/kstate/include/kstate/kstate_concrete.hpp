@@ -1,5 +1,4 @@
-#ifndef KSTATE_KSTATE_CONCRETE_HPP
-#define KSTATE_KSTATE_CONCRETE_HPP
+#pragma once
 
 #include <kstate/trait_site_state.hpp>
 #include <kstate/trait_kstate.hpp>
@@ -195,5 +194,3 @@ struct TraitKstate<DynamicKstate<_SiteStateTraitT>> {
 namespace kstate {
 //TODO
 }
-
-#endif

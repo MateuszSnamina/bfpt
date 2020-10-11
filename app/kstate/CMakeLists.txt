@@ -11,6 +11,7 @@ target_sources("${TARGET_NAME}" INTERFACE ${inc})
 target_include_directories("${TARGET_NAME}" INTERFACE include)
 target_link_libraries("${TARGET_NAME}" INTERFACE
   extensions
+  utility
 )
 
 message("CMake has processed: ${TARGET_NAME}")
