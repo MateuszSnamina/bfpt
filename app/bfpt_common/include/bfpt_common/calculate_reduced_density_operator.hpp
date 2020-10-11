@@ -1,7 +1,5 @@
 #pragma once
 
-#include <bfpt_common/density_operator.hpp>
-
 #include <kbasis/basis.hpp>
 
 #include <kstate/range_op_unique_shift.hpp>
