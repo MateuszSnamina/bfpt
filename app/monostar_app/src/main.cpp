@@ -45,19 +45,24 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
         unsigned n_threads) {
     using KstateT = monostar_system::DynamicMonostarKstate;
     using KstateTraitT = monostar_system::DynamicMonostarKstateTrait;
+    using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
+    using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
+    using KoperatorT =  koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
+    using KoperatorTraitT =  koperator_trait::TraitKoperator<KoperatorT>;
     using BasisT = monostar_system::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
-    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateTraitT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateTraitT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe<KstateTraitT>(kstate_populator, kstate_hamiltonian,
-                                                       basis, max_pt_order,
-                                                       0,
-                                                       print_flags,
-                                                       one_site_metrices_for_average_calculation,
-                                                       two_sites_metrices_for_average_calculation,
-                                                       "[gs] ",
-                                                       n_threads).unwrap();
+    const KpopulatorT kstate_populator_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
+    const KoperatorT kstate_hamiltonian_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
+    return bfpt_common::do_common_recipe_NEWAPI<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
+                kstate_populator_NEWAPI, kstate_hamiltonian_NEWAPI,
+                basis, max_pt_order,
+                0,
+                print_flags,
+                one_site_metrices_for_average_calculation,
+                two_sites_metrices_for_average_calculation,
+                "[gs] ",
+                n_threads).unwrap();
 }
 
 bfpt_common::CommonRecipeReceipt bfpt_kn_es(
@@ -70,19 +75,24 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
         unsigned n_threads) {
     using KstateT = monostar_system::DynamicMonostarKstate;
     using KstateTraitT = monostar_system::DynamicMonostarKstateTrait;
+    using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
+    using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
+    using KoperatorT =  koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
+    using KoperatorTraitT =  koperator_trait::TraitKoperator<KoperatorT>;
     using BasisT = monostar_system::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
-    const bfpt_common::KernelDrivenKstateBasisPopulator<KstateTraitT> kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const bfpt_common::KernelDrivenKstateOperatorMatrix<KstateTraitT> kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe<KstateTraitT>(kstate_populator, kstate_hamiltonian,
-                                                       basis, max_pt_order,
-                                                       k_n,
-                                                       print_flags,
-                                                       one_site_metrices_for_average_calculation,
-                                                       two_sites_metrices_for_average_calculation,
-                                                       "[es (" + std::to_string(k_n) + ")] ",
-                                                       n_threads).unwrap();
+    const KpopulatorT kstate_populator_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
+    const KoperatorT kstate_hamiltonian_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
+    return bfpt_common::do_common_recipe_NEWAPI<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
+                kstate_populator_NEWAPI, kstate_hamiltonian_NEWAPI,
+                basis, max_pt_order,
+                k_n,
+                print_flags,
+                one_site_metrices_for_average_calculation,
+                two_sites_metrices_for_average_calculation,
+                "[es (" + std::to_string(k_n) + ")] ",
+                n_threads).unwrap();
 }
 
 // #######################################################################

@@ -124,7 +124,7 @@ struct TraitKpopulator<kpopulator_impl::KernelDrivenKstateBasisPopulator<_Kstate
     using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<_KstateTraitT>;
     using BasisT = kbasis::Basis<KstateTraitT>;
     // function being the public API:
-    kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
+    static kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
             const KpopulatorT& kpopulator,
             const KstateT& generator) {
         return kpopulator.get_coupled_states(generator);

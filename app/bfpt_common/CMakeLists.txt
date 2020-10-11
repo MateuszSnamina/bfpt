@@ -10,7 +10,9 @@ add_library("${TARGET_NAME}" INTERFACE)
 target_sources("${TARGET_NAME}" INTERFACE ${inc})
 target_include_directories("${TARGET_NAME}" INTERFACE include)
 target_link_libraries("${TARGET_NAME}" INTERFACE
-  kstate
+  kstate_trait
+  koperator_trait
+  kpopulator_trait
   kbasis
   armadillo
   linear_algebra
