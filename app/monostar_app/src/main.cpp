@@ -14,11 +14,9 @@
 #include <monostar_system/monostar_kstate.hpp>
 #include <monostar_system/monostar_site_state.hpp>
 
-#include <bfpt_common/kernel_driven_kstate_basis_populator.hpp>
-#include <bfpt_common/kernel_driven_kstate_operator_matrix.hpp>
 #include <bfpt_common/do_common_recipie.hpp>
 
-#include<chainkernel/operator_kernel.hpp>
+#include <chainkernel/operator_kernel.hpp>
 
 #include <armadillo>
 

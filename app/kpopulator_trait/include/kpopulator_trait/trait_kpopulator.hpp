@@ -18,4 +18,10 @@ template<typename T>
 struct IsTraitKpopulator<TraitKpopulator<T>> : std::true_type {
 };
 
+// #######################################################################
+// ## Instruction: registerin a type as Kpopulator                      ##
+// #######################################################################
+
+//[TODO]
+
 } // end of namespace kstate
