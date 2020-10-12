@@ -2,7 +2,7 @@
 
 #include <kbasis/basis.hpp>
 
-#include <kstate_impl/range_op_unique_shift.hpp>
+#include <kstate_range_op/range_op_unique_shift.hpp>
 
 #include <kstate_trait/trait_kstate.hpp>
 
@@ -60,7 +60,7 @@ calculate_reduced_density_operator_12_impl(
                 const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1);// Must outlive bra_kstate_range.
                 const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2);// Must outlive bra_kstate_range.
                 const auto bra_kstate_range = ket_kstate_range | refined_holder_1 | refined_holder_2;
-                const auto bra_kstate_range_unique_shifted = kstate_impl::make_unique_shift(bra_kstate_range);
+                const auto bra_kstate_range_unique_shifted = kstate_range_op::make_unique_shift(bra_kstate_range);
                 if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                     const auto bra_kstate_idx = *bra_kstate_optional_idx;
                     const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
@@ -166,7 +166,7 @@ calculate_reduced_density_operator_1_impl(
             const auto bra_kernel_site_1 = SiteStateTraitT::from_index(bra_kernel_site_1_idx);
             const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
             const auto bra_kstate_range = ket_kstate_range | refined_holder_1;
-            const auto bra_kstate_range_unique_shifted = kstate_impl::make_unique_shift(bra_kstate_range);
+            const auto bra_kstate_range_unique_shifted = kstate_range_op::make_unique_shift(bra_kstate_range);
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);

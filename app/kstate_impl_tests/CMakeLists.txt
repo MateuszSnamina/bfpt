@@ -14,6 +14,8 @@ add_executable("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_gtest_and_tested_target("${TARGET_NAME}")
 
+target_link_libraries("${TARGET_NAME}" kstate_range_op)
+
 add_test(NAME "${TARGET_NAME}" COMMAND "${TARGET_NAME}")
 
 message("CMake has processed: ${TARGET_NAME}")

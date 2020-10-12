@@ -1,7 +1,8 @@
 #include <kstate_tests/site_state_trait_for_int.hpp>
 
+#include <kstate_range_op/range_op_unique_shift.hpp>
+
 #include <kstate_impl/kstate_concrete.hpp>
-#include <kstate_impl/range_op_unique_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 
@@ -281,7 +282,7 @@ TEST(DynamicUniqueKstate, CtrTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     const std::array<int, 1> v2 = {11};
-    const Kstate k2(kstate_impl::make_unique_shift(v2), ctr_from_range);
+    const Kstate k2(kstate_range_op::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃11⦄");
 }
 
@@ -289,7 +290,7 @@ TEST(DynamicUniqueKstate, CtrTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     const std::array<int, 2> v2 = {11, 12};
-    const Kstate k2(kstate_impl::make_unique_shift(v2), ctr_from_range);
+    const Kstate k2(kstate_range_op::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
 }
 
@@ -297,7 +298,7 @@ TEST(DynamicUniqueKstate, CtrTest2) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     const std::array<int, 2> v2 = {12, 11};
-    const Kstate k2(kstate_impl::make_unique_shift(v2), ctr_from_range);
+    const Kstate k2(kstate_range_op::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
 }
 
@@ -305,6 +306,6 @@ TEST(DynamicUniqueKstate, CtrTest3) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};
-    const Kstate k2(kstate_impl::make_unique_shift(v2), ctr_from_range);
+    const Kstate k2(kstate_range_op::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
 }

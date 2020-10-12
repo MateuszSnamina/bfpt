@@ -13,10 +13,11 @@ message_fancy_list("${inc}")
 add_library("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
-  utility
+  bfpt_common
   kstate_trait
   kstate_impl
-  bfpt_common
+  kstate_range_op
+  utility
   Boost::boost
 )
 
