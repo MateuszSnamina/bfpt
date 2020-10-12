@@ -13,8 +13,7 @@ message_fancy_list("${inc}")
 add_library("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
-  bfpt_common
-  kstate
+  chainkernel
   monostar_system
   utility
   armadillo

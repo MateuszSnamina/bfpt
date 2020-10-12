@@ -14,7 +14,8 @@ add_library("${TARGET_NAME}" ${src} ${inc})
 target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
   utility
-  kstate
+  kstate_trait
+  kstate_impl
   bfpt_common
   Boost::boost
 )

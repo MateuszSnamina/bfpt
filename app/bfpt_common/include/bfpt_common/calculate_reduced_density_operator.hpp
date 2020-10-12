@@ -1,11 +1,10 @@
-#ifndef BFPT_COMMON_CALCULATE_REDUCED_DENSITY_OPERATOR_HPP
-#define BFPT_COMMON_CALCULATE_REDUCED_DENSITY_OPERATOR_HPP
+#pragma once
 
-#include <bfpt_common/density_operator.hpp>
+#include <kbasis/basis.hpp>
 
-#include <kstate/basis.hpp>
-#include <kstate/trait_kstate.hpp>
-#include <kstate/unique_shift.hpp>
+#include <kstate_impl/range_op_unique_shift.hpp>
+
+#include <kstate_trait/trait_kstate.hpp>
 
 #include <extensions/adaptors.hpp>
 
@@ -28,12 +27,12 @@ namespace bfpt_common {
 template<typename KstateTraitT>
 void
 calculate_reduced_density_operator_12_impl(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
     // static asserts:
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // helper types:
     using KstateT = typename KstateTraitT::KstateT;
@@ -61,7 +60,7 @@ calculate_reduced_density_operator_12_impl(
                 const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1);// Must outlive bra_kstate_range.
                 const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2);// Must outlive bra_kstate_range.
                 const auto bra_kstate_range = ket_kstate_range | refined_holder_1 | refined_holder_2;
-                const auto bra_kstate_range_unique_shifted = kstate::make_unique_shift(bra_kstate_range);
+                const auto bra_kstate_range_unique_shifted = kstate_impl::make_unique_shift(bra_kstate_range);
                 if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                     const auto bra_kstate_idx = *bra_kstate_optional_idx;
                     const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
@@ -80,11 +79,11 @@ calculate_reduced_density_operator_12_impl(
 template<typename KstateTraitT>
 arma::cx_mat
 calculate_reduced_density_operator_12(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // *********** helper types ***********************************************************
     using KstateT = typename KstateTraitT::KstateT;
@@ -139,12 +138,12 @@ namespace bfpt_common {
 template<typename KstateTraitT>
 void
 calculate_reduced_density_operator_1_impl(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
     // static asserts:
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // helper types:
     using KstateT = typename KstateTraitT::KstateT;
@@ -167,7 +166,7 @@ calculate_reduced_density_operator_1_impl(
             const auto bra_kernel_site_1 = SiteStateTraitT::from_index(bra_kernel_site_1_idx);
             const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
             const auto bra_kstate_range = ket_kstate_range | refined_holder_1;
-            const auto bra_kstate_range_unique_shifted = kstate::make_unique_shift(bra_kstate_range);
+            const auto bra_kstate_range_unique_shifted = kstate_impl::make_unique_shift(bra_kstate_range);
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
@@ -183,11 +182,11 @@ calculate_reduced_density_operator_1_impl(
 template<typename KstateTraitT>
 arma::cx_mat
 calculate_reduced_density_operator_1(
-        const kstate::Basis<KstateTraitT>& basis,
+        const kbasis::Basis<KstateTraitT>& basis,
         const arma::cx_vec& eigen_vector,
         unsigned n_threads) {
     // *********** asserts ****************************************************************
-    static_assert(kstate::IsTraitKstate<KstateTraitT>::value);
+    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     // *********** helper types ***********************************************************
     using KstateT = typename KstateTraitT::KstateT;
@@ -232,5 +231,3 @@ calculate_reduced_density_operator_1(
 }
 
 } // end of namespace bfpt_common;
-
-#endif // CALCULATE_REDUCED_DENSITY_OPERATOR_HPP

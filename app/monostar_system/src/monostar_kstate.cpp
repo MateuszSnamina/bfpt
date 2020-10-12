@@ -1,7 +1,7 @@
 #include <monostar_system/monostar_kstate.hpp>
 
-#include <kstate/unique_shift.hpp>
-#include <kstate/kstate_streamer.hpp>
+#include <kstate_impl/range_op_unique_shift.hpp>
+#include <kstate_impl/kstate_streamer.hpp>
 
 #include <vector>
 
@@ -20,7 +20,7 @@ DynamicMonostarKstate classical_gs_kstate(const unsigned n_sites) {
 DynamicMonostarKstate classical_es_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
     generator_array[0] = es;
-    return DynamicMonostarKstateTrait::from_range(kstate::make_unique_shift(generator_array));
+    return DynamicMonostarKstateTrait::from_range(kstate_impl::make_unique_shift(generator_array));
 }
 
 }  // namespace monostar_system
@@ -34,8 +34,8 @@ namespace monostar_system {
 
 std::ostream& operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
     using extension::boost::stream_pragma::RSS;
-    using kstate::pramga::operator||;
-    using kstate::pramga::operator<<;
+    using kstate_impl::pramga::operator||;
+    using kstate_impl::pramga::operator<<;
 
     const extension::boost::RangeStreamerSettings<MonostarSiteState> monostar_kstate_range_streamer_settings =
             extension::boost::RangeStreamerSettings<MonostarSiteState>()

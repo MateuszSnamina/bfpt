@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kstate/trait_site_state.hpp>
+#include <kstate_trait/trait_site_state.hpp>
 
 #include <boost/operators.hpp>
 
@@ -57,7 +57,7 @@ extern const std::vector<MonostarSiteState> ordered_site_states;//TODO remove
 // ## MonostarSiteState -- implement trait                              ##
 // #######################################################################
 
-namespace kstate {
+namespace kstate_trait {
 
 template<>
 struct TraitSiteState<monostar_system::MonostarSiteState> {
@@ -94,6 +94,6 @@ struct TraitSiteState<monostar_system::MonostarSiteState> {
 
 namespace monostar_system {
 
-using MonostarSiteStateTrait = kstate::TraitSiteState<monostar_system::MonostarSiteState>;
+using MonostarSiteStateTrait = kstate_trait::TraitSiteState<monostar_system::MonostarSiteState>;
 
 } // end of namespace monostar_system

@@ -1,5 +1,4 @@
-#ifndef BFPT_COMMON_COMMON_RECIPIE_PRINT_FLAGS_HPP
-#define BFPT_COMMON_COMMON_RECIPIE_PRINT_FLAGS_HPP
+#pragma once
 
 #include<utility>
 
@@ -26,5 +25,3 @@ struct CommonRecipePrintFlags {
 };
 
 }  // namespace bfpt_common
-
-#endif
