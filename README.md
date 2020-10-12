@@ -56,13 +56,13 @@ Rather than implementing a very general solution in a monolith library,
 `bfpt` lets a few smaller plug-able components to define parts of the overall problem and provide the desired implementation of the parts.
 `bfpt_common_recipe` is a function that merely orchestrates the standard calculation workflow taking advantage of the provided implementations.
 The workflow includes the following steps.
-- it generates the "populated basis" in which ED should be performed,
-- it generates the matrix for Hamiltonian restricted to the subspace,
-- it performs the matrix ed to find the lower-energy eigenstate,
-- it performs basic post-processing
-  - prints results,
-  - calculates reduced density operator matrix,
-  - calculates mean value for some given operators.
+- Generating the "populated basis" in which ED should be performed,
+- Generating the matrix for Hamiltonian restricted to the subspace,
+- Performing the matrix ed to find the lower-energy eigenstate,
+- Performing basic post-processing:
+  - printing results,
+  - calculating reduced density operator matrix,
+  - calculating mean value for some given operators.
 
 For convenience `bfpt` splits the **physical problem definition** into two separate definition layers:
 - in the first layer relevant _Hilbert space_ is concertized,
