@@ -35,7 +35,7 @@ size_t n_least_replication_shift(const ForwardRange& rng) {
 namespace kstate_range_op {
 
 template <typename ForwardRange>
-double norm_factor(const ForwardRange& rng) {
+double norm_factor(const ForwardRange& rng) noexcept {
     const size_t n_sites = boost::size(rng);
     return std::sqrt(n_least_replication_shift(rng)) / n_sites;
     // The result is equal to 1 / std::sqrt(n_least_replication_shift) / n_replicas;
@@ -51,7 +51,7 @@ double norm_factor(const ForwardRange& rng) {
 namespace kstate_range_op {
 
 template <typename ForwardRange>
-bool is_prolific(const ForwardRange& rng, int n_k) {
+bool is_prolific(const ForwardRange& rng, int n_k) noexcept {
     const size_t n_sites = boost::size(rng);
     return !((n_least_replication_shift(rng) * n_k) % n_sites);
 }

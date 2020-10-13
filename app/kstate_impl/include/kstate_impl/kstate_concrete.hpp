@@ -98,8 +98,8 @@ public:
     DynamicKstate(const OtherRangeT&, CtrFromRange);
 
 public:
-    ConstRangeT to_range() const override;
-    size_t n_sites() const override;
+    ConstRangeT to_range() const noexcept override;
+    size_t n_sites() const noexcept override;
 
 protected:
     const BufferT _v;
@@ -124,13 +124,13 @@ DynamicKstate<_SiteStateTraitT>::DynamicKstate(const OtherRangeT& r, CtrFromRang
 
 template <typename _SiteStateTraitT>
 typename DynamicKstate<_SiteStateTraitT>::ConstRangeT
-DynamicKstate<_SiteStateTraitT>::to_range() const {
+DynamicKstate<_SiteStateTraitT>::to_range() const noexcept {
     return _v;
 }
 
 template <typename _SiteStateTraitT>
 size_t
-DynamicKstate<_SiteStateTraitT>::n_sites() const {
+DynamicKstate<_SiteStateTraitT>::n_sites() const noexcept {
     return _v.size();
 }
 
@@ -160,22 +160,22 @@ struct TraitKstate<kstate_impl::DynamicKstate<_SiteStateTraitT>> {
     static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
         return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
     }
-    static ConstRangeT to_range(const KstateT& kstate) {
+    static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-    static ConstAnyRangeT to_any_range(const KstateT& kstate) {
+    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
         return kstate.to_any_range();
     }
-    static size_t n_sites(const KstateT& kstate){
+    static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.is_prolific();
     }
-    static size_t n_least_replication_shift(const KstateT& kstate) {
+    static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
         return kstate.n_least_replication_shift();
     }
-    static double norm_factor(const KstateT& kstate) {
+    static double norm_factor(const KstateT& kstate) noexcept {
         return kstate.norm_factor();
     }
-    static bool is_prolific(const KstateT& kstate, int n_k) {
+    static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
         return kstate.is_prolific(n_k);
     }
 };

@@ -73,18 +73,18 @@ public: // Helper types:
     using AnyRangeT = typename boost::any_range<SiteStateT, TraversalTagT>;
     using ConstAnyRangeT = typename boost::any_range<const SiteStateT, TraversalTagT>;
 public:
-    virtual ConstAnyRangeT to_any_range() const = 0;
-    virtual size_t n_sites() const = 0;
+    virtual ConstAnyRangeT to_any_range() const noexcept = 0;
+    virtual size_t n_sites() const noexcept = 0;
 public:  // Kstate descriptors:
-    virtual size_t n_least_replication_shift() const;
-    virtual double norm_factor() const;
-    virtual bool is_prolific(int n_k) const;
-    virtual std::string to_str() const;
+    virtual size_t n_least_replication_shift() const noexcept ;
+    virtual double norm_factor() const noexcept ;
+    virtual bool is_prolific(int n_k) const noexcept ;
+    virtual std::string to_str() const noexcept ;
 public:  // Convenient binary functions:
-    bool compare_equality_kstate(const Kstate<SiteStateTraitT, TraversalTagT>& other) const;
-    std::optional<size_t> compare_translational_equality_kstate(const Kstate<SiteStateTraitT, TraversalTagT>& other) const;
-    bool compare_equality_any_range(const ConstAnyRangeT& other) const;
-    std::optional<size_t> compare_translational_equality_any_range(const ConstAnyRangeT& other) const;
+    bool compare_equality_kstate(const Kstate<SiteStateTraitT, TraversalTagT>& other) const noexcept ;
+    std::optional<size_t> compare_translational_equality_kstate(const Kstate<SiteStateTraitT, TraversalTagT>& other) const noexcept ;
+    bool compare_equality_any_range(const ConstAnyRangeT& other) const noexcept ;
+    std::optional<size_t> compare_translational_equality_any_range(const ConstAnyRangeT& other) const noexcept ;
 public:
     virtual ~Kstate() = default;
 };
@@ -93,51 +93,51 @@ public:
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 size_t
-Kstate<_SiteStateTraitT, _TraversalTagT>::n_least_replication_shift() const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::n_least_replication_shift() const noexcept {
     return kstate_range_op::n_least_replication_shift(to_any_range());
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 double
-Kstate<_SiteStateTraitT, _TraversalTagT>::norm_factor() const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::norm_factor() const noexcept {
     return kstate_range_op::norm_factor(to_any_range());
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 bool
-Kstate<_SiteStateTraitT, _TraversalTagT>::is_prolific(int n_k) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::is_prolific(int n_k) const noexcept {
     return kstate_range_op::is_prolific(to_any_range(), n_k);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 bool
-Kstate<_SiteStateTraitT, _TraversalTagT>::compare_equality_kstate(const Kstate<_SiteStateTraitT, _TraversalTagT>& other) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::compare_equality_kstate(const Kstate<_SiteStateTraitT, _TraversalTagT>& other) const noexcept {
     return compare_equality_any_range(other.to_any_range());
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 std::optional<size_t>
-Kstate<_SiteStateTraitT, _TraversalTagT>::compare_translational_equality_kstate(const Kstate<_SiteStateTraitT, _TraversalTagT>& other) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::compare_translational_equality_kstate(const Kstate<_SiteStateTraitT, _TraversalTagT>& other) const noexcept {
     return compare_translational_equality_any_range(other.to_any_range());
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 bool
-Kstate<_SiteStateTraitT, _TraversalTagT>::compare_equality_any_range(const ConstAnyRangeT& other) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::compare_equality_any_range(const ConstAnyRangeT& other) const noexcept {
     assert(n_sites() == boost::size(other));
     return kstate_range_op::compare_equality(to_any_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 std::optional<size_t>
-Kstate<_SiteStateTraitT, _TraversalTagT>::compare_translational_equality_any_range(const ConstAnyRangeT& other) const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::compare_translational_equality_any_range(const ConstAnyRangeT& other) const noexcept {
     assert(this->n_sites() == boost::size(other));
     return kstate_range_op::compare_translational_equality(to_any_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 std::string
-Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const {
+Kstate<_SiteStateTraitT, _TraversalTagT>::to_str() const noexcept {
     using namespace extension::boost::stream_pragma;
     const auto range_stream_settings = RSS<SiteStateT>()
             .set_string_preparer("⦃")
@@ -223,19 +223,19 @@ public:  // Helper types:
     using AnyRangeT = typename Kstate<SiteStateTraitT, TraversalTagT>::AnyRangeT;
     using ConstAnyRangeT = typename Kstate<SiteStateTraitT, TraversalTagT>::ConstAnyRangeT;
 public:  // Base on the two functions:
-    virtual ConstRangeT to_range() const = 0;
-    virtual size_t n_sites() const = 0;
+    virtual ConstRangeT to_range() const noexcept = 0;
+    virtual size_t n_sites() const noexcept = 0;
 public:  // SpeedyKstate implements pure virtual base class function:
-    virtual ConstAnyRangeT to_any_range() const override;
+    virtual ConstAnyRangeT to_any_range() const noexcept override;
 public:  // SpeedyKstate overrides for fast implementations:
-    size_t n_least_replication_shift() const override;
-    double norm_factor() const override;
-    bool is_prolific(int n_k) const override;
+    size_t n_least_replication_shift() const noexcept override;
+    double norm_factor() const noexcept override;
+    bool is_prolific(int n_k) const noexcept override;
     template <typename OtherConstRangeT>
-    bool compare_equality_range(const OtherConstRangeT& other) const;
+    bool compare_equality_range(const OtherConstRangeT& other) const noexcept;
     template <typename OtherConstRangeT>
-    std::optional<size_t> compare_translational_equality_range(const OtherConstRangeT& other) const;
-    std::string to_str() const override;
+    std::optional<size_t> compare_translational_equality_range(const OtherConstRangeT& other) const noexcept ;
+    std::string to_str() const noexcept override;
 public:
     virtual ~SpeedyKstate() = default;
 };
@@ -244,32 +244,32 @@ public:
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 typename SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::ConstAnyRangeT
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_any_range() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_any_range() const noexcept {
     return to_range();
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 size_t
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::n_least_replication_shift() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::n_least_replication_shift() const noexcept {
     return kstate_range_op::n_least_replication_shift(to_range());
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 double
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::norm_factor() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::norm_factor() const noexcept {
     return kstate_range_op::norm_factor(to_range());
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 bool
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::is_prolific(int n_k) const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::is_prolific(int n_k) const noexcept {
     return kstate_range_op::is_prolific(to_range(), n_k);
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 template <typename OtherConstRangeT>
 bool
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_equality_range(const OtherConstRangeT& other) const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_equality_range(const OtherConstRangeT& other) const noexcept {
     assert(this->n_sites() == boost::size(other));
     return kstate_range_op::compare_equality(to_range(), other);
 }
@@ -277,14 +277,14 @@ SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_equality_range(const Other
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 template <typename OtherConstRangeT>
 std::optional<size_t>
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_translational_equality_range(const OtherConstRangeT& other) const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_translational_equality_range(const OtherConstRangeT& other) const noexcept {
     //assert(this->n_sites() == boost::size(other));
     return kstate_range_op::compare_translational_equality(to_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 std::string
-SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_str() const {
+SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_str() const noexcept {
     using namespace extension::boost::stream_pragma;
     const auto range_stream_settings = RSS<SiteStateT>()
             .set_string_preparer("⦃")

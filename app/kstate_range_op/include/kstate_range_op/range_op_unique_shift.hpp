@@ -14,7 +14,7 @@
 namespace kstate_range_op {
 
 template <typename ForwardRange>
-size_t n_unique_shift(const ForwardRange& rng) {
+size_t n_unique_shift(const ForwardRange& rng) noexcept {
     using Difference = typename boost::range_difference<ForwardRange>::type;
     const Difference d = std::distance(std::begin(rng), std::end(rng));
     size_t i = 0;
@@ -38,7 +38,7 @@ size_t n_unique_shift(const ForwardRange& rng) {
 namespace kstate_range_op {
 
 template <typename ForwardRange>
-extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) {
+extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) noexcept {
     return rng | extension::boost::adaptors::rotated(n_unique_shift(rng));
 }
 
