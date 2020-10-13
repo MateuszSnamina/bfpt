@@ -10,7 +10,7 @@
 
 #include <chrono>
 
-namespace koperator_trait {
+namespace bfpt_common {
 
 template<typename KoperatorTraitT>
 arma::sp_cx_mat
@@ -62,5 +62,5 @@ generate_operator_matrix(
     return kn_operator_builder_matrix_all[0];
 }
 
-}  // namespace koperator_trait
+}  // namespace bfpt_common
 

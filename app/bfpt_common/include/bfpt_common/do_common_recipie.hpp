@@ -2,17 +2,16 @@
 
 #include <bfpt_common/common_recipe_print_flags.hpp>
 #include <bfpt_common/calculate_reduced_density_operator.hpp>
-
-#include <linear_algebra/linear_algebra.hpp>
+#include <bfpt_common/generate_operator_matrix.hpp>
+#include <bfpt_common/generate_populated_basis.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
 #include <koperator_trait/trait_koperator.hpp>
 #include <kpopulator_trait/trait_kpopulator.hpp>
 
-#include <koperator_trait/generate_operator_matrix.hpp>
-#include <kpopulator_trait/generate_populated_basis.hpp>
-
 #include <kbasis/basis.hpp>
+
+#include <linear_algebra/linear_algebra.hpp>
 
 #include <extensions/stream_fromat_stacker.hpp>
 
@@ -390,7 +389,7 @@ do_common_recipe_NEWAPI(
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    kpopulator_trait::generate_populated_basis<KpopulatorTraitT>(bais_populator, max_pt_order, basis, n_threads);
+    generate_populated_basis<KpopulatorTraitT>(bais_populator, max_pt_order, basis, n_threads);
     const double time_populating_pt_basis = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
@@ -407,7 +406,7 @@ do_common_recipe_NEWAPI(
     // Generate hamiltoniam matrix:
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
-    const auto kn_hamiltonian_matrix = koperator_trait::generate_operator_matrix<KoperatorTraitT>(hamiltonian, basis, k_n, n_threads);
+    const auto kn_hamiltonian_matrix = generate_operator_matrix<KoperatorTraitT>(hamiltonian, basis, k_n, n_threads);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;

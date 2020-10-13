@@ -13,6 +13,4 @@ target_link_libraries("${TARGET_NAME}" INTERFACE
   armadillo
 )
 
-target_link_libraries("${TARGET_NAME}" INTERFACE OpenMP::OpenMP_CXX)
-
 message("CMake has processed: ${TARGET_NAME}")

@@ -33,7 +33,7 @@
  *
  */
 
-namespace kpopulator_trait {
+namespace bfpt_common {
 
 template<typename TraitKpopulatorT>
 void generate_populated_basis(
@@ -91,4 +91,4 @@ void generate_populated_basis(
     }
 }
 
-}  // namespace kpopulator_trait
+}  // namespace bfpt_common
