@@ -24,24 +24,24 @@ TEST(DynamicKstate, ConstructorFromRange) {
     EXPECT_EQ(k1.n_sites(), 6);
 }
 
-TEST(DynamicKstate, CompareTest0) {
+TEST(DynamicKstate, CompareEqualityTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
     const Kstate k1(v1, ctr_from_range);
     const Kstate k2(v2, ctr_from_range);
-    EXPECT_TRUE(k1.compare_range(k1.to_range()));
-    EXPECT_FALSE(k1.compare_range(k2.to_range()));
+    EXPECT_TRUE(k1.compare_equality_range(k1.to_range()));
+    EXPECT_FALSE(k1.compare_equality_range(k2.to_range()));
     // ---
-    EXPECT_TRUE(k1.compare_any_range(k1.to_range()));
-    EXPECT_FALSE(k1.compare_any_range(k2.to_range()));
+    EXPECT_TRUE(k1.compare_equality_any_range(k1.to_range()));
+    EXPECT_FALSE(k1.compare_equality_any_range(k2.to_range()));
     // ---
-    EXPECT_TRUE(k1.compare_kstate(k1));
-    EXPECT_FALSE(k1.compare_kstate(k2));
+    EXPECT_TRUE(k1.compare_equality_kstate(k1));
+    EXPECT_FALSE(k1.compare_equality_kstate(k2));
 }
 
-TEST(DynamicKstate, TranlationalCompareTest0) {
+TEST(DynamicKstate, CompareTranlationalEqualityTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
     using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
@@ -59,50 +59,47 @@ TEST(DynamicKstate, TranlationalCompareTest0) {
     const Kstate k14(v14, ctr_from_range);
     const Kstate k15(v15, ctr_from_range);
     // ---
-    ASSERT_FALSE(k1.compare_range(v2));
-    ASSERT_TRUE(k1.translational_compare_range(v1));
-    ASSERT_EQ(*k1.translational_compare_range(v1), 0);
-    ASSERT_TRUE(k1.translational_compare_range(v11));
-    ASSERT_EQ(*k1.translational_compare_range(v11), 1);
-    ASSERT_TRUE(k1.translational_compare_range(v12));
-    ASSERT_EQ(*k1.translational_compare_range(v12), 2);
-    ASSERT_TRUE(k1.translational_compare_range(v13));
-    ASSERT_EQ(*k1.translational_compare_range(v13), 3);
-    ASSERT_TRUE(k1.translational_compare_range(v13));
-    ASSERT_EQ(*k1.translational_compare_range(v14), 4);
-    ASSERT_TRUE(k1.translational_compare_range(v14));
-    ASSERT_EQ(*k1.translational_compare_range(v15), 5);
-    ASSERT_TRUE(k1.translational_compare_range(v15));
+    //ASSERT_FALSE(k1.compare_translational_equality_range(v2)); //TODO rethink!
+    ASSERT_TRUE(k1.compare_translational_equality_range(v1));
+    ASSERT_EQ(*k1.compare_translational_equality_range(v1), 0);
+    ASSERT_TRUE(k1.compare_translational_equality_range(v11));
+    ASSERT_EQ(*k1.compare_translational_equality_range(v11), 1);
+    ASSERT_TRUE(k1.compare_translational_equality_range(v12));
+    ASSERT_EQ(*k1.compare_translational_equality_range(v12), 2);
+    ASSERT_TRUE(k1.compare_translational_equality_range(v13));
+    ASSERT_EQ(*k1.compare_translational_equality_range(v13), 3);
+    ASSERT_TRUE(k1.compare_translational_equality_range(v14));
+    ASSERT_EQ(*k1.compare_translational_equality_range(v14), 4);
+    ASSERT_TRUE(k1.compare_translational_equality_range(v15));
+    ASSERT_EQ(*k1.compare_translational_equality_range(v15), 5);
     // ---
-    ASSERT_FALSE(k1.compare_any_range(v2));
-    ASSERT_TRUE(k1.translational_compare_any_range(v1));
-    ASSERT_EQ(*k1.translational_compare_any_range(v1), 0);
-    ASSERT_TRUE(k1.translational_compare_any_range(v11));
-    ASSERT_EQ(*k1.translational_compare_any_range(v11), 1);
-    ASSERT_TRUE(k1.translational_compare_any_range(v12));
-    ASSERT_EQ(*k1.translational_compare_any_range(v12), 2);
-    ASSERT_TRUE(k1.translational_compare_any_range(v13));
-    ASSERT_EQ(*k1.translational_compare_any_range(v13), 3);
-    ASSERT_TRUE(k1.translational_compare_any_range(v13));
-    ASSERT_EQ(*k1.translational_compare_any_range(v14), 4);
-    ASSERT_TRUE(k1.translational_compare_any_range(v14));
-    ASSERT_EQ(*k1.translational_compare_any_range(v15), 5);
-    ASSERT_TRUE(k1.translational_compare_any_range(v15));
+    //ASSERT_FALSE(k1.compare_translational_equality_range(v2)); //TODO rethink!
+    ASSERT_TRUE(k1.compare_translational_equality_any_range(v1));
+    ASSERT_EQ(*k1.compare_translational_equality_any_range(v1), 0);
+    ASSERT_TRUE(k1.compare_translational_equality_any_range(v11));
+    ASSERT_EQ(*k1.compare_translational_equality_any_range(v11), 1);
+    ASSERT_TRUE(k1.compare_translational_equality_any_range(v12));
+    ASSERT_EQ(*k1.compare_translational_equality_any_range(v12), 2);
+    ASSERT_TRUE(k1.compare_translational_equality_any_range(v13));
+    ASSERT_EQ(*k1.compare_translational_equality_any_range(v13), 3);
+    ASSERT_TRUE(k1.compare_translational_equality_any_range(v14));
+    ASSERT_EQ(*k1.compare_translational_equality_any_range(v14), 4);
+    ASSERT_TRUE(k1.compare_translational_equality_any_range(v15));
+    ASSERT_EQ(*k1.compare_translational_equality_any_range(v15), 5);
     // ---
-    ASSERT_FALSE(k1.compare_kstate(k2));
-    ASSERT_TRUE(k1.translational_compare_kstate(k1));
-    ASSERT_EQ(*k1.translational_compare_kstate(k1), 0);
-    ASSERT_TRUE(k1.translational_compare_kstate(k11));
-    ASSERT_EQ(*k1.translational_compare_kstate(k11), 1);
-    ASSERT_TRUE(k1.translational_compare_kstate(k12));
-    ASSERT_EQ(*k1.translational_compare_kstate(k12), 2);
-    ASSERT_TRUE(k1.translational_compare_kstate(k13));
-    ASSERT_EQ(*k1.translational_compare_kstate(k13), 3);
-    ASSERT_TRUE(k1.translational_compare_kstate(k13));
-    ASSERT_EQ(*k1.translational_compare_kstate(k14), 4);
-    ASSERT_TRUE(k1.translational_compare_kstate(k14));
-    ASSERT_EQ(*k1.translational_compare_kstate(k15), 5);
-    ASSERT_TRUE(k1.translational_compare_kstate(k15));
+    //ASSERT_FALSE(k1.compare_translational_equality_range(k2)); //TODO rethink!
+    ASSERT_TRUE(k1.compare_translational_equality_kstate(k1));
+    ASSERT_EQ(*k1.compare_translational_equality_kstate(k1), 0);
+    ASSERT_TRUE(k1.compare_translational_equality_kstate(k11));
+    ASSERT_EQ(*k1.compare_translational_equality_kstate(k11), 1);
+    ASSERT_TRUE(k1.compare_translational_equality_kstate(k12));
+    ASSERT_EQ(*k1.compare_translational_equality_kstate(k12), 2);
+    ASSERT_TRUE(k1.compare_translational_equality_kstate(k13));
+    ASSERT_EQ(*k1.compare_translational_equality_kstate(k13), 3);
+    ASSERT_TRUE(k1.compare_translational_equality_kstate(k14));
+    ASSERT_EQ(*k1.compare_translational_equality_kstate(k14), 4);
+    ASSERT_TRUE(k1.compare_translational_equality_kstate(k15));
+    ASSERT_EQ(*k1.compare_translational_equality_kstate(k15), 5);
 }
 
 TEST(DynamicKstate, LeastReplicationShiftTest0) {
