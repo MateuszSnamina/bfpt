@@ -13,14 +13,29 @@
 namespace monostar_system {
 
 DynamicMonostarKstate classical_gs_kstate(const unsigned n_sites) {
-    std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
+    //std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
+    std::array<MonostarSiteState, 20> generator_array {
+        monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs
+    };
     return DynamicMonostarKstateTrait::from_range(generator_array);
+    //return DynamicMonostarKstateTrait::from_range(generator_array);
 
 }
 
 DynamicMonostarKstate classical_es_kstate(const unsigned n_sites) {
-    std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
-    generator_array[0] = es;
+    //std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
+    //generator_array[0] = es;
+    std::array<MonostarSiteState, 20> generator_array {
+        monostar_system::es, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs,
+                monostar_system::gs, monostar_system::gs, monostar_system::gs, monostar_system::gs
+    };
     return DynamicMonostarKstateTrait::from_range(kstate_range_op::make_unique_shift(generator_array));
 }
 
