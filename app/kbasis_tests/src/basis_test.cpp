@@ -5,7 +5,7 @@
 
 #include <kbasis/basis.hpp>
 
-#include <kstate_impl/kstate_concrete.hpp>
+#include <kstate_impl/kstate_concrete_stl.hpp>
 
 #include <kstate_range_op/range_op_unique_shift.hpp>
 

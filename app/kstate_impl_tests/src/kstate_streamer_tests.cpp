@@ -2,7 +2,7 @@
 #include <kstate_tests/site_state_trait_for_double.hpp>
 
 #include <kstate_impl/kstate_streamer.hpp>
-#include <kstate_impl/kstate_concrete.hpp>
+#include <kstate_impl/kstate_concrete_stl.hpp>
 
 #include <gtest/gtest.h>
 
