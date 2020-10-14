@@ -342,9 +342,9 @@ struct TraitKstate<kstate_impl::StaticKstate<_SiteStateTraitT, _N>> {
     static constexpr bool is_kstate_trait = true;
     // helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using KstateT = kstate_impl::DynamicKstate<_SiteStateTraitT>;
-    using ConstRangeT = typename kstate_impl::DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using ConstAnyRangeT = typename kstate_impl::DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+    using KstateT = kstate_impl::StaticKstate<_SiteStateTraitT, _N>;
+    using ConstRangeT = typename kstate_impl::StaticKstateTypes<SiteStateTraitT, _N>::ConstRangeT;
+    using ConstAnyRangeT = typename kstate_impl::StaticKstateTypes<SiteStateTraitT, _N>::ConstAnyRangeT;
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
