@@ -1,6 +1,6 @@
 #include <monostar_system/monostar_kstate.hpp>
 
-#include <kstate_range_op/range_op_unique_shift.hpp>
+#include <kstate_op_range/op_unique_shift.hpp>
 
 #include <kstate_impl/kstate_streamer.hpp>
 
@@ -21,7 +21,7 @@ DynamicMonostarKstate classical_gs_kstate(const unsigned n_sites) {
 DynamicMonostarKstate classical_es_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
     generator_array[0] = es;
-    return DynamicMonostarKstateTrait::from_range(kstate_range_op::make_unique_shift(generator_array));
+    return DynamicMonostarKstateTrait::from_range(kstate_op_range::make_unique_shift(generator_array));
 }
 
 }  // namespace monostar_system

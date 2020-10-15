@@ -16,7 +16,7 @@ target_link_libraries("${TARGET_NAME}"
   bfpt_common
   kstate_trait
   kstate_impl
-  kstate_range_op
+  kstate_op_range
   utility
   Boost::boost
 )

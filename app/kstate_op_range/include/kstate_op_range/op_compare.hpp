@@ -14,7 +14,7 @@
 // ## compare_XXX                                                       ##
 // #######################################################################
 
-namespace kstate_range_op {
+namespace kstate_op_range {
 
 template <typename ForwardRange1, typename ForwardRange2>
 bool compare_less(const ForwardRange1& rng1, const ForwardRange2& rng2) noexcept {
@@ -38,4 +38,4 @@ std::optional<size_t> compare_translational_equality(const ForwardRange1& rng1, 
             : static_cast<size_t>(std::distance(std::begin(rng2d), it));
 }
 
-}  // namespace kstate_range_op
+}  // namespace kstate_op_range

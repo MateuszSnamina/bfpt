@@ -11,7 +11,7 @@
 // ## n_unique_shift                                                    ##
 // #######################################################################
 
-namespace kstate_range_op {
+namespace kstate_op_range {
 
 template <typename ForwardRange>
 size_t n_unique_shift(const ForwardRange& rng) noexcept {
@@ -29,17 +29,17 @@ size_t n_unique_shift(const ForwardRange& rng) noexcept {
     return i;
 }
 
-}  // namespace kstate_range_op
+}  // namespace kstate_op_range
 
 // #######################################################################
 // ## make_unique_shift                                                 ##
 // #######################################################################
 
-namespace kstate_range_op {
+namespace kstate_op_range {
 
 template <typename ForwardRange>
 extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) noexcept {
     return rng | extension::boost::adaptors::rotated(n_unique_shift(rng));
 }
 
-}  // namespace kstate_range_op
+}  // namespace kstate_op_range

@@ -7,7 +7,7 @@
 
 #include <kstate_impl/kstate_concrete_stl.hpp>
 
-#include <kstate_range_op/range_op_unique_shift.hpp>
+#include <kstate_op_range/op_unique_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 
@@ -315,15 +315,15 @@ TEST(Basis, BigTestWithUniqueStates) {
     const int v6[3] = {1, 14, 15};
     const int v7[3] = {20, 15, 1};  // (equivalent) replica of v5
     const int v8[3] = {3, 20, 15};
-    const auto k0 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v0), ctr_from_range);
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v1), ctr_from_range);
-    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v2), ctr_from_range);
-    const auto k3 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v3), ctr_from_range);
-    const auto k4 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v4), ctr_from_range);
-    const auto k5 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v5), ctr_from_range);
-    const auto k6 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v6), ctr_from_range);
-    const auto k7 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v7), ctr_from_range);
-    const auto k8 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v8), ctr_from_range);
+    const auto k0 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v0), ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v1), ctr_from_range);
+    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v2), ctr_from_range);
+    const auto k3 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v3), ctr_from_range);
+    const auto k4 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v4), ctr_from_range);
+    const auto k5 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v5), ctr_from_range);
+    const auto k6 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v6), ctr_from_range);
+    const auto k7 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v7), ctr_from_range);
+    const auto k8 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v8), ctr_from_range);
     basis.add_element(k0);
     basis.add_element(k1);
     basis.add_element(k2);
@@ -398,7 +398,7 @@ TEST(Basis, BigTestWithUniqueStates) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k8->to_range()), 5);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_range_op::make_unique_shift(v100), ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v100), ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 

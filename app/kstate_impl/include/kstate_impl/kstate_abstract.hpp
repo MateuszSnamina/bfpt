@@ -1,7 +1,7 @@
 #pragma once
 
-#include <kstate_range_op/range_op_compare.hpp>
-#include <kstate_range_op/range_op_least_replication_shift.hpp>
+#include <kstate_op_range/op_compare.hpp>
+#include <kstate_op_range/op_least_replication_shift.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
 
@@ -94,19 +94,19 @@ public:
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 size_t
 Kstate<_SiteStateTraitT, _TraversalTagT>::n_least_replication_shift() const noexcept {
-    return kstate_range_op::n_least_replication_shift(to_any_range());
+    return kstate_op_range::n_least_replication_shift(to_any_range());
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 double
 Kstate<_SiteStateTraitT, _TraversalTagT>::norm_factor() const noexcept {
-    return kstate_range_op::norm_factor(to_any_range());
+    return kstate_op_range::norm_factor(to_any_range());
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 bool
 Kstate<_SiteStateTraitT, _TraversalTagT>::is_prolific(int n_k) const noexcept {
-    return kstate_range_op::is_prolific(to_any_range(), n_k);
+    return kstate_op_range::is_prolific(to_any_range(), n_k);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
@@ -125,14 +125,14 @@ template <typename _SiteStateTraitT, typename _TraversalTagT>
 bool
 Kstate<_SiteStateTraitT, _TraversalTagT>::compare_equality_any_range(const ConstAnyRangeT& other) const noexcept {
     assert(n_sites() == boost::size(other));
-    return kstate_range_op::compare_equality(to_any_range(), other);
+    return kstate_op_range::compare_equality(to_any_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
 std::optional<size_t>
 Kstate<_SiteStateTraitT, _TraversalTagT>::compare_translational_equality_any_range(const ConstAnyRangeT& other) const noexcept {
     assert(this->n_sites() == boost::size(other));
-    return kstate_range_op::compare_translational_equality(to_any_range(), other);
+    return kstate_op_range::compare_translational_equality(to_any_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _TraversalTagT>
@@ -251,19 +251,19 @@ SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::to_any_range() const noexcept {
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 size_t
 SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::n_least_replication_shift() const noexcept {
-    return kstate_range_op::n_least_replication_shift(to_range());
+    return kstate_op_range::n_least_replication_shift(to_range());
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 double
 SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::norm_factor() const noexcept {
-    return kstate_range_op::norm_factor(to_range());
+    return kstate_op_range::norm_factor(to_range());
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
 bool
 SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::is_prolific(int n_k) const noexcept {
-    return kstate_range_op::is_prolific(to_range(), n_k);
+    return kstate_op_range::is_prolific(to_range(), n_k);
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
@@ -271,7 +271,7 @@ template <typename OtherConstRangeT>
 bool
 SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_equality_range(const OtherConstRangeT& other) const noexcept {
     assert(this->n_sites() == boost::size(other));
-    return kstate_range_op::compare_equality(to_range(), other);
+    return kstate_op_range::compare_equality(to_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>
@@ -279,7 +279,7 @@ template <typename OtherConstRangeT>
 std::optional<size_t>
 SpeedyKstate<_SiteStateTraitT, _ConstRangeT>::compare_translational_equality_range(const OtherConstRangeT& other) const noexcept {
     //assert(this->n_sites() == boost::size(other));
-    return kstate_range_op::compare_translational_equality(to_range(), other);
+    return kstate_op_range::compare_translational_equality(to_range(), other);
 }
 
 template <typename _SiteStateTraitT, typename _ConstRangeT>

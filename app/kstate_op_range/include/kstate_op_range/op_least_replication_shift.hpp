@@ -14,7 +14,7 @@
 // ## n_unique_shift                                                    ##
 // #######################################################################
 
-namespace kstate_range_op {
+namespace kstate_op_range {
 
 template <typename ForwardRange>
 size_t n_least_replication_shift(const ForwardRange& rng) {
@@ -26,13 +26,13 @@ size_t n_least_replication_shift(const ForwardRange& rng) {
     return static_cast<size_t>(_ + 1);
 }
 
-}  // namespace kstate_range_op
+}  // namespace kstate_op_range
 
 // #######################################################################
 // ## norm_factor                                                       ##
 // #######################################################################
 
-namespace kstate_range_op {
+namespace kstate_op_range {
 
 template <typename ForwardRange>
 double norm_factor(const ForwardRange& rng) noexcept {
@@ -42,13 +42,13 @@ double norm_factor(const ForwardRange& rng) noexcept {
     // where n_replicas = n_sites / n_least_replication_shift
 }
 
-}  // namespace kstate_range_op
+}  // namespace kstate_op_range
 
 // #######################################################################
 // ## is_prolific                                                       ##
 // #######################################################################
 
-namespace kstate_range_op {
+namespace kstate_op_range {
 
 template <typename ForwardRange>
 bool is_prolific(const ForwardRange& rng, int n_k) noexcept {
@@ -56,4 +56,4 @@ bool is_prolific(const ForwardRange& rng, int n_k) noexcept {
     return !((n_least_replication_shift(rng) * n_k) % n_sites);
 }
 
-}  // namespace kstate_range_op
+}  // namespace kstate_op_range
