@@ -1,21 +1,20 @@
-/*
+
 #pragma once
 
-#include <extensions/adaptors.hpp>
+#include<kstate_op_integral/integral_bits.hpp>
+#include<kstate_op_integral/op_integral_bits.hpp>
 
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-
-#include <iterator>
-
+#include<cassert>
+/*
 // #######################################################################
 // ## n_unique_shift                                                    ##
 // #######################################################################
 
 namespace kstate_op_integral {
 
-template <typename ForwardRange>
-size_t n_unique_shift(const ForwardRange& rng) noexcept {
+template <typename IntegralBitsT>
+size_t n_unique_shift(IntegralBitsT integral_bits) noexcept {
+    static_assert(IsIntegralBits<IntegralBitsT>::value);
     using Difference = typename boost::range_difference<ForwardRange>::type;
     const Difference d = std::distance(std::begin(rng), std::end(rng));
     size_t i = 0;
@@ -38,8 +37,9 @@ size_t n_unique_shift(const ForwardRange& rng) noexcept {
 
 namespace kstate_op_integral {
 
-template <typename ForwardRange>
-extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) noexcept {
+template <typename IntegralBitsT>
+extension::boost::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(IntegralBitsT integral_bits) noexcept {
+    static_assert(IsIntegralBits<IntegralBitsT>::value);
     return rng | extension::boost::adaptors::rotated(n_unique_shift(rng));
 }
 

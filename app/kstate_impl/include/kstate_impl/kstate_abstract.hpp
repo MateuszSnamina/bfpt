@@ -1,7 +1,7 @@
 #pragma once
 
-#include <kstate_op_range/op_compare.hpp>
-#include <kstate_op_range/op_least_replication_shift.hpp>
+#include <kstate_op_range/op_range_compare.hpp>
+#include <kstate_op_range/op_range_least_replication_shift.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
 

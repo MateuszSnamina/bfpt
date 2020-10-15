@@ -9,7 +9,7 @@
 
 #include <chainkernel/operator_kernel.hpp>
 
-#include <kstate_op_range/op_unique_shift.hpp>
+#include <kstate_op_range/op_range_unique_shift.hpp>
 
 #include <extensions/adaptors.hpp>
 

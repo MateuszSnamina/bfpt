@@ -1,6 +1,6 @@
 #include <kstate_tests/site_state_trait_for_int.hpp>
 
-#include <kstate_op_range/op_unique_shift.hpp>
+#include <kstate_op_range/op_range_unique_shift.hpp>
 
 #include <kstate_impl/kstate_concrete_stl.hpp>
 

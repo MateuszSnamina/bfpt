@@ -1,37 +1,51 @@
+#include<kstate_op_integral/integral_bits.hpp>
 #include<kstate_op_integral/op_integral_compare.hpp>
-/*
-#include <array>
 
 #include <gtest/gtest.h>
 
+#include <cstdint> //for types like: uint64_t
+
+
 TEST(KstateRangeOp, CompareEqualityTest0) {
-    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-    const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
-    EXPECT_TRUE(kstate_range_op::compare_equality(v1, v1));
-    EXPECT_FALSE(kstate_range_op::compare_equality(v1, v2));
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1100101110, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b2{0b1100101100, 10};
+    EXPECT_TRUE(kstate_op_integral::compare_equality(b1, b1));
+    EXPECT_FALSE(kstate_op_integral::compare_equality(b1, b2));
 }
 
 TEST(KstateRangeOp, CompareTranlationalEqualityTest0) {
-    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-    const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 13};
-    const std::array<int, 6> v11 = {16, 11, 12, 13, 14, 15};
-    const std::array<int, 6> v12 = {15, 16, 11, 12, 13, 14};
-    const std::array<int, 6> v13 = {14, 15, 16, 11, 12, 13};
-    const std::array<int, 6> v14 = {13, 14, 15, 16, 11, 12};
-    const std::array<int, 6> v15 = {12, 13, 14, 15, 16, 11};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1100101110, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b2{0b1100101100, 10};
+
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b11{0b1001011101, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b12{0b0010111011, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b13{0b0101110110, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b14{0b1011101100, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b15{0b0111011001, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b16{0b1110110010, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b17{0b1101100101, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b18{0b1011001011, 10};
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> b19{0b0110010111, 10};
     // ---
-    ASSERT_FALSE(kstate_range_op::compare_translational_equality(v1, v2));
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v1));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v1), 0);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v11));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v11), 1);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v12));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v12), 2);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v13));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v13), 3);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v14));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v14), 4);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v15));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v15), 5);
+    ASSERT_FALSE(kstate_op_integral::compare_translational_equality(b1, b2));
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b1));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b1), 0);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b11));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b11), 1);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b12));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b12), 2);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b13));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b13), 3);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b14));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b14), 4);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b15));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b15), 5);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b16));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b16), 6);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b17));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b17), 7);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b18));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b18), 8);
+    ASSERT_TRUE(kstate_op_integral::compare_translational_equality(b1, b19));
+    ASSERT_EQ(*kstate_op_integral::compare_translational_equality(b1, b19), 9);
 }
-*/

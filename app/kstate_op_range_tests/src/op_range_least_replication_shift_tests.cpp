@@ -1,4 +1,4 @@
-#include<kstate_op_range/op_least_replication_shift.hpp>
+#include<kstate_op_range/op_range_least_replication_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 

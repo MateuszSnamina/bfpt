@@ -6,7 +6,6 @@
 
 #include <iterator>
 #include <type_traits>
-#include <memory>
 #include <cassert>
 
 // #######################################################################
@@ -16,7 +15,7 @@
 namespace kstate_op_integral {
 
 template <typename T>
-bool extract_bit(T n, unsigned idx) {
+bool extract_bit(T n, unsigned idx) noexcept {
     static_assert(std::is_arithmetic_v<T>);
     static_assert(std::is_integral_v<T>);
     static_assert(std::is_unsigned_v<T>);
@@ -25,7 +24,7 @@ bool extract_bit(T n, unsigned idx) {
 }
 
 template <typename T>
-T rotate(T n, unsigned n_all_bits, unsigned idx_pivot_bit) {
+T rotate(T n, unsigned n_all_bits, unsigned idx_pivot_bit) noexcept {
     static_assert(std::is_arithmetic_v<T>);
     static_assert(std::is_integral_v<T>);
     static_assert(std::is_unsigned_v<T>);
@@ -44,7 +43,7 @@ T rotate(T n, unsigned n_all_bits, unsigned idx_pivot_bit) {
 }
 
 template <typename T>
-T refine(T n, bool new_value, unsigned idx_bit) {
+T refine(T n, bool new_value, unsigned idx_bit) noexcept {
     static_assert(std::is_arithmetic_v<T>);
     static_assert(std::is_integral_v<T>);
     static_assert(std::is_unsigned_v<T>);
@@ -54,7 +53,7 @@ T refine(T n, bool new_value, unsigned idx_bit) {
 }
 
 template <typename T>
-auto integral_to_bits_range(T n, unsigned n_all_bits) {
+auto integral_to_bits_range(T n, unsigned n_all_bits) noexcept {
     static_assert(std::is_arithmetic_v<T>);
     static_assert(std::is_integral_v<T>);
     static_assert(std::is_unsigned_v<T>);
@@ -66,11 +65,10 @@ auto integral_to_bits_range(T n, unsigned n_all_bits) {
 }
 
 template <typename T, typename RangeT>
-T integral_from_bits_range(RangeT r) {
+T integral_from_bits_range(RangeT r) noexcept {
     static_assert(std::is_arithmetic_v<T>);
     static_assert(std::is_integral_v<T>);
     static_assert(std::is_unsigned_v<T>);
-    //static_assert(boost::range_iterator<RangeT>::type);
     using IteratorT = typename boost::range_iterator<RangeT>::type;
     using DerefIteratorT = decltype(*std::declval<IteratorT>());
     using RemoveCvRefDerefIteratorT = std::remove_cv_t<std::remove_reference_t<DerefIteratorT>>; //  std::remove_cvref_t<DerefIteratorT>

@@ -1,6 +1,6 @@
 #include <monostar_system/monostar_kstate.hpp>
 
-#include <kstate_op_range/op_unique_shift.hpp>
+#include <kstate_op_range/op_range_unique_shift.hpp>
 
 #include <kstate_impl/kstate_streamer.hpp>
 
