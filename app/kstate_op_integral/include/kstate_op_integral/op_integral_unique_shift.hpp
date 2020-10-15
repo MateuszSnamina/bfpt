@@ -17,7 +17,6 @@ size_t n_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
     const auto n_all_bits = integral_bits.get_n_all_bits();
     assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::BufferT));
-   ////// const auto n1_buffer = integral_bits.get_buffer();//TODO remove
     auto n2_buffer = integral_bits.get_buffer();
     size_t i = 0;
     typename IntegralBitsT::BufferT n_max_buffer = integral_bits.get_buffer();

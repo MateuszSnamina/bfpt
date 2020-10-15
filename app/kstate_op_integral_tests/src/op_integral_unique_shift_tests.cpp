@@ -1,47 +1,46 @@
 #include<kstate_op_integral/op_integral_unique_shift.hpp>
-#include<kstate_op_integral/op_integral_compare.hpp>
+//#include<kstate_op_integral/op_integral_compare.hpp>
 
 #include <gtest/gtest.h>
 
 #include <cstdint> //for types like: uint64_t
 
-TEST(KstateOpRange, NUniqueShiftTest0) {
+TEST(KstateOpIntegral, NUniqueShiftTest0) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1, 1};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 0);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest1) {
+TEST(KstateOpIntegral, NUniqueShiftTest1) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b01, 2};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 1);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest2) {
+TEST(KstateOpIntegral, NUniqueShiftTest2) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b10, 2};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 0);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest3) {
+TEST(KstateOpIntegral, NUniqueShiftTest3) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1101101001, 10};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 1);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest4) {
+TEST(KstateOpIntegral, NUniqueShiftTest4) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1101101000, 10};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 0);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest5) {
+TEST(KstateOpIntegral, NUniqueShiftTest5) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b0001011011, 10};
-    //0b0100011011
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 5);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest6) {
+TEST(KstateOpIntegral, NUniqueShiftTest6) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1100001100, 10};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 4);
 }
 
-TEST(KstateOpRange, NUniqueShiftTest7) {
+TEST(KstateOpIntegral, NUniqueShiftTest7) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b0110100110, 10};
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1), 9);
 }
