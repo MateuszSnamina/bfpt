@@ -4,14 +4,14 @@
 
 #include <gtest/gtest.h>
 
-TEST(KstateRangeOp, CompareEqualityTest0) {
+TEST(KstateOpRange, CompareEqualityTest0) {
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
     EXPECT_TRUE(kstate_op_range::compare_equality(v1, v1));
     EXPECT_FALSE(kstate_op_range::compare_equality(v1, v2));
 }
 
-TEST(KstateRangeOp, CompareTranlationalEqualityTest0) {
+TEST(KstateOpRange, CompareTranlationalEqualityTest0) {
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 13};
     const std::array<int, 6> v11 = {16, 11, 12, 13, 14, 15};

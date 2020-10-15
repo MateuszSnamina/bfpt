@@ -5,7 +5,7 @@
 #include<kstate_op_integral/op_integral_bits.hpp>
 
 #include<cassert>
-/*
+
 // #######################################################################
 // ## n_unique_shift                                                    ##
 // #######################################################################
@@ -15,22 +15,24 @@ namespace kstate_op_integral {
 template <typename IntegralBitsT>
 size_t n_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
-    using Difference = typename boost::range_difference<ForwardRange>::type;
-    const Difference d = std::distance(std::begin(rng), std::end(rng));
+    const auto n_all_bits = integral_bits.get_n_all_bits();
+    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::BufferT));
+   ////// const auto n1_buffer = integral_bits.get_buffer();//TODO remove
+    auto n2_buffer = integral_bits.get_buffer();
     size_t i = 0;
-    for (size_t _ = 1; boost::numeric_cast<Difference>(_) < d; _++) {
-        const bool result_cmp = boost::lexicographical_compare(
-            rng | extension::boost::adaptors::rotated(i),
-            rng | extension::boost::adaptors::rotated(_));
-        if (result_cmp) {
+    typename IntegralBitsT::BufferT n_max_buffer = integral_bits.get_buffer();
+    for (size_t _ = 1; _ < n_all_bits; _++) {
+        n2_buffer = ::kstate_op_integral::rotate(n2_buffer, n_all_bits, 1);
+        if (n_max_buffer < n2_buffer) {
             i = _;
+            n_max_buffer = n2_buffer;
         }
     }
     return i;
 }
 
 }  // namespace kstate_op_integral
-
+/*
 // #######################################################################
 // ## make_unique_shift                                                 ##
 // #######################################################################

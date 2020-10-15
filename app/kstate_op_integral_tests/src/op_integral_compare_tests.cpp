@@ -5,15 +5,14 @@
 
 #include <cstdint> //for types like: uint64_t
 
-
-TEST(KstateRangeOp, CompareEqualityTest0) {
+TEST(KstateOpIntegral, CompareEqualityTest0) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1100101110, 10};
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b2{0b1100101100, 10};
     EXPECT_TRUE(kstate_op_integral::compare_equality(b1, b1));
     EXPECT_FALSE(kstate_op_integral::compare_equality(b1, b2));
 }
 
-TEST(KstateRangeOp, CompareTranlationalEqualityTest0) {
+TEST(KstateOpIntegral, CompareTranlationalEqualityTest0) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b1{0b1100101110, 10};
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> b2{0b1100101100, 10};
 
