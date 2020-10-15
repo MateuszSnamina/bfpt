@@ -5,23 +5,15 @@
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
 
-#include <extensions/range_streamer.hpp>
-
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/numeric/conversion/cast.hpp>
 #include <boost/range.hpp>
-#include <boost/range/algorithm/search.hpp>
 #include <boost/range/any_range.hpp>
 
-#include <cassert>
 #include <iterator>
-#include <optional>
-#include <sstream>
-#include <string>
 #include <type_traits>
 #include <vector>
 #include <array>
 #include <memory>
+#include <cassert>
 
 namespace kstate_impl {
 
@@ -138,7 +130,7 @@ struct DynamicKstateTypes {
 };
 
 template <typename _SiteStateTraitT>
-class DynamicKstate : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeT> {
+class DynamicKstate final : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
@@ -271,7 +263,7 @@ struct StaticKstateTypes {
 };
 
 template <typename _SiteStateTraitT, std::size_t _N>
-class StaticKstate : public SpeedyKstate<_SiteStateTraitT, typename StaticKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
+class StaticKstate final : public SpeedyKstate<_SiteStateTraitT, typename StaticKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
