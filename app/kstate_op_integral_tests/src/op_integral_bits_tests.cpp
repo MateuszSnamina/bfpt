@@ -1,37 +1,25 @@
-#include<kstate_op_integral/op_integral_bits.hpp>
-/*
-#include <array>
+#include <kstate_op_integral/op_integral_bits.hpp>
 
 #include <gtest/gtest.h>
 
-TEST(KstateRangeOp, CompareEqualityTest0) {
-    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-    const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
-    EXPECT_TRUE(kstate_range_op::compare_equality(v1, v1));
-    EXPECT_FALSE(kstate_range_op::compare_equality(v1, v2));
+#include <cstdint> //for types like: uint64_t
+
+TEST(KstateOpBits, ExtractBit) {
+    EXPECT_FALSE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 0));
+    EXPECT_TRUE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 1));
+    EXPECT_TRUE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 2));
+    EXPECT_TRUE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 3));
+    EXPECT_FALSE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 4));
+    EXPECT_TRUE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 5));
+    EXPECT_FALSE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 6));
+    EXPECT_FALSE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 7));
+    EXPECT_TRUE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 8));
+    EXPECT_TRUE(kstate_op_integral::extract_bit<uint64_t>(0b1100101110, 9));
 }
 
-TEST(KstateRangeOp, CompareTranlationalEqualityTest0) {
-    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-    const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 13};
-    const std::array<int, 6> v11 = {16, 11, 12, 13, 14, 15};
-    const std::array<int, 6> v12 = {15, 16, 11, 12, 13, 14};
-    const std::array<int, 6> v13 = {14, 15, 16, 11, 12, 13};
-    const std::array<int, 6> v14 = {13, 14, 15, 16, 11, 12};
-    const std::array<int, 6> v15 = {12, 13, 14, 15, 16, 11};
-    // ---
-    ASSERT_FALSE(kstate_range_op::compare_translational_equality(v1, v2));
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v1));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v1), 0);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v11));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v11), 1);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v12));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v12), 2);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v13));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v13), 3);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v14));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v14), 4);
-    ASSERT_TRUE(kstate_range_op::compare_translational_equality(v1, v15));
-    ASSERT_EQ(kstate_range_op::compare_translational_equality(v1, v15), 5);
+TEST(ExtensionBoostAdaptorsRotated, FilledRawArray) {
+    ASSERT_EQ(kstate_op_integral::rotate<uint64_t>(0b1100101110, 10, 0), 0b1100101110);
+    ASSERT_EQ(kstate_op_integral::rotate<uint64_t>(0b1100101110, 10, 1), 0b0110010111);
+    ASSERT_EQ(kstate_op_integral::rotate<uint64_t>(0b1100101110, 10, 2), 0b1011001011);
+    ASSERT_EQ(kstate_op_integral::rotate<uint64_t>(0b1100101110, 10, 9), 0b1001011101);
 }
-*/
