@@ -51,11 +51,6 @@ site_state_range_to_integral(RangeT r) noexcept {
     return kstate_op_integral::IntegralBitsDynamic<BufferT>{buffer, n_all_bits};
 }
 
-
-// TODO remove:
-//auto integral_to_bits_range(T n, unsigned n_all_bits) noexcept
-//T integral_from_bits_range(RangeT r) noexcept
-
 } // end of namespace kstate_impl
 
 //// #######################################################################

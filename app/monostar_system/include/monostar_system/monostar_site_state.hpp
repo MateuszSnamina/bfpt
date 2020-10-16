@@ -49,7 +49,6 @@ namespace monostar_system {
 
 extern const MonostarSiteState gs;  // ground-state (there is no star)
 extern const MonostarSiteState es;  // excited-state (there is a star)
-extern const std::vector<MonostarSiteState> ordered_site_states;//TODO remove
 
 }  // namespace monostar_system
 
@@ -74,8 +73,7 @@ struct TraitSiteState<monostar_system::MonostarSiteState> {
         } else if (state == monostar_system::es) {
             return 1u;
         } else {
-            //throw std::domain_error("Not a valid state."); //TODO restore
-            throw std::domain_error("Not a valid state.NNNN"); //TODO remove
+            throw std::domain_error("Not a valid state."); //TODO restore
         }
     }
 
