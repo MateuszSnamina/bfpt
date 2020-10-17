@@ -32,31 +32,32 @@ unsigned bool_to_unsigned(bool b) {
     return (b ? 1u : 0u);
 }
 
-template<typename SiteStateTraitT, typename BufferT>
-auto integral_to_site_state_range(const kstate_op_integral::IntegralBitsDynamic<BufferT>& integral_bits) noexcept {
-    const BufferT buffer = integral_bits.get_buffer();
+template<typename SiteStateTraitT, typename IntegralT>
+auto integral_number_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamic<IntegralT>& integral_bits) noexcept {
+    const IntegralT integral_number = integral_bits.get_number();
     const unsigned char n_all_bits = integral_bits.get_n_all_bits();
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
-    return kstate_op_integral::integral_to_bits_range(buffer, n_all_bits)
+    static_assert(SiteStateTraitT::site_basis_dim() == 2);
+    return kstate_op_integral::integral_to_bits_range(integral_number, n_all_bits)
             | boost::adaptors::transformed(bool_to_unsigned)
             | boost::adaptors::transformed(SiteStateTraitT::from_index);
 }
 
-template<typename SiteStateTraitT, typename BufferT>
-using IntegralToSiteStateRangeResult = decltype(integral_to_site_state_range<SiteStateTraitT, BufferT>(std::declval<kstate_op_integral::IntegralBitsDynamic<BufferT>>()));
+template<typename SiteStateTraitT, typename IntegralT>
+using IntegralNumberToTwoLevelSiteStateRangeResult = decltype(integral_number_to_two_level_site_state_range<SiteStateTraitT, IntegralT>(std::declval<kstate_op_integral::IntegralBitsDynamic<IntegralT>>()));
 
-template<typename SiteStateTraitT, typename BufferT, typename RangeT>
-kstate_op_integral::IntegralBitsDynamic<BufferT>
-site_state_range_to_integral(RangeT r) noexcept {
+template<typename SiteStateTraitT, typename IntegralT, typename RangeT>
+kstate_op_integral::IntegralBitsDynamic<IntegralT>
+two_level_site_state_range_to_integral_number(RangeT r) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     const auto bits_range = r
             | boost::adaptors::transformed(SiteStateTraitT::get_index)
             | boost::adaptors::transformed(unsigned_to_bool);
-    const BufferT buffer = kstate_op_integral::integral_from_bits_range<BufferT>(bits_range);
+    const IntegralT integral_number = kstate_op_integral::integral_from_bits_range<IntegralT>(bits_range);
     const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r));
-    return kstate_op_integral::IntegralBitsDynamic<BufferT>{buffer, n_all_bits};
+    return kstate_op_integral::IntegralBitsDynamic<IntegralT>{integral_number, n_all_bits};
 }
 
 } // end of namespace kstate_impl
@@ -68,7 +69,7 @@ site_state_range_to_integral(RangeT r) noexcept {
 namespace kstate_impl {
 
 template <typename _SiteStateTraitT>
-class DynamicTwoLevelIntegralKstate final : public SpeedyKstate<_SiteStateTraitT, IntegralToSiteStateRangeResult<_SiteStateTraitT, uint64_t>> {
+class DynamicTwoLevelIntegralKstate final : public SpeedyKstate<_SiteStateTraitT, IntegralNumberToTwoLevelSiteStateRangeResult<_SiteStateTraitT, uint64_t>> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:

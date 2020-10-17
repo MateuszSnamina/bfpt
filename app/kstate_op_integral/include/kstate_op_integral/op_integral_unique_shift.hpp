@@ -12,24 +12,24 @@
 
 namespace kstate_op_integral {
 
-template<typename _BufferT>
+template<typename _IntegralT>
 struct UniqueShiftReceipt {
-    using BufferT = _BufferT;
-    static_assert(std::is_arithmetic_v<_BufferT>);
-    static_assert(std::is_integral_v<_BufferT>);
-    static_assert(std::is_unsigned_v<_BufferT>);
+    using IntegralT = _IntegralT;
+    static_assert(std::is_arithmetic_v<_IntegralT>);
+    static_assert(std::is_integral_v<_IntegralT>);
+    static_assert(std::is_unsigned_v<_IntegralT>);
     unsigned char n_roration;
-    BufferT buffer;
+    IntegralT buffer;
 };
 
 template <typename IntegralBitsT>
-UniqueShiftReceipt<typename IntegralBitsT::BufferT> _n_unique_shift(IntegralBitsT integral_bits) noexcept {
+UniqueShiftReceipt<typename IntegralBitsT::IntegralT> _n_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
     const auto n_all_bits = integral_bits.get_n_all_bits();
-    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::BufferT));
-    auto n2_buffer = integral_bits.get_buffer();
+    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::IntegralT));
+    auto n2_buffer = integral_bits.get_number();
     unsigned char i = 0;
-    typename IntegralBitsT::BufferT n_max_buffer = integral_bits.get_buffer();
+    typename IntegralBitsT::IntegralT n_max_buffer = integral_bits.get_number();
     for (unsigned char _ = 1; _ < n_all_bits; _++) {
         n2_buffer = ::kstate_op_integral::rotate(n2_buffer, n_all_bits, 1);
         if (n_max_buffer < n2_buffer) {
@@ -52,7 +52,7 @@ template <typename IntegralBitsT>
 unsigned char n_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
     const auto n_all_bits = integral_bits.get_n_all_bits();
-    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::BufferT));
+    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::IntegralT));
     return _n_unique_shift(integral_bits).n_roration;
 }
 
@@ -65,10 +65,10 @@ unsigned char n_unique_shift(IntegralBitsT integral_bits) noexcept {
 namespace kstate_op_integral {
 
 template <typename IntegralBitsT>
-typename IntegralBitsT::BufferT make_unique_shift(IntegralBitsT integral_bits) noexcept {
+typename IntegralBitsT::IntegralT make_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
     const auto n_all_bits = integral_bits.get_n_all_bits();
-    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::BufferT));
+    assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::IntegralT));
     return _n_unique_shift(integral_bits).buffer;
 }
 

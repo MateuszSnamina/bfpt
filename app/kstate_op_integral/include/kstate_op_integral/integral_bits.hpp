@@ -5,39 +5,39 @@
 
 namespace kstate_op_integral {
 
-template<typename _BufferT>
+template<typename _IntegralT>
 struct IntegralBitsDynamic {
-    static_assert(std::is_arithmetic_v<_BufferT>);
-    static_assert(std::is_integral_v<_BufferT>);
-    static_assert(std::is_unsigned_v<_BufferT>);
-    using BufferT = _BufferT;
-    const BufferT buffer;
+    static_assert(std::is_arithmetic_v<_IntegralT>);
+    static_assert(std::is_integral_v<_IntegralT>);
+    static_assert(std::is_unsigned_v<_IntegralT>);
+    using IntegralT = _IntegralT;
+    const IntegralT number;
     const unsigned char n_all_bits;
-    const BufferT& get_buffer_ref() const noexcept {
-        return buffer;
+    const IntegralT& get_number_ref() const noexcept {
+        return number;
     }
-    BufferT get_buffer() const noexcept {
-        return buffer;
+    IntegralT get_number() const noexcept {
+        return number;
     }
     unsigned char get_n_all_bits() const noexcept {
         return n_all_bits;
     };
 };
 
-template<typename _BufferT, std::size_t _N>
+template<typename _IntegralT, std::size_t _N>
 struct IntegralBitsStatic {
-    static_assert(std::is_arithmetic_v<_BufferT>);
-    static_assert(std::is_integral_v<_BufferT>);
-    static_assert(std::is_unsigned_v<_BufferT>);
-    static_assert(_N < 8 * sizeof(_BufferT));
-    using BufferT = _BufferT;
+    static_assert(std::is_arithmetic_v<_IntegralT>);
+    static_assert(std::is_integral_v<_IntegralT>);
+    static_assert(std::is_unsigned_v<_IntegralT>);
+    static_assert(_N < 8 * sizeof(_IntegralT));
+    using IntegralT = _IntegralT;
     constexpr static std::size_t N = _N;
-    const BufferT buffer;
-    const BufferT& get_buffer_ref() const noexcept {
-        return buffer;
+    const IntegralT number;
+    const IntegralT& get_number_ref() const noexcept {
+        return number;
     }
-    BufferT get_buffer() const noexcept {
-        return buffer;
+    IntegralT get_number() const noexcept {
+        return number;
     }
     unsigned char get_n_all_bits() const noexcept {
         return N;

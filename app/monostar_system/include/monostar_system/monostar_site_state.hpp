@@ -15,9 +15,9 @@ namespace monostar_system {
 
 class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
    public:
-    MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
-    bool operator<(const MonostarSiteState& other) const;
-    bool operator==(const MonostarSiteState& other) const;
+    constexpr MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
+    constexpr bool operator<(const MonostarSiteState& other) const;
+    constexpr bool operator==(const MonostarSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
    //private://RESTORE
     bool _is_excited;
@@ -25,11 +25,11 @@ class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
 
 // ***********************************************************************
 
-inline bool MonostarSiteState::operator<(const MonostarSiteState& other) const {
+inline constexpr bool MonostarSiteState::operator<(const MonostarSiteState& other) const {
     return static_cast<int>(this->_is_excited) < static_cast<int>(other._is_excited);
 }
 
-inline bool MonostarSiteState::operator==(const MonostarSiteState& other) const {
+inline constexpr bool MonostarSiteState::operator==(const MonostarSiteState& other) const {
     return this->_is_excited == other._is_excited;
 }
 
@@ -63,11 +63,11 @@ struct TraitSiteState<monostar_system::MonostarSiteState> {
     static constexpr bool is_site_state_trait = true;
     using SiteStateT = monostar_system::MonostarSiteState;
 
-    static unsigned site_basis_dim() {
+    constexpr static unsigned site_basis_dim() {
         return 2u;
     }
 
-    static unsigned get_index(const SiteStateT& state) {
+    constexpr static unsigned get_index(const SiteStateT& state) {
         if (state == monostar_system::gs) {
             return 0u;
         } else if (state == monostar_system::es) {
