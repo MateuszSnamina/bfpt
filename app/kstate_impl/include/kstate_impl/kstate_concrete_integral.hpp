@@ -35,11 +35,11 @@ constexpr unsigned bool_to_unsigned(bool b) {
 
 template<typename SiteStateTraitT, typename IntegralT>
 auto integral_number_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamic<IntegralT>& integral_bits) noexcept {
-    const IntegralT integral_number = integral_bits.get_number();
-    const unsigned char n_all_bits = integral_bits.get_n_all_bits();
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     static_assert(SiteStateTraitT::site_basis_dim() == 2);
+    const IntegralT integral_number = integral_bits.get_number();
+    const unsigned char n_all_bits = integral_bits.get_n_all_bits();
     return kstate_op_integral::integral_to_bits_range(integral_number, n_all_bits)
             | boost::adaptors::transformed(bool_to_unsigned)
             | boost::adaptors::transformed(SiteStateTraitT::from_index);
@@ -53,6 +53,7 @@ kstate_op_integral::IntegralBitsDynamic<IntegralT>
 two_level_site_state_range_to_integral_number(RangeT r) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
+    static_assert(SiteStateTraitT::site_basis_dim() == 2);
     const auto bits_range = r
             | boost::adaptors::transformed(SiteStateTraitT::get_index)
             | boost::adaptors::transformed(unsigned_to_bool);
@@ -76,6 +77,7 @@ template <typename _SiteStateTraitT>
 class DynamicTwoLevelIntegral64Kstate final : public SpeedyKstate<_SiteStateTraitT, DynamicTwoLevelIntegral64KstateRange<_SiteStateTraitT>> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
+    static_assert(_SiteStateTraitT::site_basis_dim() == 2);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -131,3 +133,48 @@ DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::n_sites() const noexcept {
 
 } // end of namespace kstate_impl
 
+// #######################################################################
+// ## TraitsFor kstate_impl::DynamicStlKstate                           ##
+// #######################################################################
+
+namespace kstate_trait {
+
+template<typename _SiteStateTraitT>
+struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>> {
+    // the is_kstate_trait flag:
+    static constexpr bool is_kstate_trait = true;
+    // helper types:
+    using SiteStateTraitT = _SiteStateTraitT;
+    using KstateT = kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>;
+    using ConstRangeT = typename KstateT::ConstRangeT;
+    //using ConstAnyRangeT = typename kstate_impl::KstateT::ConstAnyRangeT;
+    // function being the public API:
+    template <typename OtherRangeT>
+    static KstateT from_range(const OtherRangeT& range) {
+        return KstateT(range, kstate_impl::CtrFromRange{});
+    }
+    template <typename OtherRangeT>
+    static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
+        return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
+    }
+    static ConstRangeT to_range(const KstateT& kstate) noexcept {
+        return kstate.to_range();
+    }
+//    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
+//        return kstate.to_any_range();
+//    }//TODO remove
+    static size_t n_sites(const KstateT& kstate) noexcept {
+        return kstate.is_prolific();
+    }
+    static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
+        return kstate.n_least_replication_shift();
+    }
+    static double norm_factor(const KstateT& kstate) noexcept {
+        return kstate.norm_factor();
+    }
+    static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
+        return kstate.is_prolific(n_k);
+    }
+};
+
+} // end of namespace kstate_trait

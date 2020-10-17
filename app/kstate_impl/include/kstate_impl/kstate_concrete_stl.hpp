@@ -117,7 +117,7 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     using SiteStateTraitT = _SiteStateTraitT;
     using KstateT = kstate_impl::DynamicStlKstate<_SiteStateTraitT>;
     using ConstRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using ConstAnyRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+//    using ConstAnyRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstAnyRangeT;//TODO remove
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
@@ -130,9 +130,9 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
-        return kstate.to_any_range();
-    }
+//    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
+//        return kstate.to_any_range();
+//    }//TODO remove
     static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.is_prolific();
     }
@@ -251,7 +251,7 @@ struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     using SiteStateTraitT = _SiteStateTraitT;
     using KstateT = kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>;
     using ConstRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstRangeT;
-    using ConstAnyRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstAnyRangeT;
+//    using ConstAnyRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstAnyRangeT;//TODO remove
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
@@ -264,9 +264,9 @@ struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
-        return kstate.to_any_range();
-    }
+//    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
+//        return kstate.to_any_range();
+//    }//TODO remove
     static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.is_prolific();
     }
