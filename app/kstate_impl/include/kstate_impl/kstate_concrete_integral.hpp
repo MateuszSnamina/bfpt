@@ -1,6 +1,7 @@
 #pragma once
 
 #include <kstate_impl/kstate_abstract.hpp>
+#include <kstate_impl/kstate_constructor_flavor_tag.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
@@ -12,7 +13,7 @@
 #include <boost/range/any_range.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
-//#include <cstdint> for types like: uint64_t
+#include <cstdint> // for types like: uint64_t
 #include <iterator>
 #include <type_traits>
 #include <memory>
@@ -22,7 +23,7 @@
 // ## init_vector_from_range (a helper function)                        ##
 // #######################################################################
 
-namespace kstate_impl {
+namespace kstate_impl::helpers {
 
 constexpr bool unsigned_to_bool(unsigned u) {
     return (u ? true : false);
@@ -69,7 +70,7 @@ two_level_site_state_range_to_integral_number(RangeT r) noexcept {
 namespace kstate_impl {
 
 template<typename SiteStateTraitT>
-using DynamicTwoLevelIntegral64KstateRange = IntegralNumberToTwoLevelSiteStateRangeResult<SiteStateTraitT, uint64_t>;
+using DynamicTwoLevelIntegral64KstateRange = helpers::IntegralNumberToTwoLevelSiteStateRangeResult<SiteStateTraitT, uint64_t>;
 
 template <typename _SiteStateTraitT>
 class DynamicTwoLevelIntegral64Kstate final : public SpeedyKstate<_SiteStateTraitT, DynamicTwoLevelIntegral64KstateRange<_SiteStateTraitT>> {
@@ -81,18 +82,18 @@ public:
     using BufferT = kstate_op_integral::IntegralBitsDynamic<uint64_t>;
 //    using IteratorT = typename StaticKstateTypes<SiteStateTraitT, N>::IteratorT;
 //    using ConstIteratorT = typename StaticKstateTypes<SiteStateTraitT, N>::ConstIteratorT;
-//    using RangeT = typename StaticKstateTypes<SiteStateTraitT, N>::RangeT;
-//    using ConstRangeT = typename StaticKstateTypes<SiteStateTraitT, N>::ConstRangeT;
+    using RangeT = DynamicTwoLevelIntegral64KstateRange<SiteStateTraitT>;
+    using ConstRangeT = DynamicTwoLevelIntegral64KstateRange<SiteStateTraitT>;
 //    using AnyRangeT = typename StaticKstateTypes<SiteStateTraitT, N>::AnyRangeT;
 //    using ConstAnyRangeT = typename StaticKstateTypes<SiteStateTraitT, N>::ConstAnyRangeT;
 
 public:
-//    DynamicTwoLevelIntegral64Kstate(BufferT, CtrFromBuffer);
-//    template <typename OtherRangeT>
-//    DynamicTwoLevelIntegral64Kstate(const OtherRangeT&, CtrFromRange);
+    DynamicTwoLevelIntegral64Kstate(BufferT, CtrFromBuffer);
+    template <typename OtherRangeT>
+    DynamicTwoLevelIntegral64Kstate(const OtherRangeT&, CtrFromRange);
 
 public:
-//    ConstRangeT to_range() const noexcept override;
+    ConstRangeT to_range() const noexcept override;
     size_t n_sites() const noexcept override;
 
 protected:
@@ -101,26 +102,26 @@ protected:
 
 // ***********************************************************************
 
-//template <typename _SiteStateTraitT>
-//DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(
-//        DynamicTwoLevelIntegralKstate<_SiteStateTraitT>::BufferT integral_bits,
-//        CtrFromBuffer) :
-//   _integral_bits(integral_bits) {
-//}
+template <typename _SiteStateTraitT>
+DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(
+        DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::BufferT integral_bits,
+        CtrFromBuffer) :
+   _integral_bits(integral_bits) {
+}
 
-//template <typename _SiteStateTraitT>
-//template <typename OtherRangeT>
-//DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(const OtherRangeT& r, CtrFromRange) :
-//    _integral_bits(TODO) {
-//}
+template <typename _SiteStateTraitT>
+template <typename OtherRangeT>
+DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(const OtherRangeT& r, CtrFromRange) :
+    _integral_bits(helpers::two_level_site_state_range_to_integral_number(r)) {
+}
 
 // ***********************************************************************
 
-//template <typename _SiteStateTraitT>
-//typename StaticKstate<_SiteStateTraitT>::ConstRangeT
-//DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::to_range() const noexcept {
-//    return _a;
-//}
+template <typename _SiteStateTraitT>
+typename DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::ConstRangeT
+DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::to_range() const noexcept {
+    return helpers::integral_number_to_two_level_site_state_range<SiteStateTraitT, uint64_t>(_integral_bits);
+}
 
 template <typename _SiteStateTraitT>
 size_t
