@@ -12,10 +12,10 @@
 
 namespace monostar_system {
 
-using DynamicMonostarKstate = kstate_impl::DynamicKstate<MonostarSiteStateTrait>;
+using DynamicMonostarKstate = kstate_impl::DynamicStlKstate<MonostarSiteStateTrait>;
 
 template<size_t N>
-using StaticMonostarKstate = kstate_impl::StaticKstate<MonostarSiteStateTrait, N>;
+using StaticMonostarKstate = kstate_impl::StaticStlKstate<MonostarSiteStateTrait, N>;
 
 using Static20MonostarKstate = StaticMonostarKstate<20>;
 

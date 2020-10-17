@@ -1,6 +1,8 @@
 #pragma once
 
 #include <kstate_impl/kstate_abstract.hpp>
+#include <kstate_impl/kstate_concrete_stl_helpers.hpp>
+#include <kstate_impl/kstate_constructor_flavor_tag.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
@@ -15,99 +17,12 @@
 #include <memory>
 #include <cassert>
 
-namespace kstate_impl {
-
-// Helper tag classes:
-struct CtrFromRange {};
-struct CtrFromBuffer {};
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-static CtrFromRange ctr_from_range{};
-static CtrFromBuffer ctr_from_buffer{};
-#pragma GCC diagnostic pop
-
-} // end of namespace kstate_impl
-
 // #######################################################################
-// ## init_vector_from_range (a helper function)                        ##
-// #######################################################################
-
-namespace kstate_impl {
-
-template <typename Range>
-std::vector<typename boost::range_value<Range>::type>
-init_vector_from_range(
-        const Range& rng) {
-    using Element = typename boost::range_value<Range>::type;
-    using Vector = std::vector<Element>;
-    return Vector(std::begin(rng), std::end(rng));
-}
-
-} // end of namespace kstate_impl
-
-// #######################################################################
-// ## init_array_from_range (a helper function)                         ##
-// #######################################################################
-
-// Solution coppied from:
-// https://stackoverflow.com/questions/10929202/initialize-stdarray-with-a-range-pair-of-iterators
-
-namespace kstate_impl {
-
-template <std::size_t... Indices>
-struct indices {
-    using next = indices<Indices..., sizeof...(Indices)>;
-};
-
-template <std::size_t N>
-struct build_indices {
-    using type = typename build_indices<N-1>::type::next;
-};
-
-template <>
-struct build_indices<0> {
-    using type = indices<>;
-};
-
-template <std::size_t N>
-using BuildIndices = typename build_indices<N>::type;
-
-template <typename Iterator>
-using ValueType = typename std::iterator_traits<Iterator>::value_type;
-
-// internal overload with indices tag
-template <std::size_t... I, typename RandomAccessIterator,
-          typename Array = std::array<ValueType<RandomAccessIterator>, sizeof...(I)>>
-Array make_array_impl(RandomAccessIterator first, indices<I...>) {
-    return Array { { first[I]... } };
-}
-
-// externally visible interface
-template <std::size_t N, typename RandomAccessIterator>
-std::array<ValueType<RandomAccessIterator>, N>
-make_array(RandomAccessIterator first, RandomAccessIterator last) {
-    // last is not relevant if we're assuming the size is N
-    // I'll assert it is correct anyway
-    assert(last - first == N);
-    return make_array_impl(first, BuildIndices<N> {});
-}
-
-template <std::size_t N, typename Range>
-std::array<typename boost::range_value<Range>::type, N>
-init_array_from_range(
-        const Range& rng) {
-    return make_array<N>(std::begin(rng), std::end(rng));
-}
-
-} // end of namespace kstate_impl
-
-// #######################################################################
-// ## DynamicKstate                                                     ##
+// ## DynamicStlKstate                                                  ##
 // #######################################################################
 
 /*
- * DynamicKstate<SiteStateT> is a concrete subclass of
+ * DynamicStlKstate<SiteStateT> is a concrete subclass of
  * Kstate<SiteStateT, boost::random_access_traversal_tag>
  * that uses std::vector as an internal buffer.
  */
@@ -115,7 +30,7 @@ init_array_from_range(
 namespace kstate_impl {
 
 template <typename _SiteStateTraitT>
-struct DynamicKstateTypes {
+struct DynamicStlKstateTypes {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     using SiteStateTraitT = _SiteStateTraitT;
@@ -130,24 +45,24 @@ struct DynamicKstateTypes {
 };
 
 template <typename _SiteStateTraitT>
-class DynamicKstate final : public SpeedyKstate<_SiteStateTraitT, typename DynamicKstateTypes<_SiteStateTraitT>::ConstRangeT> {
+class DynamicStlKstate final : public SpeedyKstate<_SiteStateTraitT, typename DynamicStlKstateTypes<_SiteStateTraitT>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
-    using BufferT = typename DynamicKstateTypes<SiteStateTraitT>::BufferT;
-    using IteratorT = typename DynamicKstateTypes<SiteStateTraitT>::IteratorT;
-    using ConstIteratorT = typename DynamicKstateTypes<SiteStateTraitT>::ConstIteratorT;
-    using RangeT = typename DynamicKstateTypes<SiteStateTraitT>::RangeT;
-    using ConstRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using AnyRangeT = typename DynamicKstateTypes<SiteStateTraitT>::AnyRangeT;
-    using ConstAnyRangeT = typename DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+    using BufferT = typename DynamicStlKstateTypes<SiteStateTraitT>::BufferT;
+    using IteratorT = typename DynamicStlKstateTypes<SiteStateTraitT>::IteratorT;
+    using ConstIteratorT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstIteratorT;
+    using RangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::RangeT;
+    using ConstRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
+    using AnyRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::AnyRangeT;
+    using ConstAnyRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
 
 public:
-    DynamicKstate(BufferT&&, CtrFromBuffer);
+    DynamicStlKstate(BufferT&&, CtrFromBuffer);
     template <typename OtherRangeT>
-    DynamicKstate(const OtherRangeT&, CtrFromRange);
+    DynamicStlKstate(const OtherRangeT&, CtrFromRange);
 
 public:
     ConstRangeT to_range() const noexcept override;
@@ -160,49 +75,49 @@ protected:
 // ***********************************************************************
 
 template <typename _SiteStateTraitT>
-DynamicKstate<_SiteStateTraitT>::DynamicKstate(
-        DynamicKstate<_SiteStateTraitT>::BufferT&& v,
+DynamicStlKstate<_SiteStateTraitT>::DynamicStlKstate(
+        DynamicStlKstate<_SiteStateTraitT>::BufferT&& v,
         CtrFromBuffer) :
     _v(std::move(v)) {
 }
 
 template <typename _SiteStateTraitT>
 template <typename OtherRangeT>
-DynamicKstate<_SiteStateTraitT>::DynamicKstate(const OtherRangeT& r, CtrFromRange) :
-    _v(init_vector_from_range(r)) {
+DynamicStlKstate<_SiteStateTraitT>::DynamicStlKstate(const OtherRangeT& r, CtrFromRange) :
+    _v(helpers::init_vector_from_range(r)) {
 }
 
 // ***********************************************************************
 
 template <typename _SiteStateTraitT>
-typename DynamicKstate<_SiteStateTraitT>::ConstRangeT
-DynamicKstate<_SiteStateTraitT>::to_range() const noexcept {
+typename DynamicStlKstate<_SiteStateTraitT>::ConstRangeT
+DynamicStlKstate<_SiteStateTraitT>::to_range() const noexcept {
     return _v;
 }
 
 template <typename _SiteStateTraitT>
 size_t
-DynamicKstate<_SiteStateTraitT>::n_sites() const noexcept {
+DynamicStlKstate<_SiteStateTraitT>::n_sites() const noexcept {
     return _v.size();
 }
 
 }  // namespace kstate_impl
 
 // #######################################################################
-// ## TraitsFor kstate_impl::DynamicKstate                              ##
+// ## TraitsFor kstate_impl::DynamicStlKstate                           ##
 // #######################################################################
 
 namespace kstate_trait {
 
 template<typename _SiteStateTraitT>
-struct TraitKstate<kstate_impl::DynamicKstate<_SiteStateTraitT>> {
+struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
     // helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using KstateT = kstate_impl::DynamicKstate<_SiteStateTraitT>;
-    using ConstRangeT = typename kstate_impl::DynamicKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using ConstAnyRangeT = typename kstate_impl::DynamicKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
+    using KstateT = kstate_impl::DynamicStlKstate<_SiteStateTraitT>;
+    using ConstRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
+    using ConstAnyRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
@@ -235,11 +150,11 @@ struct TraitKstate<kstate_impl::DynamicKstate<_SiteStateTraitT>> {
 } // end of namespace kstate_trait
 
 // #######################################################################
-// ## StaticKstate                                                      ##
+// ## StaticStlKstate                                                   ##
 // #######################################################################
 
 /*
- * StaticKstate<SiteStateT, N> is a concrete subclass of
+ * StaticStlKstate<SiteStateT, N> is a concrete subclass of
  * Kstate<SiteStateT, boost::random_access_traversal_tag>
  * that uses std::array as an internal buffer.
  */
@@ -247,7 +162,7 @@ struct TraitKstate<kstate_impl::DynamicKstate<_SiteStateTraitT>> {
 namespace kstate_impl {
 
 template <typename _SiteStateTraitT, std::size_t _N>
-struct StaticKstateTypes {
+struct StaticStlKstateTypes {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
     constexpr static size_t N = _N;
@@ -263,25 +178,25 @@ struct StaticKstateTypes {
 };
 
 template <typename _SiteStateTraitT, std::size_t _N>
-class StaticKstate final : public SpeedyKstate<_SiteStateTraitT, typename StaticKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
+class StaticStlKstate final : public SpeedyKstate<_SiteStateTraitT, typename StaticStlKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
     constexpr static std::size_t N = _N;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
-    using BufferT = typename StaticKstateTypes<SiteStateTraitT, N>::BufferT;
-    using IteratorT = typename StaticKstateTypes<SiteStateTraitT, N>::IteratorT;
-    using ConstIteratorT = typename StaticKstateTypes<SiteStateTraitT, N>::ConstIteratorT;
-    using RangeT = typename StaticKstateTypes<SiteStateTraitT, N>::RangeT;
-    using ConstRangeT = typename StaticKstateTypes<SiteStateTraitT, N>::ConstRangeT;
-    using AnyRangeT = typename StaticKstateTypes<SiteStateTraitT, N>::AnyRangeT;
-    using ConstAnyRangeT = typename StaticKstateTypes<SiteStateTraitT, N>::ConstAnyRangeT;
+    using BufferT = typename StaticStlKstateTypes<SiteStateTraitT, N>::BufferT;
+    using IteratorT = typename StaticStlKstateTypes<SiteStateTraitT, N>::IteratorT;
+    using ConstIteratorT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstIteratorT;
+    using RangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::RangeT;
+    using ConstRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstRangeT;
+    using AnyRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::AnyRangeT;
+    using ConstAnyRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstAnyRangeT;
 
 public:
-    StaticKstate(BufferT&&, CtrFromBuffer);
+    StaticStlKstate(BufferT&&, CtrFromBuffer);
     template <typename OtherRangeT>
-    StaticKstate(const OtherRangeT&, CtrFromRange);
+    StaticStlKstate(const OtherRangeT&, CtrFromRange);
 
 public:
     ConstRangeT to_range() const noexcept override;
@@ -294,49 +209,49 @@ protected:
 // ***********************************************************************
 
 template <typename _SiteStateTraitT, std::size_t _N>
-StaticKstate<_SiteStateTraitT, _N>::StaticKstate(
-        StaticKstate<_SiteStateTraitT, _N>::BufferT&& a,
+StaticStlKstate<_SiteStateTraitT, _N>::StaticStlKstate(
+        StaticStlKstate<_SiteStateTraitT, _N>::BufferT&& a,
         CtrFromBuffer) :
    _a(std::move(a)) {
 }
 
 template <typename _SiteStateTraitT, std::size_t _N>
 template <typename OtherRangeT>
-StaticKstate<_SiteStateTraitT, _N>::StaticKstate(const OtherRangeT& r, CtrFromRange) :
-    _a(init_array_from_range<N>(r)) {
+StaticStlKstate<_SiteStateTraitT, _N>::StaticStlKstate(const OtherRangeT& r, CtrFromRange) :
+    _a(helpers::init_array_from_range<N>(r)) {
 }
 
 // ***********************************************************************
 
 template <typename _SiteStateTraitT, std::size_t _N>
-typename StaticKstate<_SiteStateTraitT, _N>::ConstRangeT
-StaticKstate<_SiteStateTraitT, _N>::to_range() const noexcept {
+typename StaticStlKstate<_SiteStateTraitT, _N>::ConstRangeT
+StaticStlKstate<_SiteStateTraitT, _N>::to_range() const noexcept {
     return _a;
 }
 
 template <typename _SiteStateTraitT, std::size_t _N>
 size_t
-StaticKstate<_SiteStateTraitT, _N>::n_sites() const noexcept {
+StaticStlKstate<_SiteStateTraitT, _N>::n_sites() const noexcept {
     return N;
 }
 
 }  // namespace kstate_impl
 
 // #######################################################################
-// ## TraitsFor kstate_impl::StaticKstate                               ##
+// ## TraitsFor kstate_impl::StaticStlKstate                            ##
 // #######################################################################
 
 namespace kstate_trait {
 
 template<typename _SiteStateTraitT, std::size_t _N>
-struct TraitKstate<kstate_impl::StaticKstate<_SiteStateTraitT, _N>> {
+struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
     // helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using KstateT = kstate_impl::StaticKstate<_SiteStateTraitT, _N>;
-    using ConstRangeT = typename kstate_impl::StaticKstateTypes<SiteStateTraitT, _N>::ConstRangeT;
-    using ConstAnyRangeT = typename kstate_impl::StaticKstateTypes<SiteStateTraitT, _N>::ConstAnyRangeT;
+    using KstateT = kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>;
+    using ConstRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstRangeT;
+    using ConstAnyRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstAnyRangeT;
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
@@ -367,4 +282,3 @@ struct TraitKstate<kstate_impl::StaticKstate<_SiteStateTraitT, _N>> {
 };
 
 } // end of namespace kstate_trait
-

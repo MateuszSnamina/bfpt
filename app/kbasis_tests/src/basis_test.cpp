@@ -19,7 +19,7 @@ using kstate_impl::ctr_from_range;
 
 TEST(Basis, Empty) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     // test basis size:
@@ -28,18 +28,18 @@ TEST(Basis, Empty) {
     ASSERT_TRUE(basis.map_index().begin() == basis.map_index().end());//TODO remove
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, OneElement) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
     basis.add_element(k1);
     // test basis size:
     ASSERT_EQ(basis.size(), 1);
@@ -54,25 +54,25 @@ TEST(Basis, OneElement) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k1->to_range()), 0);
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v1), 0);
     const int v10[3] = {11, 12, 113};
-    const auto k10 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v10, ctr_from_range);
+    const auto k10 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v10, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k10->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v10));
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, TwoDifferentElementsTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
     basis.add_element(k1);
     basis.add_element(k2);
     // test basis size:
@@ -95,20 +95,20 @@ TEST(Basis, TwoDifferentElementsTest0) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 1);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, TwoDifferentElementsTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {13, 14, 15};
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
     basis.add_element(k2);
     basis.add_element(k1);
     // test basis size:
@@ -131,20 +131,20 @@ TEST(Basis, TwoDifferentElementsTest1) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 0);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, TwoSameElementsTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     const int v1[3] = {11, 12, 13};
     const int v2[3] = {11, 12, 13};
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
     basis.add_element(k1);
     basis.add_element(k2);
     // test basis size:
@@ -167,14 +167,14 @@ TEST(Basis, TwoSameElementsTest0) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v2), 0);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 }
 
 TEST(Basis, BigTest) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
@@ -189,18 +189,18 @@ TEST(Basis, BigTest) {
     const int v9[3] = {3, 20, 18};
     const int v10[3] = {3, 21, 15};
     const int v11[3] = {3, 21, 10};
-    const auto k0 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v0, ctr_from_range);
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
-    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
-    const auto k3 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v3, ctr_from_range);
-    const auto k4 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v4, ctr_from_range);
-    const auto k5 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v5, ctr_from_range);
-    const auto k6 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v6, ctr_from_range);
-    const auto k7 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v7, ctr_from_range);
-    const auto k8 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v8, ctr_from_range);
-    const auto k9 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v9, ctr_from_range);
-    const auto k10 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v10, ctr_from_range);
-    const auto k11 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v11, ctr_from_range);
+    const auto k0 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v0, ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v1, ctr_from_range);
+    const auto k2 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v2, ctr_from_range);
+    const auto k3 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v3, ctr_from_range);
+    const auto k4 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v4, ctr_from_range);
+    const auto k5 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v5, ctr_from_range);
+    const auto k6 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v6, ctr_from_range);
+    const auto k7 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v7, ctr_from_range);
+    const auto k8 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v8, ctr_from_range);
+    const auto k9 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v9, ctr_from_range);
+    const auto k10 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v10, ctr_from_range);
+    const auto k11 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v11, ctr_from_range);
     basis.add_element(k0);
     basis.add_element(k1);
     basis.add_element(k2);
@@ -287,7 +287,7 @@ TEST(Basis, BigTest) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(v11), 8);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 
@@ -303,7 +303,7 @@ TEST(Basis, BigTest) {
 
 TEST(Basis, BigTestWithUniqueStates) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     using KStateTrait = kstate_trait::TraitKstate<Kstate>;
     kbasis::Basis<KStateTrait> basis(3);
     const int v0[3] = {7, 12, 13};
@@ -315,15 +315,15 @@ TEST(Basis, BigTestWithUniqueStates) {
     const int v6[3] = {1, 14, 15};
     const int v7[3] = {20, 15, 1};  // (equivalent) replica of v5
     const int v8[3] = {3, 20, 15};
-    const auto k0 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v0), ctr_from_range);
-    const auto k1 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v1), ctr_from_range);
-    const auto k2 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v2), ctr_from_range);
-    const auto k3 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v3), ctr_from_range);
-    const auto k4 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v4), ctr_from_range);
-    const auto k5 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v5), ctr_from_range);
-    const auto k6 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v6), ctr_from_range);
-    const auto k7 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v7), ctr_from_range);
-    const auto k8 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v8), ctr_from_range);
+    const auto k0 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v0), ctr_from_range);
+    const auto k1 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v1), ctr_from_range);
+    const auto k2 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v2), ctr_from_range);
+    const auto k3 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v3), ctr_from_range);
+    const auto k4 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v4), ctr_from_range);
+    const auto k5 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v5), ctr_from_range);
+    const auto k6 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v6), ctr_from_range);
+    const auto k7 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v7), ctr_from_range);
+    const auto k8 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v8), ctr_from_range);
     basis.add_element(k0);
     basis.add_element(k1);
     basis.add_element(k2);
@@ -398,7 +398,7 @@ TEST(Basis, BigTestWithUniqueStates) {
     EXPECT_EQ(*basis.find_element_and_get_its_ra_index(k8->to_range()), 5);
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
-    const auto k100 = std::make_shared<kstate_impl::DynamicKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v100), ctr_from_range);
+    const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(kstate_op_range::make_unique_shift(v100), ctr_from_range);
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(k100->to_range()));
     EXPECT_FALSE(basis.find_element_and_get_its_ra_index(v100));
 

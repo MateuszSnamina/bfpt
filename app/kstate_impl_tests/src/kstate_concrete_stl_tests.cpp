@@ -15,18 +15,18 @@
 using kstate_impl::ctr_from_range;
 
 
-TEST(DynamicKstate, ConstructorFromRange) {
+TEST(DynamicStlKstate, ConstructorFromRange) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     EXPECT_TRUE(boost::equal(k1.to_range(), v1));
     EXPECT_EQ(k1.n_sites(), 6);
 }
 
-TEST(DynamicKstate, CompareEqualityTest0) {
+TEST(DynamicStlKstate, CompareEqualityTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
     const Kstate k1(v1, ctr_from_range);
@@ -41,9 +41,9 @@ TEST(DynamicKstate, CompareEqualityTest0) {
     EXPECT_FALSE(k1.compare_equality_kstate(k2));
 }
 
-TEST(DynamicKstate, CompareTranlationalEqualityTest0) {
+TEST(DynamicStlKstate, CompareTranlationalEqualityTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
     const std::array<int, 6> v11 = {16, 11, 12, 13, 14, 15};
@@ -102,36 +102,36 @@ TEST(DynamicKstate, CompareTranlationalEqualityTest0) {
     ASSERT_EQ(*k1.compare_translational_equality_kstate(k15), 5);
 }
 
-TEST(DynamicKstate, LeastReplicationShiftTest0) {
+TEST(DynamicStlKstate, LeastReplicationShiftTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     EXPECT_EQ(k1.n_least_replication_shift(), 6);
     EXPECT_EQ((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 6);
 }
 
-TEST(DynamicKstate, LeastReplicationShiftTest1) {
+TEST(DynamicStlKstate, LeastReplicationShiftTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v2 = {11, 12, 13, 11, 12, 13};
     const Kstate k2(v2, ctr_from_range);
     EXPECT_EQ(k2.n_least_replication_shift(), 3);
     EXPECT_EQ((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 3);
 }
 
-TEST(DynamicKstate, LeastReplicationShiftTest2) {
+TEST(DynamicStlKstate, LeastReplicationShiftTest2) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v3 = {11, 12, 11, 12, 11, 12};
     const Kstate k3(v3, ctr_from_range);
     EXPECT_EQ(k3.n_least_replication_shift(), 2);
     EXPECT_EQ((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::n_least_replication_shift()), 2);
 }
 
-TEST(DynamicKstate, LeastReplicationShiftTest3) {
+TEST(DynamicStlKstate, LeastReplicationShiftTest3) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v4 = {11, 11, 11, 11, 11, 11};
     const Kstate k4(v4, ctr_from_range);
     EXPECT_EQ(k4.n_least_replication_shift(), 1);
@@ -139,9 +139,9 @@ TEST(DynamicKstate, LeastReplicationShiftTest3) {
 }
 
 //---
-TEST(DynamicKstate, NormFactor0) {
+TEST(DynamicStlKstate, NormFactor0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     double expected_norm = 1.0 / std::sqrt(6);
@@ -149,9 +149,9 @@ TEST(DynamicKstate, NormFactor0) {
     // EXPECT_DOUBLE_EQ((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
-TEST(DynamicKstate, NormFactor1) {
+TEST(DynamicStlKstate, NormFactor1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v2 = {11, 12, 13, 11, 12, 13};
     const Kstate k2(v2, ctr_from_range);
     double expected_norm = 1.0 / std::sqrt(3) / 2;
@@ -159,9 +159,9 @@ TEST(DynamicKstate, NormFactor1) {
     // EXPECT_DOUBLE_EQ((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
-TEST(DynamicKstate, NormFactor2) {
+TEST(DynamicStlKstate, NormFactor2) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v3 = {11, 12, 11, 12, 11, 12};
     const Kstate k3(v3, ctr_from_range);
     double expected_norm = 1.0 / std::sqrt(2) / 3;
@@ -169,9 +169,9 @@ TEST(DynamicKstate, NormFactor2) {
     // EXPECT_DOUBLE_EQ((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
-TEST(DynamicKstate, NormFactor3) {
+TEST(DynamicStlKstate, NormFactor3) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v4 = {11, 11, 11, 11, 11, 11};
     const Kstate k4(v4, ctr_from_range);
     double expected_norm = 1.0 / 6.0;
@@ -179,9 +179,9 @@ TEST(DynamicKstate, NormFactor3) {
     // EXPECT_DOUBLE_EQ((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::norm_factor()), expected_norm);
 }
 
-TEST(DynamicKstate, IsProlificTest0) {
+TEST(DynamicStlKstate, IsProlificTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     EXPECT_TRUE(k1.is_prolific(0));
@@ -198,9 +198,9 @@ TEST(DynamicKstate, IsProlificTest0) {
     EXPECT_TRUE((k1.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
-TEST(DynamicKstate, IsProlificTest1) {
+TEST(DynamicStlKstate, IsProlificTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v2 = {11, 11, 11, 11, 11, 11};
     const Kstate k2(v2, ctr_from_range);
     EXPECT_TRUE(k2.is_prolific(0));
@@ -217,9 +217,9 @@ TEST(DynamicKstate, IsProlificTest1) {
     EXPECT_FALSE((k2.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
-TEST(DynamicKstate, IsProlificTest2) {
+TEST(DynamicStlKstate, IsProlificTest2) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v3 = {11, 12, 13, 11, 12, 13};
     const Kstate k3(v3, ctr_from_range);
     EXPECT_TRUE(k3.is_prolific(0));
@@ -236,9 +236,9 @@ TEST(DynamicKstate, IsProlificTest2) {
     EXPECT_FALSE((k3.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
-TEST(DynamicKstate, IsProlificTest3) {
+TEST(DynamicStlKstate, IsProlificTest3) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v4 = {11, 12, 11, 12, 11, 12};
     const Kstate k4(v4, ctr_from_range);
     EXPECT_TRUE(k4.is_prolific(0));
@@ -255,29 +255,29 @@ TEST(DynamicKstate, IsProlificTest3) {
     EXPECT_FALSE((k4.template Kstate<kstate_trait::TraitSiteState<int>, boost::random_access_traversal_tag>::is_prolific(5)));
 }
 
-TEST(DynamicKstate, ToStrTest0) {
+TEST(DynamicStlKstate, ToStrTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const Kstate k1(v1, ctr_from_range);
     EXPECT_EQ(k1.to_str(), "⦃11∙12∙13∙14∙15∙16⦄");
 }
 
-TEST(DynamicKstate, ToStrTest1) {
+TEST(DynamicStlKstate, ToStrTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 1> v2 = {11};
     const Kstate k2(v2, ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃11⦄");
 }
 
 // #######################################################################
-// ## UniqueDynamicKstate                                               ##
+// ## UniqueDynamicStlKstate                                               ##
 // #######################################################################
 
 TEST(DynamicUniqueKstate, CtrTest0) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 1> v2 = {11};
     const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃11⦄");
@@ -285,7 +285,7 @@ TEST(DynamicUniqueKstate, CtrTest0) {
 
 TEST(DynamicUniqueKstate, CtrTest1) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 2> v2 = {11, 12};
     const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
@@ -293,7 +293,7 @@ TEST(DynamicUniqueKstate, CtrTest1) {
 
 TEST(DynamicUniqueKstate, CtrTest2) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 2> v2 = {12, 11};
     const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
@@ -301,7 +301,7 @@ TEST(DynamicUniqueKstate, CtrTest2) {
 
 TEST(DynamicUniqueKstate, CtrTest3) {
     using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-    using Kstate = kstate_impl::DynamicKstate<SiteStateTrait>;
+    using Kstate = kstate_impl::DynamicStlKstate<SiteStateTrait>;
     const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};
     const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
     EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
