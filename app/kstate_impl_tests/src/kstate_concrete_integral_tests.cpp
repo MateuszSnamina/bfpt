@@ -76,7 +76,8 @@ using MonostarSiteStateTrait = kstate_trait::TraitSiteState<MonostarForTestsSite
 // #######################################################################
 
 TEST(DynamicIntegralKstate, IntegralToSiteStateRange) {
-    const auto r = kstate_impl::integral_to_site_state_range<MonostarSiteStateTrait, uint64_t>(0b01101, 5u);
+    const kstate_op_integral::IntegralBitsDynamic<uint64_t> integral_bits{0b01101, 5u};
+    const auto r = kstate_impl::integral_to_site_state_range<MonostarSiteStateTrait, uint64_t>(integral_bits);
     EXPECT_EQ(boost::size(r), 5);
     EXPECT_TRUE((*std::next(std::begin(r), 0)).is_excited);
     EXPECT_FALSE((*std::next(std::begin(r), 1)).is_excited);
