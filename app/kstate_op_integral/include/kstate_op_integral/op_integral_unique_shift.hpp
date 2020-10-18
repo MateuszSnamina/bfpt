@@ -51,7 +51,7 @@ namespace kstate_op_integral {
 template <typename IntegralBitsT>
 unsigned char n_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
-    const auto n_all_bits = integral_bits.get_n_all_bits(); //TODO mark unused
+    [[maybe_unused]] const auto n_all_bits = integral_bits.get_n_all_bits();
     assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::IntegralT));
     return _n_unique_shift(integral_bits).n_roration;
 }
@@ -67,7 +67,7 @@ namespace kstate_op_integral {
 template <typename IntegralBitsT>
 typename IntegralBitsT::IntegralT make_unique_shift(IntegralBitsT integral_bits) noexcept {
     static_assert(IsIntegralBits<IntegralBitsT>::value);
-    const auto n_all_bits = integral_bits.get_n_all_bits(); //TODO mark unused
+    [[maybe_unused]] const auto n_all_bits = integral_bits.get_n_all_bits();
     assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::IntegralT));
     return _n_unique_shift(integral_bits).buffer;
 }

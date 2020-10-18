@@ -108,6 +108,7 @@ DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Ksta
    _integral_bits(integral_bits) {
 }
 
+
 template <typename _SiteStateTraitT>
 template <typename OtherRangeT>
 DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(OtherRangeT r, CtrFromRange) :

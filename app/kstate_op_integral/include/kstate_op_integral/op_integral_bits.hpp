@@ -12,6 +12,7 @@
 // ## init_vector_from_range (a helper function)                        ##
 // #######################################################################
 
+
 namespace kstate_op_integral {
 
 template <typename T>
@@ -20,8 +21,10 @@ bool extract_bit(T n, unsigned char idx) noexcept {
     static_assert(std::is_integral_v<T>);
     static_assert(std::is_unsigned_v<T>);
     assert(idx < 8 * sizeof(T));
-    return static_cast<bool>(n & (static_cast<T>(1u) << idx));
+    const T mask = static_cast<T>(1u) << idx;
+    return n & mask;
 }
+
 
 template <typename T>
 T rotate(T n, unsigned char n_all_bits, unsigned char idx_pivot_bit) noexcept {
@@ -41,6 +44,7 @@ T rotate(T n, unsigned char n_all_bits, unsigned char idx_pivot_bit) noexcept {
     const T result = (high_bits >> n_low_bits) | (low_bits << n_high_bits);
     return result;
 }
+
 
 template <typename T>
 T refine(T n, bool new_value, unsigned char idx_bit) noexcept {
@@ -85,6 +89,7 @@ T integral_from_bits_range(RangeT r) noexcept {
     }
     return result;
 }
+
 
 } // end of namespace kstate_op_integral
 

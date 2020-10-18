@@ -17,10 +17,10 @@ namespace monostar_system {
 MonostarKstate classical_gs_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
     return MonostarKstateTrait::from_range(generator_array);
-
 }
 
 MonostarKstate classical_es_kstate(const unsigned n_sites) {
+    assert(n_sites > 0);
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
     generator_array[0] = es;
     return MonostarKstateTrait::from_range(kstate_op_range::make_unique_shift(generator_array));
