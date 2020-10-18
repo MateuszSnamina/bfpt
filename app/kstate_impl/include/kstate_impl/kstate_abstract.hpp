@@ -5,22 +5,15 @@
 
 #include <kstate_trait/trait_site_state.hpp>
 
-#include <extensions/adaptors.hpp>
 #include <extensions/range_streamer.hpp>
 
-#include <boost/algorithm/string/predicate.hpp>//TODO remove
-#include <boost/numeric/conversion/cast.hpp>
 #include <boost/range.hpp>
-#include <boost/range/algorithm/search.hpp>//TODO remove
-//#include <boost/range/any_range.hpp>//TODO remove
 
 #include <cassert>
 #include <iterator>
 #include <optional>
-#include <sstream>
 #include <string>
 #include <type_traits>
-#include <vector>
 
 // #######################################################################
 // ## Kstate                                                           ##
