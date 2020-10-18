@@ -3,6 +3,7 @@
 #include <monostar_system/monostar_site_state.hpp>
 
 #include <kstate_impl/kstate_concrete_stl.hpp>
+#include <kstate_impl/kstate_concrete_integral.hpp>
 
 #include <iostream>
 
@@ -12,12 +13,24 @@
 
 namespace monostar_system {
 
-using DynamicMonostarKstate = kstate_impl::DynamicStlKstate<MonostarSiteStateTrait>;
+using MonostarDynamicStlKstate = kstate_impl::DynamicStlKstate<MonostarSiteStateTrait>;
 
 template<size_t N>
-using StaticMonostarKstate = kstate_impl::StaticStlKstate<MonostarSiteStateTrait, N>;
+using StaticStlMonostarKstate = kstate_impl::StaticStlKstate<MonostarSiteStateTrait, N>;
 
-using Static20MonostarKstate = StaticMonostarKstate<20>;
+using MonostarDynamicIntegral64Kstate = kstate_impl::DynamicTwoLevelIntegral64Kstate<MonostarSiteStateTrait>;
+
+//template<size_t N>
+//using StaticIntegralMonostarKstate = kstate_impl::StaticTwoLevelIntegral64Kstate<MonostarSiteStateTrait, N>;
+// ^^^^ TODO: UNCOMMENT WHEN IT WILL BE IMPLEMENTED
+
+/*
+ *  Select the type you want to use:
+ */
+
+//using MonostarKstate = MonostarDynamicStlKstate;
+//using MonostarKstate = StaticStlMonostarKstate<20>;
+using MonostarKstate = MonostarDynamicIntegral64Kstate; //TODO make it work
 
 }  // namespace monostar_system
 
@@ -28,7 +41,7 @@ using Static20MonostarKstate = StaticMonostarKstate<20>;
 
 namespace monostar_system {
 
-using DynamicMonostarKstateTrait = kstate_trait::TraitKstate<DynamicMonostarKstate>;
+using MonostarKstateTrait = kstate_trait::TraitKstate<MonostarKstate>;
 
 }
 
@@ -39,9 +52,9 @@ using DynamicMonostarKstateTrait = kstate_trait::TraitKstate<DynamicMonostarKsta
 
 namespace monostar_system {
 
-DynamicMonostarKstate classical_gs_kstate(const unsigned n_sites);
+MonostarKstate classical_gs_kstate(const unsigned n_sites);
 
-DynamicMonostarKstate classical_es_kstate(const unsigned n_sites);
+MonostarKstate classical_es_kstate(const unsigned n_sites);
 
 }  // namespace monostar_system
 
@@ -52,6 +65,6 @@ DynamicMonostarKstate classical_es_kstate(const unsigned n_sites);
 
 namespace monostar_system {
 
-std::ostream& operator<<(std::ostream& stream, const DynamicMonostarKstate& state);
+std::ostream& operator<<(std::ostream& stream, const MonostarKstate& state);
 
 }  // namespace monostar_system

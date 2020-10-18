@@ -11,7 +11,7 @@
 
 namespace monostar_system {
 
-using DynamicMonostarKstateBasis = kbasis::Basis<kstate_trait::TraitKstate<DynamicMonostarKstate>>;
+using DynamicMonostarKstateBasis = kbasis::Basis<kstate_trait::TraitKstate<MonostarKstate>>;
 
 }  // namespace monostar_system
 
@@ -26,10 +26,10 @@ operator<<(std::ostream& stream, const DynamicMonostarKstateBasis& basis) {
     using extension::boost::stream_pragma::RSS;
     using kbasis::pramga::operator&&;
     using kbasis::pramga::operator<<;
-    const auto kstate_value_putter = [](std::ostream& os, DynamicMonostarKstate kstate) {
+    const auto kstate_value_putter = [](std::ostream& os, MonostarKstate kstate) {
         os << kstate;
     };
-    const auto range_streamer_settings = RSS<DynamicMonostarKstate>().set_stream_value_putter(kstate_value_putter);
+    const auto range_streamer_settings = RSS<MonostarKstate>().set_stream_value_putter(kstate_value_putter);
     stream << (basis && range_streamer_settings);
     return stream;
 }

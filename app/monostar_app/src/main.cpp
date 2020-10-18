@@ -41,8 +41,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
         const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
         const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
         unsigned n_threads) {
-    using KstateT = monostar_system::DynamicMonostarKstate;
-    using KstateTraitT = monostar_system::DynamicMonostarKstateTrait;
+    using KstateT = monostar_system::MonostarKstate;
+    using KstateTraitT = monostar_system::MonostarKstateTrait;
     using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
     using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
     using KoperatorT =  koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
@@ -71,8 +71,8 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
         const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
         const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
         unsigned n_threads) {
-    using KstateT = monostar_system::DynamicMonostarKstate;
-    using KstateTraitT = monostar_system::DynamicMonostarKstateTrait;
+    using KstateT = monostar_system::MonostarKstate;
+    using KstateTraitT = monostar_system::MonostarKstateTrait;
     using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
     using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
     using KoperatorT =  koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;

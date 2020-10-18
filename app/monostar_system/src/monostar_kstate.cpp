@@ -1,3 +1,5 @@
+#include <boost/range/any_range.hpp> //TODO remove??
+
 #include <monostar_system/monostar_kstate.hpp>
 
 #include <kstate_op_range/op_range_unique_shift.hpp>
@@ -12,16 +14,16 @@
 
 namespace monostar_system {
 
-DynamicMonostarKstate classical_gs_kstate(const unsigned n_sites) {
+MonostarKstate classical_gs_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
-    return DynamicMonostarKstateTrait::from_range(generator_array);
+    return MonostarKstateTrait::from_range(generator_array);
 
 }
 
-DynamicMonostarKstate classical_es_kstate(const unsigned n_sites) {
+MonostarKstate classical_es_kstate(const unsigned n_sites) {
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
     generator_array[0] = es;
-    return DynamicMonostarKstateTrait::from_range(kstate_op_range::make_unique_shift(generator_array));
+    return MonostarKstateTrait::from_range(kstate_op_range::make_unique_shift(generator_array));
 }
 
 }  // namespace monostar_system
@@ -33,7 +35,7 @@ DynamicMonostarKstate classical_es_kstate(const unsigned n_sites) {
 
 namespace monostar_system {
 
-std::ostream& operator<<(std::ostream& stream, const DynamicMonostarKstate& state) {
+std::ostream& operator<<(std::ostream& stream, const MonostarKstate& state) {
     using extension::boost::stream_pragma::RSS;
     using kstate_impl::pramga::operator||;
     using kstate_impl::pramga::operator<<;

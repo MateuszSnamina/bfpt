@@ -19,7 +19,7 @@ class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
     constexpr bool operator<(const MonostarSiteState& other) const;
     constexpr bool operator==(const MonostarSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
-   //private://RESTORE
+   //private://TODO RESTORE
     bool _is_excited;
 };
 

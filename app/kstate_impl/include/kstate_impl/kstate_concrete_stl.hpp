@@ -8,8 +8,6 @@
 #include <kstate_trait/trait_kstate.hpp>
 
 #include <boost/range.hpp>
-#include <boost/range/any_range.hpp>
-
 #include <iterator>
 #include <type_traits>
 #include <vector>
@@ -40,12 +38,10 @@ struct DynamicStlKstateTypes {
     using ConstIteratorT = typename BufferT::const_iterator;
     using RangeT = typename boost::iterator_range<IteratorT>;
     using ConstRangeT = typename boost::iterator_range<ConstIteratorT>;
-    using AnyRangeT = typename boost::any_range<SiteStateT, boost::random_access_traversal_tag>;
-    using ConstAnyRangeT = typename boost::any_range<const SiteStateT, boost::random_access_traversal_tag>;
 };
 
 template <typename _SiteStateTraitT>
-class DynamicStlKstate final : public SpeedyKstate<_SiteStateTraitT, typename DynamicStlKstateTypes<_SiteStateTraitT>::ConstRangeT> {
+class DynamicStlKstate final : public Kstate<_SiteStateTraitT, typename DynamicStlKstateTypes<_SiteStateTraitT>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
@@ -56,9 +52,6 @@ public:
     using ConstIteratorT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstIteratorT;
     using RangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::RangeT;
     using ConstRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
-    using AnyRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::AnyRangeT;
-    using ConstAnyRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstAnyRangeT;
-
 public:
     DynamicStlKstate(BufferT&&, CtrFromBuffer);
     template <typename OtherRangeT>
@@ -117,7 +110,6 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     using SiteStateTraitT = _SiteStateTraitT;
     using KstateT = kstate_impl::DynamicStlKstate<_SiteStateTraitT>;
     using ConstRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
-//    using ConstAnyRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstAnyRangeT;//TODO remove
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
@@ -130,9 +122,6 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-//    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
-//        return kstate.to_any_range();
-//    }//TODO remove
     static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.is_prolific();
     }
@@ -173,12 +162,10 @@ struct StaticStlKstateTypes {
     using ConstIteratorT = typename BufferT::const_iterator;
     using RangeT = typename boost::iterator_range<IteratorT>;
     using ConstRangeT = typename boost::iterator_range<ConstIteratorT>;
-    using AnyRangeT = typename boost::any_range<SiteStateT, boost::random_access_traversal_tag>;
-    using ConstAnyRangeT = typename boost::any_range<const SiteStateT, boost::random_access_traversal_tag>;
 };
 
 template <typename _SiteStateTraitT, std::size_t _N>
-class StaticStlKstate final : public SpeedyKstate<_SiteStateTraitT, typename StaticStlKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
+class StaticStlKstate final : public Kstate<_SiteStateTraitT, typename StaticStlKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
 public:
@@ -190,9 +177,6 @@ public:
     using ConstIteratorT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstIteratorT;
     using RangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::RangeT;
     using ConstRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstRangeT;
-    using AnyRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::AnyRangeT;
-    using ConstAnyRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstAnyRangeT;
-
 public:
     StaticStlKstate(BufferT&&, CtrFromBuffer);
     template <typename OtherRangeT>
@@ -251,7 +235,6 @@ struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     using SiteStateTraitT = _SiteStateTraitT;
     using KstateT = kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>;
     using ConstRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstRangeT;
-//    using ConstAnyRangeT = typename kstate_impl::StaticStlKstateTypes<SiteStateTraitT, _N>::ConstAnyRangeT;//TODO remove
     // function being the public API:
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
@@ -264,9 +247,6 @@ struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-//    static ConstAnyRangeT to_any_range(const KstateT& kstate) noexcept {
-//        return kstate.to_any_range();
-//    }//TODO remove
     static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.is_prolific();
     }

@@ -123,8 +123,8 @@ KstateStreamer<_KstateT>::stream(std::ostream& os) const{
                     *_range_streamer_settings._format_independence_flag :
                     default_format_independence_flag);
     // Stream:
-    extension::boost::stream_range_impl<typename utility::remove_cvref_t<KstateT>::ConstAnyRangeT>(
-                _kstate.to_any_range(),
+    extension::boost::stream_range_impl<typename utility::remove_cvref_t<KstateT>::ConstRangeT>(
+                _kstate.to_range(),
                 os,
                 stream_preparer,
                 stream_sustainer,
