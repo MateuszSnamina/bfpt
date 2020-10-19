@@ -117,6 +117,20 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     using KstateT = kstate_impl::DynamicStlKstate<_SiteStateTraitT>;
     using ConstRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
     // function being the public API:
+    // -----
+    static size_t n_sites(const KstateT& kstate) noexcept {
+        return kstate.n_sites();
+    }
+    static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
+        return kstate.n_least_replication_shift();
+    }
+    static double norm_factor(const KstateT& kstate) noexcept {
+        return kstate.norm_factor();
+    }
+    static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
+        return kstate.is_prolific(n_k);
+    }
+    // -----
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
         return KstateT(range, kstate_impl::CtrFromRange{});
@@ -125,12 +139,17 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
         return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
     }
+    static ConstRangeT to_range(const KstateT& kstate) noexcept {
+        return kstate.to_range();
+    }
+    // -----
+    template<typename ViewT>
+    static KstateT from_view(const ViewT& v) {
+        return KstateT(v, kstate_impl::CtrFromRange{});
+    }
     template<typename ViewT>
     static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
         return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{});
-    }
-    static ConstRangeT to_range(const KstateT& kstate) noexcept {
-        return kstate.to_range();
     }
     static ConstRangeT to_view(const KstateT& kstate) noexcept {
         return kstate.to_range();
@@ -158,18 +177,6 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     template<typename ViewT>
     static auto view_n_unique_shift(const ViewT& v) noexcept {
         return kstate_op_range::n_unique_shift(v);
-    }
-    static size_t n_sites(const KstateT& kstate) noexcept {
-        return kstate.n_sites();
-    }
-    static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
-        return kstate.n_least_replication_shift();
-    }
-    static double norm_factor(const KstateT& kstate) noexcept {
-        return kstate.norm_factor();
-    }
-    static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
-        return kstate.is_prolific(n_k);
     }
 };
 
@@ -261,6 +268,9 @@ StaticStlKstate<_SiteStateTraitT, _N>::n_sites() const noexcept {
 // #######################################################################
 // ## TraitsFor kstate_impl::StaticStlKstate                            ##
 // #######################################################################
+
+
+//TODO copy solution from DynamicState!
 
 namespace kstate_trait {
 

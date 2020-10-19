@@ -11,9 +11,6 @@ target_sources("${TARGET_NAME}" INTERFACE ${inc})
 target_include_directories("${TARGET_NAME}" INTERFACE include)
 target_link_libraries("${TARGET_NAME}" INTERFACE
   kstate_view_amend_spec
-  kstate_trait # TODO remove?
-  extensions # TODO remove?
-  utility
 )
 
 message("CMake has processed: ${TARGET_NAME}")
