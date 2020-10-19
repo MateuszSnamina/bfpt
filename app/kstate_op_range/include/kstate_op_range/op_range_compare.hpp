@@ -1,6 +1,6 @@
 #pragma once
 
-#include <extensions/adaptors.hpp>
+#include <kstate_op_range/op_range_raw_adaptors.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/algorithm/search.hpp>
@@ -30,8 +30,9 @@ bool compare_equality(const ForwardRange1& rng1, const ForwardRange2& rng2) noex
 
 template <typename ForwardRange1, typename ForwardRange2>
 std::optional<size_t> compare_translational_equality(const ForwardRange1& rng1, const ForwardRange2& rng2) noexcept {
+    using raw::adaptors::operator|;
     assert(boost::size(rng1) == boost::size(rng2));
-    const auto rng2d = rng2 | extension::boost::adaptors::doubled;
+    const auto rng2d = rng2 | kstate_view_amend_spec::doubled;
     const auto it = boost::range::search(rng2d, rng1);
     return it == std::end(rng2d)
             ? std::optional<size_t>()

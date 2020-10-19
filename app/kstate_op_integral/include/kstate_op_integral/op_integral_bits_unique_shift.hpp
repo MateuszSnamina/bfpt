@@ -2,7 +2,7 @@
 #pragma once
 
 #include<kstate_op_integral/integral_bits.hpp>
-#include<kstate_op_integral/op_integral_bits.hpp>
+#include<kstate_op_integral/op_integral_bits_raw.hpp>
 
 #include<cassert>
 
@@ -31,7 +31,7 @@ UniqueShiftReceipt<typename IntegralBitsT::IntegralT> _n_unique_shift(IntegralBi
     unsigned char i = 0;
     typename IntegralBitsT::IntegralT n_max_buffer = integral_bits.get_number();
     for (unsigned char _ = 1; _ < n_all_bits; _++) {
-        n2_buffer = ::kstate_op_integral::rotate(n2_buffer, n_all_bits, 1);
+        n2_buffer = ::kstate_op_integral::raw::rotate(n2_buffer, n_all_bits, 1);
         if (n_max_buffer < n2_buffer) {
             i = _;
             n_max_buffer = n2_buffer;

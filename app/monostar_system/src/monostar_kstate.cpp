@@ -1,5 +1,3 @@
-#include <boost/range/any_range.hpp> //TODO remove??
-
 #include <monostar_system/monostar_kstate.hpp>
 
 #include <kstate_op_range/op_range_unique_shift.hpp>

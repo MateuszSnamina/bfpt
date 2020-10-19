@@ -10,8 +10,7 @@
 #include <chainkernel/operator_kernel.hpp>
 
 #include <kstate_op_range/op_range_unique_shift.hpp>
-
-#include <extensions/adaptors.hpp>
+#include <kstate_op_range/op_range_raw_adaptors.hpp>
 
 #include <type_traits>
 #include <cassert>
@@ -69,6 +68,7 @@ template<typename _KstateTraitT>
 kstate_trait::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
         const KstateT& generator) const {
+    using kstate_op_range::raw::adaptors::operator|;
     kstate_trait::KstateSet<KstateTraitT> result;
     assert(generator.n_sites() == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
@@ -90,8 +90,8 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
-            const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive conjugated_range.
-            const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2); // Must outlive conjugated_range.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive conjugated_range.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive conjugated_range.
             const auto conjugated_range = generator_range | refined_holder_1 | refined_holder_2;
             const auto conjugated_range_unique_shifted = kstate_op_range::make_unique_shift(conjugated_range);
             const auto conjugated_kstate_ptr = KstateTraitT::shared_from_range(conjugated_range_unique_shifted);

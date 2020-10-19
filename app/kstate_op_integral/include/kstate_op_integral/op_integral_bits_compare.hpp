@@ -1,7 +1,7 @@
 #pragma once
 
 #include<kstate_op_integral/integral_bits.hpp>
-#include<kstate_op_integral/op_integral_bits.hpp>
+#include<kstate_op_integral/op_integral_bits_raw.hpp>
 
 #include <optional>
 #include <cassert>
@@ -40,7 +40,7 @@ std::optional<size_t> compare_translational_equality(IntegralBitsT integral_bits
         if (n1_buffer == n2_buffer) {
             return i;
         }
-        n2_buffer = ::kstate_op_integral::rotate(n2_buffer, n_all_bits, 1);
+        n2_buffer = ::kstate_op_integral::raw::rotate(n2_buffer, n_all_bits, 1);
     }
     return std::nullopt;
 }

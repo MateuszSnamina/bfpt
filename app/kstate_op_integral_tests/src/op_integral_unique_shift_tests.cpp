@@ -1,4 +1,4 @@
-#include<kstate_op_integral/op_integral_unique_shift.hpp>
+#include<kstate_op_integral/op_integral_bits_unique_shift.hpp>
 //#include<kstate_op_integral/op_integral_compare.hpp>
 
 #include <gtest/gtest.h>

@@ -15,7 +15,7 @@
 // ##  rotated                                                          ##
 // #######################################################################
 
-namespace extension_implementation::boost::adaptors {
+namespace kstate_view_amend_spec {
 
 class RotateHolder {
    public:
@@ -26,6 +26,10 @@ class RotateHolder {
 inline RotateHolder rotated(size_t n) {
     return RotateHolder(n);
 }
+
+} // namespace kstate_view_amend_spec
+
+namespace kstate_op_range::raw::adaptors::impl {
 
 /*
  * Args domain: h.n has to be a positive number, less than the range size.
@@ -39,7 +43,7 @@ using RotatedRangeType = ::boost::joined_range<
 
 template <typename ForwardRange>
 RotatedRangeType<ForwardRange>
-operator|(const ForwardRange &rng, const RotateHolder &h) {
+operator|(const ForwardRange &rng, const kstate_view_amend_spec::RotateHolder &h) {
 #ifndef NDEBUG
     const auto d = ::boost::size(rng);
     assert(d >= 0);
@@ -51,13 +55,13 @@ operator|(const ForwardRange &rng, const RotateHolder &h) {
                          ::boost::make_iterator_range(::std::begin(rng), mid));
 }
 
-}  // namespace extension_implementation::boost::adaptors
+}  // namespace kstate_op_range::raw::adaptors::impl
 
 // #######################################################################
 // ##  doubled                                                          ##
 // #######################################################################
 
-namespace extension_implementation::boost::adaptors {
+namespace kstate_view_amend_spec {
 
 class Doubler {};
 
@@ -66,22 +70,26 @@ class Doubler {};
 static Doubler doubled{};
 #pragma GCC diagnostic pop
 
+} // namespace kstate_view_amend_spec
+
+namespace kstate_op_range::raw::adaptors::impl {
+
 template <typename ForwardRange>
 using DoubledRangeType = ::boost::joined_range<const ForwardRange, const ForwardRange>;
 
 template <typename ForwardRange>
 DoubledRangeType<ForwardRange>
-operator|(const ForwardRange &rng, const Doubler &) {
+operator|(const ForwardRange &rng, const kstate_view_amend_spec::Doubler &) {
     return ::boost::join(rng, rng);
 }
 
-}  // namespace extension_implementation::boost::adaptors
+}  // namespace kstate_op_range::raw::adaptors::impl
 
 // #######################################################################
 // ##  refined                                                          ##
 // #######################################################################
 
-namespace extension_implementation::boost::adaptors {
+namespace kstate_view_amend_spec {
 
 template <typename T>
 struct RefinedHolder {
@@ -96,6 +104,10 @@ template <typename T>
 RefinedHolder<T> refined(size_t n, T v) {
     return RefinedHolder<T>(n, v);
 }
+
+} // namespace kstate_view_amend_spec
+
+namespace kstate_op_range::raw::adaptors::impl {
 
 // /*
 //  * Args domain: h.n has to be a positive number, less than the range size.
@@ -113,7 +125,7 @@ using RefinedRangeType =
 
 template <typename ForwardRange, typename T>
 RefinedRangeType<ForwardRange, T>
-operator|(const ForwardRange &rng, const RefinedHolder<T> &h) {
+operator|(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
 #ifndef NDEBUG
     const auto d = ::boost::size(rng);
     assert(d >= 0);
@@ -128,21 +140,19 @@ operator|(const ForwardRange &rng, const RefinedHolder<T> &h) {
     return ::boost::join(::boost::join(r1, r2), r3);
 }
 
-}  // namespace extension_implementation::boost::adaptors
+}  // namespace kstate_op_range::raw::adaptors::impl
 
 // ########################################################
 // ##  export API to extension::boost::adaptors          ##
 // ########################################################
 
-namespace extension::boost::adaptors {
+namespace kstate_op_range::raw::adaptors {
 
-using extension_implementation::boost::adaptors::doubled;
-using extension_implementation::boost::adaptors::DoubledRangeType;
-using extension_implementation::boost::adaptors::rotated;
-using extension_implementation::boost::adaptors::RotatedRangeType;
-using extension_implementation::boost::adaptors::refined;
-using extension_implementation::boost::adaptors::RefinedRangeType;
+using kstate_op_range::raw::adaptors::impl::DoubledRangeType;
+using kstate_op_range::raw::adaptors::impl::RotatedRangeType;
+using kstate_op_range::raw::adaptors::impl::RefinedRangeType;
+using kstate_op_range::raw::adaptors::impl::operator|;
 
-}  // namespace extension::boost::adaptors
+}  // namespace kstate_op_range::raw::adaptors
 
 #endif

@@ -1,4 +1,4 @@
-#include<kstate_op_integral/op_integral_least_replication_shift.hpp>
+#include<kstate_op_integral/op_integral_bits_least_replication_shift.hpp>
 
 #include <gtest/gtest.h>
 

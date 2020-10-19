@@ -96,7 +96,7 @@ using MonostarSiteStateTrait = kstate_trait::TraitSiteState<MonostarSiteState>;
 
 TEST(DynamicIntegralKstate, IntegralToSiteStateRange) {
     const kstate_op_integral::IntegralBitsDynamic<uint64_t> integral_bits{0b01101, 5u};
-    const auto r = kstate_impl::helpers::integral_number_to_two_level_site_state_range<MonostarSiteStateTrait, uint64_t>(integral_bits);
+    const auto r = kstate_impl::helpers::integral_bits_to_two_level_site_state_range<MonostarSiteStateTrait, uint64_t>(integral_bits);
     EXPECT_EQ(boost::size(r), 5);
     EXPECT_TRUE((*std::next(std::begin(r), 0))._is_excited);
     EXPECT_FALSE((*std::next(std::begin(r), 1))._is_excited);
@@ -114,7 +114,7 @@ TEST(DynamicIntegralKstate, IntegralToSiteStateRange) {
 TEST(DynamicIntegralKstate, SiteStateRangeToIntegral) {
     std::array<MonostarSiteState, 5> siste_state_array{es, gs, gs, es, es};
     kstate_op_integral::IntegralBitsDynamic<uint64_t> integra_bits =
-            kstate_impl::helpers::two_level_site_state_range_to_integral_number<MonostarSiteStateTrait, uint64_t>(siste_state_array);
+            kstate_impl::helpers::integral_bits_from_two_level_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array);
     EXPECT_EQ(integra_bits.get_n_all_bits() , 5);
     EXPECT_EQ(integra_bits.get_number() , 0b11001);
 }

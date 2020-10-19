@@ -3,10 +3,9 @@
 #include <kbasis/basis.hpp>
 
 #include <kstate_op_range/op_range_unique_shift.hpp>
+#include <kstate_op_range/op_range_raw_adaptors.hpp>
 
 #include <kstate_trait/trait_kstate.hpp>
-
-#include <extensions/adaptors.hpp>
 
 #include <boost/range/adaptor/sliced.hpp>
 #include <boost/range/algorithm/equal.hpp>
@@ -31,6 +30,7 @@ calculate_reduced_density_operator_12_impl(
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
+    using kstate_op_range::raw::adaptors::operator|;
     // static asserts:
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
@@ -57,8 +57,8 @@ calculate_reduced_density_operator_12_impl(
             for (unsigned bra_kernel_site_2_idx = 0; bra_kernel_site_2_idx < site_basis_dim; bra_kernel_site_2_idx++) {
                 const auto& bra_kernel_site_1 = SiteStateTraitT::from_index(bra_kernel_site_1_idx);
                 const auto& bra_kernel_site_2 = SiteStateTraitT::from_index(bra_kernel_site_2_idx);
-                const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1);// Must outlive bra_kstate_range.
-                const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2);// Must outlive bra_kstate_range.
+                const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);// Must outlive bra_kstate_range.
+                const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);// Must outlive bra_kstate_range.
                 const auto bra_kstate_range = ket_kstate_range | refined_holder_1 | refined_holder_2;
                 const auto bra_kstate_range_unique_shifted = kstate_op_range::make_unique_shift(bra_kstate_range);
                 if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
@@ -142,6 +142,7 @@ calculate_reduced_density_operator_1_impl(
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
+    using kstate_op_range::raw::adaptors::operator|;
     // static asserts:
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
@@ -164,7 +165,7 @@ calculate_reduced_density_operator_1_impl(
         const auto ket_kernel_site_1_idx = SiteStateTraitT::get_index(ket_kernel_site_1);
         for (unsigned bra_kernel_site_1_idx = 0; bra_kernel_site_1_idx < site_basis_dim; bra_kernel_site_1_idx++) {
             const auto bra_kernel_site_1 = SiteStateTraitT::from_index(bra_kernel_site_1_idx);
-            const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
             const auto bra_kstate_range = ket_kstate_range | refined_holder_1;
             const auto bra_kstate_range_unique_shifted = kstate_op_range::make_unique_shift(bra_kstate_range);
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {

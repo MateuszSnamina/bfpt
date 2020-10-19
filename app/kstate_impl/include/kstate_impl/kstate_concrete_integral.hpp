@@ -7,7 +7,7 @@
 #include <kstate_trait/trait_kstate.hpp>
 
 #include <kstate_op_integral/integral_bits.hpp>
-#include <kstate_op_integral/op_integral_bits.hpp>
+#include <kstate_op_integral/op_integral_bits_raw.hpp>
 
 #include <boost/range.hpp>
 #include <boost/range/any_range.hpp>
@@ -25,7 +25,7 @@
 
 namespace kstate_impl::helpers {
 
-constexpr bool unsigned_to_bool(unsigned u) {
+constexpr bool bool_from_unsiged(unsigned u) {
     return (u ? true : false);
 }
 
@@ -34,30 +34,30 @@ constexpr unsigned bool_to_unsigned(bool b) {
 }
 
 template<typename SiteStateTraitT, typename IntegralT>
-auto integral_number_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamic<IntegralT>& integral_bits) noexcept {
+auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamic<IntegralT>& integral_bits) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     static_assert(SiteStateTraitT::site_basis_dim() == 2);
     const IntegralT integral_number = integral_bits.get_number();
     const unsigned char n_all_bits = integral_bits.get_n_all_bits();
-    return kstate_op_integral::integral_to_bits_range(integral_number, n_all_bits)
+    return kstate_op_integral::raw::integral_to_bits_range<IntegralT>(integral_number, n_all_bits)
             | boost::adaptors::transformed(bool_to_unsigned)
             | boost::adaptors::transformed(SiteStateTraitT::from_index);
 }
 
 template<typename SiteStateTraitT, typename IntegralT>
-using IntegralNumberToTwoLevelSiteStateRangeResult = decltype(integral_number_to_two_level_site_state_range<SiteStateTraitT, IntegralT>(std::declval<kstate_op_integral::IntegralBitsDynamic<IntegralT>>()));
+using IntegralNumberToTwoLevelSiteStateRangeResult = decltype(integral_bits_to_two_level_site_state_range<SiteStateTraitT, IntegralT>(std::declval<kstate_op_integral::IntegralBitsDynamic<IntegralT>>()));
 
 template<typename SiteStateTraitT, typename IntegralT, typename RangeT>
 kstate_op_integral::IntegralBitsDynamic<IntegralT>
-two_level_site_state_range_to_integral_number(RangeT r) noexcept {
+integral_bits_from_two_level_site_state_range(RangeT r) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     static_assert(SiteStateTraitT::site_basis_dim() == 2);
     const auto bits_range = r
             | boost::adaptors::transformed(SiteStateTraitT::get_index)
-            | boost::adaptors::transformed(unsigned_to_bool);
-    const IntegralT integral_number = kstate_op_integral::integral_from_bits_range<IntegralT>(bits_range);
+            | boost::adaptors::transformed(bool_from_unsiged);
+    const IntegralT integral_number = kstate_op_integral::raw::integral_from_bits_range<IntegralT>(bits_range);
     const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r));
     return kstate_op_integral::IntegralBitsDynamic<IntegralT>{integral_number, n_all_bits};
 }
@@ -112,7 +112,7 @@ DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Ksta
 template <typename _SiteStateTraitT>
 template <typename OtherRangeT>
 DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(OtherRangeT r, CtrFromRange) :
-    _integral_bits(helpers::two_level_site_state_range_to_integral_number<SiteStateTraitT, uint64_t, OtherRangeT>(r)) {
+    _integral_bits(helpers::integral_bits_from_two_level_site_state_range<SiteStateTraitT, uint64_t, OtherRangeT>(r)) {
 }
 
 // ***********************************************************************
@@ -120,7 +120,7 @@ DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Ksta
 template <typename _SiteStateTraitT>
 typename DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::ConstRangeT
 DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::to_range() const noexcept {
-    return helpers::integral_number_to_two_level_site_state_range<SiteStateTraitT, uint64_t>(_integral_bits);
+    return helpers::integral_bits_to_two_level_site_state_range<SiteStateTraitT, uint64_t>(_integral_bits);
 }
 
 

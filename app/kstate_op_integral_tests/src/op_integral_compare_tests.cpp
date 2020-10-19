@@ -1,5 +1,5 @@
 #include<kstate_op_integral/integral_bits.hpp>
-#include<kstate_op_integral/op_integral_compare.hpp>
+#include<kstate_op_integral/op_integral_bits_compare.hpp>
 
 #include <gtest/gtest.h>
 

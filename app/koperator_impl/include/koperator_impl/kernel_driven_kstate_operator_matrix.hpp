@@ -7,10 +7,9 @@
 #include <kbasis/basis.hpp>
 
 #include <kstate_op_range/op_range_unique_shift.hpp>
+#include <kstate_op_range/op_range_raw_adaptors.hpp>
 
 #include <chainkernel/operator_kernel.hpp>
-
-#include <extensions/adaptors.hpp>
 
 #include <armadillo>
 
@@ -82,6 +81,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
         const size_t ket_kstate_idx,
         arma::sp_cx_mat& kn_operator_builder_matrix,
         const unsigned k_n) const {
+    using kstate_op_range::raw::adaptors::operator|;
     using namespace std::complex_literals;
     assert(kn_operator_builder_matrix.n_cols == kn_operator_builder_matrix.n_rows);
     assert(kn_operator_builder_matrix.n_rows == basis.size());
@@ -101,10 +101,10 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& kernel_coupling_coef = couple_info.coef;
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
-            const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
             const auto bra_kstate_range = ket_kstate_range | refined_holder_1;
             const size_t bra_kstate_n_unique_shift = kstate_op_range::n_unique_shift(bra_kstate_range);
-            const auto bra_kstate_range_unique_shifted = bra_kstate_range | extension::boost::adaptors::rotated(bra_kstate_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto bra_kstate_range_unique_shifted = bra_kstate_range | kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
@@ -141,14 +141,14 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
-            const auto refined_holder_1 = extension::boost::adaptors::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
-            const auto refined_holder_2 = extension::boost::adaptors::refined(n_delta_p1, bra_kernel_site_2); // Must outlive bra_kstate_range.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive bra_kstate_range.
             const auto bra_kstate_range = ket_kstate_range | refined_holder_1 | refined_holder_2;
             //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
             //tp_u_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
             const size_t bra_kstate_n_unique_shift = kstate_op_range::n_unique_shift(bra_kstate_range);
-            const auto bra_kstate_range_unique_shifted = bra_kstate_range | extension::boost::adaptors::rotated(bra_kstate_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto bra_kstate_range_unique_shifted = bra_kstate_range | kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift); // equivalent to `kstate::make_unique_shift(bra_kstate)`
             //tp_u_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_u_2 - tp_u_1).count(); // performance debug sake
             //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
