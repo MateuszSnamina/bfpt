@@ -4,6 +4,9 @@
 #include <kstate_impl/kstate_concrete_stl_helpers.hpp>
 #include <kstate_impl/kstate_constructor_flavor_tag.hpp>
 
+#include <kstate_op_range/op_range_raw_adaptors.hpp>
+#include <kstate_view_amend_spec/amend_spec.hpp>
+
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
 
@@ -119,11 +122,38 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
         return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
     }
+    template<typename ViewT>
+    static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
+        return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{});
+    }
     static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
+    static ConstRangeT to_view(const KstateT& kstate) noexcept {
+        return kstate.to_range();
+    }
+    template<typename View1T, typename View2T>
+    static bool view_compare_less(View1T v1, View2T v2) noexcept {
+        return kstate_op_range::compare_less(v1, v2);
+    }
+    template<typename View1T, typename View2T>
+    static bool view_compare_equality(View1T v1, View2T v2) noexcept {
+        return kstate_op_range::compare_equality(v1, v2);
+    }
+    template<typename ViewT>
+    static auto refined_view(ViewT v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
+        return kstate_op_range::raw::refined(v, h);
+    }
+    template<typename ViewT>
+    static auto rotated_view(ViewT v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
+        return kstate_op_range::raw::rotated(v, h);
+    }
+    template<typename ViewT>
+    static auto view_n_least_replication_shift(ViewT v) noexcept {
+        return kstate_op_range::n_least_replication_shift(v);
+    }
     static size_t n_sites(const KstateT& kstate) noexcept {
-        return kstate.is_prolific();
+        return kstate.n_sites();
     }
     static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
         return kstate.n_least_replication_shift();

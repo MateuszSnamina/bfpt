@@ -103,7 +103,7 @@ using RefinedRangeType =
 
 template <typename ForwardRange, typename T>
 RefinedRangeType<ForwardRange, T>
-refinded(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
+refined(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
 #ifndef NDEBUG
     const auto d = ::boost::size(rng);
     assert(d >= 0);
@@ -125,7 +125,7 @@ namespace kstate_op_range::raw::adaptors {
 template <typename ForwardRange, typename T>
 RefinedRangeType<ForwardRange, T>
 operator|(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
-    return refinded<ForwardRange, T>(rng, h);
+    return refined<ForwardRange, T>(rng, h);
 }
 
 }  // namespace kstate_op_range::raw::adaptors
