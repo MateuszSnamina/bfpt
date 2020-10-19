@@ -2,6 +2,8 @@
 
 #include <kpopulator_trait/trait_kpopulator.hpp>
 
+#include <kstate_view_amend_spec/amend_spec.hpp>
+
 #include <kstate_trait/trait_kstate.hpp>
 #include <kstate_trait/kstate_stl.hpp>
 

@@ -2,6 +2,8 @@
 
 #include <kbasis/basis.hpp>
 
+#include <kstate_view_amend_spec/amend_spec.hpp>
+
 #include <kstate_op_range/op_range_unique_shift.hpp>
 #include <kstate_op_range/op_range_raw_adaptors.hpp>
 

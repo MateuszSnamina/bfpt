@@ -39,7 +39,7 @@ size_t n_unique_shift(const ForwardRange& rng) noexcept {
 namespace kstate_op_range {
 
 template <typename ForwardRange>
-raw::adaptors::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) noexcept {
+raw::RotatedRangeType<ForwardRange> make_unique_shift(const ForwardRange& rng) noexcept {
     using raw::adaptors::operator|;
     return rng | kstate_view_amend_spec::rotated(n_unique_shift(rng));
 }

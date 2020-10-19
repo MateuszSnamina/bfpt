@@ -2,6 +2,8 @@
 
 #include <koperator_trait/trait_koperator.hpp>
 
+#include <kstate_view_amend_spec/amend_spec.hpp>
+
 #include <kstate_trait/trait_kstate.hpp>
 
 #include <kbasis/basis.hpp>

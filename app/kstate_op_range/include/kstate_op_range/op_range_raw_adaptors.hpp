@@ -1,5 +1,6 @@
-#ifndef EXTENSIONS_BOOST_ADAPTORS_HPP
-#define EXTENSIONS_BOOST_ADAPTORS_HPP
+#pragma once
+
+#include <kstate_view_amend_spec/amend_spec.hpp>
 
 #include <boost/range.hpp>
 #include <boost/range/join.hpp>
@@ -15,26 +16,12 @@
 // ##  rotated                                                          ##
 // #######################################################################
 
-namespace kstate_view_amend_spec {
-
-class RotateHolder {
-   public:
-    RotateHolder(size_t n) : n(n){};
-    const size_t n;
-};
-
-inline RotateHolder rotated(size_t n) {
-    return RotateHolder(n);
-}
-
-} // namespace kstate_view_amend_spec
-
-namespace kstate_op_range::raw::adaptors::impl {
-
 /*
  * Args domain: h.n has to be a positive number, less than the range size.
  * The performed rotation is a left rotation.
  */
+
+namespace kstate_op_range::raw {
 
 template <typename ForwardRange>
 using RotatedRangeType = ::boost::joined_range<
@@ -43,7 +30,7 @@ using RotatedRangeType = ::boost::joined_range<
 
 template <typename ForwardRange>
 RotatedRangeType<ForwardRange>
-operator|(const ForwardRange &rng, const kstate_view_amend_spec::RotateHolder &h) {
+rotated(const ForwardRange &rng, const kstate_view_amend_spec::RotateHolder &h) {
 #ifndef NDEBUG
     const auto d = ::boost::size(rng);
     assert(d >= 0);
@@ -55,65 +42,56 @@ operator|(const ForwardRange &rng, const kstate_view_amend_spec::RotateHolder &h
                          ::boost::make_iterator_range(::std::begin(rng), mid));
 }
 
-}  // namespace kstate_op_range::raw::adaptors::impl
+}  // namespace kstate_op_range::raw
+
+namespace kstate_op_range::raw::adaptors {
+
+template <typename ForwardRange>
+RotatedRangeType<ForwardRange>
+operator|(const ForwardRange &rng, const kstate_view_amend_spec::RotateHolder &h) {
+    return rotated<ForwardRange>(rng, h);
+}
+
+}  // namespace kstate_op_range::raw::adaptors
 
 // #######################################################################
 // ##  doubled                                                          ##
 // #######################################################################
 
-namespace kstate_view_amend_spec {
-
-class Doubler {};
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-static Doubler doubled{};
-#pragma GCC diagnostic pop
-
-} // namespace kstate_view_amend_spec
-
-namespace kstate_op_range::raw::adaptors::impl {
+namespace kstate_op_range::raw {
 
 template <typename ForwardRange>
 using DoubledRangeType = ::boost::joined_range<const ForwardRange, const ForwardRange>;
 
 template <typename ForwardRange>
 DoubledRangeType<ForwardRange>
-operator|(const ForwardRange &rng, const kstate_view_amend_spec::Doubler &) {
+doubled(const ForwardRange &rng) {
     return ::boost::join(rng, rng);
 }
 
-}  // namespace kstate_op_range::raw::adaptors::impl
+}  // namespace kstate_op_range::raw
+
+namespace kstate_op_range::raw::adaptors {
+
+template <typename ForwardRange>
+DoubledRangeType<ForwardRange>
+operator|(const ForwardRange &rng, const kstate_view_amend_spec::Doubler &) {
+    return doubled<ForwardRange>(rng);
+}
+
+}  // namespace kstate_op_range::raw::adaptors
 
 // #######################################################################
 // ##  refined                                                          ##
 // #######################################################################
 
-namespace kstate_view_amend_spec {
+/*
+ * Args domain: h.n has to be a positive number, less than the range size.
+ * The performed refinement is only on the h.n site,
+ * and relies on the original value replacement with the new value h.v[0];
+ */
 
-template <typename T>
-struct RefinedHolder {
-    RefinedHolder(size_t n, T v)
-        : n(n),
-          v{v} {};
-    const size_t n;
-    const T v[1];
-};
-
-template <typename T>
-RefinedHolder<T> refined(size_t n, T v) {
-    return RefinedHolder<T>(n, v);
-}
-
-} // namespace kstate_view_amend_spec
-
-namespace kstate_op_range::raw::adaptors::impl {
-
-// /*
-//  * Args domain: h.n has to be a positive number, less than the range size.
-//  * The performed refinement is only on the h.n site,
-//  * and relies on the original value replacement with the new value h.v[0];
-//  */
+namespace kstate_op_range::raw {
 
 template <typename ForwardRange, typename T>
 using RefinedRangeType =
@@ -125,7 +103,7 @@ using RefinedRangeType =
 
 template <typename ForwardRange, typename T>
 RefinedRangeType<ForwardRange, T>
-operator|(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
+refinded(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
 #ifndef NDEBUG
     const auto d = ::boost::size(rng);
     assert(d >= 0);
@@ -140,19 +118,14 @@ operator|(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T
     return ::boost::join(::boost::join(r1, r2), r3);
 }
 
-}  // namespace kstate_op_range::raw::adaptors::impl
-
-// ########################################################
-// ##  export API to extension::boost::adaptors          ##
-// ########################################################
+}  // namespace kstate_op_range::raw
 
 namespace kstate_op_range::raw::adaptors {
 
-using kstate_op_range::raw::adaptors::impl::DoubledRangeType;
-using kstate_op_range::raw::adaptors::impl::RotatedRangeType;
-using kstate_op_range::raw::adaptors::impl::RefinedRangeType;
-using kstate_op_range::raw::adaptors::impl::operator|;
+template <typename ForwardRange, typename T>
+RefinedRangeType<ForwardRange, T>
+operator|(const ForwardRange &rng, const kstate_view_amend_spec::RefinedHolder<T> &h) {
+    return refinded<ForwardRange, T>(rng, h);
+}
 
 }  // namespace kstate_op_range::raw::adaptors
-
-#endif
