@@ -11,9 +11,6 @@
 
 #include <chainkernel/operator_kernel.hpp>
 
-#include <kstate_op_range/op_range_unique_shift.hpp>
-#include <kstate_op_range/op_range_raw_adaptors.hpp>
-
 #include <type_traits>
 #include <cassert>
 
@@ -70,14 +67,13 @@ template<typename _KstateTraitT>
 kstate_trait::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
         const KstateT& generator) const {
-    using kstate_op_range::raw::adaptors::operator|;
     kstate_trait::KstateSet<KstateTraitT> result;
     assert(generator.n_sites() == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
-    const auto generator_range = KstateTraitT::to_range(generator);
+    const auto generator_view = KstateTraitT::to_view(generator);
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(generator_range), n_delta);
-        const auto ket_kernel_site_2 = *std::next(std::begin(generator_range), n_delta_p1);
+        const auto ket_kernel_site_1 = *std::next(std::begin(generator_view), n_delta);
+        const auto ket_kernel_site_2 = *std::next(std::begin(generator_view), n_delta_p1);
         const chainkernel::StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         const auto equal_range = _operator_kernel_12._full_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
@@ -94,9 +90,11 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
             const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive conjugated_range.
             const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive conjugated_range.
-            const auto conjugated_range = generator_range | refined_holder_1 | refined_holder_2;
-            const auto conjugated_range_unique_shifted = kstate_op_range::make_unique_shift(conjugated_range);
-            const auto conjugated_kstate_ptr = KstateTraitT::shared_from_range(conjugated_range_unique_shifted);
+            const auto conjugated_view = KstateTraitT::refined_view(KstateTraitT::refined_view(generator_view, refined_holder_1), refined_holder_2);
+            //const auto conjugated_view_unique_shifted = kstate_op_range::make_unique_shift(conjugated_view);//TODO restore
+            const size_t conjugated_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
+            const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, kstate_view_amend_spec::rotated(conjugated_n_unique_shift)); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
             result.insert(conjugated_kstate_ptr);
         } // end of `_full_off_diag_info` equal_range loop
     }  // end of `Delta` loop

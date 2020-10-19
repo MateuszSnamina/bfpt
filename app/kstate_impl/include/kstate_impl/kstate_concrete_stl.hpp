@@ -5,6 +5,9 @@
 #include <kstate_impl/kstate_constructor_flavor_tag.hpp>
 
 #include <kstate_op_range/op_range_raw_adaptors.hpp>
+#include <kstate_op_range/op_range_unique_shift.hpp>
+#include <kstate_op_range/op_range_least_replication_shift.hpp>
+
 #include <kstate_view_amend_spec/amend_spec.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
@@ -151,6 +154,10 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     template<typename ViewT>
     static auto view_n_least_replication_shift(const ViewT& v) noexcept {
         return kstate_op_range::n_least_replication_shift(v);
+    }
+    template<typename ViewT>
+    static auto view_n_unique_shift(const ViewT& v) noexcept {
+        return kstate_op_range::n_unique_shift(v);
     }
     static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.n_sites();
