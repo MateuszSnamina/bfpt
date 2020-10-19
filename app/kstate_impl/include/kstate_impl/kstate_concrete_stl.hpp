@@ -133,23 +133,23 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
         return kstate.to_range();
     }
     template<typename View1T, typename View2T>
-    static bool view_compare_less(View1T v1, View2T v2) noexcept {
+    static bool view_compare_less(const View1T& v1, const View2T& v2) noexcept {
         return kstate_op_range::compare_less(v1, v2);
     }
     template<typename View1T, typename View2T>
-    static bool view_compare_equality(View1T v1, View2T v2) noexcept {
+    static bool view_compare_equality(const View1T& v1, const View2T& v2) noexcept {
         return kstate_op_range::compare_equality(v1, v2);
     }
     template<typename ViewT>
-    static auto refined_view(ViewT v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
+    static auto refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
         return kstate_op_range::raw::refined(v, h);
     }
     template<typename ViewT>
-    static auto rotated_view(ViewT v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
+    static auto rotated_view(const ViewT& v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
         return kstate_op_range::raw::rotated(v, h);
     }
     template<typename ViewT>
-    static auto view_n_least_replication_shift(ViewT v) noexcept {
+    static auto view_n_least_replication_shift(const ViewT& v) noexcept {
         return kstate_op_range::n_least_replication_shift(v);
     }
     static size_t n_sites(const KstateT& kstate) noexcept {

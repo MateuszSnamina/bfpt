@@ -23,7 +23,7 @@ struct BasisKeyExtractor {
     // api needed by boost::multiindex:
     using result_type = ConstRangeT;
     result_type operator()(const std::shared_ptr<KstateT>& kstate_ptr) const{
-        return KstateTraitT::to_range(*kstate_ptr);
+        return KstateTraitT::to_view(*kstate_ptr);
     }
 };
 
@@ -41,7 +41,7 @@ private:
     //using Key = decltype(std::declval<KstateT>().to_range());
     //using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
     using KeyExtractorT = BasisKeyExtractor<KstateTraitT>;
-    using ComparisonPredicateT = kstate_trait::RangeComparator;
+    using ComparisonPredicateT = kstate_trait::ViewComparator<KstateTraitT>;
 public:
     using VecIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::VecIndex;
     using MapIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::MapIndex;

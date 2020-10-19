@@ -13,11 +13,17 @@
 
 namespace kstate_trait {
 
-struct RangeComparator {
-    template <typename ConstRangeType1, typename ConstRangeType2>
-    bool operator()(const ConstRangeType1& lhs,
-                    const ConstRangeType2& rhs) const {
-        return boost::lexicographical_compare(lhs, rhs);
+template<typename _KstateTraitT>
+struct ViewComparator {
+    static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
+    static_assert(_KstateTraitT::is_kstate_trait);
+    using KstateTraitT = _KstateTraitT;
+    using KstateT = typename _KstateTraitT::KstateT;
+
+    template <typename View1T, typename View2T>
+    bool operator()(const View1T& lhs,
+                    const View2T& rhs) const {
+        return KstateTraitT::view_compare_less(lhs, rhs);
     }
 };
 
@@ -38,18 +44,18 @@ struct KstateComparator {
 
     using is_transparent = std::true_type;
 
-    bool operator()(std::shared_ptr<KstateT> lhs, std::shared_ptr<KstateT> rhs) const {
-            return kstate_trait::RangeComparator()(KstateTraitT::to_range(*lhs), KstateTraitT::to_range(*rhs));
+    bool operator()(const std::shared_ptr<KstateT>& lhs, const std::shared_ptr<KstateT>& rhs) const {
+            return kstate_trait::ViewComparator<KstateTraitT>()(KstateTraitT::to_range(*lhs), KstateTraitT::to_range(*rhs));
     }
 
-    template<typename ForwardRangeT>
-    bool operator()(std::shared_ptr<KstateT> lhs, ForwardRangeT rhs) const {
-            return kstate_trait::RangeComparator()(KstateTraitT::to_range(*lhs), rhs);
+    template<typename ViewT>
+    bool operator()(const std::shared_ptr<KstateT>& lhs, const ViewT& rhs) const {
+            return kstate_trait::ViewComparator<KstateTraitT>()(KstateTraitT::to_range(*lhs), rhs);
     }
 
-    template<typename ForwardRangeT>
-    bool operator()(ForwardRangeT lhs, std::shared_ptr<KstateT> rhs) const {
-            return kstate_trait::RangeComparator()(lhs, KstateTraitT::to_range(*rhs));
+    template<typename ViewT>
+    bool operator()(const ViewT& lhs, const std::shared_ptr<KstateT>& rhs) const {
+            return kstate_trait::ViewComparator<KstateTraitT>()(lhs, KstateTraitT::to_range(*rhs));
     }
 
 };
