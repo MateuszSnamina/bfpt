@@ -6,8 +6,13 @@
 #include <kstate_trait/trait_site_state.hpp>
 #include <kstate_trait/trait_kstate.hpp>
 
-#include <kstate_op_integral/integral_bits.hpp>
+#include <kstate_op_integral/integral_bits_buffer.hpp>
+#include <kstate_op_integral/integral_bits_view.hpp>
+
 #include <kstate_op_integral/op_integral_bits_raw.hpp>
+#include <kstate_op_range/op_range_raw_adaptors.hpp> //TODO REMOVE
+#include <kstate_op_range/op_range_unique_shift.hpp> //TODO REMOVE
+#include <kstate_op_range/op_range_least_replication_shift.hpp> //TODO REMOVE
 
 #include <boost/range.hpp>
 #include <boost/range/any_range.hpp>
@@ -34,7 +39,7 @@ constexpr unsigned bool_to_unsigned(bool b) {
 }
 
 template<typename SiteStateTraitT, typename IntegralT>
-auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamic<IntegralT>& integral_bits) noexcept {
+auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>& integral_bits) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     static_assert(SiteStateTraitT::site_basis_dim() == 2);
@@ -46,10 +51,10 @@ auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::Integ
 }
 
 template<typename SiteStateTraitT, typename IntegralT>
-using IntegralNumberToTwoLevelSiteStateRangeResult = decltype(integral_bits_to_two_level_site_state_range<SiteStateTraitT, IntegralT>(std::declval<kstate_op_integral::IntegralBitsDynamic<IntegralT>>()));
+using IntegralNumberToTwoLevelSiteStateRangeResult = decltype(integral_bits_to_two_level_site_state_range<SiteStateTraitT, IntegralT>(std::declval<kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>>()));
 
 template<typename SiteStateTraitT, typename IntegralT, typename RangeT>
-kstate_op_integral::IntegralBitsDynamic<IntegralT>
+kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>
 integral_bits_from_two_level_site_state_range(RangeT r) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
@@ -59,7 +64,7 @@ integral_bits_from_two_level_site_state_range(RangeT r) noexcept {
             | boost::adaptors::transformed(bool_from_unsiged);
     const IntegralT integral_number = kstate_op_integral::raw::integral_from_bits_range<IntegralT>(bits_range);
     const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r));
-    return kstate_op_integral::IntegralBitsDynamic<IntegralT>{integral_number, n_all_bits};
+    return kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>{integral_number, n_all_bits};
 }
 
 } // end of namespace kstate_impl
@@ -81,7 +86,7 @@ class DynamicTwoLevelIntegral64Kstate final : public Kstate<_SiteStateTraitT, Dy
 public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
-    using BufferT = kstate_op_integral::IntegralBitsDynamic<uint64_t>;
+    using BufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
     using RangeT = DynamicTwoLevelIntegral64KstateRange<SiteStateTraitT>;
     using ConstRangeT = DynamicTwoLevelIntegral64KstateRange<SiteStateTraitT>;
 
@@ -147,6 +152,19 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     using KstateT = kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>;
     using ConstRangeT = typename KstateT::ConstRangeT;
     // function being the public API:
+    static size_t n_sites(const KstateT& kstate) noexcept {
+        return kstate.n_sites();
+    }
+    static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
+        return kstate.n_least_replication_shift();
+    }
+    static double norm_factor(const KstateT& kstate) noexcept {
+        return kstate.norm_factor();
+    }
+    static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
+        return kstate.is_prolific(n_k);
+    }
+    // -----
     template <typename OtherRangeT>
     static KstateT from_range(const OtherRangeT& range) {
         return KstateT(range, kstate_impl::CtrFromRange{});
@@ -158,17 +176,41 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     static ConstRangeT to_range(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-    static size_t n_sites(const KstateT& kstate) noexcept {
-        return kstate.is_prolific();
+    // -----
+    template<typename ViewT>
+    static KstateT from_view(const ViewT& v) {
+        return KstateT(v, kstate_impl::CtrFromRange{});
     }
-    static size_t n_least_replication_shift(const KstateT& kstate) noexcept {
-        return kstate.n_least_replication_shift();
+    template<typename ViewT>
+    static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
+        return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{});
     }
-    static double norm_factor(const KstateT& kstate) noexcept {
-        return kstate.norm_factor();
+    static ConstRangeT to_view(const KstateT& kstate) noexcept {
+        return kstate.to_range();
     }
-    static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
-        return kstate.is_prolific(n_k);
+    template<typename View1T, typename View2T>
+    static bool view_compare_less(const View1T& v1, const View2T& v2) noexcept {
+        return kstate_op_range::compare_less(v1, v2);
+    }
+    template<typename View1T, typename View2T>
+    static bool view_compare_equality(const View1T& v1, const View2T& v2) noexcept {
+        return kstate_op_range::compare_equality(v1, v2);
+    }
+    template<typename ViewT>
+    static auto refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
+        return kstate_op_range::raw::refined(v, h);
+    }
+    template<typename ViewT>
+    static auto rotated_view(const ViewT& v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
+        return kstate_op_range::raw::rotated(v, h);
+    }
+    template<typename ViewT>
+    static auto view_n_least_replication_shift(const ViewT& v) noexcept {
+        return kstate_op_range::n_least_replication_shift(v);
+    }
+    template<typename ViewT>
+    static auto view_n_unique_shift(const ViewT& v) noexcept {
+        return kstate_op_range::n_unique_shift(v);
     }
 };
 
