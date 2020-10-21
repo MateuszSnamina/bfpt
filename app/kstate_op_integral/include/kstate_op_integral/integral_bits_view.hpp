@@ -85,7 +85,7 @@ struct IntegralBitsRefinedView {
     const IntegralBitsT& integral_bits;
     const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h;
     IntegralT get_number() const noexcept {
-        const unsigned new_value_unsigned = SiteStateTraitT::get_index(h.v[1]);
+        const unsigned new_value_unsigned = SiteStateTraitT::get_index(h.v[0]);
         const bool new_value_bool = bool_from_unsiged(new_value_unsigned);
         return kstate_op_integral::raw::refine(integral_bits.get_number(), new_value_bool, h.n) ;
     }

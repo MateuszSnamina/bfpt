@@ -90,10 +90,12 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
             const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive conjugated_range.
             const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive conjugated_range.
-            const auto conjugated_view = KstateTraitT::refined_view(KstateTraitT::refined_view(generator_view, refined_holder_1), refined_holder_2);
+            const auto conjugated_view_preproduct = KstateTraitT::refined_view(generator_view, refined_holder_1);//TODO rethink
+            const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct, refined_holder_2);
             //const auto conjugated_view_unique_shifted = kstate_op_range::make_unique_shift(conjugated_view);//TODO restore
             const size_t conjugated_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
-            const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, kstate_view_amend_spec::rotated(conjugated_n_unique_shift)); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto roration_spec = kstate_view_amend_spec::rotated(conjugated_n_unique_shift);
+            const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
             const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
             result.insert(conjugated_kstate_ptr);
         } // end of `_full_off_diag_info` equal_range loop

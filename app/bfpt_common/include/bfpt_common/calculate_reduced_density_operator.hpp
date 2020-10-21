@@ -59,7 +59,9 @@ calculate_reduced_density_operator_12_impl(
 //                const auto bra_kstate_view = KstateTraitT::refined_view(KstateTraitT::refined_view(ket_kstate_view, refined_holder_1), refined_holder_2);
 //                //const auto bra_kstate_view_unique_shifted = kstate_op_range::make_unique_shift(bra_kstate_view);
 //                const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
-//                const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift)); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+//                /////////////const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift)); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+//                const auto roration_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
+//                const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
 //                if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
 //                    const auto bra_kstate_idx = *bra_kstate_optional_idx;
 //                    const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
@@ -167,7 +169,9 @@ calculate_reduced_density_operator_1_impl(
 //            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
 //            const auto bra_kstate_view = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);
 //            const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
-//            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift)); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+//            /////////////const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift)); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+//            const auto roration_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
+//            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
 //            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
 //                const auto bra_kstate_idx = *bra_kstate_optional_idx;
 //                const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
