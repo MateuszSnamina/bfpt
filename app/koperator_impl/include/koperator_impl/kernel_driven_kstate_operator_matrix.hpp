@@ -88,7 +88,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     const auto& ket_kstate_view = KstateTraitT::to_view(*ket_kstate_ptr);
     // ********** OFF-DIAG, KERNEL1 *********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_view), n_delta);
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
         const chainkernel::StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         const auto equal_range = _operator_kernel_1._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
@@ -124,8 +124,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     //const auto tp_offdiag_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_view), n_delta);
-        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate_view), n_delta_p1);
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
         const chainkernel::StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         const auto equal_range = _operator_kernel_12._half_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
@@ -173,7 +173,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
     // ********** ON-DIAG, KERNEL1 **********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_view), n_delta);
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
         const chainkernel::StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         if (_operator_kernel_1._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_1._diag_info.at(ket_kernel);
@@ -182,8 +182,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
     }  // end of `Delta` loop
     // ********** ON-DIAG, KERNEL12 *********************************************
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_view), n_delta);
-        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate_view), n_delta_p1);
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
         const chainkernel::StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         if (_operator_kernel_12._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);

@@ -21,10 +21,12 @@ struct BasisKeyExtractor {
     using KstateT = typename KstateTraitT::KstateT;
     using ConstRangeT = typename KstateTraitT::ConstRangeT;
     // api needed by boost::multiindex:
-    using result_type = ConstRangeT;
-    result_type operator()(const std::shared_ptr<KstateT>& kstate_ptr) const{
+    //using result_type = ConstRangeT; //TODO clean
+    using result_type = decltype(KstateTraitT::to_view(std::declval<KstateT>()));
+    auto operator()(const std::shared_ptr<KstateT>& kstate_ptr) const{
         return KstateTraitT::to_view(*kstate_ptr);
     }
+
 };
 
 

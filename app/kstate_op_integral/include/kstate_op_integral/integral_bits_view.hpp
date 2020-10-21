@@ -31,7 +31,7 @@ struct IntegralBitsView {
         return integral_bits.get_number();
     }
     unsigned char get_n_all_bits() const noexcept {
-        return integral_bits.get_n_all_bits;
+        return integral_bits.get_n_all_bits();
     };
 };
 
@@ -54,10 +54,10 @@ struct IntegralBitsRotatedView {
     const IntegralBitsT& integral_bits;
     const kstate_view_amend_spec::RotateHolder& h;
     IntegralT get_number() const noexcept {
-        return kstate_op_integral::raw::rotate(integral_bits.get_number(), h.n);
+        return kstate_op_integral::raw::rotate(integral_bits.get_number(), integral_bits.get_n_all_bits(), h.n);
     }
     unsigned char get_n_all_bits() const noexcept {
-        return integral_bits.get_n_all_bits;
+        return integral_bits.get_n_all_bits();
     };
 };
 
@@ -90,7 +90,7 @@ struct IntegralBitsRefinedView {
         return kstate_op_integral::raw::refine(integral_bits.get_number(), new_value_bool, h.n) ;
     }
     unsigned char get_n_all_bits() const noexcept {
-        return integral_bits.get_n_all_bits;
+        return integral_bits.get_n_all_bits();
     };
 };
 
@@ -99,6 +99,8 @@ struct IsIntegralBits<IntegralBitsRefinedView<_IntegralBitsT, _SiteStateTraitT>>
 
 }
 
+
+//TODO remove!?
 //template<typename ViewT>
 //static auto refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
 //    return kstate_op_range::raw::refined(v, h);

@@ -154,6 +154,10 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     static ConstRangeT to_view(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
+    template<typename ViewT>
+    static typename SiteStateTraitT::SiteStateT view_n_th_site_state(const ViewT& v, unsigned idx) noexcept {
+        return *std::next(std::begin(v), idx);
+    }
     template<typename View1T, typename View2T>
     static bool view_compare_less(const View1T& v1, const View2T& v2) noexcept {
         return kstate_op_range::compare_less(v1, v2);
@@ -171,11 +175,11 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
         return kstate_op_range::raw::rotated(v, h);
     }
     template<typename ViewT>
-    static auto view_n_least_replication_shift(const ViewT& v) noexcept {
+    static auto view_n_least_replication_shift(const ViewT& v) noexcept {//TODO returns size_t
         return kstate_op_range::n_least_replication_shift(v);
     }
     template<typename ViewT>
-    static auto view_n_unique_shift(const ViewT& v) noexcept {
+    static auto view_n_unique_shift(const ViewT& v) noexcept {//TODO returns size_t
         return kstate_op_range::n_unique_shift(v);
     }
 };
