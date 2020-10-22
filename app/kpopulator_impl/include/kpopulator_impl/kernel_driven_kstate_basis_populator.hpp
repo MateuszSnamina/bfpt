@@ -38,7 +38,8 @@ public:
             chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
             chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
     kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
-            const KstateT& generator) const;
+            const KstateT& generator,
+            const unsigned n_k) const;
 private:
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
@@ -66,7 +67,8 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulato
 template<typename _KstateTraitT>
 kstate_trait::KstateSet<typename KernelDrivenKstateBasisPopulator<_KstateTraitT>::KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
-        const KstateT& generator) const {
+        const KstateT& generator,
+        const unsigned n_k) const {
     kstate_trait::KstateSet<KstateTraitT> result;
     assert(generator.n_sites() == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
@@ -92,17 +94,14 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive conjugated_view.
             const auto conjugated_view_preproduct = KstateTraitT::refined_view(generator_view, refined_holder_1); // Must outlive conjugated_view.
             const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct, refined_holder_2);
-            const unsigned n_k = 0; // TODO move to args list.
             if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
-                /*noop*/
-                //TODO use it
+                //const auto conjugated_view_unique_shifted = kstate_op_range::make_unique_shift(conjugated_view);//TODO restore
+                const size_t conjugated_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
+                const auto roration_spec = kstate_view_amend_spec::rotated(conjugated_n_unique_shift);
+                const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+                const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
+                result.insert(conjugated_kstate_ptr);
             }
-            //const auto conjugated_view_unique_shifted = kstate_op_range::make_unique_shift(conjugated_view);//TODO restore
-            const size_t conjugated_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
-            const auto roration_spec = kstate_view_amend_spec::rotated(conjugated_n_unique_shift);
-            const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
-            const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
-            result.insert(conjugated_kstate_ptr);
         } // end of `_full_off_diag_info` equal_range loop
     }  // end of `Delta` loop
     // ********** OFF-DIAG, KERNEL1  ********************************************
@@ -134,8 +133,9 @@ struct TraitKpopulator<kpopulator_impl::KernelDrivenKstateBasisPopulator<_Kstate
     // function being the public API:
     static kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
             const KpopulatorT& kpopulator,
-            const KstateT& generator) {
-        return kpopulator.get_coupled_states(generator);
+            const KstateT& generator,
+            const unsigned n_k) {
+        return kpopulator.get_coupled_states(generator, n_k);
     }
 
 };

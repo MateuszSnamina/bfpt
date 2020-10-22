@@ -337,7 +337,7 @@ struct CommonRecipeReceipt {
 
 
 //// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+//TODO remove
 
 
 
@@ -348,7 +348,7 @@ do_common_recipe_NEWAPI(
                  const typename KoperatorTraitT::KoperatorT& hamiltonian,
                  kbasis::Basis<KstateTraitT>& basis,
                  const unsigned max_pt_order,
-                 const unsigned k_n,
+                 const unsigned k_n,//TODO rename to n_k
                  const CommonRecipePrintFlags& print_flags,
                  const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
                  const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
@@ -389,7 +389,7 @@ do_common_recipe_NEWAPI(
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    generate_populated_basis<KpopulatorTraitT>(bais_populator, max_pt_order, basis, n_threads);
+    generate_populated_basis<KpopulatorTraitT>(bais_populator, max_pt_order, basis, k_n, n_threads);
     const double time_populating_pt_basis = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;

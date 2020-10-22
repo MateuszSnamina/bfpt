@@ -40,6 +40,7 @@ void generate_populated_basis(
         const typename TraitKpopulatorT::KpopulatorT& basis_populator,
         const unsigned max_pt_order,
         typename TraitKpopulatorT::BasisT& basis,
+        const unsigned n_k,
         unsigned n_threads = 1) {
     // *********** asserts ********************************************************************
     static_assert(kpopulator_trait::IsTraitKpopulator<TraitKpopulatorT>::value);
@@ -59,7 +60,7 @@ void generate_populated_basis(
             const auto el = basis.vec_index()[idx];
             assert(el);
             const kstate_trait::KstateSet<typename TraitKpopulatorT::KstateTraitT> newely_generated_states =
-                    TraitKpopulatorT::get_coupled_states(basis_populator, *el);
+                    TraitKpopulatorT::get_coupled_states(basis_populator, *el, n_k);
             kstate_set_all[tid].insert(std::begin(newely_generated_states), std::end(newely_generated_states));
         }
         //const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
