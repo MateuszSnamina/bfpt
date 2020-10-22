@@ -99,7 +99,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& kernel_coupling_coef = couple_info.coef;
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_view.
             const auto bra_kstate_view = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);
             const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
             const auto roration_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
@@ -140,9 +140,9 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
-            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive bra_kstate_range.
-            const auto bra_kstate_view_preproduct = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);//TODO rethink
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive bra_kstate_view.
+            const auto bra_kstate_view_preproduct = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
             const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct, refined_holder_2);
             // const auto bra_kstate_view = KstateTraitT::refined_view(KstateTraitT::refined_view(ket_kstate_view, refined_holder_1), refined_holder_2); //OLD
             //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
