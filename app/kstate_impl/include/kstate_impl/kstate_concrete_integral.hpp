@@ -100,10 +100,9 @@ public:
 
 public:
     ConstRangeT to_range() const noexcept override;
-    //double to_range_XXX() const noexcept;
     size_t n_sites() const noexcept override;
 
-//protected://TODO think
+    //protected://TODO think
     const BufferT _integral_bits;
 };
 
@@ -113,7 +112,7 @@ template <typename _SiteStateTraitT>
 DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(
         DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::BufferT integral_bits,
         CtrFromBuffer) :
-   _integral_bits(integral_bits) {
+    _integral_bits(integral_bits) {
 }
 
 
@@ -182,25 +181,21 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     // -----
     template<typename ViewT>
     static KstateT from_view(const ViewT& v) {
-        //return KstateT(v, kstate_impl::CtrFromRange{}); //TODO remove;
         const typename KstateT::BufferT buffer{v.get_number(), v.get_n_all_bits};
         return KstateT(buffer, kstate_impl::CtrFromBuffer{});
     }
     template<typename ViewT>
     static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
-        //return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{}); //TODO remove;
         const typename KstateT::BufferT buffer{v.get_number(), v.get_n_all_bits()};
         return std::make_shared<KstateT>(buffer, kstate_impl::CtrFromBuffer{});
     }
     static kstate_op_integral::IntegralBitsView<typename KstateT::BufferT>
     to_view(const KstateT& kstate) noexcept {
-        //return kstate.to_range(); //TODO remove;
         return kstate_op_integral::IntegralBitsView<typename KstateT::BufferT>{kstate._integral_bits};
     }
     template<typename ViewT>
     static typename SiteStateTraitT::SiteStateT view_n_th_site_state(const ViewT& v, unsigned idx) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        //return *std::next(std::begin(v), idx);//TODO remove;
         const bool site_bit = kstate_op_integral::raw::extract_bit(v.get_number() , idx);
         const unsigned site_unsigned = kstate_impl::helpers::bool_to_unsigned(site_bit);
         const typename SiteStateTraitT::SiteStateT site_state = SiteStateTraitT::from_index(site_unsigned);
@@ -210,41 +205,40 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     static bool view_compare_less(const View1T& v1, const View2T& v2) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<View1T>::value);
         static_assert(kstate_op_integral::IsIntegralBits<View2T>::value);
-        //return kstate_op_range::compare_less(v1, v2);//TODO remove;
         return kstate_op_integral::compare_less(v1, v2);
     }
     template<typename View1T, typename View2T>
     static bool view_compare_equality(const View1T& v1, const View2T& v2) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<View1T>::value);
         static_assert(kstate_op_integral::IsIntegralBits<View2T>::value);
-        //return kstate_op_range::compare_equality(v1, v2);//TODO remove;
         return kstate_op_integral::compare_equality(v1, v2);
     }
     template<typename ViewT>
     static kstate_op_integral::IntegralBitsRefinedView<ViewT, SiteStateTraitT>
     refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        //return kstate_op_range::raw::refined(v, h);//TODO remove;
         return kstate_op_integral::IntegralBitsRefinedView<ViewT, SiteStateTraitT>{v, h};
     }
     template<typename ViewT>
     static kstate_op_integral::IntegralBitsRotatedView<ViewT>
     rotated_view(const ViewT& v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        //return kstate_op_range::raw::rotated(v, h);//TODO remove;
         return kstate_op_integral::IntegralBitsRotatedView<ViewT>{v, h};
     }
     template<typename ViewT>
     static size_t view_n_least_replication_shift(const ViewT& v) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        //return kstate_op_range::n_least_replication_shift(v);//TODO remove;
         return kstate_op_integral::n_least_replication_shift(v);
     }
     template<typename ViewT>
     static size_t view_n_unique_shift(const ViewT& v) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        //return kstate_op_range::n_unique_shift(v);//TODO remove;
         return kstate_op_integral::n_unique_shift(v);
+    }
+    template<typename ViewT>
+    static size_t is_prolific(const ViewT& v, unsigned n_k) noexcept {
+        static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
+        return kstate_op_integral::is_prolific(v, n_k);
     }
 };
 

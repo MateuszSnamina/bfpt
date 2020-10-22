@@ -28,9 +28,9 @@ using MonostarDynamicIntegral64Kstate = kstate_impl::DynamicTwoLevelIntegral64Ks
  *  Select the type you want to use:
  */
 
-//using MonostarKstate = MonostarDynamicStlKstate;
+using MonostarKstate = MonostarDynamicStlKstate;
 //using MonostarKstate = StaticStlMonostarKstate<20>;
-using MonostarKstate = MonostarDynamicIntegral64Kstate; //TODO make it work
+//using MonostarKstate = MonostarDynamicIntegral64Kstate; //TODO make it work
 
 }  // namespace monostar_system
 
