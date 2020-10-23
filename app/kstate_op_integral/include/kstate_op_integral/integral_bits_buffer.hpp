@@ -1,12 +1,14 @@
 #pragma once
 
+#include <kstate_op_integral/is_integral_bits.hpp>
+
 #include <type_traits>
 #include <cassert>
 
 namespace kstate_op_integral {
 
 template<typename _IntegralT>
-struct IntegralBitsDynamic {
+struct IntegralBitsDynamicBuffer {
     static_assert(std::is_arithmetic_v<_IntegralT>);
     static_assert(std::is_integral_v<_IntegralT>);
     static_assert(std::is_unsigned_v<_IntegralT>);
@@ -25,7 +27,7 @@ struct IntegralBitsDynamic {
 };
 
 template<typename _IntegralT, std::size_t _N>
-struct IntegralBitsStatic {
+struct IntegralBitsStaticBuffer {
     static_assert(std::is_arithmetic_v<_IntegralT>);
     static_assert(std::is_integral_v<_IntegralT>);
     static_assert(std::is_unsigned_v<_IntegralT>);
@@ -44,13 +46,10 @@ struct IntegralBitsStatic {
     };
 };
 
-template<typename T>
-struct IsIntegralBits : std::false_type {};
+template<typename _IntegralT>
+struct IsIntegralBits<IntegralBitsDynamicBuffer<_IntegralT>> : std::true_type {};
 
-template<typename T>
-struct IsIntegralBits<IntegralBitsDynamic<T>> : std::true_type {};
-
-template<typename T, std::size_t N>
-struct IsIntegralBits<IntegralBitsStatic<T, N>> : std::true_type {};
+template<typename _IntegralT, std::size_t _N>
+struct IsIntegralBits<IntegralBitsStaticBuffer<_IntegralT, _N>> : std::true_type {};
 
 }

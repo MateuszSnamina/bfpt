@@ -52,7 +52,7 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
     const KpopulatorT kstate_populator_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
     const KoperatorT kstate_hamiltonian_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
-    return bfpt_common::do_common_recipe_NEWAPI<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
+    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
                 kstate_populator_NEWAPI, kstate_hamiltonian_NEWAPI,
                 basis, max_pt_order,
                 0,
@@ -82,7 +82,7 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
     const KpopulatorT kstate_populator_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
     const KoperatorT kstate_hamiltonian_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};//TODO change name
-    return bfpt_common::do_common_recipe_NEWAPI<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
+    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
                 kstate_populator_NEWAPI, kstate_hamiltonian_NEWAPI,
                 basis, max_pt_order,
                 k_n,

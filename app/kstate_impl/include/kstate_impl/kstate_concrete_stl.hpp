@@ -5,6 +5,9 @@
 #include <kstate_impl/kstate_constructor_flavor_tag.hpp>
 
 #include <kstate_op_range/op_range_raw_adaptors.hpp>
+#include <kstate_op_range/op_range_unique_shift.hpp>
+#include <kstate_op_range/op_range_least_replication_shift.hpp>
+
 #include <kstate_view_amend_spec/amend_spec.hpp>
 
 #include <kstate_trait/trait_site_state.hpp>
@@ -114,44 +117,7 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     using KstateT = kstate_impl::DynamicStlKstate<_SiteStateTraitT>;
     using ConstRangeT = typename kstate_impl::DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
     // function being the public API:
-    template <typename OtherRangeT>
-    static KstateT from_range(const OtherRangeT& range) {
-        return KstateT(range, kstate_impl::CtrFromRange{});
-    }
-    template <typename OtherRangeT>
-    static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
-        return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
-    }
-    template<typename ViewT>
-    static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
-        return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{});
-    }
-    static ConstRangeT to_range(const KstateT& kstate) noexcept {
-        return kstate.to_range();
-    }
-    static ConstRangeT to_view(const KstateT& kstate) noexcept {
-        return kstate.to_range();
-    }
-    template<typename View1T, typename View2T>
-    static bool view_compare_less(View1T v1, View2T v2) noexcept {
-        return kstate_op_range::compare_less(v1, v2);
-    }
-    template<typename View1T, typename View2T>
-    static bool view_compare_equality(View1T v1, View2T v2) noexcept {
-        return kstate_op_range::compare_equality(v1, v2);
-    }
-    template<typename ViewT>
-    static auto refined_view(ViewT v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
-        return kstate_op_range::raw::refined(v, h);
-    }
-    template<typename ViewT>
-    static auto rotated_view(ViewT v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
-        return kstate_op_range::raw::rotated(v, h);
-    }
-    template<typename ViewT>
-    static auto view_n_least_replication_shift(ViewT v) noexcept {
-        return kstate_op_range::n_least_replication_shift(v);
-    }
+    // -----
     static size_t n_sites(const KstateT& kstate) noexcept {
         return kstate.n_sites();
     }
@@ -163,6 +129,62 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     }
     static bool is_prolific(const KstateT& kstate, int n_k) noexcept {
         return kstate.is_prolific(n_k);
+    }
+    // -----
+    template <typename OtherRangeT>
+    static KstateT from_range(const OtherRangeT& range) {
+        return KstateT(range, kstate_impl::CtrFromRange{});
+    }
+    template <typename OtherRangeT>
+    static std::shared_ptr<KstateT> shared_from_range(const OtherRangeT& range) {
+        return std::make_shared<KstateT>(range, kstate_impl::CtrFromRange{});
+    }
+    static ConstRangeT to_range(const KstateT& kstate) noexcept {
+        return kstate.to_range();
+    }
+    // -----
+    template<typename ViewT>
+    static KstateT from_view(const ViewT& v) {
+        return KstateT(v, kstate_impl::CtrFromRange{});
+    }
+    template<typename ViewT>
+    static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
+        return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{});
+    }
+    static ConstRangeT to_view(const KstateT& kstate) noexcept {
+        return kstate.to_range();
+    }
+    template<typename ViewT>
+    static typename SiteStateTraitT::SiteStateT view_n_th_site_state(const ViewT& v, unsigned idx) noexcept {
+        return *std::next(std::begin(v), idx);
+    }
+    template<typename View1T, typename View2T>
+    static bool view_compare_less(const View1T& v1, const View2T& v2) noexcept {
+        return kstate_op_range::compare_less(v1, v2);
+    }
+    template<typename View1T, typename View2T>
+    static bool view_compare_equality(const View1T& v1, const View2T& v2) noexcept {
+        return kstate_op_range::compare_equality(v1, v2);
+    }
+    template<typename ViewT>
+    static auto refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
+        return kstate_op_range::raw::refined(v, h);
+    }
+    template<typename ViewT>
+    static auto rotated_view(const ViewT& v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
+        return kstate_op_range::raw::rotated(v, h);
+    }
+    template<typename ViewT>
+    static size_t view_n_least_replication_shift(const ViewT& v) noexcept {//TODO returns size_t
+        return kstate_op_range::n_least_replication_shift(v);
+    }
+    template<typename ViewT>
+    static size_t view_n_unique_shift(const ViewT& v) noexcept {//TODO returns size_t
+        return kstate_op_range::n_unique_shift(v);
+    }
+    template<typename ViewT>
+    static size_t is_prolific(const ViewT& v, unsigned n_k) noexcept {
+        return kstate_op_range::is_prolific(v, n_k);
     }
 };
 
@@ -254,6 +276,9 @@ StaticStlKstate<_SiteStateTraitT, _N>::n_sites() const noexcept {
 // #######################################################################
 // ## TraitsFor kstate_impl::StaticStlKstate                            ##
 // #######################################################################
+
+
+//TODO copy solution from DynamicState!
 
 namespace kstate_trait {
 

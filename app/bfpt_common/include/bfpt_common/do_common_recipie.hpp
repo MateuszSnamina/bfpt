@@ -166,189 +166,14 @@ struct CommonRecipeReceipt {
     std::optional<arma::cx_vec> eigen_vector;
 };
 
-//template<typename KstateTraitT>
-//utility::Result<CommonRecipeReceipt, std::runtime_error>
-//do_common_recipe(const IKstateBasisPopulator<KstateTraitT>& bais_populator,
-//                 const IKstateOperatorMatrix<KstateTraitT>& hamiltonian,
-//                 kbasis::Basis<KstateTraitT>& basis,
-//                 const unsigned max_pt_order,
-//                 const unsigned k_n,
-//                 const CommonRecipePrintFlags& print_flags,
-//                 const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
-//                 const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
-//                 std::string print_outer_prefix = "",
-//                 unsigned n_threads = 1) {
-//    // --------------------------------------------------
-//    static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
-//    static_assert(KstateTraitT::is_kstate_trait);
-//    // --------------------------------------------------
-//    //using KstateT = typename KstateTraitT::KstateT;
-//    //using SiteStateTraitT = typename KstateT::SiteStateTraitT;
-//    //using SiteStateT = typename KstateT::SiteStateT;
-//    //using BasisT = kbasis::Basis<KstateTraitT>;
-//    using ResultT = utility::Result<CommonRecipeReceipt, std::runtime_error>;
-//    // --------------------------------------------------
-//    assert(n_threads != 0);
-//    assert(n_threads <= 256);
-//    [[maybe_unused]] const size_t n_sites = basis.n_sites();
-//    assert(k_n < n_sites);
-//    arma::wall_clock timer;
-//    // --------------------------------------------------
-//    if (print_flags.print_unpopulated_basis_flag) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis):" << std::endl;
-//        std::cout << basis;
-//    }
-//    if (print_flags.print_unpopulated_basis_size_flag) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "Unpopulated basis (0'th pt-order basis) size: "
-//                  << basis.size() << "." << std::endl;
-//    }
-//    // --------------------------------------------------
-//    // Define hamiltonian and basis:
-//    std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
-//    // Generate higher pt-orders subspace basis:
-//    timer.tic();
-//    generate_populated_basis(bais_populator, max_pt_order, basis, n_threads);
-//    const double time_populating_pt_basis = timer.toc();
-//    std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
-//    std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
-//    // --------------------------------------------------
-//    if (print_flags.print_populated_basis_flag) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis):" << std::endl;
-//        std::cout << basis;
-//    }
-//    if (print_flags.print_populated_basis_size_flag) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "Populated basis (" << max_pt_order << "'th pt-order basis) size: "
-//                  << basis.size() << "." << std::endl;
-//    }
-//    // --------------------------------------------------
-//    // Generate hamiltoniam matrix:
-//    std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
-//    timer.tic();
-//    const auto kn_hamiltonian_matrix = generate_operator_matrix(hamiltonian, basis, k_n, n_threads);
-//    const double time_generating_kn_hamiltonian_matrix = timer.toc();
-//    std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
-//    std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;
-//    // --------------------------------------------------
-//    if (print_flags.print_hamiltonian_stats) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.n_rows: " << kn_hamiltonian_matrix.n_rows << std::endl;
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.n_cols: " << kn_hamiltonian_matrix.n_cols << std::endl;
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.n_nonzero: " << kn_hamiltonian_matrix.n_nonzero << std::endl;
-//        const double fill_quotient = double(kn_hamiltonian_matrix.n_nonzero) / double(kn_hamiltonian_matrix.n_cols * kn_hamiltonian_matrix.n_rows);
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.fill_quotient: " << fill_quotient * 100 << "%" << std::endl;
-//    }
-//    if (print_flags.print_sp_hamiltonian_flag) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
-//        std::cout << kn_hamiltonian_matrix;
-//    }
-//    if (print_flags.print_hamiltonian_flag) {
-//        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
-//        std::cout << arma::cx_mat(kn_hamiltonian_matrix);
-//    }
-//    // --------------------------------------------------
-//    const bool should_calculate_eigenvectors = print_flags.print_eigen_vectors_flag || print_flags.print_pretty_vectors_flag || print_flags.print_density_operator_flag;
-//    // --------------------------------------------------
-//    if (should_calculate_eigenvectors) {
-//        std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
-//        timer.tic();
-//        const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
-//        const double time_solving_eigen_problem = timer.toc();
-//        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
-//        if (eigs_sym_result.is_err()) {
-//            std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues & eigenvectors)." << std::endl;
-//            std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
-//            std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
-//            return ResultT::Err(std::runtime_error(eigs_sym_result.unwrap_err().what()));
-//        }
-//        std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem (eigenvalues & eigenvectors)." << std::endl;
-//        const auto eigen_info = eigs_sym_result.unwrap();
-//        const arma::vec& eigen_values = eigen_info.eigen_values;
-//        const arma::cx_mat& eigen_vectors = eigen_info.eigen_vectors;
-//        // --------------------------------------------------
-//        if (print_flags.print_eigen_values_flag) {
-//            std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
-//            std::cout << print_outer_prefix << message_prefix << eigen_values;
-//        }
-//        if (print_flags.print_eigen_vectors_flag) {
-//            std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_vectors:" << std::endl;
-//            std::cout << print_outer_prefix << message_prefix << eigen_vectors;
-//        }
-//        if (print_flags.print_pretty_vectors_flag) {
-//            pretty_print(basis, eigen_values, eigen_vectors,
-//                         print_flags.print_pretty_min_max_n_kstates, print_flags.print_pretty_probability_treshold,
-//                         print_outer_prefix);
-//        }
-//        // --------------------------------------------------
-//        if (print_flags.print_density_operator_flag) {
-//            {
-//                std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate one-site density matrix." << std::endl;
-//                timer.tic();
-//                const arma::cx_mat density_operator_1 = calculate_reduced_density_operator_1<KstateTraitT>(basis, eigen_vectors.col(0), n_threads);
-//                const double time_generating_kn_hamiltonian_matrix = timer.toc();
-//                std::cout << print_outer_prefix << message_prefix << time_tag << "Calculating one-site density matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
-//                std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated one-site density matrix." << std::endl;
-//                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix:" << std::endl;
-//                std::cout << density_operator_1;
-//                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix tr: "
-//                          << arma::trace(density_operator_1)
-//                          << std::endl;
-//                print_averages(density_operator_1, one_site_metrices_for_average_calculation, print_outer_prefix);
-//            }
-//            {
-//                std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate two-site density matrix." << std::endl;
-//                timer.tic();
-//                const arma::cx_mat density_operator_12 = calculate_reduced_density_operator_12<KstateTraitT>(basis, eigen_vectors.col(0), n_threads);
-//                const double time_generating_kn_hamiltonian_matrix = timer.toc();
-//                std::cout << print_outer_prefix << message_prefix << time_tag << "Calculating two-site density matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
-//                std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated two-site density matrix." << std::endl;
-//                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix:" << std::endl;
-//                std::cout << density_operator_12;
-//                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix tr: "
-//                          << arma::trace(density_operator_12)
-//                          << std::endl;
-//                print_averages(density_operator_12, two_sites_metrices_for_average_calculation, print_outer_prefix);
-//            }
-//        }
-//        // --------------------------------------------------
-//        return ResultT::Ok({eigen_values(0), eigen_vectors.col(0)});
-//    } else {
-//        std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues only)." << std::endl;
-//        timer.tic();
-//        const auto& eigs_sym_result = lin_alg::fallbacked_eigs_sym(lin_alg::WithoutVectors{}, kn_hamiltonian_matrix, 1, 1e-6);
-//        const double time_solving_eigen_problem = timer.toc();
-//        std::cout << print_outer_prefix << message_prefix << time_tag << "Solving eigen problem took: " << time_solving_eigen_problem << "s." << std::endl;
-//        if (eigs_sym_result.is_err()) {
-//            std::cout << print_outer_prefix << message_prefix << progress_tag << "Failed to solve eigen problem (eigenvalues only)." << std::endl;
-//            std::cout << print_outer_prefix << message_prefix << progress_tag << "The reported error message:" << std::endl;
-//            std::cout << eigs_sym_result.unwrap_err().what() << std::endl;
-//            return ResultT::Err(std::runtime_error(eigs_sym_result.unwrap_err().what()));
-//        }
-//        std::cout << print_outer_prefix << message_prefix << progress_tag << "Has solved eigen problem (eigenvalues only)." << std::endl;
-//        const arma::vec& eigen_values = eigs_sym_result.unwrap();
-//        // --------------------------------------------------
-//        if (print_flags.print_eigen_values_flag) {
-//            std::cout << print_outer_prefix << message_prefix << data_tag << "eigen_values:" << std::endl;
-//            std::cout << print_outer_prefix << message_prefix << eigen_values;
-//        }
-//        return ResultT::Ok({eigen_values(0), std::nullopt});
-//    }
-//    // --------------------------------------------------
-//    assert(false);
-//}
-
-
-//// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-
 template<typename KstateTraitT, typename KpopulatorTraitT, typename KoperatorTraitT>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
-do_common_recipe_NEWAPI(
+do_common_recipe(
                  const typename KpopulatorTraitT::KpopulatorT& bais_populator,
                  const typename KoperatorTraitT::KoperatorT& hamiltonian,
                  kbasis::Basis<KstateTraitT>& basis,
                  const unsigned max_pt_order,
-                 const unsigned k_n,
+                 const unsigned n_k,
                  const CommonRecipePrintFlags& print_flags,
                  const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
                  const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
@@ -373,7 +198,7 @@ do_common_recipe_NEWAPI(
     assert(n_threads != 0);
     assert(n_threads <= 256);
     [[maybe_unused]] const size_t n_sites = basis.n_sites();
-    assert(k_n < n_sites);
+    assert(n_k < n_sites);
     arma::wall_clock timer;
     // --------------------------------------------------
     if (print_flags.print_unpopulated_basis_flag) {
@@ -389,7 +214,7 @@ do_common_recipe_NEWAPI(
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to populate pt-basis." << std::endl;
     // Generate higher pt-orders subspace basis:
     timer.tic();
-    generate_populated_basis<KpopulatorTraitT>(bais_populator, max_pt_order, basis, n_threads);
+    generate_populated_basis<KpopulatorTraitT>(bais_populator, max_pt_order, basis, n_k, n_threads);
     const double time_populating_pt_basis = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Populating pt-basis took " << time_populating_pt_basis << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has populated pt-basis." << std::endl;
@@ -406,7 +231,7 @@ do_common_recipe_NEWAPI(
     // Generate hamiltoniam matrix:
     std::cout << print_outer_prefix << message_prefix << progress_tag << "About to generate hamiltoniam." << std::endl;
     timer.tic();
-    const auto kn_hamiltonian_matrix = generate_operator_matrix<KoperatorTraitT>(hamiltonian, basis, k_n, n_threads);
+    const auto kn_hamiltonian_matrix = generate_operator_matrix<KoperatorTraitT>(hamiltonian, basis, n_k, n_threads);
     const double time_generating_kn_hamiltonian_matrix = timer.toc();
     std::cout << print_outer_prefix << message_prefix << time_tag << "Generating kn-hamiltoniam matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
     std::cout << print_outer_prefix << message_prefix << progress_tag << "Has generated kn-hamiltoniam." << std::endl;

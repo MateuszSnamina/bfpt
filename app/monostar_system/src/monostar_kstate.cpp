@@ -1,7 +1,5 @@
 #include <monostar_system/monostar_kstate.hpp>
 
-#include <kstate_op_range/op_range_unique_shift.hpp>
-
 #include <kstate_impl/kstate_streamer.hpp>
 
 #include <vector>
@@ -21,7 +19,13 @@ MonostarKstate classical_es_kstate(const unsigned n_sites) {
     assert(n_sites > 0);
     std::vector<MonostarSiteState> generator_array(n_sites, monostar_system::gs);
     generator_array[0] = es;
-    return MonostarKstateTrait::from_range(kstate_op_range::make_unique_shift(generator_array));
+    const auto generator = MonostarKstateTrait::from_range(generator_array);
+    const auto generator_view = MonostarKstateTrait::to_view(generator);
+    const size_t generator_n_unique_shift = MonostarKstateTrait::view_n_unique_shift(generator_view);
+    const auto rotation_spec = kstate_view_amend_spec::rotated(generator_n_unique_shift);
+    const auto generator_view_unique_shifted = MonostarKstateTrait::rotated_view(generator_view, rotation_spec);
+    const auto uniquely_shifted_generator = MonostarKstateTrait::from_view(generator_view_unique_shifted);
+    return uniquely_shifted_generator;
 }
 
 }  // namespace monostar_system

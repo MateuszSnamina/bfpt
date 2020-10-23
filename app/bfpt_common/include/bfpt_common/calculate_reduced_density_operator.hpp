@@ -4,13 +4,7 @@
 
 #include <kstate_view_amend_spec/amend_spec.hpp>
 
-#include <kstate_op_range/op_range_unique_shift.hpp>
-#include <kstate_op_range/op_range_raw_adaptors.hpp>
-
 #include <kstate_trait/trait_kstate.hpp>
-
-#include <boost/range/adaptor/sliced.hpp>
-#include <boost/range/algorithm/equal.hpp>
 
 #include <omp.h>
 
@@ -32,7 +26,6 @@ calculate_reduced_density_operator_12_impl(
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
-    using kstate_op_range::raw::adaptors::operator|;
     // static asserts:
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
@@ -49,21 +42,24 @@ calculate_reduced_density_operator_12_impl(
     // the job:
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
-    const auto ket_kstate_range = KstateTraitT::to_range(*ket_kstate_ptr);
+    const auto ket_kstate_view = KstateTraitT::to_view(*ket_kstate_ptr);
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % n_sites) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_range), n_delta);
-        const auto ket_kernel_site_2 = *std::next(std::begin(ket_kstate_range), n_delta_p1);
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
         const auto ket_kernel_site_1_idx = SiteStateTraitT::get_index(ket_kernel_site_1);
         const auto ket_kernel_site_2_idx = SiteStateTraitT::get_index(ket_kernel_site_2);
         for (unsigned bra_kernel_site_1_idx = 0; bra_kernel_site_1_idx < site_basis_dim; bra_kernel_site_1_idx++) {
             for (unsigned bra_kernel_site_2_idx = 0; bra_kernel_site_2_idx < site_basis_dim; bra_kernel_site_2_idx++) {
                 const auto& bra_kernel_site_1 = SiteStateTraitT::from_index(bra_kernel_site_1_idx);
                 const auto& bra_kernel_site_2 = SiteStateTraitT::from_index(bra_kernel_site_2_idx);
-                const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);// Must outlive bra_kstate_range.
-                const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);// Must outlive bra_kstate_range.
-                const auto bra_kstate_range = ket_kstate_range | refined_holder_1 | refined_holder_2;
-                const auto bra_kstate_range_unique_shifted = kstate_op_range::make_unique_shift(bra_kstate_range);
-                if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
+                const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);// Must outlive bra_kstate_view
+                const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);// Must outlive bra_kstate_view.
+                const auto bra_kstate_view_preproduct = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
+                const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct, refined_holder_2);
+                const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
+                const auto roration_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
+                const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+                if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
                     const auto bra_kstate_idx = *bra_kstate_optional_idx;
                     const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
                     const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
@@ -144,7 +140,6 @@ calculate_reduced_density_operator_1_impl(
         const arma::cx_vec& eigen_vector,
         const arma::uword ket_kstate_idx,
         arma::cx_mat& result_accumulator) {
-    using kstate_op_range::raw::adaptors::operator|;
     // static asserts:
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
@@ -161,16 +156,18 @@ calculate_reduced_density_operator_1_impl(
     // the job:
     const auto ket_kstate_ptr = basis.vec_index()[ket_kstate_idx];
     assert(ket_kstate_ptr);
-    const auto ket_kstate_range = KstateTraitT::to_range(*ket_kstate_ptr);
+    const auto ket_kstate_view = KstateTraitT::to_view(*ket_kstate_ptr);
     for (size_t n_delta = 0; n_delta < n_sites; n_delta++) {
-        const auto ket_kernel_site_1 = *std::next(std::begin(ket_kstate_range), n_delta);
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
         const auto ket_kernel_site_1_idx = SiteStateTraitT::get_index(ket_kernel_site_1);
         for (unsigned bra_kernel_site_1_idx = 0; bra_kernel_site_1_idx < site_basis_dim; bra_kernel_site_1_idx++) {
             const auto bra_kernel_site_1 = SiteStateTraitT::from_index(bra_kernel_site_1_idx);
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_range.
-            const auto bra_kstate_range = ket_kstate_range | refined_holder_1;
-            const auto bra_kstate_range_unique_shifted = kstate_op_range::make_unique_shift(bra_kstate_range);
-            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_range_unique_shifted)) {
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_view.
+            const auto bra_kstate_view = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);
+            const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
+            const auto roration_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
+            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 const double pre_norm_1 = KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
                 const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
