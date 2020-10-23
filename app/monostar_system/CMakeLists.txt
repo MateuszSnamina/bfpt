@@ -15,7 +15,6 @@ target_include_directories("${TARGET_NAME}" PUBLIC include)
 target_link_libraries("${TARGET_NAME}"
   kstate_trait
   kstate_impl
-  kstate_op_range
   utility
   Boost::boost
 )

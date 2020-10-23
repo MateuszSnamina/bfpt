@@ -181,11 +181,13 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     // -----
     template<typename ViewT>
     static KstateT from_view(const ViewT& v) {
-        const typename KstateT::BufferT buffer{v.get_number(), v.get_n_all_bits};
+        static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
+        const typename KstateT::BufferT buffer{v.get_number(), v.get_n_all_bits()};
         return KstateT(buffer, kstate_impl::CtrFromBuffer{});
     }
     template<typename ViewT>
     static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
+        static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
         const typename KstateT::BufferT buffer{v.get_number(), v.get_n_all_bits()};
         return std::make_shared<KstateT>(buffer, kstate_impl::CtrFromBuffer{});
     }
