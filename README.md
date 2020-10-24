@@ -9,7 +9,7 @@
 The solver performs exact denationalization (ED) in a subspace of the system Hilbert space. The subspace is constructed in a spirit of perturbation calculus. The construction starts with the `0`-th order subspace filled exclusively with quantum states provded (as an input) by the solver user. Then the next order subspaces are constructed iteratively: The `(n+1)`-th order subspace is the `n`-th order subspace extended by the Hamiltonian image of the `n`-th order subspace. The solver user defines the target subspace order. Having the desired subspace constructed, Hamiltonian restricted to the subspace is diagonalized using a spare matrices numeric method.
 
 Note that for sufficiently high value of the order parameter the relevant subspace is an invariant subspace of Hamiltonian and
-the solver performs ED.
+the solver performs "full" ED.
 
 All calculations (both at the subspace generation stage and the diagonalization stage) are performed in the 'inverse space' (or 'momentum space') -- in the realm of quantum states with given Bloch's theorem pseudo-momentum.
 
@@ -19,7 +19,7 @@ The archetype problem fitting the solver domain is one dimensional Heisenberg an
 
 The project provides codebase for the `bfpt` solver components libraries as well as codebase of applications that integrates the solver soluton for real physical problem analysis.
 
-The solver is conceived to be general and easily extensible so to encore further experimenting. The project tries to achieve the objectives by involving easy to play modern C++ with balanced static and dynamic polymorphism, limited usage of external libraries focusing only on battle-tested ones: `boost C++` libraries for general purposes and `Armadillo`, `LAPACK`, `ARPACK`, `BLAS` libraries stack for linear algebra.
+The solver is conceived to be general and easily extensible so to encourage further experimenting. The project tries to achieve the objectives by involving easy to play modern C++ with balanced static and dynamic polymorphism, limited usage of external libraries focusing only on battle-tested ones: `boost C++` libraries for general purposes and `Armadillo`, `LAPACK`, `ARPACK`, `BLAS` libraries stack for linear algebra.
 
 ## What it is not
 
@@ -27,45 +27,6 @@ The solver is conceived to be general and easily extensible so to encore further
 - Bfpt is not meant to be the fastest numeric solver created.
 - Bfpt is not meant to target continuous systems.
 - Bfpt is not meant to target  two and more dimensional systems.
-
-# Compile/build/install/use
-
-## Docker
-The simplest way to build and run the app (on any OS) is using the app in the container: 
-```
-sudo docker build . -t bfpt
-sudo docker run --rm bfpt # try it! Use `-h` for help
-```
-
-## Development env
-Compiling/linking the project requires basic dev tools (`cmake3.16` and `gcc9`) and 3p libraries (`armadillo9`, `boost1.71`) to be installed.
-Setting up the dev env on `Ubuntu 20.04` requires following steps:
-```
-apt install g++
-apt install cmake
-apt install libboost-dev
-apt install libboost-program-options-dev
-apt install libarmadillo-dev
-apt install libgtest-dev
-```
-
-## Runtime env
-Setting up the runtime env on `Ubuntu 20.04` requires following steps:
-```
-apt install libgomp1 
-apt install libboost-program-options1.71.0 
-apt install libarmadillo9 
-```
-
-## Build process
-The build process is managed by cmake:
-```
-pushd build_release
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make "-j$(nproc)"
-popd
-build_release/bin/monostar_app # try it! Use `-h` for help
-```
 
 # `bfpt` solver design
 
@@ -187,14 +148,14 @@ The specyfic meaning of "two-level subsystem" is not relevant at the system leve
 - `kerneled Hamiltonian`
 
 `kerneled Hamiltonian` is for hamiltonians defined by _on-site_ interactions and _nearest neighbors_ interactions.
-In this case the chain Hamiltonian `ℋ` is expressed as `ℋ = ℋ_1 + ℋ_12`, where
-- `ℋ_1 = \sum_{<i>} H_1(i)`,
-- `ℋ_12 = \sum_{<ij>} H_12(i,j)` (with the summation over pairs of adjacent nodes);
+In this case the chain Hamiltonian `ℋ` is expressed as `ℋ = ℋ₁ + ℋ₁₂`, where
+- `ℋ₁ = Σ_{i} H₁(i)`,
+- `ℋ₁₂ = Σ_{<ij>} H₁₂(i,j)` (with the summation over pairs of adjacent nodes);
 and thus prescribed by two-nodes kernel Hamiltionians
-- one-node kernel Hamiltionian `H_1`,
-- two-nodes kernel Hamiltionian `H_12`.
+- one-node kernel Hamiltionian `H₁`,
+- two-nodes kernel Hamiltionian `H₁₂`.
 
-The hamiltonian type is parametrized by `H_1` and `H_12`.
+The hamiltonian type is parametrized by `H₁` and `H₁₂`.
 The type is a template type and may be instantiated for any _ststem type_.
 
 ### Approximation specification -- Basis populator definition layer
@@ -204,10 +165,17 @@ The type is a template type and may be instantiated for any _ststem type_.
 
 # Usage examples: `monostar_app`
 
-The project contains an executable (`monostar_app`) showing
-how to use the solver for models like 1D Heisenberg (anti)ferromagnet.
+The project contains an executable (`monostar_app`) 
+integrating the `bfpt` solver for analysis of two-level systems.
+The considered models are:
+- 1D Heisenberg ferromagnet spin-dublets chain,
+- 1D Heisenberg antiferromagnet spin-dublets chain,
+- 1D `e_g`-type orbitals chain (where `e_g` is a symbol of a irreducible representation
+of `Oh` point symmetry group).
 
-## 1D Heisenberg (anti)ferromagnet
+## Models details:
+
+### 1D Heisenberg (anti)ferromagnet
 
 ** Model monostat with `af` and `fm` Hamiltonians **
 
@@ -247,8 +215,114 @@ The content of the eigenstates may be printed in a pretty form in which the stat
 
 !["Monostar model -- excitation energies"](img/monostar_16sites_gs_eigenvector.png )
 
-## Executable CLI synopsis
+### `e_g`-type orbitals chain
 
-[TODO]
+**Notation** Below we assume `e_g` oribtal space consists of linear combinations of
+the two basis oribtals: `|x² - y²⟩` and `|3z² - r²⟩`.
 
-# Example -- a spinorbital
+The system hamiltonian is often expressed in terms of
+one-orbital projection operatos like these four:
+```
+Pᶻ = |z⟩⟨z|,         Pˣ = |x⟩⟨x|,
+P⁺ = |+⟩⟨+|,         P⁻ = |-⟩⟨-|,
+```
+where:
+`|x⟩` and `|z⟩` are shortcut notation of `|x² - y²⟩` and `|3z² - r²⟩`,
+`|+⟩` and `|-⟩` denotes `(|z⟩+|x⟩)/√2` and `(|z⟩-|x⟩)/√2`.
+
+The matrix representatrion of the projection operators
+in the (`|z⟩`, `|x⟩`) basis is as follow:
+
+```
+        |z⟩ |x⟩                       |z⟩ |x⟩
+      ╭        ╮                    ╭        ╮
+ Pᶻ = │ +1   0 │  |z⟩          Pˣ = │  0   0 │  |z⟩
+      │  0   0 │  |x⟩               │  0  +1 │  |x⟩
+      ╰        ╯                    ╰        ╯
+
+        |z⟩ |x⟩                       |z⟩ |x⟩
+      ╭        ╮                    ╭        ╮
+ P⁺ = │ +½  +½ │  |z⟩          P⁻ = │ +½  -½ │  |z⟩
+      │ +½  +½ │  |x⟩               │ -½  +½ │  |x⟩
+      ╰        ╯                    ╰        ╯
+```
+We also define τ operators:
+```
+ τᶻ = |z⟩⟨z| - |x⟩⟨x|
+ τ⁻ = |-⟩⟨-| - |+⟩⟨+|
+```
+
+**Hamiltonian definition** The system Hamiltonian `ℋ` is parametrized by five real params:
+`tau_z_coef`, `tau_minus_coef`, `Pzz_coef`, `Pxz_coef`, `Pxx_coef`.
+```
+ℋ = ℋ₁ + ℋ₁₂
+```
+with:
+```
+ℋ₁ = ℋ₁ᶻ + ℋ₁⁻
+ℋ₁ᶻ = Σ_i tau_z_coef τᶻ(i)
+ℋ₁⁻ = Σ_i tau_minus_coef τ⁻(i)
+```
+and
+```
+ℋ₁₂ = ℋ₁₂ᶻᶻ + ℋ₁₂ˣᶻ + ℋ₁₂ˣˣ
+ℋ₁₂ᶻᶻ = Σ_<ij> Pzz_coef (Pᶻ(i) Pᶻ(j))
+ℋ₁₂ˣᶻ = Σ_<ij> Pxz_coef (Pˣ(i) Pᶻ(j) + Pᶻ(i) Pˣ(j))
+ℋ₁₂ˣˣ = Σ_<ij> Pxx_coef (Pˣ(i) Pˣ(j))
+```
+
+**`e_g` space base for calculations** In the program all calculations are performed in "rotated orbitals"
+basis. It is defined by a single parameter `θ` (called "orbital_theta")
+by the relation:
+```
+ ╭         ╮     ╭         ╮              ╭                        ╮
+ │ |∥⟩ |⟂⟩ │  =  │ |x⟩ |z⟩ │ β, where β = │  +cos(θ/2)   -sin(θ/2) │
+ ╰         ╯     ╰         ╯              │  +sin(θ/2)   +cos(θ/2) │
+                                          ╰                        ╯
+```
+Value of "orbital_theta" may be requested by the application user "on demand",
+or the user may let the program to choose the "best" value automatically.
+Here "the best" is defined as a value that minimizes the energy
+of the chain of not entangled oritals.
+
+## CLI
+
+## Compile/build/install/use 
+
+### Docker
+The simplest way to build and run the app (on any OS) is using the app in the container: 
+```
+sudo docker build . -t bfpt
+sudo docker run --rm bfpt [CLI args] # try it! Use `-h` for help
+```
+
+### Development env
+Compiling/linking the project requires basic dev tools (`cmake3.16` and `gcc9`) and 3p libraries (`armadillo9`, `boost1.71`) to be installed.
+Setting up the dev env on `Ubuntu 20.04` requires following steps:
+```
+apt install g++
+apt install cmake
+apt install libboost-dev
+apt install libboost-program-options-dev
+apt install libarmadillo-dev
+apt install libgtest-dev
+```
+
+### Runtime env
+Setting up the runtime env on `Ubuntu 20.04` requires following steps:
+```
+apt install libgomp1 
+apt install libboost-program-options1.71.0 
+apt install libarmadillo9 
+```
+
+### Build process
+The build process is managed by cmake:
+```
+pushd build_release
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make "-j$(nproc)"
+popd
+build_release/bin/monostar_app [CLI args] # try it! Use `-h` for help
+```
+
