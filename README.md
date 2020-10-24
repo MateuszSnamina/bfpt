@@ -28,23 +28,43 @@ The solver is conceived to be general and easily extensible so to encore further
 - Bfpt is not meant to target continuous systems.
 - Bfpt is not meant to target  two and more dimensional systems.
 
-# Compile/build/install
+# Compile/build/install/use
 
-Compiling/linking the project requires basic dev tools (`cmake3.16` and `gcc9`) and 3p libraries (`armadillo9`, `boost1.71`) to be installed.
-On Ubuntu 20.04:
-
+## Docker
+The simplest way to build and run the app (on any OS) is using the app in the container: 
 ```
-apt install gcc-9
+sudo docker build . -t bfpt
+sudo docker run --rm bfpt # try it! Use `-h` for help
+```
+
+## Development env
+Compiling/linking the project requires basic dev tools (`cmake3.16` and `gcc9`) and 3p libraries (`armadillo9`, `boost1.71`) to be installed.
+Setting up the dev env on `Ubuntu 20.04` requires following steps:
+```
+apt install g++
 apt install cmake
 apt install libboost-dev
 apt install libboost-program-options-dev
 apt install libarmadillo-dev
-mkdir build_release
+apt install libgtest-dev
+```
+
+## Runtime env
+Setting up the runtime env on `Ubuntu 20.04` requires following steps:
+```
+apt install libgomp1 
+apt install libboost-program-options1.71.0 
+apt install libarmadillo9 
+```
+
+## Build process
+The build process is managed by cmake:
+```
 pushd build_release
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make "-j$(nproc)"
 popd
-build_release/bin/monostar_app # try it!
+build_release/bin/monostar_app # try it! Use `-h` for help
 ```
 
 # `bfpt` solver design
