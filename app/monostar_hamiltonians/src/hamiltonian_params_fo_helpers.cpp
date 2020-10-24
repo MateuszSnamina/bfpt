@@ -100,6 +100,26 @@ double AcosPlusBsinPlusCsqcosPlusZ::get_derivative_value_without_prefactor(doubl
             - 2 * _sqcos_coef * std::cos(phi) * std::sin(phi);
 }
 
+double AcosPlusBsinPlusCsqcosPlusZ::get_derivative2_value_without_prefactor(double phi) const {
+    return - _cos_coef * std::cos(phi)
+            - _sin_coef * std::sin(phi)
+            - 4 * _sqcos_coef * std::cos(phi) * std::cos(phi)
+            + 2 * _sqcos_coef;
+}
+
+double AcosPlusBsinPlusCsqcosPlusZ::get_derivative3_value_without_prefactor(double phi) const {
+    return + _cos_coef * std::sin(phi)
+            - _sin_coef * std::cos(phi)
+            + 8 * _sqcos_coef * std::cos(phi) * std::sin(phi);
+}
+
+double AcosPlusBsinPlusCsqcosPlusZ::get_derivative4_value_without_prefactor(double phi) const {
+    return + _cos_coef * std::cos(phi)
+            + _sin_coef * std::sin(phi)
+            + 16 * _sqcos_coef * std::cos(phi) * std::cos(phi)
+            - 8 * _sqcos_coef;
+}
+
 double AcosPlusBsinPlusCsqcosPlusZ::get_value(double phi) const {
     return _prefactor * get_value_without_prefactor(phi);
 }
@@ -108,6 +128,17 @@ double AcosPlusBsinPlusCsqcosPlusZ::get_derivative_value(double phi) const {
     return _prefactor * get_derivative_value_without_prefactor(phi);
 }
 
+double AcosPlusBsinPlusCsqcosPlusZ::get_derivative2_value(double phi) const {
+    return _prefactor * get_derivative2_value_without_prefactor(phi);
+}
+
+double AcosPlusBsinPlusCsqcosPlusZ::get_derivative3_value(double phi) const {
+    return _prefactor * get_derivative3_value_without_prefactor(phi);
+}
+
+double AcosPlusBsinPlusCsqcosPlusZ::get_derivative4_value(double phi) const {
+    return _prefactor * get_derivative4_value_without_prefactor(phi);
+}
 std::set<double> AcosPlusBsinPlusCsqcosPlusZ::get_minimum_argument() const {
     if (const auto& analicical_solution = get_minimum_argument_analytical()) {
         return analicical_solution.unwrap();

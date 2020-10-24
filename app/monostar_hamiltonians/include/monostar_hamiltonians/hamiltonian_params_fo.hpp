@@ -3,6 +3,7 @@
 #include<monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
 
 #include<set>
+#include<string>
 
 /*
  * The below is for orbital hamiltonians defined for systems of `eg`-type orbitals
@@ -82,14 +83,15 @@
  * τ⁻ = |-⟩⟨-| - |+⟩⟨+|
  *
  * The in the program the a general Hamiltonian for the orbitals chain is considered:
- * H₁ᶻ = sum_i tau_z_coef * τᶻ(i)
- * H₁⁻ = sum_i tau_minus_coef * τ⁻(i)
- * H₁₂ᶻᶻ = sum_<ij> Pzz_coef * (Pᶻ(i) Pᶻ(j))
- * H₁₂ˣᶻ = sum_<ij> Pxz_coef * (Pˣ(i) Pᶻ(j) + Pᶻ(i) Pˣ(j))
- * H₁₂ˣˣ = sum_<ij> Pxx_coef * (Pˣ(i) Pˣ(j))
- * H₁ = H₁⁻ + H₁ᶻ
+ * H₁ᶻ = Σ_i tau_z_coef * τᶻ(i)
+ * H₁⁻ = Σ_i tau_minus_coef * τ⁻(i)
+ * H₁₂ᶻᶻ = Σ_<ij> Pzz_coef * (Pᶻ(i) Pᶻ(j))
+ * H₁₂ˣᶻ = Σ_<ij> Pxz_coef * (Pˣ(i) Pᶻ(j) + Pᶻ(i) Pˣ(j))
+ * H₁₂ˣˣ = Σ_<ij> Pxx_coef * (Pˣ(i) Pˣ(j))
+ * H₁ = H₁ᶻ + H₁⁻
  * H₁₂ = H₁₂ᶻᶻ + H₁₂ˣᶻ + H₁₂ˣˣ
  * H = H₁ + H₁₂
+ *
  */
 
 // #######################################################################
@@ -123,9 +125,16 @@ public:
     double get_Pxz_coef() const;
     double get_Pxx_coef() const;
     double get_site_energy(double theta) const;
+    double get_site_energy_derivative(double theta) const;
+    double get_site_energy_derivative2(double theta) const;
+    double get_site_energy_derivative3(double theta) const;
+    double get_site_energy_derivative4(double theta) const;
     std::set<double> get_theta_opt() const;
     std::set<double> get_theta_opt_numerical() const;
     utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_theta_opt_analytical() const;
+    std::string string_repr_in_orbital_operators() const;
+    std::string string_repr_in_trigonometric_functions() const;
+
 
 private:
     HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);

@@ -198,10 +198,12 @@ void print_theta_opt(const monostar_hamiltonians::HamiltonianParamsFo& hamiltoni
     // Print:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     std::cout << std::showpos;
+    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_fo_params.string_repr_in_orbital_operators() << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_fo_params.string_repr_in_trigonometric_functions() << std::endl;
     if (const auto & _ = hamiltonian_fo_params.get_theta_opt_analytical()) {
-        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
+        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
     } else {
-        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical) = " << "<no known analicycal solution solver>" << std::endl;
+        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = " << "<no known analicycal solution solver>" << std::endl;
     }
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)        = "
               << (hamiltonian_fo_params.get_theta_opt_numerical()| RSS<double>().like_python_set()) << std::endl;
@@ -230,6 +232,17 @@ void print_theta_opt(const monostar_hamiltonians::HamiltonianParamsFo& hamiltoni
               << std::pow(0.5 + 0.5 * std::cos(orbital_theta_to_use), 2) << ", "
               << 2 * (0.5 + 0.5 * std::cos(orbital_theta_to_use)) * (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << ", "
               << std::pow(0.5 - 0.5 * std::cos(orbital_theta_to_use), 2) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] H [used orbital theta]                   = "
+              << hamiltonian_fo_params.get_site_energy(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] dH/dθ [used orbital theta]               = "
+              << hamiltonian_fo_params.get_site_energy_derivative(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] d²H/dθ² [used orbital theta]             = "
+              << hamiltonian_fo_params.get_site_energy_derivative2(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] d³H/dθ³ [used orbital theta]             = "
+              << hamiltonian_fo_params.get_site_energy_derivative3(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] d⁴H/dθ⁴ [used orbital theta]             = "
+              << hamiltonian_fo_params.get_site_energy_derivative4(orbital_theta_to_use) << std::endl;
+
 }
 
 } // end of namespace monostar_app

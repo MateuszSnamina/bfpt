@@ -51,6 +51,9 @@ public:
     double get_free_coef() const;
     double get_value(double phi) const;
     double get_derivative_value(double phi) const;
+    double get_derivative2_value(double phi) const;
+    double get_derivative3_value(double phi) const;
+    double get_derivative4_value(double phi) const;
     std::set<double> get_minimum_argument() const;
     std::set<double> get_minimum_argument_numerical() const;
     utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_minimum_argument_analytical() const;
@@ -64,6 +67,9 @@ private:
     const double _free_coef;
     double get_value_without_prefactor(double phi) const;
     double get_derivative_value_without_prefactor(double phi) const;
+    double get_derivative2_value_without_prefactor(double phi) const;
+    double get_derivative3_value_without_prefactor(double phi) const;
+    double get_derivative4_value_without_prefactor(double phi) const;
     bool is_degenerated_to_const_function() const;
     bool is_degenerated_to_sqcos_coef_equal_to_zero_case() const;
     bool is_degenerated_to_cos_coef_equal_to_zero_case() const;
