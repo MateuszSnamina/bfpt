@@ -97,8 +97,8 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
                 //const auto conjugated_view_unique_shifted = kstate_op_range::make_unique_shift(conjugated_view);//TODO restore
                 const size_t conjugated_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
-                const auto roration_spec = kstate_view_amend_spec::rotated(conjugated_n_unique_shift);
-                const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, roration_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+                const auto rotation_spec = kstate_view_amend_spec::rotated(conjugated_n_unique_shift);
+                const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, rotation_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
                 const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
                 result.insert(conjugated_kstate_ptr);
             }

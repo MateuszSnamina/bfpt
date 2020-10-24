@@ -139,6 +139,7 @@ double AcosPlusBsinPlusCsqcosPlusZ::get_derivative3_value(double phi) const {
 double AcosPlusBsinPlusCsqcosPlusZ::get_derivative4_value(double phi) const {
     return _prefactor * get_derivative4_value_without_prefactor(phi);
 }
+
 std::set<double> AcosPlusBsinPlusCsqcosPlusZ::get_minimum_argument() const {
     if (const auto& analicical_solution = get_minimum_argument_analytical()) {
         return analicical_solution.unwrap();
