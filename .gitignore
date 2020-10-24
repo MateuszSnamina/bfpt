@@ -32,9 +32,17 @@
 *.app
 
 # build directories
-build_vsc/
-build_debug/
-build_release/
-app/build_vsc/
-app/build_debug/
-app/build_release/
+/build_vsc/
+/build_debug/
+/build_release/
+/build_relwithdebinfo/
+/app/build_vsc/
+/app/build_debug/
+/app/build_release/
+/app/build_relwithdebinfo/
+
+# py venv directories
+/post/venv
+
+# py cache directories
+__pycache__
