@@ -37,11 +37,11 @@ Rather than implementing a very general solution in a monolith library,
 `bfpt` lets a few smaller plug-able components to define parts of the overall problem and provide the desired implementation of the parts.
 `bfpt_common_recipe` is a function that merely orchestrates the standard calculation workflow taking advantage of the provided implementations.
 The workflow includes the following steps.
-- Generating the "populated basis" in which ED should be performed,
-- Generating the matrix for Hamiltonian restricted to the subspace,
-- Performing the matrix ed to find the lower-energy eigenstate,
+- Generating _Hilbert subspace_ in which ED should be performed,
+- Generating the matrix of _Hamiltonian operator_ restricted to the subspace,
+- Performing the matrix ED to find the lower-energy eigenstate,
 - Performing basic post-processing:
-  - printing results,
+  - printing results (eigenvalue, eigenstate basis state contributions)
   - calculating reduced density operator matrix,
   - calculating mean value for some given operators.
 
@@ -50,27 +50,32 @@ For convenience `bfpt` splits the **physical problem definition** into two separ
 - in the second layer relevant _Hamiltonian operator_ is concertized.
 In addition for `bfpt` calculations to run **approximation definition** needs to be provided.
 ("Approximation" here means the departure of full Hilbert space ED.)
-For this rules for generating the "populated basis" need to be stipulated, what includes:
+For this rules for generating basis of the _Hilbert subspace_ need to be stipulated; that includes:
 - providing _`0`-th order basis_ elements,
 - providing _pupulator map_, stipulating rules how `n+1`-th order basis is constructed from `n`-th order basis,
 - providing the _desired order_ basis order.
 
-One of the key feature of `bfpt` is try not to provide an optimal/convenient implementation capable for 
+One of the key feature of `bfpt` is try not to hardcode an optimal/convenient implementation capable to 
 work well with a wide range of physical problems.
-Letting the user to provide the right **implementation definition** together with the problem definition.
+Instead, it lets the library user to provide the right **implementation definition**
+together with the **problem definition** and **approximation definition**.
 
-For example defining the _Hilbert space_ one need to define: number of nodes and node quantum states.
-For convenience also the states ordering should be imposed.
-But in addition to the _pure_ physical problem definition one need to specify the underlying programmatic implementation.
-This makes it possible to consider chains with the node number known at the compilation time,
-flexible states that allocates dynamically as much memory as needed.
-It also makes it possible to have a general state -- working well for chains of any kind of physical system as nodes,
-but at the same time lets the user to provide an optimized chain states implementation that "compress" data in a fancy way.
+For example defining the _Hilbert space_ one need to define _number of chain nodes_ and _node quantum states_.
+For convenience also _the states ordering_ should be imposed.
+But in addition to the _pure physical problem definition_ one need to specify the _underlying programmatic implementation_.
+This makes possible to consider chains states with the chain nodes number known at the compilation time,
+or flexible states that allocates memory dynamically as much memory as needed.
+In the same way it allows to define quantum states representation memory layout.
+It also makes it possible to have a general state -- working well for chains of any/many kind of physical system as nodes,
+but at the same time lets the library user to provide an fancy optimized chain states implementation
+working perfectly for one target physical system.
+
 Similar consideration may by carried out for _Hamiltonian operator_ and _populator map_.
 
-The flexibility is achieved by letting the Hilbert space definition to be a type definition.
+The flexibility is achieved by letting the _Hilbert space definition_ to be a _type definition_.
+_Hilbert space_ definitions are provided by `Kstate`s types prescribed by corresponding `KstateTait`s.
+`Kstate`s instances are to hold Hilbert state data, while `KstateTait`s is to provide the api to use the `Kstate` instances.
 `bfpt common recipe` function is a template function that accepts any type intended to work as a Hamiltonian definition.
-The library provides `kstate_trait` to specialize
 
 ```
                                          +----------------------+
@@ -90,12 +95,9 @@ average_calculation : Set<Matrices> ---> |                      | ---> averges f
                                          +----------------------+
 ```
 
-Hilbert space definition is provided by `kstate` prescribed by KstateTait
-
 ## Implemented plugins
 
-
-### Bfpt Systems -- Hilbert space definition layer
+### Bfpt Systems -- Hilbert space definition
 
 `Bfpt` solver may be applied to any finite discrete one dimensional periodic systems.
 Any such system may be perceived as a chain made of replicas of a node subsystem.
@@ -263,7 +265,6 @@ with:
 ℋ₁ᶻ = Σ_i tau_z_coef τᶻ(i)
 ℋ₁⁻ = Σ_i tau_minus_coef τ⁻(i)
 ```
-and
 ```
 ℋ₁₂ = ℋ₁₂ᶻᶻ + ℋ₁₂ˣᶻ + ℋ₁₂ˣˣ
 ℋ₁₂ᶻᶻ = Σ_<ij> Pzz_coef (Pᶻ(i) Pᶻ(j))

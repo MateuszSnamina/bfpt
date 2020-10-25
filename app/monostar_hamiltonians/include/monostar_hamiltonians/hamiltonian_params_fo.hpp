@@ -6,7 +6,7 @@
 #include<string>
 
 /*
- * The below is for orbital hamiltonians defined for systems of `eg`-type orbitals
+ * The below is for orbital hamiltonians defined for systems of `e_g`-type orbitals
  * (where `eg` is a symbol of a irreducible representation
  *  of `Oh` point symmetry group).
  *
@@ -20,7 +20,7 @@
  * P⁺ = |+⟩⟨+|,         P⁻ = |-⟩⟨-|,
  *
  * where:
- *  |x⟩ and |z⟩ are shortcu notation of |x² - y²⟩ and |3z² - r²⟩,
+ *  |x⟩ and |z⟩ are shortcut notation of |x² - y²⟩ and |3z² - r²⟩,
  *  |+⟩ and |-⟩ denotes (|z⟩+|x⟩)/√2 and (|z⟩-|x⟩)/√2.
  *
  * The matrix representatrion of the projection operators

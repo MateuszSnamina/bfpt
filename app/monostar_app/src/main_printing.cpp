@@ -228,7 +228,7 @@ void print_theta_opt(const monostar_hamiltonians::HamiltonianParamsFo& hamiltoni
     std::cout << "[INFO   ] [THETA_OPT] Pᶻ, Pˣ [used orbital theta]              = "
               << (0.5 + 0.5 * std::cos(orbital_theta_to_use)) << ", "
               << (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << std::endl;
-    std::cout << "[INFO   ] [THETA_OPT] Pᶻᶻ, (Pᶻˣ+Pˣᶻ), Pˣˣ [used orbital theta] = "
+    std::cout << "[INFO   ] [THETA_OPT] Pᶻᶻ, Pᶻˣ+Pˣᶻ, Pˣˣ [used orbital theta]   = "
               << std::pow(0.5 + 0.5 * std::cos(orbital_theta_to_use), 2) << ", "
               << 2 * (0.5 + 0.5 * std::cos(orbital_theta_to_use)) * (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << ", "
               << std::pow(0.5 - 0.5 * std::cos(orbital_theta_to_use), 2) << std::endl;

@@ -418,7 +418,7 @@ utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_zz_in_ge_basi
 
 
 utility::Named<arma::cx_mat44> TwoSitesOrbitalNamedMatrices::get_P_zx_sum_P_xz_in_ge_basis(double orbital_theta) {
-    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta), "(Pᶻˣ+Pˣᶻ)");
+    return utility::Named<arma::cx_mat44>(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(orbital_theta), "Pᶻˣ+Pˣᶻ");
 }
 
 
