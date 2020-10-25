@@ -230,17 +230,17 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     template<typename ViewT>
     static size_t view_n_least_replication_shift(const ViewT& v) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::n_least_replication_shift(v);
+        return kstate_op_integral::n_least_replication_shift(v, 1);
     }
     template<typename ViewT>
     static size_t view_n_unique_shift(const ViewT& v) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::n_unique_shift(v);
+        return kstate_op_integral::n_unique_shift(v, 1);
     }
     template<typename ViewT>
     static size_t is_prolific(const ViewT& v, unsigned n_k) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::is_prolific(v, n_k);
+        return kstate_op_integral::is_prolific(v, 1, n_k);
     }
 };
 
