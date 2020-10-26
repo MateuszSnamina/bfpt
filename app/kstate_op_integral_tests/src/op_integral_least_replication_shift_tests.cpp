@@ -26,25 +26,39 @@ TEST(KstateOpIntegral, LeastReplicationShiftTest3) {
 }
 
 TEST(KstateOpIntegral, LeastReplicationShiftTest4) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b111111, 6};
+    EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 6), 1);
+}
+
+TEST(KstateOpIntegral, LeastReplicationShiftTest5) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b011101, 6};
+    EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 2), 3);
+}
+
+TEST(KstateOpIntegral, LeastReplicationShiftTest6) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b111111, 6};
+    EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 2), 1);
+}
+
+TEST(KstateOpIntegral, LeastReplicationShiftTest7) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b010101, 6};
     EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 1), 2);
 }
 
-TEST(KstateOpIntegral, LeastReplicationShiftTest5) {
+TEST(KstateOpIntegral, LeastReplicationShiftTest8) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b010101, 6};
     EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 2), 1);
 }
 
-TEST(KstateOpIntegral, LeastReplicationShiftTest6) {
+TEST(KstateOpIntegral, LeastReplicationShiftTest9) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b011011011011, 12};
     EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 1), 3);
 }
 
-TEST(KstateOpIntegral, LeastReplicationShiftTest7) {
+TEST(KstateOpIntegral, LeastReplicationShiftTest10) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b011011011011, 12};
     EXPECT_EQ(kstate_op_integral::n_least_replication_shift(b3, 2), 3);
 }
-
 
 TEST(KstateOpIntegral, NormFactor0) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b0{0b010011, 6};
@@ -111,6 +125,25 @@ TEST(KstateOpIntegral, IsProlificTest3) {
 }
 
 TEST(KstateOpIntegral, IsProlificTest4) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b111111, 6};
+    EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 0));
+}
+
+TEST(KstateOpIntegral, IsProlificTest5) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b011101, 6};
+    EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 0));
+    EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 1));
+    EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 2));
+}
+
+TEST(KstateOpIntegral, IsProlificTest6) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b111111, 6};
+    EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 0));
+    EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 1, 1));
+    EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 1, 2));
+}
+
+TEST(KstateOpIntegral, IsProlificTest7) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b010101, 6};
     EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 0));
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 1, 1));
@@ -120,14 +153,14 @@ TEST(KstateOpIntegral, IsProlificTest4) {
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 1, 5));
 }
 
-TEST(KstateOpIntegral, IsProlificTest5) {
+TEST(KstateOpIntegral, IsProlificTest8) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b010101, 6};
     EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 2, 0));
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 2, 1));
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 2, 2));
 }
 
-TEST(KstateOpIntegral, IsProlificTest6) {
+TEST(KstateOpIntegral, IsProlificTest9) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b011011011011, 12};
     EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 1, 0));
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 1, 1));
@@ -143,7 +176,7 @@ TEST(KstateOpIntegral, IsProlificTest6) {
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 1, 11));
 }
 
-TEST(KstateOpIntegral, IsProlificTest7) {
+TEST(KstateOpIntegral, IsProlificTest10) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b3{0b011011011011, 12};
     EXPECT_TRUE(kstate_op_integral::is_prolific(b3, 2, 0));
     EXPECT_FALSE(kstate_op_integral::is_prolific(b3, 2, 1));
