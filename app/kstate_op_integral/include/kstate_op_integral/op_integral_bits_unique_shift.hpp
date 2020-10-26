@@ -18,7 +18,7 @@ struct UniqueShiftReceipt {
     static_assert(std::is_arithmetic_v<_IntegralT>);
     static_assert(std::is_integral_v<_IntegralT>);
     static_assert(std::is_unsigned_v<_IntegralT>);
-    unsigned char n_roration; //expressed in site stride (not in bits) //TODO fix typo
+    unsigned char n_rotation;
     IntegralT buffer;
 };
 
@@ -32,10 +32,10 @@ UniqueShiftReceipt<typename IntegralBitsT::IntegralT> _n_unique_shift(IntegralBi
     UniqueShiftReceipt<typename IntegralBitsT::IntegralT> current_max{0, integral_bits.get_number()};
     {
         UniqueShiftReceipt<typename IntegralBitsT::IntegralT> proposed_max{0, integral_bits.get_number()};
-        while (proposed_max.n_roration + 1u < n_sites)
+        while (proposed_max.n_rotation + 1u < n_sites)
         {
             proposed_max.buffer = ::kstate_op_integral::raw::rotate(proposed_max.buffer, n_all_bits, n_bits_per_site);
-            proposed_max.n_roration++;
+            proposed_max.n_rotation++;
             if (current_max.buffer < proposed_max.buffer) {
                 current_max = proposed_max;
             }
@@ -58,7 +58,7 @@ unsigned char n_unique_shift(IntegralBitsT integral_bits, unsigned n_bits_per_si
     [[maybe_unused]] const auto n_all_bits = integral_bits.get_n_all_bits();
     assert(n_all_bits < 8 * sizeof(typename IntegralBitsT::IntegralT));
     assert(n_all_bits % n_bits_per_site == 0);
-    return _n_unique_shift(integral_bits, n_bits_per_site).n_roration;
+    return _n_unique_shift(integral_bits, n_bits_per_site).n_rotation;
 }
 
 }  // namespace kstate_op_integral

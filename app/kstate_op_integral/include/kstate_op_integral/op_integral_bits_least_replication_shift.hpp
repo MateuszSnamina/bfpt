@@ -6,8 +6,6 @@
 #include <cmath>
 #include <cassert>
 
-
-
 // #######################################################################
 // ## n_unique_shift                                                    ##
 // #######################################################################
@@ -22,8 +20,8 @@ size_t n_least_replication_shift(IntegralBitsT integral_bits, unsigned n_bits_pe
     assert(n_all_bits % n_bits_per_site == 0);
     const auto n_buffer = integral_bits.get_number();
     auto n2_buffer = integral_bits.get_number();
-    for (size_t _ = 1; _ < n_all_bits; _ += n_bits_per_site) {
-        n2_buffer = ::kstate_op_integral::raw::rotate(n2_buffer, n_all_bits, 1);
+    for (size_t _ = 1; _ < n_all_bits; _ ++) {
+        n2_buffer = ::kstate_op_integral::raw::rotate(n2_buffer, n_all_bits, n_bits_per_site);
         if (n_buffer == n2_buffer) {
             return _;
         }

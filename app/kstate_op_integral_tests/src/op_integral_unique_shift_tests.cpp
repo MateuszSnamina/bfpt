@@ -45,6 +45,16 @@ TEST(KstateOpIntegral, NUniqueShiftTest7) {
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1, 1), 9);
 }
 
+TEST(KstateOpIntegral, NUniqueShiftTest8) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6};
+    ASSERT_EQ(kstate_op_integral::n_unique_shift(b1, 1), 5);
+}
+
+TEST(KstateOpIntegral, NUniqueShiftTest9) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6}; // 1=b01 3=b11 2=b10
+    ASSERT_EQ(kstate_op_integral::n_unique_shift(b1, 2), 2);
+}
+
 TEST(KstateOpIntegral, MakeUniqueShiftTest0) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b1, 1};
     ASSERT_EQ(kstate_op_integral::make_unique_shift(b1, 1), 0b1);
@@ -83,4 +93,14 @@ TEST(KstateOpIntegral, MakeUniqueShiftTest6) {
 TEST(KstateOpIntegral, MakeUniqueShiftTest7) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b0110100110, 10};
     ASSERT_EQ(kstate_op_integral::make_unique_shift(b1, 1), 0b1101001100);
+}
+
+TEST(KstateOpIntegral, MakeUniqueShiftTest8) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6};
+    ASSERT_EQ(kstate_op_integral::make_unique_shift(b1, 1), 0b111100);
+}
+
+TEST(KstateOpIntegral, MakeUniqueShiftTest9) {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6}; // 1=b01 3=b11 2=b10
+    ASSERT_EQ(kstate_op_integral::make_unique_shift(b1, 2), 0b111001);
 }
