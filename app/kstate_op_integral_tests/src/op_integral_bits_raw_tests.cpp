@@ -35,80 +35,64 @@ TEST(KstateOpIntegralRaw, BitsRefined) {
 }
 
 TEST(KstateOpIntegralRaw, ExtractChunkNumber) {
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 0, 4), 0b1110);
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 1, 4), 0b0111);
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 2, 4), 0b1011);
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 3, 4), 0b0101);
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 4, 4), 0b0010);
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 5, 4), 0b1001);
-    ASSERT_EQ(kstate_op_integral::raw::extract_chunk_number<uint64_t>(0b1100101110, 6, 4), 0b1100);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 0, 4)), 0b1110);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 1, 4)), 0b0111);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 2, 4)), 0b1011);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 3, 4)), 0b0101);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 4, 4)), 0b0010);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 5, 4)), 0b1001);
+    ASSERT_EQ((kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(0b1100101110, 6, 4)), 0b1100);
 }
 
 TEST(KstateOpIntegralRaw, SetChunkNumber) {
     {
       uint64_t n = 0b0;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 0, 5, 0b10101);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 0, 5, 0b10101);
       ASSERT_EQ(n, 0b10101);
     }
     {
       uint64_t n = 0b0;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 0, 5, 0b01010);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 0, 5, 0b01010);
       ASSERT_EQ(n, 0b01010);
     }
     {
       uint64_t n = 0b111111111;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 0, 5, 0b10101);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 0, 5, 0b10101);
       ASSERT_EQ(n, 0b111110101);
     }
     {
       uint64_t n = 0b111111111;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 0, 5, 0b01010);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 0, 5, 0b01010);
       ASSERT_EQ(n, 0b111101010);
     }
     {
       uint64_t n = 0b0;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 1, 5, 0b10101);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 1, 5, 0b10101);
       ASSERT_EQ(n, 0b101010);
     }
     {
       uint64_t n = 0b0;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 1, 5, 0b01010);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 1, 5, 0b01010);
       ASSERT_EQ(n, 0b010100);
     }
     {
       uint64_t n = 0b111111111;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 1, 5, 0b10101);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 1, 5, 0b10101);
       ASSERT_EQ(n, 0b111101011);
     }
     {
       uint64_t n = 0b111111111;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 1, 5, 0b01010);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 1, 5, 0b01010);
       ASSERT_EQ(n, 0b111010101);
     }
     {
       //           0b9876543210
       //           0b-11010----
       uint64_t n = 0b1100101110;
-      kstate_op_integral::raw::set_chunk_number<uint64_t>(n, 4, 5, 0b11010);
+      kstate_op_integral::raw::set_chunk_number<uint64_t, unsigned>(n, 4, 5, 0b11010);
       ASSERT_EQ(n, 0b1110101110);
     }
 }
-
-
-//template <typename IntegralT>
-//void set_chunk_number(IntegralT& n, unsigned char idx_first_bit, unsigned char n_bits_in_number, unsigned n_chunk) noexcept {
-//    static_assert(std::is_arithmetic_v<IntegralT>);
-//    static_assert(std::is_integral_v<IntegralT>);
-//    static_assert(std::is_unsigned_v<IntegralT>);
-//    assert(n_bits_in_number + 1 < 8 * sizeof(unsigned));
-//    assert(idx_first_bit + n_bits_in_number < 8 * sizeof(IntegralT));
-//    const IntegralT mask = static_cast<IntegralT>((1u << n_bits_in_number) - 1) << idx_first_bit;
-//    n &= ~mask;
-//    n |= n_chunk << n_bits_in_number;
-//    //TODO tests!
-//}
-
-
 
 TEST(KstateOpIntegralRaw, ToBitsRange) {
     const auto r = kstate_op_integral::raw::integral_to_bits_range<uint64_t>(0b1100101110, 10);

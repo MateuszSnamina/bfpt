@@ -39,28 +39,36 @@ bool extract_bit(IntegralT n, unsigned char idx) noexcept {
     // template <typename IntegralT> auto integral_to_bits_range(IntegralT n, unsigned char n_all_bits) noexcept {
 }
 
-template <typename IntegralT>
+template <typename IntegralT, typename ChunkIntegralT>
 unsigned extract_chunk_number(IntegralT n, unsigned char idx_first_bit, unsigned char n_bits_in_number) noexcept {
     static_assert(std::is_arithmetic_v<IntegralT>);
     static_assert(std::is_integral_v<IntegralT>);
     static_assert(std::is_unsigned_v<IntegralT>);
-    assert(n_bits_in_number + 1u < 8 * sizeof(unsigned));
+    static_assert(std::is_arithmetic_v<ChunkIntegralT>);
+    static_assert(std::is_integral_v<ChunkIntegralT>);
+    static_assert(std::is_unsigned_v<ChunkIntegralT>);
+    static_assert(sizeof(ChunkIntegralT) <= sizeof(IntegralT));
+    assert(n_bits_in_number + 1u < 8 * sizeof(IntegralT));
     assert(idx_first_bit + n_bits_in_number < 8 * sizeof(IntegralT));
     const IntegralT mask = (static_cast<IntegralT>(1u) << n_bits_in_number) - static_cast<IntegralT>(1u);
-    const unsigned result = (n & (mask << idx_first_bit)) >> idx_first_bit;
-    return result;
+    const IntegralT result = (n & (mask << idx_first_bit)) >> idx_first_bit;
+    return static_cast<ChunkIntegralT>(result);
 }
 
-template <typename IntegralT>
-void set_chunk_number(IntegralT& n, unsigned char idx_first_bit, unsigned char n_bits_in_number, unsigned n_chunk) noexcept {
+template <typename IntegralT, typename ChunkIntegralT>
+void set_chunk_number(IntegralT& n, unsigned char idx_first_bit, unsigned char n_bits_in_chunk_number, ChunkIntegralT n_chunk) noexcept {
     static_assert(std::is_arithmetic_v<IntegralT>);
     static_assert(std::is_integral_v<IntegralT>);
     static_assert(std::is_unsigned_v<IntegralT>);
-    assert(n_bits_in_number + 1u < 8 * sizeof(unsigned));
-    assert(idx_first_bit + n_bits_in_number < 8 * sizeof(IntegralT));
-    const IntegralT mask = (static_cast<IntegralT>(1u) << n_bits_in_number) - static_cast<IntegralT>(1u);
+    static_assert(std::is_arithmetic_v<ChunkIntegralT>);
+    static_assert(std::is_integral_v<ChunkIntegralT>);
+    static_assert(std::is_unsigned_v<ChunkIntegralT>);
+    static_assert(sizeof(ChunkIntegralT) <= sizeof(IntegralT));
+    assert(n_bits_in_chunk_number + 1u < 8 * sizeof(IntegralT));
+    assert(idx_first_bit + n_bits_in_chunk_number < 8 * sizeof(IntegralT));
+    const IntegralT mask = (static_cast<IntegralT>(1u) << n_bits_in_chunk_number) - static_cast<IntegralT>(1u);
     n &= ~(mask << idx_first_bit);
-    n |= (n_chunk << idx_first_bit);
+    n |= (static_cast<IntegralT>(n_chunk) << idx_first_bit);
 }
 
 template <typename IntegralT>
