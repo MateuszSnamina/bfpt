@@ -106,10 +106,13 @@ auto integral_to_bits_range(IntegralT n, unsigned char n_all_bits) noexcept {
     static_assert(std::is_integral_v<IntegralT>);
     static_assert(std::is_unsigned_v<IntegralT>);
     assert(n_all_bits < 8 * sizeof(IntegralT));
-    const auto r = boost::irange(static_cast<unsigned char>(0u), n_all_bits) | boost::adaptors::transformed(
-                [n](unsigned char idx_bit) -> bool {return extract_bit(n, idx_bit);}
-    );
-    return r;
+    const auto transformation = [n](unsigned char idx_bit) -> bool {
+        return extract_bit(n, idx_bit);
+    };
+    const auto result_range =
+            boost::irange(static_cast<unsigned char>(0u), n_all_bits) |
+            boost::adaptors::transformed(transformation);
+    return result_range;
 }
 
 template <typename IntegralT, typename RangeT>
@@ -133,5 +136,52 @@ IntegralT integral_from_bits_range(RangeT r) noexcept {
     }
     return result;
 }
+
+template <typename IntegralT, typename ChunkIntegralT>
+auto integral_to_chunk_numbers_range(IntegralT n, unsigned char n_all_bits, unsigned char n_bits_in_chunk_number) noexcept {
+    static_assert(std::is_arithmetic_v<IntegralT>);
+    static_assert(std::is_integral_v<IntegralT>);
+    static_assert(std::is_unsigned_v<IntegralT>);
+    static_assert(std::is_arithmetic_v<ChunkIntegralT>);
+    static_assert(std::is_integral_v<ChunkIntegralT>);
+    static_assert(std::is_unsigned_v<ChunkIntegralT>);
+    static_assert(sizeof(ChunkIntegralT) <= sizeof(IntegralT));
+    assert(n_all_bits < 8 * sizeof(IntegralT));
+    assert(n_bits_in_chunk_number != 0);
+    assert(n_all_bits % n_bits_in_chunk_number == 0);
+    const auto transformation = [n, n_bits_in_chunk_number](unsigned char idx_bit) -> ChunkIntegralT {
+        return extract_chunk_number<IntegralT, ChunkIntegralT>(n, idx_bit, n_bits_in_chunk_number);
+    };
+    const auto result_range =
+            boost::irange(static_cast<unsigned char>(0u), n_all_bits, n_bits_in_chunk_number) |
+            boost::adaptors::transformed(transformation);
+    return result_range;
+}
+
+template <typename IntegralT, typename ChunkIntegralT, typename RangeT>
+IntegralT integral_from_chunk_numbers_range(RangeT chunk_numbers_range, unsigned char n_bits_in_chunk_number) noexcept {
+    static_assert(std::is_arithmetic_v<IntegralT>);
+    static_assert(std::is_integral_v<IntegralT>);
+    static_assert(std::is_unsigned_v<IntegralT>);
+    static_assert(std::is_arithmetic_v<ChunkIntegralT>);
+    static_assert(std::is_integral_v<ChunkIntegralT>);
+    static_assert(std::is_unsigned_v<ChunkIntegralT>);
+    static_assert(sizeof(ChunkIntegralT) <= sizeof(IntegralT));
+    using IteratorT = typename boost::range_iterator<RangeT>::type;
+    using DerefIteratorT = decltype(*std::declval<IteratorT>());//TODO make it better. boost::iterator_value<> ??
+    using RemoveCvRefDerefIteratorT = std::remove_cv_t<std::remove_reference_t<DerefIteratorT>>; //  std::remove_cvref_t<DerefIteratorIntegralT>
+    static_assert(std::is_same_v<RemoveCvRefDerefIteratorT, ChunkIntegralT>);
+    [[maybe_unused]] const unsigned char n_chunk_numbers = boost::size(chunk_numbers_range);
+    assert(n_bits_in_chunk_number != 0);
+    assert(n_chunk_numbers * n_bits_in_chunk_number < 8 * sizeof(IntegralT));
+    IntegralT result = static_cast<IntegralT>(0u);
+    unsigned char idx_first_bit = 0;
+    for (ChunkIntegralT n_chunk : chunk_numbers_range) {
+        set_chunk_number<IntegralT, ChunkIntegralT>(result, idx_first_bit, n_bits_in_chunk_number, n_chunk);
+        idx_first_bit += n_bits_in_chunk_number;
+    }
+    return result;
+}
+
 
 } // end of namespace kstate_op_integral::raw
