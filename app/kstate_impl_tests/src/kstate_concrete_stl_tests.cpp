@@ -1,4 +1,4 @@
-#include <kstate_tests/site_state_trait_for_int.hpp>
+#include <kstate_impl_tests/site_state_trait_for_int.hpp>
 
 #include <kstate_op_range/op_range_unique_shift.hpp>
 
@@ -13,7 +13,6 @@
 #include <gtest/gtest.h>
 
 using kstate_impl::ctr_from_range;
-
 
 TEST(DynamicStlKstate, ConstructorFromRange) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
@@ -52,7 +51,6 @@ TEST(DynamicStlKstate, CompareTranlationalEqualityTest0) {
     const KstateT k13(v13, ctr_from_range);
     const KstateT k14(v14, ctr_from_range);
     const KstateT k15(v15, ctr_from_range);
-    // ---
     //ASSERT_FALSE(k1.compare_translational_equality_range(v2)); //TODO rethink!
     ASSERT_TRUE(k1.compare_translational_equality_range(v1));
     ASSERT_EQ(*k1.compare_translational_equality_range(v1), 0);

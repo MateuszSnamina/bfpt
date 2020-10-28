@@ -30,7 +30,7 @@ using MonostarDynamicIntegral64Kstate = kstate_impl::DynamicTwoLevelIntegral64Ks
 
 //using MonostarKstate = MonostarDynamicStlKstate;
 //using MonostarKstate = StaticStlMonostarKstate<20>;
-using MonostarKstate = MonostarDynamicIntegral64Kstate; //TODO make it work
+using MonostarKstate = MonostarDynamicIntegral64Kstate;
 
 }  // namespace monostar_system
 

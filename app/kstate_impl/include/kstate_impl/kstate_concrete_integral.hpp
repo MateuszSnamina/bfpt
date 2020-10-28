@@ -35,11 +35,11 @@ namespace kstate_impl::helpers {
 
 constexpr bool bool_from_unsiged(unsigned u) {
     return (u ? true : false);
-}
+}//TODO remove
 
 constexpr unsigned bool_to_unsigned(bool b) {
     return (b ? 1u : 0u);
-}
+}//TODO remove
 
 template<typename SiteStateTraitT, typename IntegralT>
 auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>& integral_bits) noexcept {
@@ -48,8 +48,7 @@ auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::Integ
     static_assert(SiteStateTraitT::site_basis_dim() == 2);
     const IntegralT integral_number = integral_bits.get_number();
     const unsigned char n_all_bits = integral_bits.get_n_all_bits();
-    return kstate_op_integral::raw::integral_to_bits_range<IntegralT>(integral_number, n_all_bits)
-            | boost::adaptors::transformed(bool_to_unsigned)
+    return kstate_op_integral::raw::integral_to_chunk_numbers_range<IntegralT, unsigned>(integral_number, n_all_bits, 1u)
             | boost::adaptors::transformed(SiteStateTraitT::from_index);
 }
 
@@ -62,10 +61,9 @@ integral_bits_from_two_level_site_state_range(RangeT r) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     static_assert(SiteStateTraitT::site_basis_dim() == 2);
-    const auto bits_range = r
-            | boost::adaptors::transformed(SiteStateTraitT::get_index)
-            | boost::adaptors::transformed(bool_from_unsiged);
-    const IntegralT integral_number = kstate_op_integral::raw::integral_from_bits_range<IntegralT>(bits_range);
+    const auto chunk_numbers_range = r
+            | boost::adaptors::transformed(SiteStateTraitT::get_index);
+    const IntegralT integral_number = kstate_op_integral::raw::integral_from_chunk_numbers_range<IntegralT, unsigned>(chunk_numbers_range, 1u);
     const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r));
     return kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>{integral_number, n_all_bits};
 }

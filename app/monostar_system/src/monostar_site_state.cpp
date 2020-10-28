@@ -1,12 +1,14 @@
-#include <monostar_system/monostar_site_state.hpp>
+//#include <monostar_system/monostar_site_state.hpp>
 
-// #######################################################################
-// ## MonostarSiteState                                                 ##
-// #######################################################################
+//// #######################################################################
+//// ## MonostarSiteState                                                 ##
+//// #######################################################################
 
-namespace monostar_system {
+//namespace monostar_system {
 
-const MonostarSiteState gs{false};
-const MonostarSiteState es{true};
+//const MonostarSiteState gs{false};
+//const MonostarSiteState es{true};
 
-}  // namespace monostar_system
+//}  // namespace monostar_system
+
+//TODO remove file
