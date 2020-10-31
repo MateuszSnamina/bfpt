@@ -33,37 +33,34 @@
 
 namespace kstate_impl::helpers {
 
-constexpr bool bool_from_unsiged(unsigned u) {
-    return (u ? true : false);
-}//TODO remove
-
-constexpr unsigned bool_to_unsigned(bool b) {
-    return (b ? 1u : 0u);
-}//TODO remove
-
 template<typename SiteStateTraitT, typename IntegralT>
-auto integral_bits_to_two_level_site_state_range(const kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>& integral_bits) noexcept {
+auto integral_bits_to_site_state_range(const kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>& integral_bits, unsigned char n_bits_per_site) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
-    static_assert(SiteStateTraitT::site_basis_dim() == 2);
+    //static_assert(SiteStateTraitT::site_basis_dim() == 2);
     const IntegralT integral_number = integral_bits.get_number();
     const unsigned char n_all_bits = integral_bits.get_n_all_bits();
-    return kstate_op_integral::raw::integral_to_chunk_numbers_range<IntegralT, unsigned>(integral_number, n_all_bits, 1u)
+    return kstate_op_integral::raw::integral_to_chunk_numbers_range<IntegralT, unsigned>(integral_number, n_all_bits, n_bits_per_site)
             | boost::adaptors::transformed(SiteStateTraitT::from_index);
 }
 
 template<typename SiteStateTraitT, typename IntegralT>
-using IntegralNumberToTwoLevelSiteStateRangeResult = decltype(integral_bits_to_two_level_site_state_range<SiteStateTraitT, IntegralT>(std::declval<kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>>()));
+using IntegralNumberToSiteStateRangeResult = decltype(
+integral_bits_to_site_state_range<SiteStateTraitT, IntegralT>(
+std::declval<kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>>(),
+std::declval<unsigned char>()
+)
+);
 
 template<typename SiteStateTraitT, typename IntegralT, typename RangeT>
 kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>
-integral_bits_from_two_level_site_state_range(RangeT r) noexcept {
+integral_bits_from_site_state_range(RangeT r, unsigned char n_bits_per_site) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
-    static_assert(SiteStateTraitT::site_basis_dim() == 2);
+    //static_assert(SiteStateTraitT::site_basis_dim() == 2);
     const auto chunk_numbers_range = r
             | boost::adaptors::transformed(SiteStateTraitT::get_index);
-    const IntegralT integral_number = kstate_op_integral::raw::integral_from_chunk_numbers_range<IntegralT, unsigned>(chunk_numbers_range, 1u);
+    const IntegralT integral_number = kstate_op_integral::raw::integral_from_chunk_numbers_range<IntegralT, unsigned>(chunk_numbers_range, n_bits_per_site);
     const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r));
     return kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>{integral_number, n_all_bits};
 }
@@ -71,85 +68,83 @@ integral_bits_from_two_level_site_state_range(RangeT r) noexcept {
 } // end of namespace kstate_impl
 
 // #######################################################################
-// ## DynamicTwoLevelIntegralKstate                                     ##
+// ## DynamicIntegral64Kstate                                           ##
 // #######################################################################
 
 namespace kstate_impl {
 
 template<typename SiteStateTraitT>
-using DynamicTwoLevelIntegral64KstateRange = helpers::IntegralNumberToTwoLevelSiteStateRangeResult<SiteStateTraitT, uint64_t>;
+using DynamicIntegral64KstateRange = helpers::IntegralNumberToSiteStateRangeResult<SiteStateTraitT, uint64_t>;
 
-template <typename _SiteStateTraitT>
-class DynamicTwoLevelIntegral64Kstate final : public Kstate<_SiteStateTraitT, DynamicTwoLevelIntegral64KstateRange<_SiteStateTraitT>> {
+template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
+class DynamicIntegral64Kstate final : public Kstate<_SiteStateTraitT, DynamicIntegral64KstateRange<_SiteStateTraitT>> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
-    static_assert(_SiteStateTraitT::site_basis_dim() == 2);
+    static_assert(_n_bits_per_site != 0);
 public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
     using BufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
-    using RangeT = DynamicTwoLevelIntegral64KstateRange<SiteStateTraitT>;
-    using ConstRangeT = DynamicTwoLevelIntegral64KstateRange<SiteStateTraitT>;
-
+    using RangeT = DynamicIntegral64KstateRange<SiteStateTraitT>;
+    using ConstRangeT = DynamicIntegral64KstateRange<SiteStateTraitT>;
+    constexpr static unsigned char n_bits_per_site = _n_bits_per_site;
 public:
-    DynamicTwoLevelIntegral64Kstate(BufferT, CtrFromBuffer);
+    DynamicIntegral64Kstate(BufferT, CtrFromBuffer);
     template <typename OtherRangeT>
-    DynamicTwoLevelIntegral64Kstate(OtherRangeT, CtrFromRange);
-
+    DynamicIntegral64Kstate(OtherRangeT, CtrFromRange);
 public:
     ConstRangeT to_range() const noexcept override;
     size_t n_sites() const noexcept override;
-
-    //protected://TODO think
     const BufferT _integral_bits;
 };
 
 // ***********************************************************************
 
-template <typename _SiteStateTraitT>
-DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(
-        DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::BufferT integral_bits,
+template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
+DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::DynamicIntegral64Kstate(
+        DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::BufferT integral_bits,
         CtrFromBuffer) :
     _integral_bits(integral_bits) {
+    assert(_integral_bits.get_n_all_bits() % n_bits_per_site == 0);
 }
 
 
-template <typename _SiteStateTraitT>
+template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
 template <typename OtherRangeT>
-DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::DynamicTwoLevelIntegral64Kstate(OtherRangeT r, CtrFromRange) :
-    _integral_bits(helpers::integral_bits_from_two_level_site_state_range<SiteStateTraitT, uint64_t, OtherRangeT>(r)) {
+DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::DynamicIntegral64Kstate(OtherRangeT r, CtrFromRange) :
+    _integral_bits(helpers::integral_bits_from_site_state_range<SiteStateTraitT, uint64_t, OtherRangeT>(r, n_bits_per_site)) {
 }
 
 // ***********************************************************************
 
-template <typename _SiteStateTraitT>
-typename DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::ConstRangeT
-DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::to_range() const noexcept {
-    return helpers::integral_bits_to_two_level_site_state_range<SiteStateTraitT, uint64_t>(_integral_bits);
+template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
+typename DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::ConstRangeT
+DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::to_range() const noexcept {
+    return helpers::integral_bits_to_site_state_range<SiteStateTraitT, uint64_t>(_integral_bits, n_bits_per_site);
 }
 
 
-template <typename _SiteStateTraitT>
+template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
 size_t
-DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>::n_sites() const noexcept {
+DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::n_sites() const noexcept {
     return _integral_bits.get_n_all_bits();
 }
 
 } // end of namespace kstate_impl
 
 // #######################################################################
-// ## TraitsFor kstate_impl::DynamicTwoLevelIntegral64Kstate            ##
+// ## TraitsFor kstate_impl::DynamicIntegral64Kstate                    ##
 // #######################################################################
 
 namespace kstate_trait {
 
-template<typename _SiteStateTraitT>
-struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>> {
+template<typename _SiteStateTraitT, unsigned char _n_bits_per_site>
+struct TraitKstate<kstate_impl::DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
     // helper types:
     using SiteStateTraitT = _SiteStateTraitT;
-    using KstateT = kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT>;
+    using KstateT = kstate_impl::DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>;
     using ConstRangeT = typename KstateT::ConstRangeT;
     // function being the public API:
     static size_t n_sites(const KstateT& kstate) noexcept {
@@ -196,8 +191,10 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
     template<typename ViewT>
     static typename SiteStateTraitT::SiteStateT view_n_th_site_state(const ViewT& v, unsigned idx) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        const bool site_bit = kstate_op_integral::raw::extract_bit(v.get_number() , idx);
-        const unsigned site_unsigned = kstate_impl::helpers::bool_to_unsigned(site_bit);
+        const unsigned site_unsigned = kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(
+                    v.get_number(),
+                    idx * KstateT::n_bits_per_site,
+                    KstateT::n_bits_per_site);//TODO check!
         const typename SiteStateTraitT::SiteStateT site_state = SiteStateTraitT::from_index(site_unsigned);
         return site_state;
     }
@@ -214,31 +211,31 @@ struct TraitKstate<kstate_impl::DynamicTwoLevelIntegral64Kstate<_SiteStateTraitT
         return kstate_op_integral::compare_equality(v1, v2);
     }
     template<typename ViewT>
-    static kstate_op_integral::IntegralBitsRefinedView<ViewT, SiteStateTraitT>
+    static kstate_op_integral::IntegralBitsRefinedView<ViewT, SiteStateTraitT, KstateT::n_bits_per_site>
     refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::IntegralBitsRefinedView<ViewT, SiteStateTraitT>{v, h};
+        return kstate_op_integral::IntegralBitsRefinedView<ViewT, SiteStateTraitT, KstateT::n_bits_per_site>{v, h};
     }
     template<typename ViewT>
-    static kstate_op_integral::IntegralBitsRotatedView<ViewT>
+    static kstate_op_integral::IntegralBitsRotatedView<ViewT, KstateT::n_bits_per_site>
     rotated_view(const ViewT& v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::IntegralBitsRotatedView<ViewT>{v, h};
+        return kstate_op_integral::IntegralBitsRotatedView<ViewT, KstateT::n_bits_per_site>{v, h};
     }
     template<typename ViewT>
     static size_t view_n_least_replication_shift(const ViewT& v) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::n_least_replication_shift(v, 1);
+        return kstate_op_integral::n_least_replication_shift(v, KstateT::n_bits_per_site);
     }
     template<typename ViewT>
     static size_t view_n_unique_shift(const ViewT& v) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::n_unique_shift(v, 1);
+        return kstate_op_integral::n_unique_shift(v, KstateT::n_bits_per_site);
     }
     template<typename ViewT>
     static size_t is_prolific(const ViewT& v, unsigned n_k) noexcept {
         static_assert(kstate_op_integral::IsIntegralBits<ViewT>::value);
-        return kstate_op_integral::is_prolific(v, 1, n_k);
+        return kstate_op_integral::is_prolific(v, KstateT::n_bits_per_site, n_k);
     }
 };
 

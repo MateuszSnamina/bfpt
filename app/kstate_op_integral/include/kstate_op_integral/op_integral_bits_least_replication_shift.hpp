@@ -22,7 +22,7 @@ size_t n_least_replication_shift(IntegralBitsT integral_bits, unsigned n_bits_pe
     auto n_rotated_buffer = integral_bits.get_number();
     size_t result = 1;
     for (size_t _ = n_bits_per_site; _ < n_all_bits; _ += n_bits_per_site) {
-        n_rotated_buffer = ::kstate_op_integral::raw::rotate(n_rotated_buffer, n_all_bits, n_bits_per_site);
+        n_rotated_buffer = ::kstate_op_integral::raw::rotate_bit(n_rotated_buffer, n_all_bits, n_bits_per_site);
         if (n_buffer == n_rotated_buffer) {
             break;
         }

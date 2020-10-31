@@ -44,7 +44,7 @@ std::optional<size_t> compare_translational_equality(IntegralBits1T integral_bit
         if (n1_buffer == n2_buffer) {
             return i;
         }
-        n2_buffer = ::kstate_op_integral::raw::rotate(n2_buffer, n_all_bits, 1);
+        n2_buffer = ::kstate_op_integral::raw::rotate_bit(n2_buffer, n_all_bits, 1);
     }
     return std::nullopt;
 }

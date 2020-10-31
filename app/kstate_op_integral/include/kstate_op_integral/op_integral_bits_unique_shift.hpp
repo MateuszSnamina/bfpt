@@ -34,7 +34,7 @@ UniqueShiftReceipt<typename IntegralBitsT::IntegralT> _n_unique_shift(IntegralBi
         UniqueShiftReceipt<typename IntegralBitsT::IntegralT> proposed_max{0, integral_bits.get_number()};
         while (proposed_max.n_rotation + 1u < n_sites)
         {
-            proposed_max.buffer = ::kstate_op_integral::raw::rotate(proposed_max.buffer, n_all_bits, n_bits_per_site);
+            proposed_max.buffer = ::kstate_op_integral::raw::rotate_bit(proposed_max.buffer, n_all_bits, n_bits_per_site);
             proposed_max.n_rotation++;
             if (current_max.buffer < proposed_max.buffer) {
                 current_max = proposed_max;

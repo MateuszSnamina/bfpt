@@ -18,10 +18,10 @@ using MonostarDynamicStlKstate = kstate_impl::DynamicStlKstate<MonostarSiteState
 template<size_t N>
 using StaticStlMonostarKstate = kstate_impl::StaticStlKstate<MonostarSiteStateTrait, N>;
 
-using MonostarDynamicIntegral64Kstate = kstate_impl::DynamicTwoLevelIntegral64Kstate<MonostarSiteStateTrait>;
+using MonostarDynamicIntegral64Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1u>;
 
 //template<size_t N>
-//using StaticIntegralMonostarKstate = kstate_impl::StaticTwoLevelIntegral64Kstate<MonostarSiteStateTrait, N>;
+//using StaticIntegralMonostarKstate = kstate_impl::StaticTwoLevelIntegral64Kstate<MonostarSiteStateTrait, N, 1u>;
 // ^^^^ TODO: UNCOMMENT WHEN IT WILL BE IMPLEMENTED
 
 /*
