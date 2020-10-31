@@ -136,16 +136,19 @@ TEST(DynamicIntegralKstate, ConstructorFromRange7) {
     EXPECT_TRUE(boost::equal(k1.to_range(), v1));
 }
 
+TEST(DynamicIntegralKstate, ConstructorFromRange8) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 5> v1 = {MySiteState(14), MySiteState(12), MySiteState(13), MySiteState(13), MySiteState(14)};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 5);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 0), MySiteState(14));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 1), MySiteState(12));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 2), MySiteState(13));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 3), MySiteState(13));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 4), MySiteState(14));
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
 
-
-
-//TEST(DynamicIntegralKstate, ConstructorFromRange) {
-//    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1>;
-//    const std::array<MonostarSiteState, 6> v1 = {gs, gs, gs, gs, gs, gs};
-//    const Kstate k1(v1, ctr_from_range);
-////    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
-////    EXPECT_EQ(k1.n_sites(), 6);
-//}
 
 //TEST(DynamicIntegralKstate, CompareEqualityTest0) {
 //    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
@@ -224,6 +227,42 @@ TEST(DynamicIntegralKstate, ConstructorFromRange7) {
 //    ASSERT_TRUE(k1.compare_translational_equality_kstate(k15));
 //    ASSERT_EQ(*k1.compare_translational_equality_kstate(k15), 5);
 //}
+
+TEST(DynamicIntegralKstate, LeastReplicationShiftTest0) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 6> v1 = {MySiteState(14), MySiteState(14), MySiteState(14), MySiteState(14), MySiteState(14), MySiteState(14)};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    ASSERT_TRUE(boost::equal(k1.to_range(), v1));
+    EXPECT_EQ(k1.n_least_replication_shift(), 1);
+}
+
+TEST(DynamicIntegralKstate, LeastReplicationShiftTest1) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 6> v1 = {MySiteState(14), MySiteState(12), MySiteState(13), MySiteState(14), MySiteState(12), MySiteState(13)};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    ASSERT_TRUE(boost::equal(k1.to_range(), v1));
+    EXPECT_EQ(k1.n_least_replication_shift(), 3);
+}
+
+TEST(DynamicIntegralKstate, LeastReplicationShiftTest2) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 6> v1 = {MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(12)};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    ASSERT_TRUE(boost::equal(k1.to_range(), v1));
+    EXPECT_EQ(k1.n_least_replication_shift(), 2);
+}
+
+TEST(DynamicIntegralKstate, LeastReplicationShiftTest3) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 6> v1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    ASSERT_TRUE(boost::equal(k1.to_range(), v1));
+    EXPECT_EQ(k1.n_least_replication_shift(), 6);
+}
 
 //TEST(DynamicIntegralKstate, LeastReplicationShiftTest0) {
 //    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
