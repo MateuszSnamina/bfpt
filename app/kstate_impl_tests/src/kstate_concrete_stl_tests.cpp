@@ -207,7 +207,7 @@ TEST(DynamicStlKstate, ToStrTest1) {
 // ## UniqueDynamicStlKstate                                            ##
 // #######################################################################
 
-TEST(DynamicUniqueKstate, CtrTest0) {
+TEST(DynamicUniqueStlKstate, CtrTest0) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 1> v2 = {11};
@@ -215,7 +215,7 @@ TEST(DynamicUniqueKstate, CtrTest0) {
     EXPECT_EQ(k2.to_str(), "⦃11⦄");
 }
 
-TEST(DynamicUniqueKstate, CtrTest1) {
+TEST(DynamicUniqueStlKstate, CtrTest1) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 2> v2 = {11, 12};
@@ -223,7 +223,7 @@ TEST(DynamicUniqueKstate, CtrTest1) {
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
 }
 
-TEST(DynamicUniqueKstate, CtrTest2) {
+TEST(DynamicUniqueStlKstate, CtrTest2) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 2> v2 = {12, 11};
@@ -231,7 +231,7 @@ TEST(DynamicUniqueKstate, CtrTest2) {
     EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
 }
 
-TEST(DynamicUniqueKstate, CtrTest3) {
+TEST(DynamicUniqueStlKstate, CtrTest3) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};

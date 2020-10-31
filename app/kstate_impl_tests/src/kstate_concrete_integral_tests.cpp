@@ -1,10 +1,13 @@
 #include <kstate_impl_tests/site_state_trait_for_monostar.hpp>
+#include <kstate_impl_tests/site_state_trait_for_int.hpp>
+#include <kstate_impl_tests/site_state_trait_for_my_site.h>
 
 #include <kstate_impl/kstate_concrete_integral.hpp>
 
 //#include <boost/range/algorithm.hpp>
 
 #include <array>
+#include<iterator> //TODO remove
 
 #include <gtest/gtest.h>
 
@@ -32,17 +35,117 @@ TEST(DynamicIntegralKstate, SiteStateRangeToIntegral) {
     EXPECT_EQ(integra_bits.get_number() , 0b11001);
 }
 
-// ****************************
-// ** TESTS  ******************
-// ****************************
+// ***************************************************
+// ** DynamicIntegralKstate -- one bit per site     **
+// ***************************************************
 
-TEST(DynamicIntegralKstate, ConstructorFromRange) {
+TEST(DynamicIntegralKstate, ConstructorFromRange0) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1>;
+    const std::array<MonostarSiteState, 0> v1;
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 0);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+TEST(DynamicIntegralKstate, ConstructorFromRange1) {
     using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1>;
     const std::array<MonostarSiteState, 6> v1 = {gs, gs, gs, gs, gs, gs};
     const Kstate k1(v1, ctr_from_range);
-//    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
-//    EXPECT_EQ(k1.n_sites(), 6);
+    ASSERT_EQ(k1.n_sites(), 6);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 0), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 1), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 2), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 3), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 4), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 5), gs);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
 }
+
+TEST(DynamicIntegralKstate, ConstructorFromRange2) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1>;
+    const std::array<MonostarSiteState, 6> v1 = {gs, es, es, gs, es, gs};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 0), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 1), es);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 2), es);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 3), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 4), es);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 5), gs);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+// ***************************************************
+// ** DynamicIntegralKstate -- three bits per site  **
+// ***************************************************
+
+TEST(DynamicIntegralKstate, ConstructorFromRange3) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 3>;
+    const std::array<MonostarSiteState, 0> v1;
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 0);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+TEST(DynamicIntegralKstate, ConstructorFromRange4) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 3>;
+    const std::array<MonostarSiteState, 6> v1 = {gs, gs, gs, gs, gs, gs};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 0), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 1), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 2), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 3), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 4), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 5), gs);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+TEST(DynamicIntegralKstate, ConstructorFromRange5) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 3>;
+    const std::array<MonostarSiteState, 6> v1 = {gs, es, es, gs, es, gs};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 6);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 0), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 1), es);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 2), es);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 3), gs);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 4), es);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 5), gs);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+TEST(DynamicIntegralKstate, ConstructorFromRange6) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 0> v1;
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 0);
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+TEST(DynamicIntegralKstate, ConstructorFromRange7) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3>;
+    const std::array<MySiteState, 5> v1 = {MySiteState(12), MySiteState(12), MySiteState(12), MySiteState(12), MySiteState(12)};
+    const Kstate k1(v1, ctr_from_range);
+    ASSERT_EQ(k1.n_sites(), 5);
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 0), MySiteState(12));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 1), MySiteState(12));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 2), MySiteState(12));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 3), MySiteState(12));
+    EXPECT_EQ(*std::next(std::begin(k1.to_range()), 4), MySiteState(12));
+    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+}
+
+
+
+
+//TEST(DynamicIntegralKstate, ConstructorFromRange) {
+//    using Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1>;
+//    const std::array<MonostarSiteState, 6> v1 = {gs, gs, gs, gs, gs, gs};
+//    const Kstate k1(v1, ctr_from_range);
+////    EXPECT_TRUE(boost::equal(k1.to_range(), v1));
+////    EXPECT_EQ(k1.n_sites(), 6);
+//}
 
 //TEST(DynamicIntegralKstate, CompareEqualityTest0) {
 //    using SiteStateTrait = kstate_trait::TraitSiteState<int>;

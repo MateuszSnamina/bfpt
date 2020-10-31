@@ -61,7 +61,7 @@ integral_bits_from_site_state_range(RangeT r, unsigned char n_bits_per_site) noe
     const auto chunk_numbers_range = r
             | boost::adaptors::transformed(SiteStateTraitT::get_index);
     const IntegralT integral_number = kstate_op_integral::raw::integral_from_chunk_numbers_range<IntegralT, unsigned>(chunk_numbers_range, n_bits_per_site);
-    const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r));
+    const unsigned char n_all_bits = static_cast<unsigned char>(boost::size(r)) * n_bits_per_site;
     return kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>{integral_number, n_all_bits};
 }
 
@@ -127,7 +127,7 @@ DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::to_range() const no
 template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
 size_t
 DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::n_sites() const noexcept {
-    return _integral_bits.get_n_all_bits();
+    return _integral_bits.get_n_all_bits() / n_bits_per_site;
 }
 
 } // end of namespace kstate_impl
