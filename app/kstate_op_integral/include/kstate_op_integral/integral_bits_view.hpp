@@ -58,10 +58,6 @@ struct IntegralBitsRotatedView {
     IntegralT get_number() const noexcept {
         const IntegralT underlying_value = integral_bits.get_number();
         const unsigned char n_all_bits = integral_bits.get_n_all_bits();
-        //        const IntegralT refined_value = kstate_op_integral::raw::rotate_bit(
-        //                    underlying_value,
-        //                    integral_bits.get_n_all_bits(),
-        //                    h.n); //OLD
         const unsigned char idx_pivot_chunk_number = h.n;
         const unsigned char n_bits_in_chunk_number = n_bits_per_site;
         const IntegralT refined_value = kstate_op_integral::raw::rotate_chunk_number(

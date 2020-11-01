@@ -104,7 +104,7 @@ TEST(DynamicStlKstate, NormFactor0) {
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
     const KstateT k1(v1, ctr_from_range);
-    double expected_norm = 1.0 / std::sqrt(6);
+    const double expected_norm = 1.0 / std::sqrt(6);
     EXPECT_DOUBLE_EQ(k1.norm_factor(), expected_norm);
 }
 
@@ -113,7 +113,7 @@ TEST(DynamicStlKstate, NormFactor1) {
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 6> v2 = {11, 12, 13, 11, 12, 13};
     const KstateT k2(v2, ctr_from_range);
-    double expected_norm = 1.0 / std::sqrt(3) / 2;
+    const double expected_norm = 1.0 / std::sqrt(3) / 2;
     EXPECT_DOUBLE_EQ(k2.norm_factor(), expected_norm);
 }
 
@@ -122,7 +122,7 @@ TEST(DynamicStlKstate, NormFactor2) {
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 6> v3 = {11, 12, 11, 12, 11, 12};
     const KstateT k3(v3, ctr_from_range);
-    double expected_norm = 1.0 / std::sqrt(2) / 3;
+    const double expected_norm = 1.0 / std::sqrt(2) / 3;
     EXPECT_DOUBLE_EQ(k3.norm_factor(), expected_norm);
 }
 
@@ -131,7 +131,7 @@ TEST(DynamicStlKstate, NormFactor3) {
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 6> v4 = {11, 11, 11, 11, 11, 11};
     const KstateT k4(v4, ctr_from_range);
-    double expected_norm = 1.0 / 6.0;
+    const double expected_norm = 1.0 / 6.0;
     EXPECT_DOUBLE_EQ(k4.norm_factor(), expected_norm);
 }
 
