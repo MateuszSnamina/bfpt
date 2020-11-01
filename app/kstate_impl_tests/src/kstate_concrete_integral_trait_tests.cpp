@@ -12,7 +12,7 @@ TEST(DynamicIntegralKstateTrait, Test0) {
     using KstateTrait = kstate_trait::TraitKstate<Kstate>;
     const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
     // before unique shift: {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
-    // after  unique shift: {MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12), MySiteState(14)};
+    // after unique shift:  {MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12), MySiteState(14)};
     const auto kstate_1 = KstateTrait::from_range(array_1);
     ASSERT_TRUE(boost::equal(kstate_1.to_range(), array_1));
     const auto view_1 = KstateTrait::to_view(kstate_1);
@@ -30,7 +30,7 @@ TEST(DynamicIntegralKstateTrait, Test1) {
     using KstateTrait = kstate_trait::TraitKstate<Kstate>;
     const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(11), MySiteState(14), MySiteState(12)};
     // before unique shift: {MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(11), MySiteState(14), MySiteState(12)};
-    // after  unique shift: {MySiteState(11), MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(12), MySiteState(14)};
+    // after unique shift:  {MySiteState(11), MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(12), MySiteState(14)};
     const auto kstate_1 = KstateTrait::from_range(array_1);
     ASSERT_TRUE(boost::equal(kstate_1.to_range(), array_1));
     const auto view_1 = KstateTrait::to_view(kstate_1);
@@ -87,4 +87,60 @@ TEST(DynamicIntegralKstateTrait, Test3) {
     ASSERT_TRUE(boost::equal(kstate_1_re.to_range(), array_1));
     const auto view_1_re = KstateTrait::to_view(kstate_1_re);
     ASSERT_TRUE(KstateTrait::view_compare_equality(view_1, view_1_re));
+}
+
+TEST(DynamicIntegralKstateTrait, Test4) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+    using KstateTrait = kstate_trait::TraitKstate<Kstate>;
+    const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    // before unique shift: {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    // after unique shift:  {MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12), MySiteState(14)};
+    // after rotation(2):   {MySiteState(11), MySiteState(12), MySiteState(12), MySiteState(14), MySiteState(12), MySiteState(11)};
+    const auto kstate_1 = KstateTrait::from_range(array_1);
+    ASSERT_TRUE(boost::equal(kstate_1.to_range(), array_1));
+    const auto view_1 = KstateTrait::to_view(kstate_1);
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 0), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 1), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 2), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 3), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 4), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 5), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1), 1u);
+    const kstate_view_amend_spec::RotateHolder rotation_holder{2};
+    const auto view_1_rotated = KstateTrait::rotated_view(view_1, rotation_holder);
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_rotated, 0), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_rotated, 1), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_rotated, 2), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_rotated, 3), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_rotated, 4), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_rotated, 5), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1_rotated), 5u);
+}
+
+TEST(DynamicIntegralKstateTrait, Test5) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+    using KstateTrait = kstate_trait::TraitKstate<Kstate>;
+    const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    // before unique shift: {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    // after  unique shift: {MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12), MySiteState(14)};
+    // after  refine(3,15): {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(15), MySiteState(12), MySiteState(12)};
+    const auto kstate_1 = KstateTrait::from_range(array_1);
+    ASSERT_TRUE(boost::equal(kstate_1.to_range(), array_1));
+    const auto view_1 = KstateTrait::to_view(kstate_1);
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 0), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 1), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 2), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 3), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 4), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 5), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1), 1u);
+    const kstate_view_amend_spec::RefinedHolder<MySiteState> refined_holder{3, MySiteState(15)};// MySiteState(12) => idx = 5;
+    const auto view_1_refined = KstateTrait::refined_view(view_1, refined_holder);
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 0), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 1), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 2), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 3), MySiteState(15));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 4), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 5), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1_refined), 4u);
 }
