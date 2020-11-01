@@ -48,11 +48,11 @@ struct TraitSiteState<MySiteState> {
     using SiteStateT = MySiteState;
 
     constexpr static unsigned site_basis_dim() {
-        return 5u;
+        return 7u;
     }
 
     constexpr static unsigned get_index(const SiteStateT& state) {
-        if (state._i >= 10 && state._i < 15) {
+        if (state._i >= 10 && state._i < 10 + site_basis_dim()) {
             return state._i - 10;
         } else {
             throw std::domain_error("Not a valid state."); //TODO restore
@@ -60,7 +60,7 @@ struct TraitSiteState<MySiteState> {
     }
 
     constexpr static SiteStateT from_index(unsigned idx) {
-        if (idx < 5) {
+        if (idx < site_basis_dim()) {
             return SiteStateT(idx + 10);
         } else {
             throw std::domain_error("Index out of range.");

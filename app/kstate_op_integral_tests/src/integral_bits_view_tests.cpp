@@ -67,14 +67,3 @@ TEST(IntegralBitsRefinedView, Test3) {
     EXPECT_EQ(refined_view.get_n_all_bits(), 9);
     EXPECT_EQ(refined_view.get_number(), 0b101010111);
 }
-
-
-//TEST(IntegralBitsRefinedView, Test2) {
-//    using IntegralBitsBufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
-//    const IntegralBitsBufferT b{0b110010111, 9};
-//    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{1, MySiteState(10)};
-////    typename _IntegralBitsT, typename _SiteStateTraitT, unsigned char _n_bits_per_site>
-//    const kstate_op_integral::IntegralBitsRefinedView<IntegralBitsBufferT, MySiteStateTrait, 3u> refined_view{b, h};
-//    EXPECT_EQ(refined_view.get_n_all_bits(), 9);
-//    EXPECT_EQ(refined_view.get_number(), 0b110010101);
-//}
