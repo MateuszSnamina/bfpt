@@ -7,24 +7,43 @@
 
 #include <gtest/gtest.h>
 
-
 TEST(DynamicIntegralKstateTrait, Test0) {
     using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
     using KstateTrait = kstate_trait::TraitKstate<Kstate>;
     const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    // before unique shift: {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    // after  unique shift: {MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12), MySiteState(14)};
     const auto kstate_1 = KstateTrait::from_range(array_1);
     ASSERT_TRUE(boost::equal(kstate_1.to_range(), array_1));
     const auto view_1 = KstateTrait::to_view(kstate_1);
-    //ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1), 6u); //TODO make it work
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 0), MySiteState(14));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 1), MySiteState(12));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 2), MySiteState(11));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 3), MySiteState(11));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 4), MySiteState(12));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 5), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1), 1u);
 }
 
 TEST(DynamicIntegralKstateTrait, Test1) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+    using KstateTrait = kstate_trait::TraitKstate<Kstate>;
+    const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(11), MySiteState(14), MySiteState(12)};
+    // before unique shift: {MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(11), MySiteState(14), MySiteState(12)};
+    // after  unique shift: {MySiteState(11), MySiteState(14), MySiteState(12), MySiteState(14), MySiteState(12), MySiteState(14)};
+    const auto kstate_1 = KstateTrait::from_range(array_1);
+    ASSERT_TRUE(boost::equal(kstate_1.to_range(), array_1));
+    const auto view_1 = KstateTrait::to_view(kstate_1);
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 0), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 1), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 2), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 3), MySiteState(11));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 4), MySiteState(14));
+    ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 5), MySiteState(12));
+    ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1), 3u);
+}
+
+TEST(DynamicIntegralKstateTrait, Test2) {
     using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
     using KstateTrait = kstate_trait::TraitKstate<Kstate>;
     const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
@@ -56,7 +75,7 @@ TEST(DynamicIntegralKstateTrait, Test1) {
     ASSERT_FALSE(KstateTrait::view_compare_less(view_4, view_1));
 }
 
-TEST(DynamicIntegralKstateTrait, Test2) {
+TEST(DynamicIntegralKstateTrait, Test3) {
     using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
     using KstateTrait = kstate_trait::TraitKstate<Kstate>;
     const std::array<MySiteState, 6> array_1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
