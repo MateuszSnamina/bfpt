@@ -46,9 +46,10 @@ struct IsIntegralBits<IntegralBitsView<_IntegralBitsT>> : std::true_type {};
 
 namespace kstate_op_integral {
 
-template<typename _IntegralBitsT, unsigned char _n_bits_per_site>//TODO use _n_bits_per_site (now we assume it is equal to 1u).
+template<typename _IntegralBitsT, unsigned char _n_bits_per_site>
 struct IntegralBitsRotatedView {
     static_assert(IsIntegralBits<_IntegralBitsT>::value);
+    //static_assert(_SiteStateTraitT::site_basis_dim() == 2); //TODO make the right check
     static_assert(_n_bits_per_site >= 0u);
     using IntegralBitsT = _IntegralBitsT;
     using IntegralT = typename IntegralBitsT::IntegralT;
@@ -88,7 +89,7 @@ struct IntegralBitsRefinedView {
     static_assert(IsIntegralBits<_IntegralBitsT>::value);
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
-    static_assert(_SiteStateTraitT::site_basis_dim() == 2);
+    //static_assert(_SiteStateTraitT::site_basis_dim() == 2); //TODO make the right check
     static_assert(_n_bits_per_site >= 1u);
     using IntegralBitsT = _IntegralBitsT;
     using SiteStateTraitT = _SiteStateTraitT;
