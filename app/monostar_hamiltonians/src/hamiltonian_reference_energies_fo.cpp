@@ -8,9 +8,10 @@
 
 namespace monostar_hamiltonians {
 
-HamiltonianReferenceEnergiesFo::HamiltonianReferenceEnergiesFo(unsigned n_sites, const HamiltonianParamsFo& params, double orbital_theta) : HamiltonianReferenceEnergies(n_sites),
-                                                                                                                                            _params(params),
-                                                                                                                                            _orbital_theta(orbital_theta) {
+HamiltonianReferenceEnergiesFo::HamiltonianReferenceEnergiesFo(unsigned n_sites, const HamiltonianParamsFo& params, double orbital_theta)
+    : HamiltonianReferenceEnergies(n_sites),
+      _params(params),
+      _orbital_theta(orbital_theta) {
 }
 
 std::optional<double> HamiltonianReferenceEnergiesFo::get_gs_energy() const {

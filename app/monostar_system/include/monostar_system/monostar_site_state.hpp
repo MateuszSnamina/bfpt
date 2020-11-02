@@ -15,7 +15,7 @@ namespace monostar_system {
 
 class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
    public:
-    constexpr MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
+    constexpr explicit MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
     constexpr bool operator<(const MonostarSiteState& other) const;
     constexpr bool operator==(const MonostarSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
@@ -73,7 +73,7 @@ struct TraitSiteState<monostar_system::MonostarSiteState> {
         } else if (state == monostar_system::es) {
             return 1u;
         } else {
-            throw std::domain_error("Not a valid state.");  //TODO restore
+            throw std::domain_error("Not a valid state.");
         }
     }
 

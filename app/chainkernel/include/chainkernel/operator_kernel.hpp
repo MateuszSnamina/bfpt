@@ -78,9 +78,10 @@ half_off_diag_info_to_full_off_diag_info_1(
 }
 
 template <typename _SiteStateTraitT>
-OperatorKernel1<_SiteStateTraitT>::OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) : _diag_info(diag_info),
-                                                                                                           _half_off_diag_info(half_off_diag_info),
-                                                                                                           _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_1(half_off_diag_info)) {
+OperatorKernel1<_SiteStateTraitT>::OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info)
+    : _diag_info(diag_info),
+      _half_off_diag_info(half_off_diag_info),
+      _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_1(half_off_diag_info)) {
 }
 
 }  // namespace chainkernel
@@ -153,9 +154,10 @@ half_off_diag_info_to_full_off_diag_info_12(
 }
 
 template <typename _SiteStateTraitT>
-OperatorKernel12<_SiteStateTraitT>::OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info) : _diag_info(diag_info),
-                                                                                                             _half_off_diag_info(half_off_diag_info),
-                                                                                                             _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_12(half_off_diag_info)) {
+OperatorKernel12<_SiteStateTraitT>::OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info)
+    : _diag_info(diag_info),
+      _half_off_diag_info(half_off_diag_info),
+      _full_off_diag_info(half_off_diag_info_to_full_off_diag_info_12(half_off_diag_info)) {
 }
 
 }  // namespace chainkernel

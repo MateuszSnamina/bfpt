@@ -16,12 +16,10 @@ namespace kbasis {
 
 template <typename _KstateTraitT>
 struct BasisKeyExtractor {
-    // helper types:
+    // Helper types:
     using KstateTraitT = _KstateTraitT;
     using KstateT = typename KstateTraitT::KstateT;
-    using ConstRangeT = typename KstateTraitT::ConstRangeT;
-    // api needed by boost::multiindex:
-    //using result_type = ConstRangeT; //TODO clean
+    // API needed by boost::multiindex:
     using result_type = decltype(KstateTraitT::to_view(std::declval<KstateT>()));
     auto operator()(const std::shared_ptr<KstateT>& kstate_ptr) const {
         return KstateTraitT::to_view(*kstate_ptr);
@@ -40,8 +38,6 @@ class Basis {
     using KstatePtrT = std::shared_ptr<KstateT>;
 
    private:
-    //using Key = decltype(std::declval<KstateT>().to_range());
-    //using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
     using KeyExtractorT = BasisKeyExtractor<KstateTraitT>;
     using ComparisonPredicateT = kstate_trait::ViewComparator<KstateTraitT>;
 

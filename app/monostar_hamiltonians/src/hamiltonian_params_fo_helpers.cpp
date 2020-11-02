@@ -60,11 +60,12 @@ AcosPlusBsinPlusCsqcosPlusZ AcosPlusBsinPlusCsqcosPlusZ::Builder::build() const 
     return AcosPlusBsinPlusCsqcosPlusZ(_cos_coef, _sin_coef, _sqcos_coef, _free_coef);
 }
 
-AcosPlusBsinPlusCsqcosPlusZ::AcosPlusBsinPlusCsqcosPlusZ(double cos_coef, double sin_coef, double sqcos_coef, double free_coef) : _prefactor(calculate_prefactor(cos_coef, sin_coef, sqcos_coef, free_coef)),
-                                                                                                                                  _cos_coef(cos_coef / _prefactor),
-                                                                                                                                  _sin_coef(sin_coef / _prefactor),
-                                                                                                                                  _sqcos_coef(sqcos_coef / _prefactor),
-                                                                                                                                  _free_coef(free_coef / _prefactor) {
+AcosPlusBsinPlusCsqcosPlusZ::AcosPlusBsinPlusCsqcosPlusZ(double cos_coef, double sin_coef, double sqcos_coef, double free_coef)
+    : _prefactor(calculate_prefactor(cos_coef, sin_coef, sqcos_coef, free_coef)),
+      _cos_coef(cos_coef / _prefactor),
+      _sin_coef(sin_coef / _prefactor),
+      _sqcos_coef(sqcos_coef / _prefactor),
+      _free_coef(free_coef / _prefactor) {
 }
 
 double AcosPlusBsinPlusCsqcosPlusZ::get_cos_coef() const {

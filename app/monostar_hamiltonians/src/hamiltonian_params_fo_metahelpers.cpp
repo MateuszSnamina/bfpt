@@ -34,9 +34,10 @@ AcosPlusBsinPlusZ AcosPlusBsinPlusZ::Builder::build() const {
 
 // #######################################################################
 
-AcosPlusBsinPlusZ::AcosPlusBsinPlusZ(double cos_coef, double sin_coef, double free_coef) : _cos_coef(cos_coef),
-                                                                                           _sin_coef(sin_coef),
-                                                                                           _free_coef(free_coef) {
+AcosPlusBsinPlusZ::AcosPlusBsinPlusZ(double cos_coef, double sin_coef, double free_coef)
+    : _cos_coef(cos_coef),
+      _sin_coef(sin_coef),
+      _free_coef(free_coef) {
 }
 
 double AcosPlusBsinPlusZ::get_cos_coef() const {
@@ -104,9 +105,10 @@ BsinPlusCsqcosPlusZ BsinPlusCsqcosPlusZ::Builder::build() const {
 
 // #######################################################################
 
-BsinPlusCsqcosPlusZ::BsinPlusCsqcosPlusZ(double sin_coef, double sqcos_coef, double free_coef) : _sin_coef(sin_coef),
-                                                                                                 _sqcos_coef(sqcos_coef),
-                                                                                                 _free_coef(free_coef) {
+BsinPlusCsqcosPlusZ::BsinPlusCsqcosPlusZ(double sin_coef, double sqcos_coef, double free_coef)
+    : _sin_coef(sin_coef),
+      _sqcos_coef(sqcos_coef),
+      _free_coef(free_coef) {
 }
 
 double BsinPlusCsqcosPlusZ::get_sin_coef() const {
@@ -226,9 +228,10 @@ AcosPlusCsqcosPlusZ AcosPlusCsqcosPlusZ::Builder::build() const {
 
 // #######################################################################
 
-AcosPlusCsqcosPlusZ::AcosPlusCsqcosPlusZ(double cos_coef, double sqcos_coef, double free_coef) : _cos_coef(cos_coef),
-                                                                                                 _sqcos_coef(sqcos_coef),
-                                                                                                 _free_coef(free_coef) {
+AcosPlusCsqcosPlusZ::AcosPlusCsqcosPlusZ(double cos_coef, double sqcos_coef, double free_coef)
+    : _cos_coef(cos_coef),
+      _sqcos_coef(sqcos_coef),
+      _free_coef(free_coef) {
 }
 
 double AcosPlusCsqcosPlusZ::get_cos_coef() const {

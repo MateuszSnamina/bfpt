@@ -12,7 +12,7 @@ using kstate_impl::ctr_from_range;
 
 class MonostarSiteState {
    public:
-    constexpr MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
+    constexpr explicit MonostarSiteState(bool is_excited) : _is_excited(is_excited){};
     constexpr bool operator<(const MonostarSiteState& other) const;
     constexpr bool operator==(const MonostarSiteState& other) const;
     constexpr bool operator!=(const MonostarSiteState& other) const;

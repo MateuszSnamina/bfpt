@@ -175,11 +175,11 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
         return kstate_op_range::raw::rotated(v, h);
     }
     template <typename ViewT>
-    static size_t view_n_least_replication_shift(const ViewT& v) noexcept {  //TODO returns size_t
+    static size_t view_n_least_replication_shift(const ViewT& v) noexcept {
         return kstate_op_range::n_least_replication_shift(v);
     }
     template <typename ViewT>
-    static size_t view_n_unique_shift(const ViewT& v) noexcept {  //TODO returns size_t
+    static size_t view_n_unique_shift(const ViewT& v) noexcept {
         return kstate_op_range::n_unique_shift(v);
     }
     template <typename ViewT>

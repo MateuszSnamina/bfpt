@@ -74,11 +74,12 @@ HamiltonianParamsFo HamiltonianParamsFo::Builder::build() const {
 
 // #######################################################################
 
-HamiltonianParamsFo::HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef) : _tau_z_coef(tau_z_coef),
-                                                                                                                                        _tau_minus_coef(tau_minus_coef),
-                                                                                                                                        _Pzz_coef(Pzz_coef),
-                                                                                                                                        _Pxz_coef(Pxz_coef),
-                                                                                                                                        _Pxx_coef(Pxx_coef) {
+HamiltonianParamsFo::HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef)
+    : _tau_z_coef(tau_z_coef),
+      _tau_minus_coef(tau_minus_coef),
+      _Pzz_coef(Pzz_coef),
+      _Pxz_coef(Pxz_coef),
+      _Pxx_coef(Pxx_coef) {
 }
 
 double HamiltonianParamsFo::get_tau_z_coef() const {

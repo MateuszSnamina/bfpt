@@ -12,17 +12,19 @@
 
 namespace monostar_hamiltonians {
 
-HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B) : HamiltonianReferenceEnergies(n_sites),
-                                                                                                                                   _J_classical(J_classical),
-                                                                                                                                   _J_quantum(J_quantum),
-                                                                                                                                   _B(B) {
+HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B)
+    : HamiltonianReferenceEnergies(n_sites),
+      _J_classical(J_classical),
+      _J_quantum(J_quantum),
+      _B(B) {
     assert(_J_classical > 0);
 }
 
-HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites, const HamiltonianParamsAfFm& params) : HamiltonianReferenceEnergies(n_sites),
-                                                                                                                        _J_classical(params.get_J_classical()),
-                                                                                                                        _J_quantum(params.get_J_quantum()),
-                                                                                                                        _B(params.get_B()) {
+HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites, const HamiltonianParamsAfFm& params)
+    : HamiltonianReferenceEnergies(n_sites),
+      _J_classical(params.get_J_classical()),
+      _J_quantum(params.get_J_quantum()),
+      _B(params.get_B()) {
 }
 
 std::optional<double> HamiltonianReferenceEnergiesFm::get_gs_energy() const {
@@ -41,14 +43,16 @@ std::optional<double> HamiltonianReferenceEnergiesFm::get_es_exciation_enery(uns
 
 namespace monostar_hamiltonians {
 
-HamiltonianReferenceEnergiesAf::HamiltonianReferenceEnergiesAf(unsigned n_sites, double J) : HamiltonianReferenceEnergies(n_sites),
-                                                                                             _J(J),
-                                                                                             _is_applicable(true) {
+HamiltonianReferenceEnergiesAf::HamiltonianReferenceEnergiesAf(unsigned n_sites, double J)
+    : HamiltonianReferenceEnergies(n_sites),
+      _J(J),
+      _is_applicable(true) {
 }
 
-HamiltonianReferenceEnergiesAf::HamiltonianReferenceEnergiesAf(unsigned n_sites, const HamiltonianParamsAfFm& params) : HamiltonianReferenceEnergies(n_sites),
-                                                                                                                        _J(params.get_J_classical()),
-                                                                                                                        _is_applicable(params.get_J_classical() == params.get_J_quantum() && params.get_B() == 0) {
+HamiltonianReferenceEnergiesAf::HamiltonianReferenceEnergiesAf(unsigned n_sites, const HamiltonianParamsAfFm& params)
+    : HamiltonianReferenceEnergies(n_sites),
+      _J(params.get_J_classical()),
+      _is_applicable(params.get_J_classical() == params.get_J_quantum() && params.get_B() == 0) {
 }
 
 std::optional<double> HamiltonianReferenceEnergiesAf::get_gs_energy() const {

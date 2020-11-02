@@ -13,7 +13,7 @@
 
 class MySiteState : boost::totally_ordered<MySiteState> {
    public:
-    constexpr MySiteState(unsigned i) : _i(i){};
+    constexpr explicit MySiteState(unsigned i) : _i(i){};
     constexpr bool operator<(const MySiteState& other) const;
     constexpr bool operator==(const MySiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MySiteState&);
