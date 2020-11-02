@@ -18,7 +18,6 @@ class SoSiteState : boost::totally_ordered<SoSiteState> {
    public:
     constexpr SoSiteState(bool spin_excitation, bool orbit_excitation);
     constexpr explicit SoSiteState(unsigned char idx);
-    // constexpr explicit SoSiteState(const SoSiteState&) = default;//THIS MAKES COMPILATION FAILS
     constexpr bool operator<(const SoSiteState& other) const;
     constexpr bool operator==(const SoSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const SoSiteState&);
@@ -40,7 +39,7 @@ inline constexpr SoSiteState::SoSiteState(bool spin_excitation, bool orbit_excit
 
 inline constexpr SoSiteState::SoSiteState(unsigned char idx)
     : _idx(idx) {
-    //assert(idx < 4u);
+    assert(idx < 4u);
 }
 
 inline constexpr unsigned char SoSiteState::excitation_bools_to_idx(bool spin_excitation, bool orbit_excitation) {
@@ -116,7 +115,7 @@ struct TraitSiteState<so_system::SoSiteState> {
     }
 
     constexpr static SiteStateT from_index(unsigned idx) {
-        if (idx < 4u) {
+        if (idx < site_basis_dim()) {
             return SiteStateT(static_cast<unsigned char>(idx));
         } else {
             throw std::domain_error("Index out of range.");
