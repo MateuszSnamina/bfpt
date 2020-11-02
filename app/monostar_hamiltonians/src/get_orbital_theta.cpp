@@ -7,13 +7,13 @@
 namespace monostar_hamiltonians {
 
 double get_orbital_theta(
-        const HamiltonianParamsFo& hamiltonian_fo_params,
-        std::optional<double> user_defined_overrule) {
+    const HamiltonianParamsFo& hamiltonian_fo_params,
+    std::optional<double> user_defined_overrule) {
     if (user_defined_overrule) {
         return *user_defined_overrule;
     } else {
         const auto theta_opt_set = hamiltonian_fo_params.get_theta_opt();
-        const auto positive_theta_opt_set = theta_opt_set | boost::adaptors::filtered([](double theta){return theta >=0;});
+        const auto positive_theta_opt_set = theta_opt_set | boost::adaptors::filtered([](double theta) { return theta >= 0; });
         if (!boost::empty(positive_theta_opt_set)) {
             return *positive_theta_opt_set.begin();
         } else if (!boost::empty(theta_opt_set)) {
@@ -26,4 +26,4 @@ double get_orbital_theta(
     }
 }
 
-} //end of namespace monostar_hamiltonians
+}  //end of namespace monostar_hamiltonians

@@ -1,6 +1,6 @@
 #pragma once
 
-#include<cstddef>
+#include <cstddef>
 
 // #######################################################################
 // ##  rotated                                                          ##
@@ -18,7 +18,7 @@ inline RotateHolder rotated(size_t n) {
     return RotateHolder(n);
 }
 
-} // namespace kstate_view_amend_spec
+}  // namespace kstate_view_amend_spec
 
 // #######################################################################
 // ##  doubled                                                          ##
@@ -33,7 +33,7 @@ class Doubler {};
 static Doubler doubled{};
 #pragma GCC diagnostic pop
 
-} // namespace kstate_view_amend_spec
+}  // namespace kstate_view_amend_spec
 
 // #######################################################################
 // ##  refined                                                          ##
@@ -55,4 +55,4 @@ RefinedHolder<T> refined(size_t n, T v) {
     return RefinedHolder<T>(n, v);
 }
 
-} // namespace kstate_view_amend_spec
+}  // namespace kstate_view_amend_spec

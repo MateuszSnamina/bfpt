@@ -168,16 +168,15 @@ struct HermitianEigenInfo {
 
 }  // namespace lin_alg
 
-
 // #######################################################################
 // ## fallbacked_eigs_sym                                               ##
 // #######################################################################
 
 // used for tag dispatch function resolution:
 namespace lin_alg {
-struct WithVectors{};
-struct WithoutVectors{};
-}
+struct WithVectors {};
+struct WithoutVectors {};
+}  // namespace lin_alg
 
 // #######################################################################
 // ## eig_sym                                                          ##
@@ -252,7 +251,6 @@ eigs_sym(WithoutVectors,
          const arma::sp_cx_mat& matrix, unsigned n_vectors,
          const unsigned n_extra_vectors, const char* form, const double tol);
 
-
 }  // namespace lin_alg
 
 // #######################################################################
@@ -279,7 +277,6 @@ LinearAlgebraResult<arma::vec>
 fallbacked_eigs_sym(WithoutVectors,
                     const arma::sp_cx_mat& matrix, unsigned n_vectors,
                     const double tol, const unsigned max_n_tries = 7);
-
 
 struct AllTriesFailed {
     //std::vector<atd::any> details_for_tries;

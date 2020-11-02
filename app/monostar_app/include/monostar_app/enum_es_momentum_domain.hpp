@@ -25,7 +25,6 @@ std::ostream& operator<<(std::ostream&, const EsMomentumDomain&);
 // --  Variant type                                   --
 // -----------------------------------------------------
 
-
 struct EsMomentumDomainHalfPiWithout {
 };
 
@@ -46,14 +45,13 @@ struct EsMomentumDomainOne {
 };
 
 using EsMomentumDomainVariant =
-std::variant<
-EsMomentumDomainHalfPiWithout,
-EsMomentumDomainHalfPiWith,
-EsMomentumDomainPiWithout,
-EsMomentumDomainPiWith,
-EsMomentumDomainAll,
-EsMomentumDomainOne
->;
+    std::variant<
+        EsMomentumDomainHalfPiWithout,
+        EsMomentumDomainHalfPiWith,
+        EsMomentumDomainPiWithout,
+        EsMomentumDomainPiWith,
+        EsMomentumDomainAll,
+        EsMomentumDomainOne>;
 
 std::ostream&
 operator<<(std::ostream&, const EsMomentumDomainVariant&);
@@ -61,4 +59,4 @@ operator<<(std::ostream&, const EsMomentumDomainVariant&);
 std::pair<unsigned, unsigned>
 es_momentum_domain_variant_to_momentum_range_sapn(EsMomentumDomainVariant md, unsigned n_sites);
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

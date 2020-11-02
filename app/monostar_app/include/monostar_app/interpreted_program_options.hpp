@@ -16,18 +16,18 @@
 namespace monostar_app {
 
 struct InterpretedProgramOptions {
-  unsigned n_sites;
-  unsigned n_pt;
-  ModelType model_type;
-  monostar_hamiltonians::HamiltonianParamsAfFm hamiltonian_params_af_fm;
-  monostar_hamiltonians::HamiltonianParamsFo hamiltonian_params_fo;
-  std::optional<double> orbital_theta;
-  RunType run_type;
-  EsMomentumDomainVariant es_momentum_domain;
-  bfpt_common::CommonRecipePrintFlags print_flags;
-  unsigned n_threads;
+    unsigned n_sites;
+    unsigned n_pt;
+    ModelType model_type;
+    monostar_hamiltonians::HamiltonianParamsAfFm hamiltonian_params_af_fm;
+    monostar_hamiltonians::HamiltonianParamsFo hamiltonian_params_fo;
+    std::optional<double> orbital_theta;
+    RunType run_type;
+    EsMomentumDomainVariant es_momentum_domain;
+    bfpt_common::CommonRecipePrintFlags print_flags;
+    unsigned n_threads;
 };
 
 InterpretedProgramOptions interpret_program_options(const RawProgramOptions&);
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

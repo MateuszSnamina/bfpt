@@ -1,9 +1,9 @@
-#include<monostar_hamiltonians/simple_numerical_root_finder.hpp>
+#include <monostar_hamiltonians/simple_numerical_root_finder.hpp>
 
-#include<utility/almost_equal.hpp>
+#include <utility/almost_equal.hpp>
 
-#include<cmath>
-#include<cassert>
+#include <cmath>
+#include <cassert>
 
 // #######################################################################
 // ## find_zero_in_given_range                                          ##
@@ -12,8 +12,8 @@
 namespace monostar_hamiltonians::root_finder {
 
 std::optional<double> find_zero_in_given_range(
-        const std::function<double(double)>& fn,
-        std::pair<double, double> range) {
+    const std::function<double(double)>& fn,
+    std::pair<double, double> range) {
     double& a = range.first;
     double& b = range.second;
     const double problem_scale = std::abs(b - a);
@@ -26,10 +26,10 @@ std::optional<double> find_zero_in_given_range(
     } else if (std::copysign(1.0, fna) == std::copysign(1.0, fnb)) {
         return std::nullopt;
     } else if ((std::copysign(1.0, fna) == +1 && std::copysign(1.0, fnb) == -1) ||
-               (std::copysign(1.0, fna) == -1 && std::copysign(1.0, fnb) == +1) ){
+               (std::copysign(1.0, fna) == -1 && std::copysign(1.0, fnb) == +1)) {
         assert(fna != 0);
         assert(fnb != 0);
-        while (!utility::almost_equal(a,b, problem_scale)) {
+        while (!utility::almost_equal(a, b, problem_scale)) {
             assert(std::copysign(1.0, fna) == -1 || std::copysign(1.0, fna) == +1);
             assert(std::copysign(1.0, fnb) == -1 || std::copysign(1.0, fnb) == +1);
             assert(std::copysign(1.0, fna) != std::copysign(1.0, fnb));
@@ -52,7 +52,7 @@ std::optional<double> find_zero_in_given_range(
                 // fn(c) is NaN.
                 return std::nullopt;
             }
-        } // end of while loop
+        }  // end of while loop
         return (a + b) / 2;
     } else {
         // at least one of: fn(a), fn(b) is NaN.
@@ -60,7 +60,7 @@ std::optional<double> find_zero_in_given_range(
     }
 }
 
-} // end of namespace monostar_hamiltonians::root_finder
+}  // end of namespace monostar_hamiltonians::root_finder
 
 // #######################################################################
 // ## find_zero_in_subranges                                            ##
@@ -69,9 +69,9 @@ std::optional<double> find_zero_in_given_range(
 namespace monostar_hamiltonians::root_finder {
 
 std::set<double> find_zero_in_subranges(
-        const std::function<double(double)>& fn,
-        const std::pair<double, double>& range,
-        unsigned n_subranges) {
+    const std::function<double(double)>& fn,
+    const std::pair<double, double>& range,
+    unsigned n_subranges) {
     assert(n_subranges > 0);
     const std::optional<std::pair<double, double>> sanitized_range = [&range]() -> std::optional<std::pair<double, double>> {
         const double& a = range.first;
@@ -102,4 +102,4 @@ std::set<double> find_zero_in_subranges(
     return result;
 }
 
-} // end of namespace monostar_hamiltonians::root_finder
+}  // end of namespace monostar_hamiltonians::root_finder

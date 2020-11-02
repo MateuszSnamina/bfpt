@@ -37,6 +37,7 @@ class VecMap {
     using ElementPtrT = std::shared_ptr<ElementT>;
     using KeyExtractorT = _KeyExtractorT;
     using ComparisonPredicateT = _ComparisonPredicateT;
+
    private:
     // Tags for random-access-index and search-index;
     struct Vec;
@@ -51,6 +52,7 @@ class VecMap {
     using Container = boost::multi_index::multi_index_container<ElementPtrT, boost::multi_index::indexed_by<VecIndexDef, MapIndexDef>>;
     // The container:
     Container container;
+
    public:
     // Container type definition -- index typedefs:
     using VecIndex = typename Container::template index<Vec>::type;
@@ -70,10 +72,10 @@ class VecMap {
 };
 
 template <typename _ElementT, typename _KeyExtractorT, typename _ComparisonPredicateT>
-struct VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::Vec{};
+struct VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::Vec {};
 
 template <typename _ElementT, typename _KeyExtractorT, typename _ComparisonPredicateT>
-struct VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::Map{};
+struct VecMap<_ElementT, _KeyExtractorT, _ComparisonPredicateT>::Map {};
 
 // *************************************************************************
 // ********  Member functions definitions     ******************************

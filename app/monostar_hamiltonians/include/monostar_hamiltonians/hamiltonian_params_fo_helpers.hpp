@@ -1,8 +1,8 @@
 #pragma once
 
-#include<set>
+#include <set>
 
-#include<utility/result.hpp>
+#include <utility/result.hpp>
 
 // #######################################################################
 // ## NoKnownAnalyticalSolutionError                                    ##
@@ -10,12 +10,12 @@
 
 namespace monostar_hamiltonians {
 
-class NoKnownAnalyticalSolutionError: public std::domain_error {
-public:
+class NoKnownAnalyticalSolutionError : public std::domain_error {
+   public:
     NoKnownAnalyticalSolutionError();
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## AcosPlusBsinPlusCsqcosPlusZ                                       ##
@@ -31,15 +31,16 @@ public:
 namespace monostar_hamiltonians {
 
 class AcosPlusBsinPlusCsqcosPlusZ {
-public:
+   public:
     class Builder {
-    public:
+       public:
         Builder set_cos_coef(double);
         Builder set_sin_coef(double);
         Builder set_sqcos_coef(double);
         Builder set_free_coef(double);
         AcosPlusBsinPlusCsqcosPlusZ build() const;
-    private:
+
+       private:
         double _cos_coef = 0.0;
         double _sin_coef = 0.0;
         double _sqcos_coef = 0.0;
@@ -57,7 +58,8 @@ public:
     std::set<double> get_minimum_argument() const;
     std::set<double> get_minimum_argument_numerical() const;
     utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_minimum_argument_analytical() const;
-private:
+
+   private:
     static double calculate_prefactor(double cos_coef, double sin_coef, double sqcos_coef, double free_coef);
     AcosPlusBsinPlusCsqcosPlusZ(double cos_coef, double sin_coef, double sqcos_coef, double free_coef);
     const double _prefactor;
@@ -79,4 +81,4 @@ private:
     std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_not_zero_and_sin_coef_is_zero() const;
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

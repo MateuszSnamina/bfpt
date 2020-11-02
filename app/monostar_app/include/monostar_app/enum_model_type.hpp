@@ -26,4 +26,4 @@ inline std::ostream& operator<<(std::ostream& s, const ModelType& m) {
     return s;
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

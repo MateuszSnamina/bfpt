@@ -13,7 +13,7 @@
 
 namespace kstate_trait {
 
-template<typename _KstateTraitT>
+template <typename _KstateTraitT>
 struct ViewComparator {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
@@ -27,7 +27,7 @@ struct ViewComparator {
     }
 };
 
-}  // namespace kstate
+}  // namespace kstate_trait
 
 // #######################################################################
 // ## KstateComparator                                                  ##
@@ -35,7 +35,7 @@ struct ViewComparator {
 
 namespace kstate_trait {
 
-template<typename _KstateTraitT>
+template <typename _KstateTraitT>
 struct KstateComparator {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
@@ -45,19 +45,18 @@ struct KstateComparator {
     using is_transparent = std::true_type;
 
     bool operator()(const std::shared_ptr<KstateT>& lhs, const std::shared_ptr<KstateT>& rhs) const {
-            return kstate_trait::ViewComparator<KstateTraitT>()(KstateTraitT::to_view(*lhs), KstateTraitT::to_view(*rhs));
+        return kstate_trait::ViewComparator<KstateTraitT>()(KstateTraitT::to_view(*lhs), KstateTraitT::to_view(*rhs));
     }
 
-    template<typename ViewT>
+    template <typename ViewT>
     bool operator()(const std::shared_ptr<KstateT>& lhs, const ViewT& rhs) const {
-            return kstate_trait::ViewComparator<KstateTraitT>()(KstateTraitT::to_view(*lhs), rhs);
+        return kstate_trait::ViewComparator<KstateTraitT>()(KstateTraitT::to_view(*lhs), rhs);
     }
 
-    template<typename ViewT>
+    template <typename ViewT>
     bool operator()(const ViewT& lhs, const std::shared_ptr<KstateT>& rhs) const {
-            return kstate_trait::ViewComparator<KstateTraitT>()(lhs, KstateTraitT::to_view(*rhs));
+        return kstate_trait::ViewComparator<KstateTraitT>()(lhs, KstateTraitT::to_view(*rhs));
     }
-
 };
 
-}  // namespace kstate
+}  // namespace kstate_trait

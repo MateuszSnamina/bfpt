@@ -1,10 +1,10 @@
 #pragma once
 
-#include<utility/named.hpp>
+#include <utility/named.hpp>
 
-#include<armadillo>
+#include <armadillo>
 
-#include<vector>
+#include <vector>
 
 // #######################################################################
 // ## OneSiteOrbitalMatrices                                            ##
@@ -32,7 +32,7 @@ struct OneSiteOrbitalMatrices {
     static arma::cx_mat22 get_tau_minus_in_ge_basis(double orbital_theta);
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## OneSiteOrbitalNamedMatrices                                       ##
@@ -60,7 +60,7 @@ struct OneSiteOrbitalNamedMatrices {
     static std::vector<utility::Named<arma::cx_mat22>> matrices_for_average_calculations(double orbital_theta);
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## TwoSitesOrbitalMatrices                                           ##
@@ -77,7 +77,7 @@ struct TwoSitesOrbitalMatrices {
     static arma::cx_mat44 get_P_xx_in_ge_basis(double orbital_theta);
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## TwoSitesOrbitalNamedMatrices                                      ##
@@ -95,4 +95,4 @@ struct TwoSitesOrbitalNamedMatrices {
     static std::vector<utility::Named<arma::cx_mat44>> matrices_for_average_calculations(double orbital_theta);
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

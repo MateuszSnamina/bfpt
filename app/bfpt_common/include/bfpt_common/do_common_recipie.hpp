@@ -36,7 +36,7 @@ const std::string progress_tag = "[progress] ";
 const std::string data_tag = "[data    ] ";
 const std::string time_tag = "[time    ] ";
 
-} // end of namespace bfpt_common
+}  // end of namespace bfpt_common
 
 // #######################################################################
 // ## print avarages                                                    ##
@@ -44,26 +44,27 @@ const std::string time_tag = "[time    ] ";
 
 namespace bfpt_common {
 
-template<arma::uword N>
+template <arma::uword N>
 void print_averages(
-        const arma::cx_mat& density_matrix,
-        const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
-        const std::string& print_outer_prefix) {
+    const arma::cx_mat& density_matrix,
+    const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
+    const std::string& print_outer_prefix) {
     assert(density_matrix.n_rows == N);
     assert(density_matrix.n_cols == N);
     for (const auto& matrix_for_average_calculation : metrices_for_average_calculation) {
         const auto average = arma::trace(matrix_for_average_calculation.value * density_matrix);
-            std::cout << print_outer_prefix << message_prefix << data_tag
-                      << "⟨" << matrix_for_average_calculation.name   << "⟩" << ": ";
+        std::cout << print_outer_prefix << message_prefix << data_tag
+                  << "⟨" << matrix_for_average_calculation.name << "⟩"
+                  << ": ";
         if (std::abs(std::imag(average)) < 1e-10) {
-            std::cout  << std::real(average) << std::endl;
+            std::cout << std::real(average) << std::endl;
         } else {
-           std::cout << ": " << average << std::endl;
+            std::cout << ": " << average << std::endl;
         }
     }
 }
 
-} // end of namespace bfpt_common
+}  // end of namespace bfpt_common
 
 // #######################################################################
 // ## pretty_print                                                      ##
@@ -71,14 +72,14 @@ void print_averages(
 
 namespace bfpt_common {
 
-template<typename KstateT>
+template <typename KstateT>
 void pretty_print(
-        kbasis::Basis<KstateT>& basis,
-        const arma::vec& eigen_values,
-        const arma::cx_mat& eigen_vectors,
-        std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
-        double print_pretty_probability_treshold,
-        std::string print_outer_prefix = "") {
+    kbasis::Basis<KstateT>& basis,
+    const arma::vec& eigen_values,
+    const arma::cx_mat& eigen_vectors,
+    std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
+    double print_pretty_probability_treshold,
+    std::string print_outer_prefix = "") {
     // [[expect]]:
     assert(eigen_vectors.n_cols == eigen_values.n_rows);
     assert(basis.size() == eigen_vectors.n_rows);
@@ -88,8 +89,7 @@ void pretty_print(
         unsigned idx;
         double probability;
     };
-    const auto order_kstateIdx_and_probability = []
-            (const KstateIdxAndProbability& lhs, const KstateIdxAndProbability& rhs) -> bool {
+    const auto order_kstateIdx_and_probability = [](const KstateIdxAndProbability& lhs, const KstateIdxAndProbability& rhs) -> bool {
         return lhs.probability > rhs.probability;
     };
     // Stream RAII:
@@ -103,16 +103,16 @@ void pretty_print(
                   << "eigen energy: " << eigen_value
                   << "." << std::endl;
         const std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector =
-                [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
-            std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
-            kstateIdx_and_probability_vector_builder.resize(basis_size);
-            for(unsigned idx = 0; idx < basis_size; idx++) {
-                kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
-            }
-            std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
-            return kstateIdx_and_probability_vector_builder;
-        }();
-        const std::complex<double> presentation_layer_amplitude_factor = [&kstateIdx_and_probability_vector, &eigien_vector] () {
+            [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
+                std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
+                kstateIdx_and_probability_vector_builder.resize(basis_size);
+                for (unsigned idx = 0; idx < basis_size; idx++) {
+                    kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
+                }
+                std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
+                return kstateIdx_and_probability_vector_builder;
+            }();
+        const std::complex<double> presentation_layer_amplitude_factor = [&kstateIdx_and_probability_vector, &eigien_vector]() {
             const unsigned print_idx = 0;
             const unsigned idx = kstateIdx_and_probability_vector[print_idx].idx;
             const std::complex<double> amplitude = eigien_vector(idx);
@@ -121,7 +121,7 @@ void pretty_print(
         const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
         std::cout << std::fixed << std::setprecision(9);
         double accumulated_probability = 0.0;
-        for(unsigned print_idx = 0; print_idx < basis_size; print_idx++) {
+        for (unsigned print_idx = 0; print_idx < basis_size; print_idx++) {
             if (print_pretty_min_max_n_kstates.second <= print_idx) {
                 std::cout << print_outer_prefix << message_prefix << data_tag
                           << "Break pretty print loop as the requested max number of contributions are already printed."
@@ -133,9 +133,9 @@ void pretty_print(
             const std::complex<double> amplitude = eigien_vector(idx);
             const double probability = std::norm(amplitude);
             accumulated_probability += probability;
-            if (print_pretty_min_max_n_kstates.first <= print_idx &&  probability < print_pretty_probability_treshold) {
+            if (print_pretty_min_max_n_kstates.first <= print_idx && probability < print_pretty_probability_treshold) {
                 std::cout << print_outer_prefix << message_prefix << data_tag
-                          <<  "Break pretty print loop as the rest of the kstate contributions have probabilities lower than the requested threshold." << std::endl;
+                          << "Break pretty print loop as the rest of the kstate contributions have probabilities lower than the requested threshold." << std::endl;
                 break;
             }
             std::cout << print_outer_prefix << message_prefix << data_tag
@@ -146,11 +146,11 @@ void pretty_print(
                       << "kstate basis idx: " << std::setw(6) << idx << ", "
                       << "kstate print idx: " << std::setw(6) << print_idx
                       << "." << std::endl;
-        } // end of print_idx loop
+        }  // end of print_idx loop
         std::cout << print_outer_prefix << message_prefix << data_tag
                   << "The listed above kstate contributions accumulated_probability: " << std::noshowpos << accumulated_probability
                   << "." << std::endl;
-    } // end of n_eigien_vector loop
+    }  // end of n_eigien_vector loop
 }
 
 }  // namespace bfpt_common
@@ -166,19 +166,19 @@ struct CommonRecipeReceipt {
     std::optional<arma::cx_vec> eigen_vector;
 };
 
-template<typename KstateTraitT, typename KpopulatorTraitT, typename KoperatorTraitT>
+template <typename KstateTraitT, typename KpopulatorTraitT, typename KoperatorTraitT>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
 do_common_recipe(
-                 const typename KpopulatorTraitT::KpopulatorT& bais_populator,
-                 const typename KoperatorTraitT::KoperatorT& hamiltonian,
-                 kbasis::Basis<KstateTraitT>& basis,
-                 const unsigned max_pt_order,
-                 const unsigned n_k,
-                 const CommonRecipePrintFlags& print_flags,
-                 const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
-                 const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
-                 std::string print_outer_prefix = "",
-                 unsigned n_threads = 1) {
+    const typename KpopulatorTraitT::KpopulatorT& bais_populator,
+    const typename KoperatorTraitT::KoperatorT& hamiltonian,
+    kbasis::Basis<KstateTraitT>& basis,
+    const unsigned max_pt_order,
+    const unsigned n_k,
+    const CommonRecipePrintFlags& print_flags,
+    const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
+    const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
+    std::string print_outer_prefix = "",
+    unsigned n_threads = 1) {
     // --------------------------------------------------
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
@@ -341,6 +341,5 @@ do_common_recipe(
     // --------------------------------------------------
     assert(false);
 }
-
 
 }  // namespace bfpt_common

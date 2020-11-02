@@ -12,7 +12,7 @@
 // ##  rotated                                                          ##
 // #######################################################################
 
-TEST(KstateOpRange, FilledRawArray) { //TODO name change
+TEST(KstateOpRange, FilledRawArray) {  //TODO name change
     using kstate_op_range::raw::adaptors::operator|;
     int v1[6] = {11, 12, 13, 14, 15, 16};
     int v2[6] = {13, 14, 15, 16, 11, 12};

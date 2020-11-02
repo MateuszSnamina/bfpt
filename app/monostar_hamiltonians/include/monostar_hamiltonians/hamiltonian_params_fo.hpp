@@ -1,9 +1,9 @@
 #pragma once
 
-#include<monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
 
-#include<set>
-#include<string>
+#include <set>
+#include <string>
 
 /*
  * The below is for orbital hamiltonians defined for systems of `e_g`-type orbitals
@@ -101,16 +101,17 @@
 namespace monostar_hamiltonians {
 
 class HamiltonianParamsFo {
-public:
+   public:
     class Builder {
-    public:
+       public:
         Builder set_tau_z_coef(double);
         Builder set_tau_minus_coef(double);
         Builder set_Pzz_coef(double);
         Builder set_Pxz_coef(double);
         Builder set_Pxx_coef(double);
         HamiltonianParamsFo build() const;
-    private:
+
+       private:
         double _tau_z_coef = 0.0;
         double _tau_munis_coef = 0.0;
         double _Pzz_coef = 0.0;
@@ -135,8 +136,7 @@ public:
     std::string string_repr_in_orbital_operators() const;
     std::string string_repr_in_trigonometric_functions() const;
 
-
-private:
+   private:
     HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);
     double _tau_z_coef;
     double _tau_minus_coef;
@@ -145,4 +145,4 @@ private:
     double _Pxx_coef;
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

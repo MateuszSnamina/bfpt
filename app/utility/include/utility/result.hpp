@@ -16,7 +16,7 @@ template <typename OutT, typename ExceptionT = std::exception>
 class Result {
     static_assert(std::is_base_of<std::exception, ExceptionT>::value);
 
-public:
+   public:
     Result(OutT);
     Result(ExceptionT);
     static Result<OutT, ExceptionT> Ok(OutT);
@@ -29,7 +29,8 @@ public:
     ExceptionT unwrap_err() const;
     operator bool() const;
     OutT operator*() const;
-private:
+
+   private:
     Result(std::variant<OutT, ExceptionT>);
     const std::variant<OutT, ExceptionT> _variant;
 };
@@ -102,7 +103,7 @@ OutT Result<OutT, ExceptionT>::unwrap() const {
 // -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 class UnwrapOrVisitor {
-public:
+   public:
     UnwrapOrVisitor(const OutT& optb) : _optb(optb) {
     }
     OutT operator()(const OutT& value) const {
@@ -112,7 +113,7 @@ public:
         return _optb;
     }
 
-private:
+   private:
     const OutT& _optb;
 };
 
@@ -125,7 +126,7 @@ OutT Result<OutT, ExceptionT>::unwrap_or(OutT optb) const {
 // -----------------------------------------------------------------------
 template <typename OutT, typename ExceptionT>
 class UnwrapOrElseVisitor {
-public:
+   public:
     UnwrapOrElseVisitor(std::function<OutT(ExceptionT)> op) : _op(op) {
     }
     OutT operator()(const OutT& value) const {
@@ -135,7 +136,7 @@ public:
         return op(exception);
     }
 
-private:
+   private:
     std::function<OutT(ExceptionT)> _op;
 };
 
@@ -178,4 +179,4 @@ OutT Result<OutT, ExceptionT>::operator*() const {
 
 // -----------------------------------------------------------------------
 
-}
+}  // namespace utility

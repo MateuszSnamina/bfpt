@@ -4,10 +4,10 @@
 
 namespace kstate_trait {
 
-template<>
+template <>
 struct TraitSiteState<int> {
     static constexpr bool is_site_state_trait = true;
     using SiteStateT = int;
 };
 
-} // end of namespace kstate
+}  // namespace kstate_trait

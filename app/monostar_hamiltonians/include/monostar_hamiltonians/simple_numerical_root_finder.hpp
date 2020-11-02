@@ -1,9 +1,9 @@
 #pragma once
 
-#include<functional>
-#include<set>
-#include<optional>
-#include<utility>
+#include <functional>
+#include <set>
+#include <optional>
+#include <utility>
 
 // #######################################################################
 // ## find_zero_in_given_range                                          ##
@@ -20,10 +20,10 @@
 namespace monostar_hamiltonians::root_finder {
 
 std::optional<double> find_zero_in_given_range(
-        const std::function<double(double)>& fn,
-        std::pair<double, double> range);
+    const std::function<double(double)>& fn,
+    std::pair<double, double> range);
 
-} // end of namespace monostar_hamiltonians::root_finder
+}  // end of namespace monostar_hamiltonians::root_finder
 
 // #######################################################################
 // ## find_zero_in_subranges                                            ##
@@ -37,8 +37,8 @@ std::optional<double> find_zero_in_given_range(
 namespace monostar_hamiltonians::root_finder {
 
 std::set<double> find_zero_in_subranges(
-        const std::function<double(double)>& fn,
-        const std::pair<double, double>& range,
-        unsigned n_subranges = 100);
+    const std::function<double(double)>& fn,
+    const std::pair<double, double>& range,
+    unsigned n_subranges = 100);
 
-} // end of namespace monostar_hamiltonians::root_finder
+}  // end of namespace monostar_hamiltonians::root_finder

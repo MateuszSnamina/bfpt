@@ -23,32 +23,33 @@ struct BasisKeyExtractor {
     // api needed by boost::multiindex:
     //using result_type = ConstRangeT; //TODO clean
     using result_type = decltype(KstateTraitT::to_view(std::declval<KstateT>()));
-    auto operator()(const std::shared_ptr<KstateT>& kstate_ptr) const{
+    auto operator()(const std::shared_ptr<KstateT>& kstate_ptr) const {
         return KstateTraitT::to_view(*kstate_ptr);
     }
-
 };
-
 
 template <typename _KstateTraitT>
 class Basis {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
-public:
+
+   public:
     // Helper types:
     using KstateTraitT = _KstateTraitT;
     using KstateT = typename _KstateTraitT::KstateT;
     using KstatePtrT = std::shared_ptr<KstateT>;
-private:
+
+   private:
     //using Key = decltype(std::declval<KstateT>().to_range());
     //using KeyExtractorT = boost::multi_index::const_mem_fun<KstateT, Key, &KstateT::to_range>;
     using KeyExtractorT = BasisKeyExtractor<KstateTraitT>;
     using ComparisonPredicateT = kstate_trait::ViewComparator<KstateTraitT>;
-public:
+
+   public:
     using VecIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::VecIndex;
     using MapIndexT = typename VecMap<KstateT, KeyExtractorT, ComparisonPredicateT>::MapIndex;
 
-public:
+   public:
     // Constructors:
     Basis(size_t n_sites);
     // The physical realm:
@@ -65,7 +66,8 @@ public:
     boost::optional<unsigned> find_element_and_get_its_ra_index(const OtherRangeType& v) const;
     // Container Member functions -- modifiers:
     void add_element(KstatePtrT c);
-private:
+
+   private:
     size_t _n_sites;
     VecMap<KstateT, KeyExtractorT, ComparisonPredicateT> _vec_map;
 };

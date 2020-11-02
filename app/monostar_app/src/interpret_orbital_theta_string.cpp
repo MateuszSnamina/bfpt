@@ -1,6 +1,6 @@
-#include<monostar_app/interpret_orbital_theta_string.hpp>
+#include <monostar_app/interpret_orbital_theta_string.hpp>
 
-#include<monostar_app/interpret_number_string.hpp>
+#include <monostar_app/interpret_number_string.hpp>
 
 namespace monostar_app {
 
@@ -19,4 +19,4 @@ utility::Result<std::optional<double>, std::domain_error> interpret_orbital_thet
     }
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

@@ -28,9 +28,9 @@ TEST(DynamicIntegralKstate, IntegralToSiteStateRange) {
 TEST(DynamicIntegralKstate, SiteStateRangeToIntegral) {
     std::array<MonostarSiteState, 5> siste_state_array{es, gs, gs, es, es};
     kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> integra_bits =
-            kstate_impl::helpers::integral_bits_from_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array, 1u);
-    EXPECT_EQ(integra_bits.get_n_all_bits() , 5);
-    EXPECT_EQ(integra_bits.get_number() , 0b11001);
+        kstate_impl::helpers::integral_bits_from_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array, 1u);
+    EXPECT_EQ(integra_bits.get_n_all_bits(), 5);
+    EXPECT_EQ(integra_bits.get_number(), 0b11001);
 }
 
 // ***************************************************
@@ -243,12 +243,12 @@ TEST(DynamicIntegralKstate, IsProlificTest0) {
     const Kstate k1(v1, ctr_from_range);
     ASSERT_EQ(k1.n_sites(), 6);
     ASSERT_TRUE(boost::equal(k1.to_range(), v1));
-        EXPECT_TRUE(k1.is_prolific(0));
-        EXPECT_FALSE(k1.is_prolific(1));
-        EXPECT_FALSE(k1.is_prolific(2));
-        EXPECT_FALSE(k1.is_prolific(3));
-        EXPECT_FALSE(k1.is_prolific(4));
-        EXPECT_FALSE(k1.is_prolific(5));
+    EXPECT_TRUE(k1.is_prolific(0));
+    EXPECT_FALSE(k1.is_prolific(1));
+    EXPECT_FALSE(k1.is_prolific(2));
+    EXPECT_FALSE(k1.is_prolific(3));
+    EXPECT_FALSE(k1.is_prolific(4));
+    EXPECT_FALSE(k1.is_prolific(5));
 }
 
 TEST(DynamicIntegralKstate, IsProlificTest1) {
@@ -292,7 +292,6 @@ TEST(DynamicIntegralKstate, IsProlificTest3) {
     EXPECT_TRUE(k1.is_prolific(4));
     EXPECT_TRUE(k1.is_prolific(5));
 }
-
 
 //TEST(DynamicIntegralKstate, ToStrTest0) {
 //    using SiteStateTrait = kstate_trait::TraitSiteState<int>;

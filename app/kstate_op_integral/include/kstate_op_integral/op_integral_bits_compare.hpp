@@ -1,7 +1,7 @@
 #pragma once
 
-#include<kstate_op_integral/is_integral_bits.hpp>
-#include<kstate_op_integral/op_integral_bits_raw.hpp>
+#include <kstate_op_integral/is_integral_bits.hpp>
+#include <kstate_op_integral/op_integral_bits_raw.hpp>
 
 #include <optional>
 #include <cassert>
@@ -50,4 +50,3 @@ std::optional<size_t> compare_translational_equality(IntegralBits1T integral_bit
 }
 
 }  // namespace kstate_op_integral
-

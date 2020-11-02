@@ -4,7 +4,7 @@
 
 namespace kstate_op_integral {
 
-template<typename T>
+template <typename T>
 struct IsIntegralBits : std::false_type {};
 
-}
+}  // namespace kstate_op_integral

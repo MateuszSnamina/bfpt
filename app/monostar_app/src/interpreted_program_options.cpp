@@ -22,17 +22,17 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         throw std::runtime_error(message);
     }
     interpreted_program_options.hamiltonian_params_af_fm = monostar_hamiltonians::HamiltonianParamsAfFm::Builder()
-            .set_J_classical(raw_program_options.hamiltonian_J_classical)
-            .set_J_quantum(raw_program_options.hamiltonian_J_quantum)
-            .set_B(raw_program_options.hamiltonian_B)
-            .build();
+                                                               .set_J_classical(raw_program_options.hamiltonian_J_classical)
+                                                               .set_J_quantum(raw_program_options.hamiltonian_J_quantum)
+                                                               .set_B(raw_program_options.hamiltonian_B)
+                                                               .build();
     interpreted_program_options.hamiltonian_params_fo = monostar_hamiltonians::HamiltonianParamsFo::Builder()
-            .set_tau_z_coef(raw_program_options.hamiltonian_tau_z_coef)
-            .set_tau_minus_coef(raw_program_options.hamiltonian_tau_minus_coef)
-            .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
-            .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
-            .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
-            .build();
+                                                            .set_tau_z_coef(raw_program_options.hamiltonian_tau_z_coef)
+                                                            .set_tau_minus_coef(raw_program_options.hamiltonian_tau_minus_coef)
+                                                            .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
+                                                            .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
+                                                            .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
+                                                            .build();
     if (const auto _ = interpret_orbital_theta_string(raw_program_options.orbital_theta_string)) {
         interpreted_program_options.orbital_theta = _.unwrap();
     } else {
@@ -77,4 +77,4 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
     return interpreted_program_options;
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

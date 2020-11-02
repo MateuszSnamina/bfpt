@@ -50,7 +50,8 @@ template <typename _SiteStateTraitT>
 class DynamicStlKstate final : public Kstate<_SiteStateTraitT, typename DynamicStlKstateTypes<_SiteStateTraitT>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
-public:
+
+   public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
     using BufferT = typename DynamicStlKstateTypes<SiteStateTraitT>::BufferT;
@@ -58,16 +59,17 @@ public:
     using ConstIteratorT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstIteratorT;
     using RangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::RangeT;
     using ConstRangeT = typename DynamicStlKstateTypes<SiteStateTraitT>::ConstRangeT;
-public:
+
+   public:
     DynamicStlKstate(BufferT&&, CtrFromBuffer);
     template <typename OtherRangeT>
     DynamicStlKstate(const OtherRangeT&, CtrFromRange);
 
-public:
+   public:
     ConstRangeT to_range() const noexcept override;
     size_t n_sites() const noexcept override;
 
-protected:
+   protected:
     const BufferT _v;
 };
 
@@ -75,15 +77,13 @@ protected:
 
 template <typename _SiteStateTraitT>
 DynamicStlKstate<_SiteStateTraitT>::DynamicStlKstate(
-        DynamicStlKstate<_SiteStateTraitT>::BufferT&& v,
-        CtrFromBuffer) :
-    _v(std::move(v)) {
+    DynamicStlKstate<_SiteStateTraitT>::BufferT&& v,
+    CtrFromBuffer) : _v(std::move(v)) {
 }
 
 template <typename _SiteStateTraitT>
 template <typename OtherRangeT>
-DynamicStlKstate<_SiteStateTraitT>::DynamicStlKstate(const OtherRangeT& r, CtrFromRange) :
-    _v(helpers::init_vector_from_range(r)) {
+DynamicStlKstate<_SiteStateTraitT>::DynamicStlKstate(const OtherRangeT& r, CtrFromRange) : _v(helpers::init_vector_from_range(r)) {
 }
 
 // ***********************************************************************
@@ -108,7 +108,7 @@ DynamicStlKstate<_SiteStateTraitT>::n_sites() const noexcept {
 
 namespace kstate_trait {
 
-template<typename _SiteStateTraitT>
+template <typename _SiteStateTraitT>
 struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
@@ -143,52 +143,52 @@ struct TraitKstate<kstate_impl::DynamicStlKstate<_SiteStateTraitT>> {
         return kstate.to_range();
     }
     // -----
-    template<typename ViewT>
+    template <typename ViewT>
     static KstateT from_view(const ViewT& v) {
         return KstateT(v, kstate_impl::CtrFromRange{});
     }
-    template<typename ViewT>
+    template <typename ViewT>
     static std::shared_ptr<KstateT> shared_from_view(const ViewT& v) {
         return std::make_shared<KstateT>(v, kstate_impl::CtrFromRange{});
     }
     static ConstRangeT to_view(const KstateT& kstate) noexcept {
         return kstate.to_range();
     }
-    template<typename ViewT>
+    template <typename ViewT>
     static typename SiteStateTraitT::SiteStateT view_n_th_site_state(const ViewT& v, unsigned idx) noexcept {
         return *std::next(std::begin(v), idx);
     }
-    template<typename View1T, typename View2T>
+    template <typename View1T, typename View2T>
     static bool view_compare_less(const View1T& v1, const View2T& v2) noexcept {
         return kstate_op_range::compare_less(v1, v2);
     }
-    template<typename View1T, typename View2T>
+    template <typename View1T, typename View2T>
     static bool view_compare_equality(const View1T& v1, const View2T& v2) noexcept {
         return kstate_op_range::compare_equality(v1, v2);
     }
-    template<typename ViewT>
+    template <typename ViewT>
     static auto refined_view(const ViewT& v, const kstate_view_amend_spec::RefinedHolder<typename SiteStateTraitT::SiteStateT>& h) noexcept {
         return kstate_op_range::raw::refined(v, h);
     }
-    template<typename ViewT>
+    template <typename ViewT>
     static auto rotated_view(const ViewT& v, const kstate_view_amend_spec::RotateHolder& h) noexcept {
         return kstate_op_range::raw::rotated(v, h);
     }
-    template<typename ViewT>
-    static size_t view_n_least_replication_shift(const ViewT& v) noexcept {//TODO returns size_t
+    template <typename ViewT>
+    static size_t view_n_least_replication_shift(const ViewT& v) noexcept {  //TODO returns size_t
         return kstate_op_range::n_least_replication_shift(v);
     }
-    template<typename ViewT>
-    static size_t view_n_unique_shift(const ViewT& v) noexcept {//TODO returns size_t
+    template <typename ViewT>
+    static size_t view_n_unique_shift(const ViewT& v) noexcept {  //TODO returns size_t
         return kstate_op_range::n_unique_shift(v);
     }
-    template<typename ViewT>
+    template <typename ViewT>
     static size_t is_prolific(const ViewT& v, unsigned n_k) noexcept {
         return kstate_op_range::is_prolific(v, n_k);
     }
 };
 
-} // end of namespace kstate_trait
+}  // end of namespace kstate_trait
 
 // #######################################################################
 // ## StaticStlKstate                                                   ##
@@ -220,7 +220,8 @@ template <typename _SiteStateTraitT, std::size_t _N>
 class StaticStlKstate final : public Kstate<_SiteStateTraitT, typename StaticStlKstateTypes<_SiteStateTraitT, _N>::ConstRangeT> {
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
     static_assert(_SiteStateTraitT::is_site_state_trait);
-public:
+
+   public:
     using SiteStateTraitT = _SiteStateTraitT;
     constexpr static std::size_t N = _N;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
@@ -229,16 +230,17 @@ public:
     using ConstIteratorT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstIteratorT;
     using RangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::RangeT;
     using ConstRangeT = typename StaticStlKstateTypes<SiteStateTraitT, N>::ConstRangeT;
-public:
+
+   public:
     StaticStlKstate(BufferT&&, CtrFromBuffer);
     template <typename OtherRangeT>
     StaticStlKstate(const OtherRangeT&, CtrFromRange);
 
-public:
+   public:
     ConstRangeT to_range() const noexcept override;
     size_t n_sites() const noexcept override;
 
-protected:
+   protected:
     const BufferT _a;
 };
 
@@ -246,15 +248,13 @@ protected:
 
 template <typename _SiteStateTraitT, std::size_t _N>
 StaticStlKstate<_SiteStateTraitT, _N>::StaticStlKstate(
-        StaticStlKstate<_SiteStateTraitT, _N>::BufferT&& a,
-        CtrFromBuffer) :
-   _a(std::move(a)) {
+    StaticStlKstate<_SiteStateTraitT, _N>::BufferT&& a,
+    CtrFromBuffer) : _a(std::move(a)) {
 }
 
 template <typename _SiteStateTraitT, std::size_t _N>
 template <typename OtherRangeT>
-StaticStlKstate<_SiteStateTraitT, _N>::StaticStlKstate(const OtherRangeT& r, CtrFromRange) :
-    _a(helpers::init_array_from_range<N>(r)) {
+StaticStlKstate<_SiteStateTraitT, _N>::StaticStlKstate(const OtherRangeT& r, CtrFromRange) : _a(helpers::init_array_from_range<N>(r)) {
 }
 
 // ***********************************************************************
@@ -277,12 +277,11 @@ StaticStlKstate<_SiteStateTraitT, _N>::n_sites() const noexcept {
 // ## TraitsFor kstate_impl::StaticStlKstate                            ##
 // #######################################################################
 
-
 //TODO copy solution from DynamicState!
 
 namespace kstate_trait {
 
-template<typename _SiteStateTraitT, std::size_t _N>
+template <typename _SiteStateTraitT, std::size_t _N>
 struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     // the is_kstate_trait flag:
     static constexpr bool is_kstate_trait = true;
@@ -316,4 +315,4 @@ struct TraitKstate<kstate_impl::StaticStlKstate<_SiteStateTraitT, _N>> {
     }
 };
 
-} // end of namespace kstate_trait
+}  // end of namespace kstate_trait

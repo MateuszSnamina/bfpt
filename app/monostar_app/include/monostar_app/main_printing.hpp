@@ -13,23 +13,23 @@
 namespace monostar_app {
 
 void print_input_data(
-        const InterpretedProgramOptions& interpreted_program_options);
+    const InterpretedProgramOptions& interpreted_program_options);
 
 void print_results_tree(
-        const InterpretedProgramOptions& interpreted_program_options,
-        const std::shared_ptr<monostar_hamiltonians::HamiltonianReferenceEnergies> reference_energies,
-        const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
-        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional,
-        const unsigned n_sites);
+    const InterpretedProgramOptions& interpreted_program_options,
+    const std::shared_ptr<monostar_hamiltonians::HamiltonianReferenceEnergies> reference_energies,
+    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional,
+    const unsigned n_sites);
 
 void print_post_data(
-        const InterpretedProgramOptions& interpreted_program_options,
-        /*const std::unique_ptr<monostar_app::ReferenceEnergies> reference_energies,*/
-        const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
-        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional);
+    const InterpretedProgramOptions& interpreted_program_options,
+    /*const std::unique_ptr<monostar_app::ReferenceEnergies> reference_energies,*/
+    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional);
 
 void print_theta_opt(
-        const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
-        std::optional<double> user_defined_overrule);
+    const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
+    std::optional<double> user_defined_overrule);
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

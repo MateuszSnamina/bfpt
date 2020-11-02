@@ -1,6 +1,6 @@
 #pragma once
 
-#include<set>
+#include <set>
 
 // #######################################################################
 // ## AcosPlusBsinPlusZ                                                 ##
@@ -22,14 +22,15 @@
 namespace monostar_hamiltonians {
 
 class AcosPlusBsinPlusZ {
-public:
+   public:
     class Builder {
-    public:
+       public:
         Builder set_cos_coef(double);
         Builder set_sin_coef(double);
         Builder set_free_coef(double);
         AcosPlusBsinPlusZ build() const;
-    private:
+
+       private:
         double _cos_coef = 0.0;
         double _sin_coef = 0.0;
         double _free_coef = 0.0;
@@ -37,9 +38,10 @@ public:
     double get_cos_coef() const;
     double get_sin_coef() const;
     double get_free_coef() const;
-    double get_value(double phi) const ;
+    double get_value(double phi) const;
     std::set<double> get_minimum_argument() const;
-private:
+
+   private:
     AcosPlusBsinPlusZ(double cos_coef, double sin_coef, double free_coef);
     bool is_degenerated_to_const_function() const;
     const double _cos_coef;
@@ -47,7 +49,7 @@ private:
     const double _free_coef;
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## BsinPlusCsqcosPlusZ                                               ##
@@ -119,14 +121,15 @@ private:
 namespace monostar_hamiltonians {
 
 class BsinPlusCsqcosPlusZ {
-public:
+   public:
     class Builder {
-    public:
+       public:
         Builder set_sin_coef(double);
         Builder set_sqcos_coef(double);
         Builder set_free_coef(double);
         BsinPlusCsqcosPlusZ build() const;
-    private:
+
+       private:
         double _sin_coef = 0.0;
         double _sqcos_coef = 0.0;
         double _free_coef = 0.0;
@@ -136,7 +139,8 @@ public:
     double get_free_coef() const;
     double get_value(double phi) const;
     std::set<double> get_minimum_argument() const;
-private:
+
+   private:
     BsinPlusCsqcosPlusZ(double sin_coef, double sqcos_coef, double free_coef);
     const double _sin_coef;
     const double _sqcos_coef;
@@ -147,7 +151,7 @@ private:
     std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_not_zero() const;
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## AcosPlusCsqcosPlusZ                                               ##
@@ -220,14 +224,15 @@ private:
 namespace monostar_hamiltonians {
 
 class AcosPlusCsqcosPlusZ {
-public:
+   public:
     class Builder {
-    public:
+       public:
         Builder set_cos_coef(double);
         Builder set_sqcos_coef(double);
         Builder set_free_coef(double);
         AcosPlusCsqcosPlusZ build() const;
-    private:
+
+       private:
         double _cos_coef = 0.0;
         double _sqcos_coef = 0.0;
         double _free_coef = 0.0;
@@ -237,7 +242,8 @@ public:
     double get_free_coef() const;
     double get_value(double phi) const;
     std::set<double> get_minimum_argument() const;
-private:
+
+   private:
     AcosPlusCsqcosPlusZ(double cos_coef, double sqcos_coef, double free_coef);
     const double _cos_coef;
     const double _sqcos_coef;
@@ -248,4 +254,4 @@ private:
     std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_not_zero() const;
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

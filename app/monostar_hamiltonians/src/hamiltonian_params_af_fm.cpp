@@ -1,4 +1,4 @@
-#include<monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
 
 // #######################################################################
 // ## HamiltonianParamsAfFm                                             ##
@@ -25,22 +25,21 @@ HamiltonianParamsAfFm HamiltonianParamsAfFm::Builder::build() const {
     return HamiltonianParamsAfFm(_J_classicall, _J_quantum, _B);
 }
 
-HamiltonianParamsAfFm::HamiltonianParamsAfFm(double J_classicall, double J_quantum, double B) :
-    _J_classicall(J_classicall),
-    _J_quantum(J_quantum),
-    _B(B) {
+HamiltonianParamsAfFm::HamiltonianParamsAfFm(double J_classicall, double J_quantum, double B) : _J_classicall(J_classicall),
+                                                                                                _J_quantum(J_quantum),
+                                                                                                _B(B) {
 }
 
-double HamiltonianParamsAfFm::get_J_classical() const{
+double HamiltonianParamsAfFm::get_J_classical() const {
     return _J_classicall;
 }
 
-double HamiltonianParamsAfFm::get_J_quantum() const{
+double HamiltonianParamsAfFm::get_J_quantum() const {
     return _J_quantum;
 }
 
-double HamiltonianParamsAfFm::get_B() const{
+double HamiltonianParamsAfFm::get_B() const {
     return _B;
 }
 
-} //end of namespace monostar_hamiltonians
+}  //end of namespace monostar_hamiltonians

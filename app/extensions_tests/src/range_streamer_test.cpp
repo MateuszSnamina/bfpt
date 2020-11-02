@@ -27,10 +27,10 @@ TEST(RangeStreamer, Fancy) {
     using namespace extension::boost::stream_pragma;
     double v1[3] = {1.1, 1.2, 1.3};
     const auto range_stream_settings = RSS<double>()
-            .set_stream_preparer([](std::ostream& s) { s << "BEGIN***|" << std::fixed << std::setprecision(2) << std::showpos; })
-            .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
-    .set_stream_separer([](std::ostream& s) { s << "|"; })
-    .set_stream_finisher([](std::ostream& s) { s << "|***END"; });
+                                           .set_stream_preparer([](std::ostream& s) { s << "BEGIN***|" << std::fixed << std::setprecision(2) << std::showpos; })
+                                           .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
+                                           .set_stream_separer([](std::ostream& s) { s << "|"; })
+                                           .set_stream_finisher([](std::ostream& s) { s << "|***END"; });
     const auto str = (v1 | range_stream_settings).str();
     ASSERT_EQ(str, "BEGIN***| A: +1.10| B: +1.20| C: +1.30|***END");
 }
@@ -42,10 +42,10 @@ TEST(RangeStreamer, FormatIndependencyFlagOff) {
     oss.fill('*');
     oss << std::setw(5);
     const auto range_stream_settings = RSS<double>()
-            .set_stream_preparer([](std::ostream& s) { s << "{" << std::fixed << std::setprecision(2) << std::showpos; })
-            .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
-    .set_stream_separer([](std::ostream& s) { s << "|"; })
-    .set_format_independence_flag(false);
+                                           .set_stream_preparer([](std::ostream& s) { s << "{" << std::fixed << std::setprecision(2) << std::showpos; })
+                                           .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
+                                           .set_stream_separer([](std::ostream& s) { s << "|"; })
+                                           .set_format_independence_flag(false);
     oss << (v1 | range_stream_settings);
     oss << 1.4;
     ASSERT_EQ(oss.str(), "****{*A:*+1.10|*B:*+1.20|*C:*+1.30}+1.40");
@@ -58,10 +58,10 @@ TEST(RangeStreamer, FormatIndependencyFlagExplicitOn) {
     oss.fill('*');
     oss << std::setw(5);
     const auto range_stream_settings = RSS<double>()
-            .set_stream_preparer([](std::ostream& s) { s << "{" << std::fixed << std::setprecision(2) << std::showpos; })
-            .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
-    .set_stream_separer([](std::ostream& s) { s << "|"; })
-    .set_format_independence_flag(true);
+                                           .set_stream_preparer([](std::ostream& s) { s << "{" << std::fixed << std::setprecision(2) << std::showpos; })
+                                           .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
+                                           .set_stream_separer([](std::ostream& s) { s << "|"; })
+                                           .set_format_independence_flag(true);
     oss << (v1 | range_stream_settings);
     oss << 1.4;
     ASSERT_EQ(oss.str(), "{ A: +1.10| B: +1.20| C: +1.30}**1.4");
@@ -74,9 +74,9 @@ TEST(RangeStreamer, FormatIndependencyFlagImplicitOn) {
     oss.fill('*');
     oss << std::setw(5);
     const auto range_stream_settings = RSS<double>()
-            .set_stream_preparer([](std::ostream& s) { s << "{" << std::fixed << std::setprecision(2) << std::showpos; })
-           .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
-            .set_stream_separer([](std::ostream& s) { s << "|"; });
+                                           .set_stream_preparer([](std::ostream& s) { s << "{" << std::fixed << std::setprecision(2) << std::showpos; })
+                                           .set_stream_sustainer([](std::ostream& s, size_t i) { s << std::setw(2) << char('A' + i) << ":" << std::setw(6); })
+                                           .set_stream_separer([](std::ostream& s) { s << "|"; });
     oss << (v1 | range_stream_settings);
     oss << 1.4;
     ASSERT_EQ(oss.str(), "{ A: +1.10| B: +1.20| C: +1.30}**1.4");
@@ -86,8 +86,7 @@ TEST(RangeStreamer, ValuePutter) {
     using namespace extension::boost::stream_pragma;
     double v1[3] = {1.1, 1.2, 1.3};
     const auto range_stream_settings = RSS<double>()
-            .set_stream_value_putter([](std::ostream& s, double t){s << 2 * t;});
+                                           .set_stream_value_putter([](std::ostream& s, double t) { s << 2 * t; });
     const auto str = (v1 | range_stream_settings).str();
     ASSERT_EQ(str, "{0:2.2,1:2.4,2:2.6}");
 }
-

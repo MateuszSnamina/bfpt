@@ -15,7 +15,7 @@ namespace monostar_system {
 
 using MonostarDynamicStlKstate = kstate_impl::DynamicStlKstate<MonostarSiteStateTrait>;
 
-template<size_t N>
+template <size_t N>
 using StaticStlMonostarKstate = kstate_impl::StaticStlKstate<MonostarSiteStateTrait, N>;
 
 using MonostarDynamicIntegral64Kstate = kstate_impl::DynamicIntegral64Kstate<MonostarSiteStateTrait, 1u>;
@@ -34,7 +34,6 @@ using MonostarKstate = MonostarDynamicIntegral64Kstate;
 
 }  // namespace monostar_system
 
-
 // #######################################################################
 // ## DynamicMonostarKstate - trait                                     ##
 // #######################################################################
@@ -44,7 +43,6 @@ namespace monostar_system {
 using MonostarKstateTrait = kstate_trait::TraitKstate<MonostarKstate>;
 
 }
-
 
 // #######################################################################
 // ## classical_gs_kstate, classical_es_kstate                          ##
@@ -57,7 +55,6 @@ MonostarKstate classical_gs_kstate(const unsigned n_sites);
 MonostarKstate classical_es_kstate(const unsigned n_sites);
 
 }  // namespace monostar_system
-
 
 // #######################################################################
 // ## DynamicMonostarKstate - printing                                  ##

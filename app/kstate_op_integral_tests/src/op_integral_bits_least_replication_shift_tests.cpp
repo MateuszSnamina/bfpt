@@ -1,9 +1,9 @@
-#include<kstate_op_integral/op_integral_bits_least_replication_shift.hpp>
-#include<kstate_op_integral/integral_bits_buffer.hpp>
+#include <kstate_op_integral/op_integral_bits_least_replication_shift.hpp>
+#include <kstate_op_integral/integral_bits_buffer.hpp>
 
 #include <gtest/gtest.h>
 
-#include <cstdint> //for types like: uint64_t
+#include <cstdint>  //for types like: uint64_t
 
 TEST(KstateOpIntegral, LeastReplicationShiftTest0) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b0{0b010011, 6};

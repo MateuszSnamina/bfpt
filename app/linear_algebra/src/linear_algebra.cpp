@@ -185,9 +185,9 @@ std::vector<MySpan> make_degeneracy_subspaces_analyse(const arma::vec& eigen_val
 namespace lin_alg {
 
 LinearAlgebraResult<arma::cx_mat> reduce_eigen_vectors(
-        const arma::cx_mat& cx_eigen_vectors_not_reduced,
-        const arma::vec& eigen_values,
-        double tol) {
+    const arma::cx_mat& cx_eigen_vectors_not_reduced,
+    const arma::vec& eigen_values,
+    double tol) {
     assert(cx_eigen_vectors_not_reduced.n_cols == 2 * eigen_values.n_rows);
     const std::vector<MySpan> spans = make_degeneracy_subspaces_analyse(eigen_values, tol);
     arma::cx_mat eigen_vectors(cx_eigen_vectors_not_reduced.n_rows, eigen_values.n_rows);
@@ -232,7 +232,6 @@ LinearAlgebraResult<arma::cx_mat> reduce_eigen_vectors(
 
 }  // namespace lin_alg
 
-
 // #######################################################################
 // ## eigs_sym                                                          ##
 // #######################################################################
@@ -248,7 +247,7 @@ eig_sym_impl(bool with_vectors_flag,
     arma::vec eigen_values;
     arma::cx_mat eigen_vectors;
     const bool eig_sym_success =
-            [with_vectors_flag, &eigen_values, &eigen_vectors, &matrix]() -> bool {
+        [with_vectors_flag, &eigen_values, &eigen_vectors, &matrix]() -> bool {
         if (with_vectors_flag) {
             return arma::eig_sym(eigen_values, eigen_vectors, matrix);
         } else {
@@ -322,9 +321,9 @@ eigs_sym_impl(bool with_vectors_flag,
     arma::vec eigen_values_not_reduced;
     arma::mat re_eigen_vectors_not_reduced;
     const bool eigs_sym_success =
-            [with_vectors_flag,
-            &eigen_values_not_reduced, &re_eigen_vectors_not_reduced, &re_matrix,
-            &n_vectors_not_reduced_to_calculate, form, tol]() -> bool {
+        [with_vectors_flag,
+         &eigen_values_not_reduced, &re_eigen_vectors_not_reduced, &re_matrix,
+         &n_vectors_not_reduced_to_calculate, form, tol]() -> bool {
         if (with_vectors_flag) {
             return arma::eigs_sym(eigen_values_not_reduced, re_eigen_vectors_not_reduced, re_matrix,
                                   n_vectors_not_reduced_to_calculate, form, tol);
@@ -485,9 +484,9 @@ fallbacked_eigs_sym_impl(bool with_vectors_flag,
 
 LinearAlgebraResult<HermitianEigenInfo>
 fallbacked_eigs_sym(
-        WithVectors,
-        const arma::sp_cx_mat& matrix, unsigned n_vectors,
-        const double tol, const unsigned max_n_tries) {
+    WithVectors,
+    const arma::sp_cx_mat& matrix, unsigned n_vectors,
+    const double tol, const unsigned max_n_tries) {
     const auto result = fallbacked_eigs_sym_impl(true, matrix, n_vectors, tol, max_n_tries);
     if (result.is_ok()) {
         const auto result_value = result.unwrap();
@@ -503,9 +502,9 @@ fallbacked_eigs_sym(
 
 LinearAlgebraResult<arma::vec>
 fallbacked_eigs_sym(
-        WithoutVectors,
-        const arma::sp_cx_mat& matrix, unsigned n_vectors,
-        const double tol, const unsigned max_n_tries) {
+    WithoutVectors,
+    const arma::sp_cx_mat& matrix, unsigned n_vectors,
+    const double tol, const unsigned max_n_tries) {
     const auto result = fallbacked_eigs_sym_impl(false, matrix, n_vectors, tol, max_n_tries);
     if (result.is_ok()) {
         const auto result_value = result.unwrap();

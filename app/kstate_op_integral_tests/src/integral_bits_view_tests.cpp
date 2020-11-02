@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <cstdint> //for types like: uint64_t
+#include <cstdint>  //for types like: uint64_t
 
 TEST(IntegralBitsRotatedView, Test0) {
     using IntegralBitsBufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
@@ -44,7 +44,7 @@ TEST(IntegralBitsRotatedView, Test2) {
 TEST(IntegralBitsRefinedView, Test1) {
     using IntegralBitsBufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
     const IntegralBitsBufferT b{0b110010111, 9};
-    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{0, MySiteState(15)};// MySiteState(12) => idx = 5;
+    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{0, MySiteState(15)};  // MySiteState(12) => idx = 5;
     const kstate_op_integral::IntegralBitsRefinedView<IntegralBitsBufferT, MySiteStateTrait, 3u> refined_view{b, h};
     EXPECT_EQ(refined_view.get_n_all_bits(), 9);
     EXPECT_EQ(refined_view.get_number(), 0b110010101);
@@ -53,7 +53,7 @@ TEST(IntegralBitsRefinedView, Test1) {
 TEST(IntegralBitsRefinedView, Test2) {
     using IntegralBitsBufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
     const IntegralBitsBufferT b{0b110010111, 9};
-    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{1, MySiteState(15)};// MySiteState(12) => idx = 5;
+    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{1, MySiteState(15)};  // MySiteState(12) => idx = 5;
     const kstate_op_integral::IntegralBitsRefinedView<IntegralBitsBufferT, MySiteStateTrait, 3u> refined_view{b, h};
     EXPECT_EQ(refined_view.get_n_all_bits(), 9);
     EXPECT_EQ(refined_view.get_number(), 0b110101111);
@@ -62,7 +62,7 @@ TEST(IntegralBitsRefinedView, Test2) {
 TEST(IntegralBitsRefinedView, Test3) {
     using IntegralBitsBufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
     const IntegralBitsBufferT b{0b110010111, 9};
-    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{2, MySiteState(15)};// MySiteState(12) => idx = 5;
+    const kstate_view_amend_spec::RefinedHolder<MySiteState> h{2, MySiteState(15)};  // MySiteState(12) => idx = 5;
     const kstate_op_integral::IntegralBitsRefinedView<IntegralBitsBufferT, MySiteStateTrait, 3u> refined_view{b, h};
     EXPECT_EQ(refined_view.get_n_all_bits(), 9);
     EXPECT_EQ(refined_view.get_number(), 0b101010111);

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <cstdint> //for types like: uint64_t
+#include <cstdint>  //for types like: uint64_t
 
 // #######################################################################
 // ## extract_{bit,chunk_number}                                        ##
@@ -148,7 +148,7 @@ TEST(KstateOpIntegralRaw, FromChunkNumbersRange1) {
 
 TEST(KstateOpIntegralRaw, FromChunkNumbersRange) {
     using BufferT = typename std::array<unsigned, 5>;
-    BufferT a {0b101, 0b000, 0b111, 0b010, 0b110};
+    BufferT a{0b101, 0b000, 0b111, 0b010, 0b110};
     const auto n = kstate_op_integral::raw::integral_from_chunk_numbers_range<uint64_t, unsigned>(a, 3);
     EXPECT_EQ(n, 0b110010111000101u);
 }

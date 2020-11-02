@@ -19,13 +19,13 @@ namespace kstate_op_range {
 template <typename ForwardRange>
 size_t n_least_replication_shift(const ForwardRange& rng) {
     // OLD IMPLEMENTATION:
-//    using raw::adaptors::operator|;
-//    assert(boost::size(rng) > 0);
-//    const auto rngdr = rng | kstate_view_amend_spec::doubled | kstate_view_amend_spec::rotated(1);
-//    const auto it = boost::range::search(rngdr, rng);
-//    const auto _ = std::distance(std::begin(rngdr), it);
-//    assert(_ >= 0);
-//    return static_cast<size_t>(_ + 1);
+    //    using raw::adaptors::operator|;
+    //    assert(boost::size(rng) > 0);
+    //    const auto rngdr = rng | kstate_view_amend_spec::doubled | kstate_view_amend_spec::rotated(1);
+    //    const auto it = boost::range::search(rngdr, rng);
+    //    const auto _ = std::distance(std::begin(rngdr), it);
+    //    assert(_ >= 0);
+    //    return static_cast<size_t>(_ + 1);
     // NEW IMPLEMENTATION:
     using raw::adaptors::operator|;
     [[maybe_unused]] const unsigned rng_size = boost::size(rng);

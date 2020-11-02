@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include<kstate_op_integral/is_integral_bits.hpp>
-#include<kstate_op_integral/op_integral_bits_raw.hpp>
+#include <kstate_op_integral/is_integral_bits.hpp>
+#include <kstate_op_integral/op_integral_bits_raw.hpp>
 
-#include<cassert>
+#include <cassert>
 
 // #######################################################################
 // ## _n_unique_shift                                                    ##
@@ -12,7 +12,7 @@
 
 namespace kstate_op_integral {
 
-template<typename _IntegralT>
+template <typename _IntegralT>
 struct UniqueShiftReceipt {
     using IntegralT = _IntegralT;
     static_assert(std::is_arithmetic_v<_IntegralT>);
@@ -32,8 +32,7 @@ UniqueShiftReceipt<typename IntegralBitsT::IntegralT> _n_unique_shift(IntegralBi
     UniqueShiftReceipt<typename IntegralBitsT::IntegralT> current_max{0, integral_bits.get_number()};
     {
         UniqueShiftReceipt<typename IntegralBitsT::IntegralT> proposed_max{0, integral_bits.get_number()};
-        while (proposed_max.n_rotation + 1u < n_sites)
-        {
+        while (proposed_max.n_rotation + 1u < n_sites) {
             proposed_max.buffer = ::kstate_op_integral::raw::rotate_bit(proposed_max.buffer, n_all_bits, n_bits_per_site);
             proposed_max.n_rotation++;
             if (current_max.buffer < proposed_max.buffer) {

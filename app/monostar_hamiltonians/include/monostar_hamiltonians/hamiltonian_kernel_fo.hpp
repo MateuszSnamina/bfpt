@@ -1,12 +1,12 @@
 #pragma once
 
-#include<monostar_hamiltonians/hamiltonian_params_fo.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
 
-#include<monostar_system/monostar_site_state.hpp>
+#include <monostar_system/monostar_site_state.hpp>
 
-#include<chainkernel/operator_kernel.hpp>
+#include <chainkernel/operator_kernel.hpp>
 
-#include<map>
+#include <map>
 
 // #######################################################################
 // ## prepare_hamiltonian_kernel_{1,12}_fo                              ##
@@ -26,4 +26,4 @@ prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsFo&, double orbital_theta);
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

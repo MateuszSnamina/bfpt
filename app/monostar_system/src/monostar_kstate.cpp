@@ -30,7 +30,6 @@ MonostarKstate classical_es_kstate(const unsigned n_sites) {
 
 }  // namespace monostar_system
 
-
 // #######################################################################
 // ## DynamicMonostarKstate - printing                                  ##
 // #######################################################################
@@ -43,7 +42,7 @@ std::ostream& operator<<(std::ostream& stream, const MonostarKstate& state) {
     using kstate_impl::pramga::operator<<;
 
     const extension::boost::RangeStreamerSettings<MonostarSiteState> monostar_kstate_range_streamer_settings =
-            extension::boost::RangeStreamerSettings<MonostarSiteState>()
+        extension::boost::RangeStreamerSettings<MonostarSiteState>()
             .set_stream_preparer([](::std::ostream& s) { s << "𝕊𝕥𝕒𝕣𝕂𝕤𝕥𝕒𝕥𝕖⦃"; })
             .set_stream_sustainer([](::std::ostream&, size_t) {})
             .set_stream_separer([](::std::ostream&) {})

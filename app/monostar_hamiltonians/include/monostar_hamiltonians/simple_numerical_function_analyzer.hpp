@@ -1,8 +1,8 @@
 #pragma once
 
-#include<functional>
-#include<set>
-#include<utility>
+#include <functional>
+#include <set>
+#include <utility>
 
 // #######################################################################
 // ## is_minimum                                                        ##
@@ -12,7 +12,7 @@ namespace monostar_hamiltonians::function_analyzer {
 
 double is_minimum(const std::function<double(double)>& fn, double x);
 
-} // end of namespace monostar_hamiltonians
+}  // namespace monostar_hamiltonians::function_analyzer
 
 // #######################################################################
 // ## find_all_extrema                                                  ##
@@ -37,7 +37,7 @@ std::set<double> find_all_extrema(const std::function<double(double)>& fn_prim,
                                   const std::pair<double, double>& range,
                                   unsigned n_subranges = 100);
 
-} // end of namespace monostar_hamiltonians::function_analyzer
+}  // end of namespace monostar_hamiltonians::function_analyzer
 
 // #######################################################################
 // ## find_all_{local,global}_minima                                    ##
@@ -46,18 +46,18 @@ std::set<double> find_all_extrema(const std::function<double(double)>& fn_prim,
 namespace monostar_hamiltonians::function_analyzer {
 
 std::set<double> find_all_local_minima(
-        const std::function<double(double)>& fn,
-        const std::function<double(double)>& fn_prim, // d/dx(fn)
-        const std::pair<double, double>& range,
-        unsigned n_subranges = 100);
+    const std::function<double(double)>& fn,
+    const std::function<double(double)>& fn_prim,  // d/dx(fn)
+    const std::pair<double, double>& range,
+    unsigned n_subranges = 100);
 std::set<double> find_all_global_minima(
-        const std::function<double(double)>& fn,
-        const std::function<double(double)>& fn_prim, // d/dx(fn)
-        const std::pair<double, double>& range,
-        unsigned n_subranges = 10000);
+    const std::function<double(double)>& fn,
+    const std::function<double(double)>& fn_prim,  // d/dx(fn)
+    const std::pair<double, double>& range,
+    unsigned n_subranges = 10000);
 std::set<double> find_all_global_minima_periodic_2_pi(
-        const std::function<double(double)>& fn,
-        const std::function<double(double)>& fn_prim, // d/dx(fn)
-        unsigned n_subranges = 10000);
+    const std::function<double(double)>& fn,
+    const std::function<double(double)>& fn_prim,  // d/dx(fn)
+    unsigned n_subranges = 10000);
 
-} // end of namespace monostar_hamiltonians::function_analyzer
+}  // end of namespace monostar_hamiltonians::function_analyzer

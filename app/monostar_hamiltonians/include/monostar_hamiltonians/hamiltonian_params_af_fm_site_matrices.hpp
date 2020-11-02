@@ -1,10 +1,10 @@
 #pragma once
 
-#include<utility/named.hpp>
+#include <utility/named.hpp>
 
-#include<armadillo>
+#include <armadillo>
 
-#include<vector>
+#include <vector>
 
 // #######################################################################
 // ## OneSiteSpinMatrices                                               ##
@@ -24,7 +24,7 @@ struct OneSiteSpinMatrices {
     static arma::cx_mat22 get_S_minus_af_latticeB();
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## OneSiteSpinNamedMatrices                                          ##
@@ -45,7 +45,7 @@ struct OneSiteSpinNamedMatrices {
     static std::vector<utility::Named<arma::cx_mat22>> site_matrices_for_average_calculations_af_fm();
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## TwoSitesSpinMatrices                                              ##
@@ -62,7 +62,7 @@ struct TwoSitesSpinMatrices {
     static arma::cx_mat44 get_S_S_af();
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians
 
 // #######################################################################
 // ## TwoSitesSpinNamedMatrices                                         ##
@@ -81,4 +81,4 @@ struct TwoSitesSpinNamedMatrices {
     static std::vector<utility::Named<arma::cx_mat44>> matrices_for_average_calculations_af();
 };
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

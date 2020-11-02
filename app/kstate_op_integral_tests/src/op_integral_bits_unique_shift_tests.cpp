@@ -1,9 +1,9 @@
-#include<kstate_op_integral/op_integral_bits_unique_shift.hpp>
-#include<kstate_op_integral/integral_bits_buffer.hpp>
+#include <kstate_op_integral/op_integral_bits_unique_shift.hpp>
+#include <kstate_op_integral/integral_bits_buffer.hpp>
 
 #include <gtest/gtest.h>
 
-#include <cstdint> //for types like: uint64_t
+#include <cstdint>  //for types like: uint64_t
 
 TEST(KstateOpIntegral, NUniqueShiftTest0) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b1, 1};
@@ -51,7 +51,7 @@ TEST(KstateOpIntegral, NUniqueShiftTest8) {
 }
 
 TEST(KstateOpIntegral, NUniqueShiftTest9) {
-    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6}; // 1=b01 3=b11 2=b10
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6};  // 1=b01 3=b11 2=b10
     ASSERT_EQ(kstate_op_integral::n_unique_shift(b1, 2), 2);
 }
 
@@ -101,6 +101,6 @@ TEST(KstateOpIntegral, MakeUniqueShiftTest8) {
 }
 
 TEST(KstateOpIntegral, MakeUniqueShiftTest9) {
-    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6}; // 1=b01 3=b11 2=b10
+    const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b011110, 6};  // 1=b01 3=b11 2=b10
     ASSERT_EQ(kstate_op_integral::make_unique_shift(b1, 2), 0b111001);
 }

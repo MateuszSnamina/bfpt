@@ -24,27 +24,30 @@
 
 namespace koperator_impl {
 
-template<typename _KstateTraitT>
+template <typename _KstateTraitT>
 class KernelDrivenKstateOperatorMatrix {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
-public:
+
+   public:
     using KstateTraitT = _KstateTraitT;
     using KstateT = typename _KstateTraitT::KstateT;
     using SiteStateTraitT = typename KstateT::SiteStateTraitT;
     using SiteStateT = typename KstateT::SiteStateT;
     using BasisT = kbasis::Basis<KstateTraitT>;
-public:
+
+   public:
     KernelDrivenKstateOperatorMatrix(
-            const size_t n_sites,
-            chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
-            chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
+        const size_t n_sites,
+        chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
+        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
     void fill_kn_operator_builder_matrix_coll(
-            const BasisT& basis,
-            size_t n_col,
-            arma::sp_cx_mat& kn_operator_builder_matrix,
-            const unsigned k_n) const;
-private:
+        const BasisT& basis,
+        size_t n_col,
+        arma::sp_cx_mat& kn_operator_builder_matrix,
+        const unsigned k_n) const;
+
+   private:
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
@@ -52,18 +55,17 @@ private:
 
 }  // namespace koperator_impl
 
-
 // #######################################################################
 // ## KernelDrivenKstateOperatorMatrix -- impl                          ##
 // #######################################################################
 
 namespace koperator_impl {
 
-template<typename _KstateTraitT>
+template <typename _KstateTraitT>
 KernelDrivenKstateOperatorMatrix<_KstateTraitT>::KernelDrivenKstateOperatorMatrix(
-        const size_t n_sites,
-        chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
-        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12)
+    const size_t n_sites,
+    chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
+    chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12)
     : _n_sites(n_sites),
       _operator_kernel_1(operator_kernel_1),
       _operator_kernel_12(operator_kernel_12) {
@@ -73,13 +75,12 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::KernelDrivenKstateOperatorMatri
  * In this implementation we assume thar
  * in the basis there are only elements that are unique shifted!
  */
-template<typename _KstateTraitT>
-void
-KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix_coll(
-        const BasisT& basis,
-        const size_t ket_kstate_idx,
-        arma::sp_cx_mat& kn_operator_builder_matrix,
-        const unsigned k_n) const {
+template <typename _KstateTraitT>
+void KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix_coll(
+    const BasisT& basis,
+    const size_t ket_kstate_idx,
+    arma::sp_cx_mat& kn_operator_builder_matrix,
+    const unsigned k_n) const {
     using namespace std::complex_literals;
     assert(kn_operator_builder_matrix.n_cols == kn_operator_builder_matrix.n_rows);
     assert(kn_operator_builder_matrix.n_rows == basis.size());
@@ -99,11 +100,11 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& kernel_coupling_coef = couple_info.coef;
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_view.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);  // Must outlive bra_kstate_view.
             const auto bra_kstate_view = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);
             const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
             const auto rotation_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
-            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, rotation_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(bra_kstate)`
             if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
                 const auto bra_kstate_idx = *bra_kstate_optional_idx;
                 double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
@@ -116,8 +117,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
                 kn_operator_builder_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
             }
-        } // end of `_half_off_diag_info` equal_range loop
-    } // end of `Delta` loop
+        }  // end of `_half_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
     // ********** OFF-DIAG, KERNEL12 ********************************************
     //std::chrono::high_resolution_clock::time_point tp_u_1, tp_u_2; // performance debug sake
     //std::chrono::high_resolution_clock::time_point tp_nu_1, tp_nu_2; // performance debug sake
@@ -140,9 +141,9 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1); // Must outlive bra_kstate_view.
-            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2); // Must outlive bra_kstate_view.
-            const auto bra_kstate_view_preproduct = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);              // Must outlive bra_kstate_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);           // Must outlive bra_kstate_view.
+            const auto bra_kstate_view_preproduct = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);  // Must outlive bra_kstate_view
             const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct, refined_holder_2);
             // const auto bra_kstate_view = KstateTraitT::refined_view(KstateTraitT::refined_view(ket_kstate_view, refined_holder_1), refined_holder_2); //OLD
             //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
@@ -150,7 +151,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
             //tp_u_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
             const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
             const auto rotation_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
-            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, rotation_spec); // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(bra_kstate)`
             //tp_u_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
             //unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_u_2 - tp_u_1).count(); // performance debug sake
             //tp_nu_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
@@ -166,8 +167,8 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
                 const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
                 kn_operator_builder_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
             }
-        } // end of `_half_off_diag_info` equal_range loop
-    } // end of `Delta` loop
+        }  // end of `_half_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
     //const auto tp_offdiag_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //tp_nu_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
     //not_unique_shift_time += std::chrono::duration_cast<std::chrono::nanoseconds>(tp_nu_2 - tp_nu_1).count(); // performance debug sake
@@ -181,7 +182,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
         const chainkernel::StateKernel1<SiteStateTraitT> ket_kernel{ket_kernel_site_1};
         if (_operator_kernel_1._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_1._diag_info.at(ket_kernel);
-            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2;  // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
     // ********** ON-DIAG, KERNEL12 *********************************************
@@ -191,7 +192,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
         const chainkernel::StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         if (_operator_kernel_12._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);
-            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2; // factor '/2' is as we build matrix M such as H = M + M^T.
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2;  // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
 }
@@ -204,7 +205,7 @@ KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_matrix
 
 namespace koperator_trait {
 
-template<typename _KstateTraitT>
+template <typename _KstateTraitT>
 struct TraitKoperator<koperator_impl::KernelDrivenKstateOperatorMatrix<_KstateTraitT>> {
     static_assert(kstate_trait::IsTraitKstate<_KstateTraitT>::value);
     static_assert(_KstateTraitT::is_kstate_trait);
@@ -216,17 +217,16 @@ struct TraitKoperator<koperator_impl::KernelDrivenKstateOperatorMatrix<_KstateTr
     using BasisT = kbasis::Basis<KstateTraitT>;
     // function being the public API:
     static void fill_kn_operator_builder_matrix_coll(
-            const KoperatorT& koperator,
-            const BasisT& basis,
-            size_t n_col,
-            arma::sp_cx_mat& kn_operator_builder_matrix,
-            const unsigned k_n) {
+        const KoperatorT& koperator,
+        const BasisT& basis,
+        size_t n_col,
+        arma::sp_cx_mat& kn_operator_builder_matrix,
+        const unsigned k_n) {
         koperator.fill_kn_operator_builder_matrix_coll(basis,
                                                        n_col,
                                                        kn_operator_builder_matrix,
                                                        k_n);
     }
-
 };
 
-}
+}  // namespace koperator_trait

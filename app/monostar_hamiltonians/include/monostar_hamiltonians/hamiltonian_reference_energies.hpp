@@ -1,8 +1,8 @@
 #pragma once
 
-#include<optional>
+#include <optional>
 
-#include<cassert>
+#include <cassert>
 
 // #######################################################################
 // ## HamiltonianReferenceEnergies                                      ##
@@ -11,9 +11,8 @@
 namespace monostar_hamiltonians {
 
 class HamiltonianReferenceEnergies {
-public:
-    HamiltonianReferenceEnergies(unsigned n_sites) :
-        _n_sites(n_sites) {
+   public:
+    HamiltonianReferenceEnergies(unsigned n_sites) : _n_sites(n_sites) {
         assert(n_sites > 0);
     }
     virtual std::optional<double> get_gs_energy() const = 0;
@@ -27,8 +26,9 @@ public:
         return std::nullopt;
     }
     virtual ~HamiltonianReferenceEnergies() = default;
-protected:
+
+   protected:
     const unsigned _n_sites;
 };
 
-}
+}  // namespace monostar_hamiltonians

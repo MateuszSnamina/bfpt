@@ -14,7 +14,7 @@
 
 namespace utility {
 
-template <template <typename...> class C, typename...Ts>
+template <template <typename...> class C, typename... Ts>
 std::true_type is_base_of_template_impl(const C<Ts...>*);
 
 template <template <typename...> class C>
@@ -26,4 +26,4 @@ using is_base_of_template = decltype(is_base_of_template_impl<C>(std::declval<T*
 template <typename T, template <typename...> class C>
 inline constexpr bool is_base_of_template_v = is_base_of_template<T, C>::value;
 
-}
+}  // namespace utility

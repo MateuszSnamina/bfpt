@@ -17,4 +17,4 @@ utility::Result<double, std::domain_error> interpret_double_string(const std::st
 utility::Result<int, std::domain_error> interpret_int_string(const std::string& s);
 utility::Result<unsigned, std::domain_error> interpret_unsigned_string(const std::string& s);
 
-}
+}  // namespace monostar_app

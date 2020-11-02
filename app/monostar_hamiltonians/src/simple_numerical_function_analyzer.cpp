@@ -1,13 +1,13 @@
-#include<monostar_hamiltonians/simple_numerical_function_analyzer.hpp>
+#include <monostar_hamiltonians/simple_numerical_function_analyzer.hpp>
 
-#include<monostar_hamiltonians/simple_numerical_root_finder.hpp>
+#include <monostar_hamiltonians/simple_numerical_root_finder.hpp>
 
-#include<utility/almost_equal.hpp>
+#include <utility/almost_equal.hpp>
 
-#include<limits>
+#include <limits>
 
-#include<cmath>
-#include<cassert>
+#include <cmath>
+#include <cassert>
 
 // #######################################################################
 // ## M_PI                                                              ##
@@ -26,13 +26,13 @@ namespace monostar_hamiltonians::function_analyzer {
 
 double is_minimum(const std::function<double(double)>& fn, double x) {
     const double fnx = fn(x);
-    for(double epsilon = 10 * std::numeric_limits<double>::epsilon(); epsilon < std::numeric_limits<double>::max() / 1000; epsilon *=2) {
+    for (double epsilon = 10 * std::numeric_limits<double>::epsilon(); epsilon < std::numeric_limits<double>::max() / 1000; epsilon *= 2) {
         const double a = x + epsilon;
         const double b = x - epsilon;
         const double fna = fn(a);
         const double fnb = fn(b);
         if ((fna > fnx && !utility::almost_equal(fna, fnx, 1.0)) &&
-                (fnb > fnx && !utility::almost_equal(fnb, fnx, 1.0))) {
+            (fnb > fnx && !utility::almost_equal(fnb, fnx, 1.0))) {
             return true;
         } else if ((fna < fnx && !utility::almost_equal(fna, fnx, 1.0)) ||
                    (fnb < fnx && !utility::almost_equal(fnb, fnx, 1.0))) {
@@ -44,7 +44,7 @@ double is_minimum(const std::function<double(double)>& fn, double x) {
     return false;
 }
 
-} // end of namespace monostar_hamiltonians
+}  // namespace monostar_hamiltonians::function_analyzer
 
 // #######################################################################
 // ## find_all_extrema                                                  ##
@@ -59,7 +59,7 @@ std::set<double> find_all_extrema(const std::function<double(double)>& fn_prim,
     return all_extrema;
 }
 
-} // end of namespace monostar_hamiltonians::function_analyzer
+}  // end of namespace monostar_hamiltonians::function_analyzer
 
 // #######################################################################
 // ## find_all_{local,global}_minima                                    ##
@@ -68,14 +68,14 @@ std::set<double> find_all_extrema(const std::function<double(double)>& fn_prim,
 namespace monostar_hamiltonians::function_analyzer {
 
 std::set<double> find_all_local_minima(
-        const std::function<double(double)>& fn,
-        const std::function<double(double)>& fn_prim, // d/dx(fn)
-        const std::pair<double, double>& range,
-        unsigned n_subranges) {
+    const std::function<double(double)>& fn,
+    const std::function<double(double)>& fn_prim,  // d/dx(fn)
+    const std::pair<double, double>& range,
+    unsigned n_subranges) {
     const std::set<double> all_extrema = function_analyzer::find_all_extrema(fn_prim, range, n_subranges);
     std::set<double> all_local_minima;
     for (const auto& extremum : all_extrema) {
-        if  (function_analyzer::is_minimum(fn, extremum)) {
+        if (function_analyzer::is_minimum(fn, extremum)) {
             all_local_minima.insert(extremum);
         }
     }
@@ -83,16 +83,16 @@ std::set<double> find_all_local_minima(
 }
 
 std::set<double> find_all_global_minima(
-        const std::function<double(double)>& fn,
-        const std::function<double(double)>& fn_prim, // d/dx(fn)
-        const std::pair<double, double>& range,
-        unsigned n_subranges) {
+    const std::function<double(double)>& fn,
+    const std::function<double(double)>& fn_prim,  // d/dx(fn)
+    const std::pair<double, double>& range,
+    unsigned n_subranges) {
     const std::set<double> all_local_minima = find_all_local_minima(fn, fn_prim, range, n_subranges);
     if (all_local_minima.empty()) {
         return {};
     } else {
         std::set<double> results;
-        std::set<double> all_fn_local_minima = [&all_local_minima, &fn](){
+        std::set<double> all_fn_local_minima = [&all_local_minima, &fn]() {
             std::set<double> all_fn_local_minima_builder;
             for (const auto local_minimum : all_local_minima) {
                 all_fn_local_minima_builder.insert(fn(local_minimum));
@@ -111,9 +111,9 @@ std::set<double> find_all_global_minima(
 }
 
 std::set<double> find_all_global_minima_periodic_2_pi(
-        const std::function<double(double)>& fn,
-        const std::function<double(double)>& fn_prim, // d/dx(fn)
-        unsigned n_subranges) {
+    const std::function<double(double)>& fn,
+    const std::function<double(double)>& fn_prim,  // d/dx(fn)
+    unsigned n_subranges) {
     const std::set<double> all_local_minima = [&fn, &fn_prim, &n_subranges]() {
         std::set<double> all_local_minima_builder = find_all_local_minima(fn, fn_prim, {-M_PI, +M_PI}, n_subranges);
         if (function_analyzer::is_minimum(fn, -M_PI)) {
@@ -129,7 +129,7 @@ std::set<double> find_all_global_minima_periodic_2_pi(
         return {};
     } else {
         std::set<double> results;
-        std::set<double> all_fn_local_minima = [&all_local_minima, &fn](){
+        std::set<double> all_fn_local_minima = [&all_local_minima, &fn]() {
             std::set<double> all_fn_local_minima_builder;
             for (const auto local_minimum : all_local_minima) {
                 all_fn_local_minima_builder.insert(fn(local_minimum));
@@ -150,4 +150,4 @@ std::set<double> find_all_global_minima_periodic_2_pi(
     }
 }
 
-} // end of namespace monostar_hamiltonians::function_analyzer
+}  // end of namespace monostar_hamiltonians::function_analyzer

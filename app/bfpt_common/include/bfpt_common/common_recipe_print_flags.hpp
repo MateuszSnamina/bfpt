@@ -1,6 +1,6 @@
 #pragma once
 
-#include<utility>
+#include <utility>
 
 // #######################################################################
 // ## CommonRecipePrintFlags                                            ##
@@ -20,7 +20,7 @@ struct CommonRecipePrintFlags {
     bool print_eigen_vectors_flag = false;
     bool print_pretty_vectors_flag = false;
     bool print_density_operator_flag = false;
-    std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates {10, 50};
+    std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates{10, 50};
     double print_pretty_probability_treshold = 0.05;
 };
 

@@ -30,4 +30,4 @@ utility::Result<RunType, std::domain_error> interpret_run_type_string(const std:
     }
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

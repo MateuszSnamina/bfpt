@@ -1,14 +1,14 @@
 #pragma once
 
-#include<monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
 
-#include<monostar_system/monostar_site_state.hpp>
+#include <monostar_system/monostar_site_state.hpp>
 
-#include<chainkernel/operator_kernel.hpp>
+#include <chainkernel/operator_kernel.hpp>
 
-#include<kstate_trait/trait_site_state.hpp>
+#include <kstate_trait/trait_site_state.hpp>
 
-#include<map>
+#include <map>
 
 // #######################################################################
 // ## prepare_hamiltonian_kernel_{1,12}_{af,fm}                         ##
@@ -34,4 +34,4 @@ prepare_hamiltonian_kernel_1_af_fm(double B = 0.0);
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_af_fm(const HamiltonianParamsAfFm&);
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

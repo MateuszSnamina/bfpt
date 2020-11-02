@@ -1,4 +1,4 @@
-#include<monostar_app/enum_es_momentum_domain.hpp>
+#include <monostar_app/enum_es_momentum_domain.hpp>
 
 #include <stdexcept>
 
@@ -11,75 +11,74 @@ namespace {
 using namespace monostar_app;
 
 class EsMomentumDomainVariantStreamerVisitor {
-public:
+   public:
     EsMomentumDomainVariantStreamerVisitor(std::ostream& stream)
         : _stream(stream) {
     }
 
-    void operator() (const EsMomentumDomainHalfPiWithout&) {
+    void operator()(const EsMomentumDomainHalfPiWithout&) {
         _stream << "EsMomentumDomainHalfPiWithout";
     }
 
-    void operator() (const EsMomentumDomainHalfPiWith&) {
+    void operator()(const EsMomentumDomainHalfPiWith&) {
         _stream << "EsMomentumDomainHalfPiWith";
     }
 
-    void operator() (const EsMomentumDomainPiWithout&) {
+    void operator()(const EsMomentumDomainPiWithout&) {
         _stream << "EsMomentumDomainPiWithout";
     }
 
-    void operator() (const EsMomentumDomainPiWith&) {
+    void operator()(const EsMomentumDomainPiWith&) {
         _stream << "EsMomentumDomainPiWith";
     }
 
-    void operator() (const EsMomentumDomainAll&) {
+    void operator()(const EsMomentumDomainAll&) {
         _stream << "EsMomentumDomainAll";
     }
 
-    void operator() (const EsMomentumDomainOne& o) {
+    void operator()(const EsMomentumDomainOne& o) {
         _stream << "EsMomentumDomainOne(n_k:" << o.n_k << ")";
     }
 
-private:
+   private:
     std::ostream& _stream;
 };
 
-
 class EsMomentumDomainVariantToMomentumRangeSapnVisitor {
-public:
+   public:
     EsMomentumDomainVariantToMomentumRangeSapnVisitor(unsigned n_sites)
         : _n_sites(n_sites) {
     }
 
-    std::pair<unsigned, unsigned> operator() (const EsMomentumDomainHalfPiWithout&) const {
+    std::pair<unsigned, unsigned> operator()(const EsMomentumDomainHalfPiWithout&) const {
         return {0, (_n_sites + 3) / 4};
     }
 
-    std::pair<unsigned, unsigned> operator() (const EsMomentumDomainHalfPiWith&) const  {
+    std::pair<unsigned, unsigned> operator()(const EsMomentumDomainHalfPiWith&) const {
         return {0, (_n_sites + 4) / 4};
     }
 
-    std::pair<unsigned, unsigned> operator() (const EsMomentumDomainPiWithout&) const {
+    std::pair<unsigned, unsigned> operator()(const EsMomentumDomainPiWithout&) const {
         return {0, (_n_sites + 1) / 2};
     }
 
-    std::pair<unsigned, unsigned> operator() (const EsMomentumDomainPiWith&) const {
+    std::pair<unsigned, unsigned> operator()(const EsMomentumDomainPiWith&) const {
         return {0, (_n_sites + 2) / 2};
     }
 
-    std::pair<unsigned, unsigned> operator() (const EsMomentumDomainAll&) const {
+    std::pair<unsigned, unsigned> operator()(const EsMomentumDomainAll&) const {
         return {0, _n_sites};
     }
 
-    std::pair<unsigned, unsigned> operator() (const EsMomentumDomainOne& o) const {
+    std::pair<unsigned, unsigned> operator()(const EsMomentumDomainOne& o) const {
         return {o.n_k, o.n_k + 1};
     }
 
-private:
+   private:
     unsigned _n_sites;
 };
 
-}
+}  // namespace
 
 // -----------------------------------------------------
 // --  Enum type                                      --
@@ -106,7 +105,7 @@ std::ostream& operator<<(std::ostream& s, const EsMomentumDomain& m) {
     return s;
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app
 
 // -----------------------------------------------------
 // --  Variant type                                   --
@@ -127,4 +126,4 @@ es_momentum_domain_variant_to_momentum_range_sapn(EsMomentumDomainVariant md, un
     return std::visit(visitor, md);
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

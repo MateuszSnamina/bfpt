@@ -1,11 +1,10 @@
-#include<kstate_op_range/op_range_least_replication_shift.hpp>
+#include <kstate_op_range/op_range_least_replication_shift.hpp>
 
 #include <boost/range/algorithm.hpp>
 
 #include <array>
 
 #include <gtest/gtest.h>
-
 
 TEST(KstateOpRange, LeastReplicationShiftTest0) {
     const std::array<int, 6> v0 = {11, 12, 13, 14, 15, 16};

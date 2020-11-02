@@ -10,4 +10,4 @@ constexpr unsigned bool_to_unsigned(bool b) {
     return (b ? 1u : 0u);
 }
 
-}
+}  // namespace kstate_op_integral

@@ -35,8 +35,8 @@ std::optional<size_t> compare_translational_equality(const ForwardRange1& rng1, 
     const auto rng2d = rng2 | kstate_view_amend_spec::doubled;
     const auto it = boost::range::search(rng2d, rng1);
     return it == std::end(rng2d)
-            ? std::optional<size_t>()
-            : static_cast<size_t>(std::distance(std::begin(rng2d), it));
+               ? std::optional<size_t>()
+               : static_cast<size_t>(std::distance(std::begin(rng2d), it));
 }
 
 }  // namespace kstate_op_range

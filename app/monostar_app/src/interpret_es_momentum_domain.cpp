@@ -16,7 +16,6 @@ const extern std::map<std::string, EsMomentumDomain> interpret_es_momentum_domai
     {"one", EsMomentumDomain::one},
 };
 
-
 utility::Result<EsMomentumDomain, std::domain_error> interpret_es_momentum_domain(const std::string& es_momentum_domain_string) {
     using extension::boost::stream_pragma::RSS;
     using extension::boost::stream_pragma::operator|;
@@ -47,10 +46,10 @@ EsMomentumDomainVariant es_momentum_domain_enum_to_variant(EsMomentumDomain m, u
         return EsMomentumDomainAll{};
     } else if (m == EsMomentumDomain::one) {
         return EsMomentumDomainOne{n_k};
-    }  else {
+    } else {
         throw std::logic_error("Invalid model enum value!");
     }
     return EsMomentumDomainAll{};
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

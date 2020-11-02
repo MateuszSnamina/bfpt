@@ -11,14 +11,13 @@
 #include <type_traits>
 #include <cassert>
 
-
 // #######################################################################
 // ## IntegralBitsView                                                  ##
 // #######################################################################
 
 namespace kstate_op_integral {
 
-template<typename _IntegralBitsT>
+template <typename _IntegralBitsT>
 struct IntegralBitsView {
     static_assert(IsIntegralBits<_IntegralBitsT>::value);
     using IntegralBitsT = _IntegralBitsT;
@@ -35,10 +34,10 @@ struct IntegralBitsView {
     };
 };
 
-template<typename _IntegralBitsT>
+template <typename _IntegralBitsT>
 struct IsIntegralBits<IntegralBitsView<_IntegralBitsT>> : std::true_type {};
 
-}
+}  // namespace kstate_op_integral
 
 // #######################################################################
 // ## IntegralBitsRotatedView                                           ##
@@ -46,7 +45,7 @@ struct IsIntegralBits<IntegralBitsView<_IntegralBitsT>> : std::true_type {};
 
 namespace kstate_op_integral {
 
-template<typename _IntegralBitsT, unsigned char _n_bits_per_site>
+template <typename _IntegralBitsT, unsigned char _n_bits_per_site>
 struct IntegralBitsRotatedView {
     static_assert(IsIntegralBits<_IntegralBitsT>::value);
     //static_assert(_SiteStateTraitT::site_basis_dim() == 2); //TODO make the right check
@@ -62,10 +61,10 @@ struct IntegralBitsRotatedView {
         const unsigned char idx_pivot_chunk_number = h.n;
         const unsigned char n_bits_in_chunk_number = n_bits_per_site;
         const IntegralT refined_value = kstate_op_integral::raw::rotate_chunk_number(
-                    underlying_value,
-                    n_all_bits,
-                    idx_pivot_chunk_number,
-                    n_bits_in_chunk_number);
+            underlying_value,
+            n_all_bits,
+            idx_pivot_chunk_number,
+            n_bits_in_chunk_number);
         return refined_value;
     }
     unsigned char get_n_all_bits() const noexcept {
@@ -73,10 +72,10 @@ struct IntegralBitsRotatedView {
     };
 };
 
-template<typename _IntegralBitsT, unsigned char _n_bits_per_site>
+template <typename _IntegralBitsT, unsigned char _n_bits_per_site>
 struct IsIntegralBits<IntegralBitsRotatedView<_IntegralBitsT, _n_bits_per_site>> : std::true_type {};
 
-}
+}  // namespace kstate_op_integral
 
 // #######################################################################
 // ## IntegralBitsRefinedView                                           ##
@@ -84,7 +83,7 @@ struct IsIntegralBits<IntegralBitsRotatedView<_IntegralBitsT, _n_bits_per_site>>
 
 namespace kstate_op_integral {
 
-template<typename _IntegralBitsT, typename _SiteStateTraitT, unsigned char _n_bits_per_site>
+template <typename _IntegralBitsT, typename _SiteStateTraitT, unsigned char _n_bits_per_site>
 struct IntegralBitsRefinedView {
     static_assert(IsIntegralBits<_IntegralBitsT>::value);
     static_assert(kstate_trait::IsTraitSiteState<_SiteStateTraitT>::value);
@@ -104,10 +103,10 @@ struct IntegralBitsRefinedView {
         const unsigned char idx_first_bit = n_bits_per_site * h.n;
         const unsigned char n_bits_in_chunk_number = n_bits_per_site;
         const IntegralT refined_value = kstate_op_integral::raw::refine_chunk_number<IntegralT, unsigned>(
-                    underlying_value,
-                    idx_first_bit,
-                    n_bits_in_chunk_number,
-                    new_chunk_number);
+            underlying_value,
+            idx_first_bit,
+            n_bits_in_chunk_number,
+            new_chunk_number);
         return refined_value;
     }
     unsigned char get_n_all_bits() const noexcept {
@@ -115,7 +114,7 @@ struct IntegralBitsRefinedView {
     };
 };
 
-template<typename _IntegralBitsT, typename _SiteStateTraitT, unsigned char _n_bits_per_site>
+template <typename _IntegralBitsT, typename _SiteStateTraitT, unsigned char _n_bits_per_site>
 struct IsIntegralBits<IntegralBitsRefinedView<_IntegralBitsT, _SiteStateTraitT, _n_bits_per_site>> : std::true_type {};
 
-}
+}  // namespace kstate_op_integral

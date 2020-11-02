@@ -1,9 +1,9 @@
-#include<kstate_op_integral/integral_bits_buffer.hpp>
-#include<kstate_op_integral/op_integral_bits_compare.hpp>
+#include <kstate_op_integral/integral_bits_buffer.hpp>
+#include <kstate_op_integral/op_integral_bits_compare.hpp>
 
 #include <gtest/gtest.h>
 
-#include <cstdint> //for types like: uint64_t
+#include <cstdint>  //for types like: uint64_t
 
 TEST(KstateOpIntegral, CompareEqualityTest0) {
     const kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> b1{0b1100101110, 10};

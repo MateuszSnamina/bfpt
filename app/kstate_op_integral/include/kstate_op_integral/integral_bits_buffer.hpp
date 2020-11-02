@@ -7,7 +7,7 @@
 
 namespace kstate_op_integral {
 
-template<typename _IntegralT>
+template <typename _IntegralT>
 struct IntegralBitsDynamicBuffer {
     static_assert(std::is_arithmetic_v<_IntegralT>);
     static_assert(std::is_integral_v<_IntegralT>);
@@ -26,7 +26,7 @@ struct IntegralBitsDynamicBuffer {
     };
 };
 
-template<typename _IntegralT, std::size_t _N>
+template <typename _IntegralT, std::size_t _N>
 struct IntegralBitsStaticBuffer {
     static_assert(std::is_arithmetic_v<_IntegralT>);
     static_assert(std::is_integral_v<_IntegralT>);
@@ -46,10 +46,10 @@ struct IntegralBitsStaticBuffer {
     };
 };
 
-template<typename _IntegralT>
+template <typename _IntegralT>
 struct IsIntegralBits<IntegralBitsDynamicBuffer<_IntegralT>> : std::true_type {};
 
-template<typename _IntegralT, std::size_t _N>
+template <typename _IntegralT, std::size_t _N>
 struct IsIntegralBits<IntegralBitsStaticBuffer<_IntegralT, _N>> : std::true_type {};
 
-}
+}  // namespace kstate_op_integral

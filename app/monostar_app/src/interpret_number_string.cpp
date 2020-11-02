@@ -14,7 +14,7 @@ namespace {
 //**********************************************************************
 
 std::optional<double> real_suffix_char_to_suffix_value(const char c) {
-    static const std::map<char, double> m {
+    static const std::map<char, double> m{
         {'T', 1e+12},
         {'G', 1e+9},
         {'M', 1e+6},
@@ -22,8 +22,7 @@ std::optional<double> real_suffix_char_to_suffix_value(const char c) {
         {'m', 1e-3},
         {'u', 1e-6},
         {'n', 1e-9},
-        {'p', 1e-12}
-    };
+        {'p', 1e-12}};
     if (m.count(c)) {
         return m.at(c);
     }
@@ -31,7 +30,7 @@ std::optional<double> real_suffix_char_to_suffix_value(const char c) {
 }
 
 std::optional<unsigned> integer_suffix_char_to_suffix_value(const char c) {
-    static const std::map<char, unsigned> m {
+    static const std::map<char, unsigned> m{
         {'T', 1e+12},
         {'G', 1e+9},
         {'M', 1e+6},
@@ -43,13 +42,13 @@ std::optional<unsigned> integer_suffix_char_to_suffix_value(const char c) {
     return std::nullopt;
 }
 
-}
+}  // namespace
 
 //**********************************************************************
 //***   find_{integer,real}_suffix                                   ***
 //**********************************************************************
 
-namespace  {
+namespace {
 
 struct RealSuffixSplitterResult {
     std::string string_without_suffix;
@@ -83,7 +82,7 @@ IntegerSuffixSplitterResult split_integer_suffix(std::string s) {
     return {s, 1};
 }
 
-}
+}  // namespace
 
 //**********************************************************************
 //***   interpret_{int,unsigned,double}_string                       ***
@@ -121,4 +120,4 @@ utility::Result<unsigned, std::domain_error> interpret_unsigned_string(const std
     }
 }
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

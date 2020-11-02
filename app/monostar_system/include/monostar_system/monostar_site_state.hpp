@@ -19,7 +19,7 @@ class MonostarSiteState : boost::totally_ordered<MonostarSiteState> {
     constexpr bool operator<(const MonostarSiteState& other) const;
     constexpr bool operator==(const MonostarSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
-   //private://TODO RESTORE
+    //private://TODO RESTORE
     bool _is_excited;
 };
 
@@ -48,7 +48,7 @@ operator<<(std::ostream& stream, const MonostarSiteState& state) {
 namespace monostar_system {
 
 constexpr MonostarSiteState gs{false};  // ground-state (there is no star)
-constexpr MonostarSiteState es{true};  // excited-state (there is a star)
+constexpr MonostarSiteState es{true};   // excited-state (there is a star)
 
 }  // namespace monostar_system
 
@@ -58,7 +58,7 @@ constexpr MonostarSiteState es{true};  // excited-state (there is a star)
 
 namespace kstate_trait {
 
-template<>
+template <>
 struct TraitSiteState<monostar_system::MonostarSiteState> {
     static constexpr bool is_site_state_trait = true;
     using SiteStateT = monostar_system::MonostarSiteState;
@@ -73,7 +73,7 @@ struct TraitSiteState<monostar_system::MonostarSiteState> {
         } else if (state == monostar_system::es) {
             return 1u;
         } else {
-            throw std::domain_error("Not a valid state."); //TODO restore
+            throw std::domain_error("Not a valid state.");  //TODO restore
         }
     }
 
@@ -88,10 +88,10 @@ struct TraitSiteState<monostar_system::MonostarSiteState> {
     }
 };
 
-} // end of namespace kstate
+}  // namespace kstate_trait
 
 namespace monostar_system {
 
 using MonostarSiteStateTrait = kstate_trait::TraitSiteState<monostar_system::MonostarSiteState>;
 
-} // end of namespace monostar_system
+}  // end of namespace monostar_system

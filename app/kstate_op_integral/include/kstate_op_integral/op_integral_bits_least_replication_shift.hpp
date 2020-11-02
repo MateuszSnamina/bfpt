@@ -1,7 +1,7 @@
 #pragma once
 
-#include<kstate_op_integral/is_integral_bits.hpp>
-#include<kstate_op_integral/op_integral_bits_raw.hpp>
+#include <kstate_op_integral/is_integral_bits.hpp>
+#include <kstate_op_integral/op_integral_bits_raw.hpp>
 
 #include <cmath>
 #include <cassert>

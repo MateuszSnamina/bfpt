@@ -125,8 +125,8 @@ auto integral_to_bits_range(IntegralT n, unsigned char n_all_bits) noexcept {
         return extract_bit(n, idx_bit);
     };
     const auto result_range =
-            boost::irange(static_cast<unsigned char>(0u), n_all_bits) |
-            boost::adaptors::transformed(transformation);
+        boost::irange(static_cast<unsigned char>(0u), n_all_bits) |
+        boost::adaptors::transformed(transformation);
     return result_range;
 }
 
@@ -146,8 +146,8 @@ auto integral_to_chunk_numbers_range(IntegralT n, unsigned char n_all_bits, unsi
         return extract_chunk_number<IntegralT, ChunkIntegralT>(n, idx_bit, n_bits_in_chunk_number);
     };
     const auto result_range =
-            boost::irange(static_cast<unsigned char>(0u), n_all_bits, n_bits_in_chunk_number) |
-            boost::adaptors::transformed(transformation);
+        boost::irange(static_cast<unsigned char>(0u), n_all_bits, n_bits_in_chunk_number) |
+        boost::adaptors::transformed(transformation);
     return result_range;
 }
 
@@ -161,8 +161,8 @@ IntegralT integral_from_bits_range(RangeT r) noexcept {
     static_assert(std::is_integral_v<IntegralT>);
     static_assert(std::is_unsigned_v<IntegralT>);
     using IteratorT = typename boost::range_iterator<RangeT>::type;
-    using DerefIteratorT = decltype(*std::declval<IteratorT>()); //TODO: make it better. boost::iterator_value<> ??
-    using RemoveCvRefDerefIteratorT = std::remove_cv_t<std::remove_reference_t<DerefIteratorT>>; //TODO: std::remove_cvref_t<DerefIteratorIntegralT>
+    using DerefIteratorT = decltype(*std::declval<IteratorT>());                                  //TODO: make it better. boost::iterator_value<> ??
+    using RemoveCvRefDerefIteratorT = std::remove_cv_t<std::remove_reference_t<DerefIteratorT>>;  //TODO: std::remove_cvref_t<DerefIteratorIntegralT>
     static_assert(std::is_same_v<RemoveCvRefDerefIteratorT, bool>);
     [[maybe_unused]] const unsigned char n_all_bits = boost::size(r);
     assert(n_all_bits < 8 * sizeof(IntegralT));
@@ -187,8 +187,8 @@ IntegralT integral_from_chunk_numbers_range(RangeT chunk_numbers_range, unsigned
     static_assert(std::is_unsigned_v<ChunkIntegralT>);
     static_assert(sizeof(ChunkIntegralT) <= sizeof(IntegralT));
     using IteratorT = typename boost::range_iterator<RangeT>::type;
-    using DerefIteratorT = decltype(*std::declval<IteratorT>()); //TODO: make it better. boost::iterator_value<> ??
-    using RemoveCvRefDerefIteratorT = std::remove_cv_t<std::remove_reference_t<DerefIteratorT>>; //TODO: std::remove_cvref_t<DerefIteratorIntegralT>
+    using DerefIteratorT = decltype(*std::declval<IteratorT>());                                  //TODO: make it better. boost::iterator_value<> ??
+    using RemoveCvRefDerefIteratorT = std::remove_cv_t<std::remove_reference_t<DerefIteratorT>>;  //TODO: std::remove_cvref_t<DerefIteratorIntegralT>
     static_assert(std::is_same_v<RemoveCvRefDerefIteratorT, ChunkIntegralT>);
     [[maybe_unused]] const unsigned char n_chunk_numbers = boost::size(chunk_numbers_range);
     assert(n_bits_in_chunk_number != 0);
@@ -202,4 +202,4 @@ IntegralT integral_from_chunk_numbers_range(RangeT chunk_numbers_range, unsigned
     return result;
 }
 
-} // end of namespace kstate_op_integral::raw
+}  // end of namespace kstate_op_integral::raw

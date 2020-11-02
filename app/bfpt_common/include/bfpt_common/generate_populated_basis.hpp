@@ -1,6 +1,6 @@
 #pragma once
 
-#include<kpopulator_trait/trait_kpopulator.hpp>
+#include <kpopulator_trait/trait_kpopulator.hpp>
 
 #include <kbasis/basis.hpp>
 
@@ -35,13 +35,13 @@
 
 namespace bfpt_common {
 
-template<typename TraitKpopulatorT>
+template <typename TraitKpopulatorT>
 void generate_populated_basis(
-        const typename TraitKpopulatorT::KpopulatorT& basis_populator,
-        const unsigned max_pt_order,
-        typename TraitKpopulatorT::BasisT& basis,
-        const unsigned n_k,
-        unsigned n_threads = 1) {
+    const typename TraitKpopulatorT::KpopulatorT& basis_populator,
+    const unsigned max_pt_order,
+    typename TraitKpopulatorT::BasisT& basis,
+    const unsigned n_k,
+    unsigned n_threads = 1) {
     // *********** asserts ********************************************************************
     static_assert(kpopulator_trait::IsTraitKpopulator<TraitKpopulatorT>::value);
     static_assert(TraitKpopulatorT::is_kpopulator_trait);
@@ -60,14 +60,14 @@ void generate_populated_basis(
             const auto el = basis.vec_index()[idx];
             assert(el);
             const kstate_trait::KstateSet<typename TraitKpopulatorT::KstateTraitT> newely_generated_states =
-                    TraitKpopulatorT::get_coupled_states(basis_populator, *el, n_k);
+                TraitKpopulatorT::get_coupled_states(basis_populator, *el, n_k);
             kstate_set_all[tid].insert(std::begin(newely_generated_states), std::end(newely_generated_states));
         }
         //const auto tp_fill_2 = std::chrono::high_resolution_clock::now(); // performance debug sake
         //std::cout << "fill took     :" << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
         // *********** reduction **************************************************************
         //const auto tp_reduce_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
-        for (unsigned d = 1; d < n_threads; d *=2) {
+        for (unsigned d = 1; d < n_threads; d *= 2) {
 #pragma omp parallel num_threads(n_threads)
             {
                 const auto tid = omp_get_thread_num();

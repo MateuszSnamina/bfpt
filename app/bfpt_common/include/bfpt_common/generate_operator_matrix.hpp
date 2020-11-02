@@ -12,13 +12,13 @@
 
 namespace bfpt_common {
 
-template<typename KoperatorTraitT>
+template <typename KoperatorTraitT>
 arma::sp_cx_mat
 generate_operator_matrix(
-        const typename KoperatorTraitT::KoperatorT& koperator,
-        const typename KoperatorTraitT::BasisT& basis,
-        const unsigned k_n,
-        unsigned n_threads) {
+    const typename KoperatorTraitT::KoperatorT& koperator,
+    const typename KoperatorTraitT::BasisT& basis,
+    const unsigned k_n,
+    unsigned n_threads) {
     // *********** asserts ****************************************************************
     static_assert(koperator_trait::IsTraitKoperator<KoperatorTraitT>::value);
     static_assert(KoperatorTraitT::is_koperator_trait);
@@ -38,7 +38,7 @@ generate_operator_matrix(
     //std::cout << "fill took     : " << std::chrono::duration_cast<std::chrono::nanoseconds>(tp_fill_2 - tp_fill_1).count() / 1e6 << "ms" << std::endl; // performance debug sake
     // *********** reduction **************************************************************
     //const auto tp_reduce_1 = std::chrono::high_resolution_clock::now(); // performance debug sake
-    for (unsigned d = 1; d < n_threads; d *=2) {
+    for (unsigned d = 1; d < n_threads; d *= 2) {
 #pragma omp parallel num_threads(n_threads)
         {
             const auto tid = omp_get_thread_num();
@@ -63,4 +63,3 @@ generate_operator_matrix(
 }
 
 }  // namespace bfpt_common
-

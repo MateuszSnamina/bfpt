@@ -17,4 +17,4 @@ utility::Result<EsMomentumDomain, std::domain_error> interpret_es_momentum_domai
 
 EsMomentumDomainVariant es_momentum_domain_enum_to_variant(EsMomentumDomain m, unsigned n_k);
 
-} // end of namespace monostar_app
+}  // end of namespace monostar_app

@@ -1,6 +1,6 @@
-#include<monostar_hamiltonians/hamiltonian_reference_energies_fo.hpp>
+#include <monostar_hamiltonians/hamiltonian_reference_energies_fo.hpp>
 
-#include<cassert>
+#include <cassert>
 
 // #######################################################################
 // ## HamiltonianReferenceEnergiesFo                                    ##
@@ -8,10 +8,9 @@
 
 namespace monostar_hamiltonians {
 
-HamiltonianReferenceEnergiesFo::HamiltonianReferenceEnergiesFo(unsigned n_sites, const HamiltonianParamsFo& params, double orbital_theta) :
-    HamiltonianReferenceEnergies(n_sites),
-    _params(params),
-  _orbital_theta(orbital_theta) {
+HamiltonianReferenceEnergiesFo::HamiltonianReferenceEnergiesFo(unsigned n_sites, const HamiltonianParamsFo& params, double orbital_theta) : HamiltonianReferenceEnergies(n_sites),
+                                                                                                                                            _params(params),
+                                                                                                                                            _orbital_theta(orbital_theta) {
 }
 
 std::optional<double> HamiltonianReferenceEnergiesFo::get_gs_energy() const {
@@ -22,4 +21,4 @@ std::optional<double> HamiltonianReferenceEnergiesFo::get_es_exciation_enery([[m
     return std::nullopt;
 }
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

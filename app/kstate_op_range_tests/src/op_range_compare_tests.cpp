@@ -1,4 +1,4 @@
-#include<kstate_op_range/op_range_compare.hpp>
+#include <kstate_op_range/op_range_compare.hpp>
 
 #include <array>
 

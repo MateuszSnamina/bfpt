@@ -7,10 +7,9 @@
 
 namespace {
 struct Person {
-    Person(std::string county, std::string given_name, std::string family_name) :
-        county(county),
-        given_name(given_name),
-        family_name(family_name) {
+    Person(std::string county, std::string given_name, std::string family_name) : county(county),
+                                                                                  given_name(given_name),
+                                                                                  family_name(family_name) {
     }
     const std::string county;
     const std::string given_name;
@@ -22,17 +21,17 @@ struct Person {
 
 struct PersonKeyExtractor {
     typedef std::string result_type;
-    std::string operator()(const std::shared_ptr<Person>& p) const{
+    std::string operator()(const std::shared_ptr<Person>& p) const {
         return p->family_name + p->given_name;
     }
 };
 
 struct PersonComparisonPredicate {
     bool operator()(const std::string& l, const std::string& r) const {
-        return l > r; // reverse order
+        return l > r;  // reverse order
     }
 };
-}
+}  // namespace
 
 TEST(VecMap, Empty) {
     kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
@@ -43,7 +42,6 @@ TEST(VecMap, Empty) {
     // test not-finding a not existing element:
     const auto k100 = std::make_shared<Person>("usa", "aaa", "bbb");
     EXPECT_FALSE(vec_map.find_element_and_get_its_ra_index(PersonKeyExtractor()(k100)));
-
 }
 
 TEST(VecMap, OneElement) {
@@ -143,15 +141,15 @@ TEST(VecMap, TwoSameElementsTest0) {
 }
 
 TEST(VecMap, BigTest) {
-    const auto k1 = std::make_shared<Person>("usa", "aaa", "ccc"); // key: "cccaaa"
-    const auto k2 = std::make_shared<Person>("usa", "bbb", "ccc"); // key: "cccbbb"
-    const auto k3 = std::make_shared<Person>("usa", "aaa", "ddd"); // key: "dddaaa"
-    const auto k4 = std::make_shared<Person>("usa", "bbb", "ccc"); // key: "cccbbb"// is same as for k2
-    const auto k5 = std::make_shared<Person>("pl", "aaa", "nnn"); // key: "nnnaaa"
-    const auto k6 = std::make_shared<Person>("usa", "aa", "cccn"); // key: "ccccnaa"
-    const auto k7 = std::make_shared<Person>("usa", "bb", "cccb"); // key: "cccbbb" // is same as for k2
-    const auto k8 = std::make_shared<Person>("pl", "aaa", "ddd"); // key: "dddaaa" // is same as for k3
-    const auto k9 = std::make_shared<Person>("pl", "aaa", "mmm"); // key: "mmmaaa"
+    const auto k1 = std::make_shared<Person>("usa", "aaa", "ccc");  // key: "cccaaa"
+    const auto k2 = std::make_shared<Person>("usa", "bbb", "ccc");  // key: "cccbbb"
+    const auto k3 = std::make_shared<Person>("usa", "aaa", "ddd");  // key: "dddaaa"
+    const auto k4 = std::make_shared<Person>("usa", "bbb", "ccc");  // key: "cccbbb"// is same as for k2
+    const auto k5 = std::make_shared<Person>("pl", "aaa", "nnn");   // key: "nnnaaa"
+    const auto k6 = std::make_shared<Person>("usa", "aa", "cccn");  // key: "ccccnaa"
+    const auto k7 = std::make_shared<Person>("usa", "bb", "cccb");  // key: "cccbbb" // is same as for k2
+    const auto k8 = std::make_shared<Person>("pl", "aaa", "ddd");   // key: "dddaaa" // is same as for k3
+    const auto k9 = std::make_shared<Person>("pl", "aaa", "mmm");   // key: "mmmaaa"
 
     kbasis::VecMap<Person, PersonKeyExtractor, PersonComparisonPredicate> vec_map;
     vec_map.add_element(k1);

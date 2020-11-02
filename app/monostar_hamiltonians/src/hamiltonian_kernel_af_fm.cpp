@@ -1,6 +1,6 @@
-#include<monostar_hamiltonians/hamiltonian_kernel_af_fm.hpp>
+#include <monostar_hamiltonians/hamiltonian_kernel_af_fm.hpp>
 
-#include<cmath>
+#include <cmath>
 
 // #######################################################################
 // ## helper functions...                                               ##
@@ -17,21 +17,19 @@ prepare_diag_info(double J) {
         {{gs, gs}, -J * 0.25},
         {{gs, es}, +J * 0.25},
         {{es, gs}, +J * 0.25},
-        {{es, es}, -J * 0.25}
-    };
+        {{es, es}, -J * 0.25}};
     return diag_info;
 }
 
 std::multimap<
-chainkernel::StateKernel12<MonostarSiteStateTrait>,
-chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>
+    chainkernel::StateKernel12<MonostarSiteStateTrait>,
+    chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>
 prepare_half_off_diag_info_for_af(double J) {
     using RsultT = std::multimap<
-    chainkernel::StateKernel12<MonostarSiteStateTrait>,
-    chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
+        chainkernel::StateKernel12<MonostarSiteStateTrait>,
+        chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
     RsultT half_off_diag_info{
-        {{gs, gs}, {{es, es}, 0.5 * J}}
-    };
+        {{gs, gs}, {{es, es}, 0.5 * J}}};
     return half_off_diag_info;
 }
 
@@ -39,12 +37,11 @@ std::multimap<chainkernel::StateKernel12<MonostarSiteStateTrait>, chainkernel::C
 prepare_half_off_diag_info_for_fm(double J) {
     using RsultT = std::multimap<chainkernel::StateKernel12<MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
     RsultT half_off_diag_info{
-        {{gs, es}, {{es, gs}, -0.5 * J}}
-    };
+        {{gs, es}, {{es, gs}, -0.5 * J}}};
     return half_off_diag_info;
 }
 
-}
+}  // namespace
 
 // #######################################################################
 // ## prepare_hamiltonian_kernel_{1,12}_{af,fm}                         ##
@@ -81,15 +78,13 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel1<MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<
-    chainkernel::StateKernel1<MonostarSiteStateTrait>,
-    chainkernel::CoupleInfoKernel1<MonostarSiteStateTrait>
-    >;
+        chainkernel::StateKernel1<MonostarSiteStateTrait>,
+        chainkernel::CoupleInfoKernel1<MonostarSiteStateTrait>>;
     OnDiagInfoType on_diag_info{
         {{gs}, -B * 0.5},
         {{es}, +B * 0.5},
     };
-    OffDiagInfoType half_off_diag_info{
-    };
+    OffDiagInfoType half_off_diag_info{};
     return chainkernel::OperatorKernel1<MonostarSiteStateTrait>{on_diag_info, half_off_diag_info};
 }
 
@@ -98,4 +93,4 @@ prepare_hamiltonian_kernel_1_af_fm(const HamiltonianParamsAfFm& params) {
     return prepare_hamiltonian_kernel_1_af_fm(params.get_B());
 }
 
-} // end of namespace monostar_hamiltonians
+}  // end of namespace monostar_hamiltonians

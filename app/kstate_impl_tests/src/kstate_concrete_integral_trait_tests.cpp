@@ -134,7 +134,7 @@ TEST(DynamicIntegralKstateTrait, Test5) {
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 4), MySiteState(12));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1, 5), MySiteState(12));
     ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1), 1u);
-    const kstate_view_amend_spec::RefinedHolder<MySiteState> refined_holder{3, MySiteState(15)}; // MySiteState(12) => idx = 5;
+    const kstate_view_amend_spec::RefinedHolder<MySiteState> refined_holder{3, MySiteState(15)};  // MySiteState(12) => idx = 5;
     const auto view_1_refined = KstateTrait::refined_view(view_1, refined_holder);
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 0), MySiteState(14));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined, 1), MySiteState(12));
@@ -152,5 +152,4 @@ TEST(DynamicIntegralKstateTrait, Test5) {
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined_rotated, 4), MySiteState(11));
     ASSERT_EQ(KstateTrait::view_n_th_site_state(view_1_refined_rotated, 5), MySiteState(15));
     ASSERT_EQ(KstateTrait::view_n_unique_shift(view_1_refined_rotated), 0u);
-
 }

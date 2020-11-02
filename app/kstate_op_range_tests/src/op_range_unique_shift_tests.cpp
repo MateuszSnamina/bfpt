@@ -1,5 +1,5 @@
-#include<kstate_op_range/op_range_unique_shift.hpp>
-#include<kstate_op_range/op_range_compare.hpp>
+#include <kstate_op_range/op_range_unique_shift.hpp>
+#include <kstate_op_range/op_range_compare.hpp>
 
 #include <boost/range/algorithm.hpp>
 
@@ -24,7 +24,7 @@ TEST(KstateOpRange, NUniqueShiftTest2) {
 
 TEST(KstateOpRange, NUniqueShiftTest3) {
     const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};
-    ASSERT_EQ(kstate_op_range::n_unique_shift(v2) , 4);
+    ASSERT_EQ(kstate_op_range::n_unique_shift(v2), 4);
 }
 
 TEST(KstateOpRange, MakeUniqueShiftTest0) {
