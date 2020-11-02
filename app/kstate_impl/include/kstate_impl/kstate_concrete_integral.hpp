@@ -26,8 +26,8 @@ namespace kstate_impl::helpers {
 
 template <typename SiteStateTraitT, typename IntegralT>
 auto integral_bits_to_site_state_range(
-        const kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>& integral_bits,
-        unsigned char n_bits_per_site) noexcept {
+    const kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>& integral_bits,
+    unsigned char n_bits_per_site) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     assert(n_bits_per_site >= 1u);
@@ -39,15 +39,15 @@ auto integral_bits_to_site_state_range(
 
 template <typename SiteStateTraitT, typename IntegralT>
 using IntegralNumberToSiteStateRangeResult = decltype(
-integral_bits_to_site_state_range<SiteStateTraitT, IntegralT>(
-std::declval<kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>>(),
-std::declval<unsigned char>()));
+    integral_bits_to_site_state_range<SiteStateTraitT, IntegralT>(
+        std::declval<kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>>(),
+        std::declval<unsigned char>()));
 
 template <typename SiteStateTraitT, typename IntegralT, typename RangeT>
 kstate_op_integral::IntegralBitsDynamicBuffer<IntegralT>
 integral_bits_from_site_state_range(
-        RangeT r,
-        unsigned char n_bits_per_site) noexcept {
+    RangeT r,
+    unsigned char n_bits_per_site) noexcept {
     static_assert(kstate_trait::IsTraitSiteState<SiteStateTraitT>::value);
     static_assert(SiteStateTraitT::is_site_state_trait);
     assert(n_bits_per_site >= 1u);
@@ -76,7 +76,7 @@ class DynamicIntegral64Kstate final : public Kstate<_SiteStateTraitT, DynamicInt
     static_assert(_n_bits_per_site >= 1u);
     static_assert(_SiteStateTraitT::site_basis_dim() <= (1u << _n_bits_per_site));
 
-public:
+   public:
     using SiteStateTraitT = _SiteStateTraitT;
     using SiteStateT = typename _SiteStateTraitT::SiteStateT;
     using BufferT = kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t>;
@@ -84,12 +84,12 @@ public:
     using ConstRangeT = DynamicIntegral64KstateRange<SiteStateTraitT>;
     constexpr static unsigned char n_bits_per_site = _n_bits_per_site;
 
-public:
+   public:
     DynamicIntegral64Kstate(BufferT, CtrFromBuffer);
     template <typename OtherRangeT>
     DynamicIntegral64Kstate(OtherRangeT, CtrFromRange);
 
-public:
+   public:
     ConstRangeT to_range() const noexcept override;
     size_t n_sites() const noexcept override;
     const BufferT _integral_bits;
@@ -99,8 +99,8 @@ public:
 
 template <typename _SiteStateTraitT, unsigned char _n_bits_per_site>
 DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::DynamicIntegral64Kstate(
-        DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::BufferT integral_bits,
-        CtrFromBuffer) : _integral_bits(integral_bits) {
+    DynamicIntegral64Kstate<_SiteStateTraitT, _n_bits_per_site>::BufferT integral_bits,
+    CtrFromBuffer) : _integral_bits(integral_bits) {
     assert(_integral_bits.get_n_all_bits() % n_bits_per_site == 0);
 }
 
@@ -198,9 +198,9 @@ struct TraitKstate<kstate_impl::DynamicIntegral64Kstate<_SiteStateTraitT, _n_bit
         assert(v.get_n_all_bits() % KstateT::n_bits_per_site == 0);
         assert(idx < v.get_n_all_bits() / KstateT::n_bits_per_site);
         const unsigned site_unsigned = kstate_op_integral::raw::extract_chunk_number<uint64_t, unsigned>(
-                    v.get_number(),
-                    idx * KstateT::n_bits_per_site,
-                    KstateT::n_bits_per_site);
+            v.get_number(),
+            idx * KstateT::n_bits_per_site,
+            KstateT::n_bits_per_site);
         const typename SiteStateTraitT::SiteStateT site_state = SiteStateTraitT::from_index(site_unsigned);
         return site_state;
     }

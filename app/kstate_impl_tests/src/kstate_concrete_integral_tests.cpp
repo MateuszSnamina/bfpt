@@ -28,7 +28,7 @@ TEST(DynamicIntegralKstate, IntegralToSiteStateRange) {
 TEST(DynamicIntegralKstate, SiteStateRangeToIntegral) {
     std::array<MonostarSiteState, 5> siste_state_array{es, gs, gs, es, es};
     kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> integra_bits =
-            kstate_impl::helpers::integral_bits_from_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array, 1u);
+        kstate_impl::helpers::integral_bits_from_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array, 1u);
     EXPECT_EQ(integra_bits.get_n_all_bits(), 5);
     EXPECT_EQ(integra_bits.get_number(), 0b11001);
 }
@@ -348,4 +348,3 @@ TEST(DynamicIntegralKstate, ToStrTest1) {
 //    //    const Kstate k2(kstate_op_range::make_unique_shift(a1), ctr_from_range);
 //    EXPECT_EQ(k1.to_str(), "⦃N∙M∙L∙O∙N∙O∙O⦄");
 //}
-
