@@ -44,7 +44,6 @@ operator<<(std::ostream& stream, const MonostarSiteState& state) {
 // ## MonostarSiteState -- global values                                ##
 // #######################################################################
 
-//TODO constexpr
 constexpr MonostarSiteState gs{false};  // ground-state (there is no star)
 constexpr MonostarSiteState es{true};   // excited-state (there is a star)
 
