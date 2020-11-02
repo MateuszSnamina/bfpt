@@ -38,7 +38,7 @@ TEST(DynamicStlKstate, CompareTranlationalEqualityTest0) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
     const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-    const std::array<int, 6> v2 = {13, 14, 15, 16, 11, 12};
+    const std::array<int, 6> v2 = {13, 15, 14, 16, 11, 12};
     const std::array<int, 6> v11 = {16, 11, 12, 13, 14, 15};
     const std::array<int, 6> v12 = {15, 16, 11, 12, 13, 14};
     const std::array<int, 6> v13 = {14, 15, 16, 11, 12, 13};
@@ -51,7 +51,7 @@ TEST(DynamicStlKstate, CompareTranlationalEqualityTest0) {
     const KstateT k13(v13, ctr_from_range);
     const KstateT k14(v14, ctr_from_range);
     const KstateT k15(v15, ctr_from_range);
-    //ASSERT_FALSE(k1.compare_translational_equality_range(v2)); //TODO rethink!
+    ASSERT_FALSE(k1.compare_translational_equality_range(v2));
     ASSERT_TRUE(k1.compare_translational_equality_range(v1));
     ASSERT_EQ(*k1.compare_translational_equality_range(v1), 0);
     ASSERT_TRUE(k1.compare_translational_equality_range(v11));
@@ -98,7 +98,6 @@ TEST(DynamicStlKstate, LeastReplicationShiftTest3) {
     EXPECT_EQ(k4.n_least_replication_shift(), 1);
 }
 
-//---
 TEST(DynamicStlKstate, NormFactor0) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
@@ -190,17 +189,17 @@ TEST(DynamicStlKstate, IsProlificTest3) {
 TEST(DynamicStlKstate, ToStrTest0) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
-    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-    const KstateT k1(v1, ctr_from_range);
-    EXPECT_EQ(k1.to_str(), "⦃11∙12∙13∙14∙15∙16⦄");
+    const std::array<int, 1> v2 = {11};
+    const KstateT k2(v2, ctr_from_range);
+    EXPECT_EQ(k2.to_str(), "⦃11⦄");
 }
 
 TEST(DynamicStlKstate, ToStrTest1) {
     using SiteStateTraitT = kstate_trait::TraitSiteState<int>;
     using KstateT = kstate_impl::DynamicStlKstate<SiteStateTraitT>;
-    const std::array<int, 1> v2 = {11};
-    const KstateT k2(v2, ctr_from_range);
-    EXPECT_EQ(k2.to_str(), "⦃11⦄");
+    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
+    const KstateT k1(v1, ctr_from_range);
+    EXPECT_EQ(k1.to_str(), "⦃11∙12∙13∙14∙15∙16⦄");
 }
 
 // #######################################################################

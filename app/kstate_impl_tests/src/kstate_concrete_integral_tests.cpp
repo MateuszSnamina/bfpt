@@ -28,7 +28,7 @@ TEST(DynamicIntegralKstate, IntegralToSiteStateRange) {
 TEST(DynamicIntegralKstate, SiteStateRangeToIntegral) {
     std::array<MonostarSiteState, 5> siste_state_array{es, gs, gs, es, es};
     kstate_op_integral::IntegralBitsDynamicBuffer<uint64_t> integra_bits =
-        kstate_impl::helpers::integral_bits_from_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array, 1u);
+            kstate_impl::helpers::integral_bits_from_site_state_range<MonostarSiteStateTrait, uint64_t>(siste_state_array, 1u);
     EXPECT_EQ(integra_bits.get_n_all_bits(), 5);
     EXPECT_EQ(integra_bits.get_number(), 0b11001);
 }
@@ -293,54 +293,59 @@ TEST(DynamicIntegralKstate, IsProlificTest3) {
     EXPECT_TRUE(k1.is_prolific(5));
 }
 
-//TEST(DynamicIntegralKstate, ToStrTest0) {
-//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-//    using Kstate = kstate_impl::DynamicIntegralKstate<SiteStateTrait>;
-//    const std::array<int, 6> v1 = {11, 12, 13, 14, 15, 16};
-//    const Kstate k1(v1, ctr_from_range);
-//    EXPECT_EQ(k1.to_str(), "⦃11∙12∙13∙14∙15∙16⦄");
-//}
+TEST(DynamicIntegralKstate, ToStrTest0) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+    const std::array<MySiteState, 1> v1 = {MySiteState(11)};
+    const Kstate k1(v1, ctr_from_range);
+    //MySiteState(10) => 'K'
+    //MySiteState(11) => 'L'
+    //MySiteState(12) => 'M'
+    //MySiteState(13) => 'N'
+    //MySiteState(14) => 'O'
+    //MySiteState(15) => 'P'
+    EXPECT_EQ(k1.to_str(), "⦃L⦄");
+}
 
-//TEST(DynamicIntegralKstate, ToStrTest1) {
-//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-//    using Kstate = kstate_impl::DynamicIntegralKstate<SiteStateTrait>;
-//    const std::array<int, 1> v2 = {11};
-//    const Kstate k2(v2, ctr_from_range);
-//    EXPECT_EQ(k2.to_str(), "⦃11⦄");
-//}
+TEST(DynamicIntegralKstate, ToStrTest1) {
+    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+    const std::array<MySiteState, 6> v1 = {MySiteState(14), MySiteState(12), MySiteState(11), MySiteState(11), MySiteState(12), MySiteState(12)};
+    const Kstate k1(v1, ctr_from_range);
+    EXPECT_EQ(k1.to_str(), "⦃O∙M∙L∙L∙M∙M⦄");
+}
 
 //// #######################################################################
 //// ## UniqueDynamicIntegralKstate                                       ##
 //// #######################################################################
 
-//TEST(DynamicUniqueKstate, CtrTest0) {
-//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-//    using Kstate = kstate_impl::DynamicIntegralKstate<SiteStateTrait>;
-//    const std::array<int, 1> v2 = {11};
-//    const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
-//    EXPECT_EQ(k2.to_str(), "⦃11⦄");
+//TEST(UniqueDynamicIntegralKstate, CtrTest0) {
+//    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+//    const std::array<MySiteState, 1> a1 = {MySiteState(11)};
+//    const Kstate k1(a1, ctr_from_range);
+//    //const Kstate k2(kstate_op_range::make_unique_shift(a2), ctr_from_range);
+//    EXPECT_EQ(k1.to_str(), "⦃L⦄");
 //}
 
-//TEST(DynamicUniqueKstate, CtrTest1) {
-//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-//    using Kstate = kstate_impl::DynamicIntegralKstate<SiteStateTrait>;
-//    const std::array<int, 2> v2 = {11, 12};
-//    const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
-//    EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
+//TEST(UniqueDynamicIntegralKstate, CtrTest1) {
+//    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+//    const std::array<MySiteState, 2> a1 = {MySiteState(11), MySiteState(12)};
+//    const Kstate k1(a1, ctr_from_range);
+//    //    const Kstate k2(kstate_op_range::make_unique_shift(a1), ctr_from_range);
+//    EXPECT_EQ(k1.to_str(), "⦃L∙M⦄");
 //}
 
-//TEST(DynamicUniqueKstate, CtrTest2) {
-//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-//    using Kstate = kstate_impl::DynamicIntegralKstate<SiteStateTrait>;
-//    const std::array<int, 2> v2 = {12, 11};
-//    const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
-//    EXPECT_EQ(k2.to_str(), "⦃12∙11⦄");
+//TEST(UniqueDynamicIntegralKstate, CtrTest2) {
+//    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+//    const std::array<MySiteState, 2> a1 = {MySiteState(12), MySiteState(11)};
+//    const Kstate k1(a1, ctr_from_range);
+//    //    const Kstate k1(kstate_op_range::make_unique_shift(a1), ctr_from_range);
+//    EXPECT_EQ(k1.to_str(), "⦃L∙M⦄");
 //}
 
-//TEST(DynamicUniqueKstate, CtrTest3) {
-//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
-//    using Kstate = kstate_impl::DynamicIntegralKstate<SiteStateTrait>;
-//    const std::array<int, 7> v2 = {12, 11, 14, 13, 14, 14, 13};
-//    const Kstate k2(kstate_op_range::make_unique_shift(v2), ctr_from_range);
-//    EXPECT_EQ(k2.to_str(), "⦃14∙14∙13∙12∙11∙14∙13⦄");
+//TEST(UniqueDynamicUniqueKstate, CtrTest3) {
+//    using Kstate = kstate_impl::DynamicIntegral64Kstate<MySiteStateTrait, 3u>;
+//    const std::array<MySiteState, 7> a1 = {MySiteState(12), MySiteState(11), MySiteState(14), MySiteState(13), MySiteState(14), MySiteState(14), MySiteState(13)};
+//    const Kstate k1(a1, ctr_from_range);//    using SiteStateTrait = kstate_trait::TraitSiteState<int>;
+//    //    const Kstate k2(kstate_op_range::make_unique_shift(a1), ctr_from_range);
+//    EXPECT_EQ(k1.to_str(), "⦃N∙M∙L∙O∙N∙O∙O⦄");
 //}
+
