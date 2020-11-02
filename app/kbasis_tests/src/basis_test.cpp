@@ -25,7 +25,7 @@ TEST(Basis, Empty) {
     // test basis size:
     ASSERT_EQ(basis.size(), 0);
     ASSERT_TRUE(basis.vec_index().begin() == basis.vec_index().end());
-    ASSERT_TRUE(basis.map_index().begin() == basis.map_index().end());  //TODO remove
+    ASSERT_TRUE(basis.map_index().begin() == basis.map_index().end());
     // test not-finding a not existing element:
     const int v100[3] = {11, 12, 113};
     const auto k100 = std::make_shared<kstate_impl::DynamicStlKstate<kstate_trait::TraitSiteState<int>>>(v100, ctr_from_range);

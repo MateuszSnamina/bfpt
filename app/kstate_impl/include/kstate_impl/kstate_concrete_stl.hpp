@@ -1,7 +1,7 @@
 #pragma once
 
-#include <kstate_impl/kstate_abstract.hpp>
 #include <kstate_impl/kstate_concrete_stl_helpers.hpp>
+#include <kstate_impl/kstate_abstract.hpp>
 #include <kstate_impl/kstate_constructor_flavor_tag.hpp>
 
 #include <kstate_op_range/op_range_raw_adaptors.hpp>
