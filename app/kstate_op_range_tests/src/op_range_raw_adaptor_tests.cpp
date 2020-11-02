@@ -12,7 +12,7 @@
 // ##  rotated                                                          ##
 // #######################################################################
 
-TEST(KstateOpRange, FilledRawArray) {  //TODO name change
+TEST(KstateOpRangeRaw, FilledRawArray) {
     using kstate_op_range::raw::adaptors::operator|;
     int v1[6] = {11, 12, 13, 14, 15, 16};
     int v2[6] = {13, 14, 15, 16, 11, 12};
@@ -27,7 +27,7 @@ TEST(KstateOpRange, FilledRawArray) {  //TODO name change
     ASSERT_TRUE(boost::equal(r, v2));
 }
 
-TEST(KstateOpRange, FilledStdArray) {
+TEST(KstateOpRangeRaw, FilledStdArray) {
     using kstate_op_range::raw::adaptors::operator|;
     std::array<int, 6> v1{11, 12, 13, 14, 15, 16};
     std::array<int, 6> v2{13, 14, 15, 16, 11, 12};
@@ -42,7 +42,7 @@ TEST(KstateOpRange, FilledStdArray) {
     ASSERT_TRUE(boost::equal(r, v2));
 }
 
-TEST(KstateOpRange, FilledStdVector) {
+TEST(KstateOpRangeRaw, FilledStdVector) {
     using kstate_op_range::raw::adaptors::operator|;
     std::vector<int> v1{11, 12, 13, 14, 15, 16};
     std::vector<int> v2{13, 14, 15, 16, 11, 12};
@@ -57,7 +57,7 @@ TEST(KstateOpRange, FilledStdVector) {
     ASSERT_TRUE(boost::equal(r, v2));
 }
 
-TEST(KstateOpRange, FilledStdList) {
+TEST(KstateOpRangeRaw, FilledStdList) {
     using kstate_op_range::raw::adaptors::operator|;
     std::list<int> v1{11, 12, 13, 14, 15, 16};
     std::list<int> v2{13, 14, 15, 16, 11, 12};
@@ -72,7 +72,7 @@ TEST(KstateOpRange, FilledStdList) {
     ASSERT_TRUE(boost::equal(r, v2));
 }
 
-TEST(KstateOpRange, EmptyStdArray) {
+TEST(KstateOpRangeRaw, EmptyStdArray) {
     using kstate_op_range::raw::adaptors::operator|;
     std::array<int, 0> v1;
     ASSERT_EQ((v1 | kstate_view_amend_spec::rotated(0)).size(), 0);
@@ -82,7 +82,7 @@ TEST(KstateOpRange, EmptyStdArray) {
     ASSERT_TRUE(boost::equal(r, v1));
 }
 
-TEST(KstateOpRange, EmptyStdVector) {
+TEST(KstateOpRangeRaw, EmptyStdVector) {
     using kstate_op_range::raw::adaptors::operator|;
     std::vector<int> v1;
     ASSERT_EQ((v1 | kstate_view_amend_spec::rotated(0)).size(), 0);
@@ -92,7 +92,7 @@ TEST(KstateOpRange, EmptyStdVector) {
     ASSERT_TRUE(boost::equal(r, v1));
 }
 
-TEST(KstateOpRange, EmptyStdList) {
+TEST(KstateOpRangeRaw, EmptyStdList) {
     using kstate_op_range::raw::adaptors::operator|;
     std::list<int> v1;
     ASSERT_EQ(boost::size(v1 | kstate_view_amend_spec::rotated(0)), 0);

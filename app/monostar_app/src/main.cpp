@@ -14,9 +14,11 @@
 #include <monostar_system/monostar_kstate.hpp>
 #include <monostar_system/monostar_site_state.hpp>
 
-#include <bfpt_common/do_common_recipie.hpp>
-
 #include <chainkernel/operator_kernel.hpp>
+#include <koperator_impl/kernel_driven_kstate_operator_matrix.hpp>
+#include <kpopulator_impl/kernel_driven_kstate_basis_populator.hpp>
+
+#include <bfpt_common/do_common_recipie.hpp>
 
 #include <armadillo>
 
@@ -25,9 +27,6 @@
 
 #include <cassert>
 #include <cstdlib>
-
-#include <koperator_impl/kernel_driven_kstate_operator_matrix.hpp>   //TODO: experimental -- remove
-#include <kpopulator_impl/kernel_driven_kstate_basis_populator.hpp>  //TODO: experimental -- remove
 
 // #######################################################################
 // ## main - helpers                                                    ##
@@ -50,10 +49,10 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using BasisT = monostar_system::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
-    const KpopulatorT kstate_populator_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};   //TODO change name
-    const KoperatorT kstate_hamiltonian_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};  //TODO change name
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
-               kstate_populator_NEWAPI, kstate_hamiltonian_NEWAPI,
+               kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
                0,
                print_flags,
@@ -81,10 +80,10 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = monostar_system::DynamicMonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
-    const KpopulatorT kstate_populator_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};   //TODO change name
-    const KoperatorT kstate_hamiltonian_NEWAPI{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};  //TODO change name
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
-               kstate_populator_NEWAPI, kstate_hamiltonian_NEWAPI,
+               kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
                k_n,
                print_flags,
