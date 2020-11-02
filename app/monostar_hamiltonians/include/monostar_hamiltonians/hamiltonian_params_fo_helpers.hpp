@@ -81,4 +81,9 @@ class AcosPlusBsinPlusCsqcosPlusZ {
     std::set<double> get_minimum_argument_analytical_when_sqcos_coef_is_not_zero_and_sin_coef_is_zero() const;
 };
 
+AcosPlusBsinPlusCsqcosPlusZ operator+(const AcosPlusBsinPlusCsqcosPlusZ&, const AcosPlusBsinPlusCsqcosPlusZ&);
+
+AcosPlusBsinPlusCsqcosPlusZ operator*(double, const AcosPlusBsinPlusCsqcosPlusZ&);
+
+
 }  // end of namespace monostar_hamiltonians

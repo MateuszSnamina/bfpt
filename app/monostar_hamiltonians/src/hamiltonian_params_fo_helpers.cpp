@@ -205,4 +205,24 @@ bool AcosPlusBsinPlusCsqcosPlusZ::is_degenerated_to_sqcos_coef_equal_to_zero_cas
     return std::abs(_sqcos_coef) < 100 * N * std::numeric_limits<double>::epsilon();
 }
 
+// #######################################################################
+
+AcosPlusBsinPlusCsqcosPlusZ operator+(const AcosPlusBsinPlusCsqcosPlusZ& fun1, const AcosPlusBsinPlusCsqcosPlusZ& fun2) {
+    return AcosPlusBsinPlusCsqcosPlusZ::Builder()
+            .set_cos_coef(fun1.get_cos_coef() + fun2.get_cos_coef())
+            .set_sin_coef(fun1.get_sin_coef() + fun2.get_sin_coef())
+            .set_sqcos_coef(fun1.get_sqcos_coef() + fun2.get_sqcos_coef())
+            .set_free_coef(fun1.get_free_coef() + fun2.get_free_coef())
+            .build();
+}
+
+AcosPlusBsinPlusCsqcosPlusZ operator*(double factor, const AcosPlusBsinPlusCsqcosPlusZ& fun) {
+    return AcosPlusBsinPlusCsqcosPlusZ::Builder()
+            .set_cos_coef(factor * fun.get_cos_coef())
+            .set_sin_coef(factor * fun.get_sin_coef())
+            .set_sqcos_coef(factor * fun.get_sqcos_coef())
+            .set_free_coef(factor * fun.get_free_coef())
+            .build();
+}
+
 }  // end of namespace monostar_hamiltonians
