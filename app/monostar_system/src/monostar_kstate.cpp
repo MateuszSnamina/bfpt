@@ -31,7 +31,7 @@ MonostarKstate classical_es_kstate(const unsigned n_sites) {
 }  // namespace monostar_system
 
 // #######################################################################
-// ## DynamicMonostarKstate - printing                                  ##
+// ## MonostarKstate - printing                                         ##
 // #######################################################################
 
 namespace monostar_system {

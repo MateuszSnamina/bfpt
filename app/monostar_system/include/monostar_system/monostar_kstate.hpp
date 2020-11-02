@@ -8,7 +8,7 @@
 #include <iostream>
 
 // #######################################################################
-// ## DynamicMonostarKstate                                             ##
+// ## MonostarKstate                                                    ##
 // #######################################################################
 
 namespace monostar_system {
@@ -35,7 +35,7 @@ using MonostarKstate = MonostarDynamicIntegral64Kstate;
 }  // namespace monostar_system
 
 // #######################################################################
-// ## DynamicMonostarKstate - trait                                     ##
+// ## MonostarKstate - trait                                            ##
 // #######################################################################
 
 namespace monostar_system {
@@ -57,7 +57,7 @@ MonostarKstate classical_es_kstate(const unsigned n_sites);
 }  // namespace monostar_system
 
 // #######################################################################
-// ## DynamicMonostarKstate - printing                                  ##
+// ## MonostarKstate - printing                                         ##
 // #######################################################################
 
 namespace monostar_system {

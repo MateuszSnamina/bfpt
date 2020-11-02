@@ -23,12 +23,17 @@ template <typename _T>
 struct RangeStreamerSettings {
     // Helper types:
     using T = _T;
+    using StreamPreparerFunT = ::std::function<void(::std::ostream&)>;
+    using StreamSustainerFunT = ::std::function<void(::std::ostream&, size_t)>;
+    using StreamValuePutterFunT = ::std::function<void(::std::ostream&, T)>;
+    using StreamSeparerFunT = ::std::function<void(::std::ostream&)>;
+    using StreamFinisherFunT = ::std::function<void(::std::ostream&)>;
     // Setters - general:
-    RangeStreamerSettings<T>& set_stream_preparer(::std::function<void(::std::ostream&)>);
-    RangeStreamerSettings<T>& set_stream_sustainer(::std::function<void(::std::ostream&, size_t)>);
-    RangeStreamerSettings<T>& set_stream_value_putter(::std::function<void(::std::ostream&, T)>);
-    RangeStreamerSettings<T>& set_stream_separer(::std::function<void(::std::ostream&)>);
-    RangeStreamerSettings<T>& set_stream_finisher(::std::function<void(::std::ostream&)>);
+    RangeStreamerSettings<T>& set_stream_preparer(StreamPreparerFunT);
+    RangeStreamerSettings<T>& set_stream_sustainer(StreamSustainerFunT);
+    RangeStreamerSettings<T>& set_stream_value_putter(StreamValuePutterFunT);
+    RangeStreamerSettings<T>& set_stream_separer(StreamSeparerFunT);
+    RangeStreamerSettings<T>& set_stream_finisher(StreamFinisherFunT);
     RangeStreamerSettings<T>& set_format_independence_flag(bool = true);
     // Setters - convenience:
     RangeStreamerSettings<T>& set_null_preparer();
@@ -53,49 +58,49 @@ struct RangeStreamerSettings {
     RangeStreamerSettings<T>& like_python_list();
     RangeStreamerSettings<T>& like_python_set();
     // Fields:
-    ::std::optional<::std::function<void(::std::ostream&)>> _stream_preparer;
-    ::std::optional<::std::function<void(::std::ostream&, size_t)>> _stream_sustainer;
-    ::std::optional<::std::function<void(::std::ostream&, T)>> _stream_value_putter;
-    ::std::optional<::std::function<void(::std::ostream&)>> _stream_separer;
-    ::std::optional<::std::function<void(::std::ostream&)>> _stream_finisher;
+    ::std::optional<StreamPreparerFunT> _stream_preparer;
+    ::std::optional<StreamSustainerFunT> _stream_sustainer;
+    ::std::optional<StreamValuePutterFunT> _stream_value_putter;
+    ::std::optional<StreamSeparerFunT> _stream_separer;
+    ::std::optional<StreamFinisherFunT> _stream_finisher;
     ::std::optional<bool> _format_independence_flag;
 };
 
 // ***********************************************************************
 
 template <typename _T>
-RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_preparer(::std::function<void(::std::ostream&)> _) {
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_preparer(StreamPreparerFunT _) {
     _stream_preparer = _;
     return *this;
 }
 
 template <typename _T>
-RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_sustainer(::std::function<void(::std::ostream&, size_t)> _) {
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_sustainer(StreamSustainerFunT _) {
     _stream_sustainer = _;
     return *this;
 }
 
 template <typename _T>
-RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_value_putter(::std::function<void(::std::ostream&, T)> _) {
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_value_putter(StreamValuePutterFunT _) {
     _stream_value_putter = _;
     return *this;
 }
 
 template <typename _T>
-RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_separer(::std::function<void(::std::ostream&)> _) {
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_separer(StreamSeparerFunT _) {
     _stream_separer = _;
+    return *this;
+}
+
+template <typename _T>
+RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_finisher(StreamFinisherFunT _) {
+    _stream_finisher = _;
     return *this;
 }
 
 template <typename _T>
 RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_format_independence_flag(bool _) {
     _format_independence_flag = _;
-    return *this;
-}
-
-template <typename _T>
-RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::set_stream_finisher(::std::function<void(::std::ostream&)> _) {
-    _stream_finisher = _;
     return *this;
 }
 
@@ -251,13 +256,13 @@ RangeStreamerSettings<_T>& RangeStreamerSettings<_T>::like_python_set() {
 
 namespace extension::boost {
 
-template <typename R>
+template <typename RangeT>
 void stream_range_impl(
-    const ::std::remove_reference_t<R>& range,
+    const ::std::remove_reference_t<RangeT>& range,
     ::std::ostream& os,
     ::std::function<void(::std::ostream&)> stream_preparer,
     ::std::function<void(::std::ostream&, size_t)> stream_sustainer,
-    ::std::function<void(::std::ostream&, typename ::boost::range_value<R>::type)> stream_value_putter,
+    ::std::function<void(::std::ostream&, typename ::boost::range_value<RangeT>::type)> stream_value_putter,
     ::std::function<void(::std::ostream&)> stream_separer,
     ::std::function<void(::std::ostream&)> stream_finisher,
     bool format_independence_flag) {
@@ -281,56 +286,58 @@ void stream_range_impl(
 
 namespace extension::boost {
 
-template <class _R>
+template <class _RangeT>
 class RangeStreamer;
 
-template <class R>
-RangeStreamer<R> make_range_streamer(
-    R&& range,
-    const RangeStreamerSettings<typename ::boost::range_value<R>::type> range_streamer_settings);
+template <class RangeT>
+RangeStreamer<RangeT> make_range_streamer(
+    RangeT&& range,
+    const RangeStreamerSettings<typename ::boost::range_value<RangeT>::type> range_streamer_settings);
 
-template <class _R>
+template <class _RangeT>
 class RangeStreamer {
-    static_assert(!::std::is_rvalue_reference_v<_R>,
+    static_assert(!::std::is_rvalue_reference_v<_RangeT>,
                   "R must not be a rvalue reference.");
-    static_assert(::std::is_lvalue_reference_v<_R> || (!::std::is_reference_v<_R> && !::std::is_const_v<_R>),
+    static_assert(::std::is_lvalue_reference_v<_RangeT> || (!::std::is_reference_v<_RangeT> && !::std::is_const_v<_RangeT>),
                   "R must be of form: `T`, `T&` or `const T&`.");
 
    public:  // Helper types:
-    using R = _R;
-    using T = typename ::boost::range_value<R>::type;
+    using RangeT = _RangeT;
+    using ValueT = typename ::boost::range_value<RangeT>::type;
 
    public:  // Factory function:
-    friend RangeStreamer<R> make_range_streamer<R>(R&& range, const RangeStreamerSettings<T> range_streamer_settings);
+    friend RangeStreamer<RangeT> make_range_streamer<RangeT>(RangeT&& range, const RangeStreamerSettings<ValueT> range_streamer_settings);
 
    public:  // API:
     ::std::ostream& stream(::std::ostream& os) const;
     ::std::string str() const;
 
    private:
-    RangeStreamer(::std::add_rvalue_reference_t<R> range, const RangeStreamerSettings<T> range_streamer_settings);
+    RangeStreamer(::std::add_rvalue_reference_t<RangeT> range, const RangeStreamerSettings<ValueT> range_streamer_settings);
 
    private:
-    const R _range;
-    const RangeStreamerSettings<typename ::boost::range_value<R>::type> _range_streamer_settings;
+    const RangeT _range;
+    const RangeStreamerSettings<typename ::boost::range_value<RangeT>::type> _range_streamer_settings;
 };
 
-template <class _R>
-RangeStreamer<_R>::RangeStreamer(
-    ::std::add_rvalue_reference_t<R> range,
-    const RangeStreamerSettings<T> range_streamer_settings) : _range(::std::forward<R>(range)),
-                                                              _range_streamer_settings(range_streamer_settings) {
+template <class _RangeT>
+RangeStreamer<_RangeT>::RangeStreamer(
+    ::std::add_rvalue_reference_t<RangeT> range,
+    const RangeStreamerSettings<ValueT> range_streamer_settings)
+    : _range(::std::forward<RangeT>(range)),
+      _range_streamer_settings(range_streamer_settings) {
 }
 
-template <class _R>
+template <class _RangeT>
 ::std::ostream&
-RangeStreamer<_R>::stream(::std::ostream& os) const {
+RangeStreamer<_RangeT>::stream(::std::ostream& os) const {
     // Defaults:
-    const auto default_stream_preparer = [](::std::ostream& s) { s << "{"; };
-    const auto default_stream_sustainer = [](::std::ostream& s, size_t i) { s << i << ":"; };
-    const auto default_stream_value_putter = [](::std::ostream& s, T t) { s << t; };
-    const auto default_stream_separer = [](::std::ostream& s) { s << ","; };
-    const auto default_stream_finisher = [](::std::ostream& s) { s << "}"; };
+    using RangeStreamerSettingsT = RangeStreamerSettings<ValueT>;
+    const typename RangeStreamerSettingsT::StreamPreparerFunT default_stream_preparer = [](::std::ostream& s) { s << "{"; };
+    const typename RangeStreamerSettingsT::StreamSustainerFunT default_stream_sustainer = [](::std::ostream& s, size_t i) { s << i << ":"; };
+    const typename RangeStreamerSettingsT::StreamValuePutterFunT default_stream_value_putter = [](::std::ostream& s, ValueT t) { s << t; };
+    const typename RangeStreamerSettingsT::StreamSeparerFunT default_stream_separer = [](::std::ostream& s) { s << ","; };
+    const typename RangeStreamerSettingsT::StreamFinisherFunT default_stream_finisher = [](::std::ostream& s) { s << "}"; };
     const bool default_format_independence_flag = true;
     // Apply overrules:
     const auto stream_preparer = (_range_streamer_settings._stream_preparer ? *_range_streamer_settings._stream_preparer : default_stream_preparer);
@@ -340,7 +347,7 @@ RangeStreamer<_R>::stream(::std::ostream& os) const {
     const auto stream_finisher = (_range_streamer_settings._stream_finisher ? *_range_streamer_settings._stream_finisher : default_stream_finisher);
     const auto format_independence_flag = (_range_streamer_settings._format_independence_flag ? *_range_streamer_settings._format_independence_flag : default_format_independence_flag);
     // Stream:
-    stream_range_impl<R>(
+    stream_range_impl<RangeT>(
         _range,
         os,
         stream_preparer,
@@ -353,16 +360,16 @@ RangeStreamer<_R>::stream(::std::ostream& os) const {
     return os;
 }
 
-template <class _R>
-::std::string RangeStreamer<_R>::str() const {
+template <class _RangeT>
+::std::string RangeStreamer<_RangeT>::str() const {
     ::std::ostringstream oss;
     stream(oss);
     return oss.str();
 }
 
-template <class R>
-RangeStreamer<R> make_range_streamer(R&& range, const RangeStreamerSettings<typename ::boost::range_value<R>::type> range_streamer_settings) {
-    return RangeStreamer<R>(::std::forward<R>(range), range_streamer_settings);
+template <class RangeT>
+RangeStreamer<RangeT> make_range_streamer(RangeT&& range, const RangeStreamerSettings<typename ::boost::range_value<RangeT>::type> range_streamer_settings) {
+    return RangeStreamer<RangeT>(::std::forward<RangeT>(range), range_streamer_settings);
 }
 
 }  // namespace extension::boost
@@ -374,21 +381,21 @@ RangeStreamer<R> make_range_streamer(R&& range, const RangeStreamerSettings<type
 namespace extension::boost {
 namespace stream_pragma {
 
-template <class R>
-RangeStreamer<R> operator|(R&& range, const RangeStreamerSettings<typename ::boost::range_value<R>::type> range_streamer_settings) {
-    return make_range_streamer(::std::forward<R>(range), range_streamer_settings);
+template <class RangeT>
+RangeStreamer<RangeT> operator|(RangeT&& range, const RangeStreamerSettings<typename ::boost::range_value<RangeT>::type> range_streamer_settings) {
+    return make_range_streamer(::std::forward<RangeT>(range), range_streamer_settings);
 }
 
-template <class R>
-::std::ostream& operator<<(::std::ostream& os, const RangeStreamer<R>& range_streamer) {
+template <class RangeT>
+::std::ostream& operator<<(::std::ostream& os, const RangeStreamer<RangeT>& range_streamer) {
     return range_streamer.stream(os);
 }
 
 struct Stringifier {
 };
 
-template <class R>
-::std::string operator*(const RangeStreamer<R>& range_streamer, Stringifier) {
+template <class RangeT>
+::std::string operator*(const RangeStreamer<RangeT>& range_streamer, Stringifier) {
     return range_streamer.str();
 }
 

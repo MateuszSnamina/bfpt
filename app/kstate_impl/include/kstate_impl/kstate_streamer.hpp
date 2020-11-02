@@ -37,6 +37,7 @@ make_kstate_streamer(
     KstateT&&,
     const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT>);
 
+
 // ***********************************************************************
 
 template <typename _KstateT>
@@ -62,21 +63,22 @@ class KstateStreamer {
    public:  // Helper types:
     using KstateT = _KstateT;
     using SiteStateT = typename utility::remove_cvref_t<KstateT>::SiteStateT;
+    using RangeStreamerSettingsT = extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT>;
 
    public:  // Factory function:
     friend KstateStreamer<KstateT>
-    make_kstate_streamer<KstateT>(KstateT&&, const extension::boost::RangeStreamerSettings<SiteStateT>);
+    make_kstate_streamer<KstateT>(KstateT&&, const RangeStreamerSettingsT);
 
    public:  // API:
     std::ostream& stream(std::ostream& os) const;
     std::string str() const;
 
    private:
-    KstateStreamer(std::add_rvalue_reference_t<KstateT>, const extension::boost::RangeStreamerSettings<SiteStateT>);
+    KstateStreamer(std::add_rvalue_reference_t<KstateT>, const RangeStreamerSettingsT);
 
    private:
     const KstateT _kstate;
-    const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT> _range_streamer_settings;
+    const RangeStreamerSettingsT _range_streamer_settings;
 };
 
 // ***********************************************************************
@@ -84,8 +86,9 @@ class KstateStreamer {
 template <typename _KstateT>
 KstateStreamer<_KstateT>::KstateStreamer(
     std::add_rvalue_reference_t<KstateT> kstate,
-    const extension::boost::RangeStreamerSettings<SiteStateT> range_streamer_settings) : _kstate(std::forward<KstateT>(kstate)),
-                                                                                         _range_streamer_settings(range_streamer_settings) {
+    const RangeStreamerSettingsT range_streamer_settings)
+    : _kstate(std::forward<KstateT>(kstate)),
+      _range_streamer_settings(range_streamer_settings) {
 }
 
 // ***********************************************************************
@@ -94,11 +97,11 @@ template <typename _KstateT>
 std::ostream&
 KstateStreamer<_KstateT>::stream(std::ostream& os) const {
     // Defaults:
-    const auto default_stream_preparer = [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
-    const auto default_stream_sustainer = [](std::ostream&, size_t) {};
-    const auto default_stream_value_putter = [](std::ostream& s, SiteStateT t) { s << t; };
-    const auto default_stream_separer = [](std::ostream& s) { s << "∙"; };
-    const auto default_stream_finisher = [](std::ostream& s) { s << "⦄"; };
+    const typename RangeStreamerSettingsT::StreamPreparerFunT default_stream_preparer = [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
+    const typename RangeStreamerSettingsT::StreamSustainerFunT default_stream_sustainer = [](std::ostream&, size_t) {};
+    const typename RangeStreamerSettingsT::StreamValuePutterFunT default_stream_value_putter = [](std::ostream& s, SiteStateT t) { s << t; };//TODO restore
+    const typename RangeStreamerSettingsT::StreamSeparerFunT default_stream_separer = [](std::ostream& s) { s << "∙"; };
+    const typename RangeStreamerSettingsT::StreamFinisherFunT default_stream_finisher = [](std::ostream& s) { s << "⦄"; };
     const bool default_format_independence_flag = true;
     // Apply overrules:
     const auto stream_preparer = (_range_streamer_settings._stream_preparer ? *_range_streamer_settings._stream_preparer : default_stream_preparer);
