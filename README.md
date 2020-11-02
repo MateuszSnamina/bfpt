@@ -307,6 +307,8 @@ apt install libboost-dev
 apt install libboost-program-options-dev
 apt install libarmadillo-dev
 apt install libgtest-dev
+apt install clang-format # optional
+apt install graphviz # optional
 ```
 
 ### Runtime env
@@ -326,4 +328,3 @@ make "-j$(nproc)"
 popd
 build_release/bin/monostar_app [CLI args] # try it! Use `-h` for help
 ```
-
