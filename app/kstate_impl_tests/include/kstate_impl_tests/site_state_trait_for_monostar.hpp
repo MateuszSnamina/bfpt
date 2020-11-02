@@ -17,8 +17,7 @@ class MonostarSiteState {
     constexpr bool operator==(const MonostarSiteState& other) const;
     constexpr bool operator!=(const MonostarSiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MonostarSiteState&);
-    //private://TODO RESTORE
-    bool _is_excited;
+    const bool _is_excited;
 };
 
 // ***********************************************************************
@@ -70,7 +69,7 @@ struct TraitSiteState<MonostarSiteState> {
         } else if (state == es) {
             return 1u;
         } else {
-            throw std::domain_error("Not a valid state.");  //TODO restore
+            throw std::domain_error("Not a valid state.");
         }
     }
 

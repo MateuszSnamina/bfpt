@@ -17,7 +17,7 @@ class MySiteState : boost::totally_ordered<MySiteState> {
     constexpr bool operator<(const MySiteState& other) const;
     constexpr bool operator==(const MySiteState& other) const;
     friend std::ostream& operator<<(std::ostream&, const MySiteState&);
-    unsigned _i;
+    const unsigned _i;
 };
 
 // ***********************************************************************
