@@ -32,7 +32,7 @@ inline constexpr bool MySiteState::operator==(const MySiteState& other) const {
 
 inline std::ostream&
 operator<<(std::ostream& stream, const MySiteState& state) {
-    stream << ('A' + state._i);
+    stream << static_cast<char>('A' + state._i);
     return stream;
 }
 
@@ -55,7 +55,7 @@ struct TraitSiteState<MySiteState> {
         if (state._i >= 10u && state._i < 10u + site_basis_dim()) {
             return state._i - 10u;
         } else {
-            throw std::domain_error("Not a valid state."); //TODO restore
+            throw std::domain_error("Not a valid state.");
         }
     }
 
