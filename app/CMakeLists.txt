@@ -167,13 +167,11 @@ add_subdirectory(kpopulator_trait)
 add_subdirectory(kpopulator_impl)
 add_subdirectory(chainkernel)
 add_subdirectory(bfpt_common)
-
-#add_subdirectory(monostar_system) #TODO restore
-#add_subdirectory(monostar_hamiltonians) #TODO restore
-#add_subdirectory(monostar_app) #TODO restore
-
+add_subdirectory(monostar_system)
+add_subdirectory(monostar_hamiltonians)
+add_subdirectory(monostar_app)
 add_subdirectory(so_system)
-#add_subdirectory(so_hamiltonians)
+add_subdirectory(so_hamiltonians)
 #add_subdirectory(so_app)
 
 add_subdirectory(bfpt)
