@@ -172,7 +172,7 @@ add_subdirectory(monostar_hamiltonians)
 add_subdirectory(monostar_app)
 add_subdirectory(so_system)
 add_subdirectory(so_hamiltonians)
-#add_subdirectory(so_app)
+add_subdirectory(so_app)
 
 add_subdirectory(bfpt)
 
