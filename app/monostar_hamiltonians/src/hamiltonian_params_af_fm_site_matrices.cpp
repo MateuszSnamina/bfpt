@@ -140,28 +140,34 @@ arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_ondiag_fm() {
 }
 
 arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_ondiag_af() {
-    const arma::cx_mat44 S_S_ondiag_af_latticeAB = arma::kron(OneSiteSpinMatrices::get_S_z_af_latticeA(), OneSiteSpinMatrices::get_S_z_af_latticeB());
+    const arma::cx_mat44 S_S_ondiag_af_latticeAB =
+            arma::kron(OneSiteSpinMatrices::get_S_z_af_latticeA(), OneSiteSpinMatrices::get_S_z_af_latticeB());
 #ifndef NDEBUG
-    const arma::cx_mat44 S_S_ondiag_af_latticeBA = arma::kron(OneSiteSpinMatrices::get_S_z_af_latticeB(), OneSiteSpinMatrices::get_S_z_af_latticeA());
-    assert(arma::norm(S_S_ondiag_af_latticeAB - S_S_ondiag_af_latticeBA) < 10 - 4);
+    const arma::cx_mat44 S_S_ondiag_af_latticeBA =
+            arma::kron(OneSiteSpinMatrices::get_S_z_af_latticeB(), OneSiteSpinMatrices::get_S_z_af_latticeA());
+    assert(arma::norm(S_S_ondiag_af_latticeAB - S_S_ondiag_af_latticeBA) < 1e-8);
 #endif
     return S_S_ondiag_af_latticeAB;
 }
 
 arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_offdiag_fm() {
-    const arma::cx_mat44 S_S_ondiag_fm = 0.5 * (arma::kron(OneSiteSpinMatrices::get_S_plus_fm(), OneSiteSpinMatrices::get_S_minus_fm()) +
-                                                arma::kron(OneSiteSpinMatrices::get_S_minus_fm(), OneSiteSpinMatrices::get_S_plus_fm()));
+    const arma::cx_mat44 S_S_ondiag_fm = 0.5 * (
+                arma::kron(OneSiteSpinMatrices::get_S_plus_fm(), OneSiteSpinMatrices::get_S_minus_fm()) +
+                arma::kron(OneSiteSpinMatrices::get_S_minus_fm(), OneSiteSpinMatrices::get_S_plus_fm()));
     return S_S_ondiag_fm;
 }
 
 arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_offdiag_af() {
-    const arma::cx_mat44 S_S_ondiagaf_latticeAB = 0.5 * (arma::kron(OneSiteSpinMatrices::get_S_plus_af_latticeA(), OneSiteSpinMatrices::get_S_minus_af_latticeB()) +
-                                                         arma::kron(OneSiteSpinMatrices::get_S_minus_af_latticeA(), OneSiteSpinMatrices::get_S_plus_af_latticeB()));
+    const arma::cx_mat44 S_S_offdiagaf_latticeAB = 0.5 * (
+                arma::kron(OneSiteSpinMatrices::get_S_plus_af_latticeA(), OneSiteSpinMatrices::get_S_minus_af_latticeB()) +
+                arma::kron(OneSiteSpinMatrices::get_S_minus_af_latticeA(), OneSiteSpinMatrices::get_S_plus_af_latticeB()));
 #ifndef NDEBUG
-    const arma::cx_mat44 S_S_ondiag_af_latticeBA = 0.5 * (arma::kron(OneSiteSpinMatrices::get_S_plus_af_latticeB(), OneSiteSpinMatrices::get_S_minus_af_latticeA()) +
-                                                          arma::kron(OneSiteSpinMatrices::get_S_minus_af_latticeB(), OneSiteSpinMatrices::get_S_plus_af_latticeA()));
+    const arma::cx_mat44 S_S_offdiag_af_latticeBA = 0.5 * (
+                arma::kron(OneSiteSpinMatrices::get_S_plus_af_latticeB(), OneSiteSpinMatrices::get_S_minus_af_latticeA()) +
+                arma::kron(OneSiteSpinMatrices::get_S_minus_af_latticeB(), OneSiteSpinMatrices::get_S_plus_af_latticeA()));
+    assert(arma::norm(S_S_offdiagaf_latticeAB - S_S_offdiag_af_latticeBA) < 1e-8);
 #endif
-    return S_S_ondiagaf_latticeAB;
+    return S_S_offdiagaf_latticeAB;
 }
 
 arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_fm() {

@@ -1,71 +1,70 @@
-//#include <so_app/main_printing.hpp>
+#include <so_app/main_printing.hpp>
 
-//#include <monostar_hamiltonians/get_orbital_theta.hpp>
+#include <monostar_hamiltonians/get_orbital_theta.hpp>
 
-//#include <extensions/range_streamer.hpp>
-//#include <extensions/stream_fromat_stacker.hpp>
+#include <extensions/range_streamer.hpp>
+#include <extensions/stream_fromat_stacker.hpp>
 
-//#include <boost/range/adaptor/transformed.hpp>
-//#include <boost/range/irange.hpp>
+#include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/irange.hpp>
 
-//#include <iostream>
-//#include <iomanip>
+#include <iostream>
+#include <iomanip>
 
-//#include <cassert>
-//#include <cmath>
+#include <cassert>
+#include <cmath>
 
-//// #######################################################################
-//// ## print_foo                                                         ##
-//// #######################################################################
+// #######################################################################
+// ## print_foo                                                         ##
+// #######################################################################
 
-//namespace so_app {
+namespace so_app {
 
-//void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
-//    using namespace extension::boost::stream_pragma;
-//    // Stream RAII:
-//    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-//    // Print:
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                            = " << interpreted_program_options.n_sites << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                               = " << interpreted_program_options.n_pt << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
-//    if (interpreted_program_options.model_type == ModelType::AF || interpreted_program_options.model_type == ModelType::FM) {
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_classical     = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_classical() << std::endl;
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_quantum       = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_quantum() << std::endl;
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_params_af_fm.get_B() << std::endl;
-//    }
-//    if (interpreted_program_options.model_type == ModelType::FO) {
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_fo.get_tau_z_coef() << std::endl;
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_fo.get_tau_minus_coef() << std::endl;
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_params_fo.get_Pzz_coef() << std::endl;
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_params_fo.get_Pxz_coef() << std::endl;
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_params_fo.get_Pxx_coef() << std::endl;
-//        if (interpreted_program_options.orbital_theta) {
-//            std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << *interpreted_program_options.orbital_theta << std::endl;
-//        } else {
-//            std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = "
-//                      << "<auto: let the program choose the optimal value>" << std::endl;
-//        }
-//    }
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
-//    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-//        std::cout << "[INFO   ] [PROGRAM_OPTIONS] es_momentum_domain                 = " << interpreted_program_options.es_momentum_domain << std::endl;
-//    }
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::unpopulated_basis_size_flag = " << interpreted_program_options.print_flags.print_unpopulated_basis_size_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::populated_basis_flag        = " << interpreted_program_options.print_flags.print_populated_basis_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::populated_basis_size_flag   = " << interpreted_program_options.print_flags.print_populated_basis_size_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::hamiltonian_stats           = " << interpreted_program_options.print_flags.print_hamiltonian_stats << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::sp_hamiltonian_flag         = " << interpreted_program_options.print_flags.print_sp_hamiltonian_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::hamiltonian_flag            = " << interpreted_program_options.print_flags.print_hamiltonian_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::density_operator_flag       = " << interpreted_program_options.print_flags.print_density_operator_flag << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_min_max_n_kstates    = "
-//              << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
-//    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_threads                          = " << interpreted_program_options.n_threads << std::endl;
-//}
+void print_input_data(const InterpretedProgramOptions& interpreted_program_options) {
+    using namespace extension::boost::stream_pragma;
+    // Stream RAII:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    // Print:
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_sites                            = " << interpreted_program_options.n_sites << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                               = " << interpreted_program_options.n_pt << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
+    if (interpreted_program_options.model_type == ModelType::AFFO) {
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_ss_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_z_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_minus_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pxx_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_Pzz_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_Pxz_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_Pxx_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pxx_coef() << std::endl;
+        if (interpreted_program_options.orbital_theta) {
+            std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << *interpreted_program_options.orbital_theta << std::endl;
+        } else {
+            std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = "
+                      << "<auto: let the program choose the optimal value>" << std::endl;
+        }
+    }
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] es_momentum_domain                 = " << interpreted_program_options.es_momentum_domain << std::endl;
+    }
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::unpopulated_basis_flag      = " << interpreted_program_options.print_flags.print_unpopulated_basis_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::unpopulated_basis_size_flag = " << interpreted_program_options.print_flags.print_unpopulated_basis_size_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::populated_basis_flag        = " << interpreted_program_options.print_flags.print_populated_basis_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::populated_basis_size_flag   = " << interpreted_program_options.print_flags.print_populated_basis_size_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::hamiltonian_stats           = " << interpreted_program_options.print_flags.print_hamiltonian_stats << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::sp_hamiltonian_flag         = " << interpreted_program_options.print_flags.print_sp_hamiltonian_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::hamiltonian_flag            = " << interpreted_program_options.print_flags.print_hamiltonian_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_values_flag           = " << interpreted_program_options.print_flags.print_eigen_values_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::eigen_vectors_flag          = " << interpreted_program_options.print_flags.print_eigen_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_vectors_flag         = " << interpreted_program_options.print_flags.print_pretty_vectors_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::density_operator_flag       = " << interpreted_program_options.print_flags.print_density_operator_flag << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_min_max_n_kstates    = "
+              << "[" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.first << ":" << interpreted_program_options.print_flags.print_pretty_min_max_n_kstates.second << ")" << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] print::pretty_probability_treshold = " << interpreted_program_options.print_flags.print_pretty_probability_treshold << std::endl;
+    std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_threads                          = " << interpreted_program_options.n_threads << std::endl;
+}
 
 //void print_results_tree(
 //    const InterpretedProgramOptions& interpreted_program_options,
@@ -190,28 +189,28 @@
 //    }
 //}
 
-//void print_theta_opt(const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params, std::optional<double> user_defined_overrule) {
-//    // Using:
-//    using namespace extension::boost::stream_pragma;
-//    using extension::boost::stream_pragma::RSS;
-//    using extension::boost::stream_pragma::operator|;
-//    using extension::boost::stream_pragma::operator<<;
-//    // Print:
-//    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-//    std::cout << std::showpos;
-//    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_fo_params.string_repr_in_orbital_operators() << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_fo_params.string_repr_in_trigonometric_functions() << std::endl;
-//    if (const auto& _ = hamiltonian_fo_params.get_theta_opt_analytical()) {
-//        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
-//    } else {
-//        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = "
-//                  << "<no known analicycal solution solver>" << std::endl;
-//    }
-//    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)        = "
-//              << (hamiltonian_fo_params.get_theta_opt_numerical() | RSS<double>().like_python_set()) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta                    = "
-//              << (hamiltonian_fo_params.get_theta_opt() | RSS<double>().like_python_set()) << std::endl;
-//    const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(hamiltonian_fo_params, user_defined_overrule);  //may thorw!
+void print_theta_opt(const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_af_fo_params, std::optional<double> user_defined_overrule) {
+    // Using:
+    using namespace extension::boost::stream_pragma;
+    using extension::boost::stream_pragma::RSS;
+    using extension::boost::stream_pragma::operator|;
+    using extension::boost::stream_pragma::operator<<;
+    // Print:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    std::cout << std::showpos;
+    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_af_fo_params.string_repr_in_orbital_operators() << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_af_fo_params.string_repr_in_trigonometric_functions() << std::endl;
+    if (const auto& _ = hamiltonian_af_fo_params.get_theta_opt_analytical()) {
+        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
+    } else {
+        std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = "
+                  << "<no known analicycal solution solver>" << std::endl;
+    }
+    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)        = "
+              << (hamiltonian_af_fo_params.get_theta_opt_numerical() | RSS<double>().like_python_set()) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta                    = "
+              << (hamiltonian_af_fo_params.get_theta_opt() | RSS<double>().like_python_set()) << std::endl;
+//    const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(hamiltonian_af_fo_params, user_defined_overrule);  //may thorw!
 //    std::cout << "[INFO   ] [THETA_OPT] used orbital theta                       = "
 //              << orbital_theta_to_use << " = "
 //              << orbital_theta_to_use / M_PI << " π" << std::endl;
@@ -244,6 +243,6 @@
 //              << hamiltonian_fo_params.get_site_energy_derivative3(orbital_theta_to_use) << std::endl;
 //    std::cout << "[INFO   ] [THETA_OPT] d⁴H/dθ⁴ [used orbital theta]             = "
 //              << hamiltonian_fo_params.get_site_energy_derivative4(orbital_theta_to_use) << std::endl;
-//}
+}
 
-//}  // end of namespace so_app
+}  // end of namespace so_app

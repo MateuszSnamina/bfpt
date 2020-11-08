@@ -1,27 +1,13 @@
 #include <so_hamiltonians/hamiltonian_params_af_fo.hpp>
+#include <so_hamiltonians/hamiltonian_params_af_fo_to_classic_energy_function.hpp>
+#include <so_hamiltonians/hamiltonian_params_af_fo_site_matrices.hpp>
 
 #include <monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_fo_site_matrices.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_fo_to_classic_energy_function.hpp>
 
 #include <sstream>
 #include <iomanip>
-
-// #######################################################################
-// ## hamiltonian_params_af_fo_to_classic_energy_function               ##
-// #######################################################################
-
-namespace so_hamiltonians {
-
-monostar_hamiltonians::AcosPlusBsinPlusCsqcosPlusZ hamiltonian_params_af_fo_to_classic_energy_function(HamiltonianParamsAfFo params) {
-    double SS_average = -4.0; //TODO: make SS_average an arg.
-    const monostar_hamiltonians::AcosPlusBsinPlusCsqcosPlusZ fun1 =
-            monostar_hamiltonians::hamiltonian_params_fo_to_classic_energy_function(params.get_hamiltonian_params_fo());
-    const monostar_hamiltonians::AcosPlusBsinPlusCsqcosPlusZ fun2 =
-            monostar_hamiltonians::hamiltonian_params_fo_to_classic_energy_function(params.get_hamiltonian_params_ss_fo());
-    return fun1 + (SS_average * fun2);//TODO finish
-}
-
-}  // end of namespace so_hamiltonians
 
 // #######################################################################
 // ## HamiltonianParamsAfFo                                             ##
@@ -138,6 +124,52 @@ double HamiltonianParamsAfFo::get_ss_Pxz_coef() const {
 
 double HamiltonianParamsAfFo::get_ss_Pxx_coef() const {
     return _hamiltonian_params_ss_fo.get_Pxx_coef();
+}
+
+monostar_hamiltonians::HamiltonianParamsFo
+HamiltonianParamsAfFo::average_out_spins_12(double average_ss){
+    //    const double free = get_ss_coef() * average_ss
+    return monostar_hamiltonians::HamiltonianParamsFo::Builder()
+            .set_tau_z_coef(get_tau_z_coef())
+            .set_tau_minus_coef(get_tau_minus_coef())
+            .set_Pzz_coef(get_Pzz_coef() + average_ss * get_ss_Pzz_coef())
+            .set_Pxz_coef(get_Pxz_coef() + average_ss * get_ss_Pxz_coef())
+            .set_Pxx_coef(get_Pxx_coef() + average_ss * get_ss_Pxx_coef())
+            .build();
+}
+
+monostar_hamiltonians::HamiltonianParamsAfFm
+HamiltonianParamsAfFo::average_out_orbitals_1(double theta){
+    const double average_tau_minus = std::real(OneSiteSpinOrbitalMatrices::get_tau_minus_in_ge_basis(theta)(0, 0));
+    const double average_tau_z = std::real(OneSiteSpinOrbitalMatrices::get_tau_z_in_ge_basis(theta)(0, 0));
+    const double average_Pzz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zz_in_ge_basis(theta)(0, 0));
+    const double average_Pzx_sum_P_xz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(theta)(0, 0));
+    const double average_Pxx = std::real(TwoSitesSpinOrbitalMatrices::get_P_xx_in_ge_basis(theta)(0, 0));
+    return average_out_orbitals_12(
+                average_tau_minus, average_tau_z,
+                average_Pzz, average_Pzx_sum_P_xz, average_Pxx);
+}
+
+monostar_hamiltonians::HamiltonianParamsAfFm
+HamiltonianParamsAfFo::average_out_orbitals_12(
+        [[maybe_unused]] double average_tau_minus, [[maybe_unused]] double average_tau_z,
+        double average_Pzz, double average_Pzx_sum_P_xz, double average_Pxx){
+    const double J =
+            get_ss_coef()
+            + get_ss_Pzz_coef() * average_Pzz
+            + get_ss_Pxz_coef() * average_Pzx_sum_P_xz
+            + get_ss_Pxx_coef() * average_Pxx;
+//    const double free =
+//            get_tau_minus_coef() * average_tau_minus
+//            + get_tau_z_coef() * average_tau_z
+//            + get_Pzz_coef() * average_Pzz
+//            + get_Pxz_coef() * average_Pxz_sum_P_xz
+//            + get_Pxx_coef() * average_Pxx;
+    return monostar_hamiltonians::HamiltonianParamsAfFm::Builder()
+            .set_B(0.0)//TODO finish when B will be defined
+            .set_J_classical(J)
+            .set_J_quantum(J)
+            .build();
 }
 
 monostar_hamiltonians::HamiltonianParamsFo HamiltonianParamsAfFo::get_hamiltonian_params_fo() const{

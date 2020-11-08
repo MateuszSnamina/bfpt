@@ -2,12 +2,9 @@
 #include <so_app/interpreted_program_options.hpp>
 #include <so_app/main_printing.hpp>
 
-#include <monostar_hamiltonians/hamiltonian_kernel_af_fm.hpp>
-#include <monostar_hamiltonians/hamiltonian_params_af_fm_site_matrices.hpp>
-#include <monostar_hamiltonians/hamiltonian_reference_energies_af_fm.hpp>
-#include <monostar_hamiltonians/hamiltonian_kernel_fo.hpp>
-#include <monostar_hamiltonians/hamiltonian_params_fo_site_matrices.hpp>
-#include <monostar_hamiltonians/hamiltonian_reference_energies_fo.hpp>
+#include <so_hamiltonians/hamiltonian_kernel_af_fo.hpp>
+#include <so_hamiltonians/hamiltonian_params_af_fo_site_matrices.hpp>
+#include <so_hamiltonians/hamiltonian_reference_energies_af_fo.hpp>
 #include <monostar_hamiltonians/get_orbital_theta.hpp>
 
 #include <monostar_system/monostar_basis.hpp>
@@ -100,14 +97,12 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
 
 int main(int argc, char** argv) {
     using namespace so_app;
-
-
-//    try {
-//        // ******************************************************************
-//        const RawProgramOptions raw_program_options = grep_program_options(argc, argv);
-//        const InterpretedProgramOptions interpreted_program_options = interpret_program_options(raw_program_options);
-//        // ******************************************************************
-//        print_input_data(interpreted_program_options);
+    try {
+        // ******************************************************************
+        const RawProgramOptions raw_program_options = grep_program_options(argc, argv);
+        const InterpretedProgramOptions interpreted_program_options = interpret_program_options(raw_program_options);
+        // ******************************************************************
+        print_input_data(interpreted_program_options);
 //        // ******************************************************************
 //        if (interpreted_program_options.model_type == ModelType::FO) {
 //            print_theta_opt(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
@@ -246,10 +241,10 @@ int main(int argc, char** argv) {
 //            gs_receipt,
 //            es_receipts);
 //        // ******************************************************************
-//    } catch (std::exception& e) {
-//        std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
-//        std::cerr << e.what() << std::endl;
-//        return EXIT_FAILURE;
-//    }
+    } catch (std::exception& e) {
+        std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

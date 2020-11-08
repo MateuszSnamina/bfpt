@@ -1,6 +1,8 @@
 #pragma once
 
 #include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
+
 
 #include <set>
 #include <string>
@@ -55,6 +57,9 @@ class HamiltonianParamsAfFo {
     double get_site_energy_derivative2(double theta) const;
     double get_site_energy_derivative3(double theta) const;
     double get_site_energy_derivative4(double theta) const;
+    monostar_hamiltonians::HamiltonianParamsFo average_out_spins_12(double average_ss);
+    monostar_hamiltonians::HamiltonianParamsAfFm average_out_orbitals_1(double theta);
+    monostar_hamiltonians::HamiltonianParamsAfFm average_out_orbitals_12(double average_tau_minus, double average_tau_z, double average_Pzz, double average_Pzx_sum_P_xz, double average_Pxx);
     std::set<double> get_theta_opt() const;
     std::set<double> get_theta_opt_numerical() const;
     utility::Result<std::set<double>, monostar_hamiltonians::NoKnownAnalyticalSolutionError> get_theta_opt_analytical() const;
