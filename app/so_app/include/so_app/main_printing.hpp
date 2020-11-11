@@ -29,7 +29,7 @@ void print_input_data(
 //    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional);
 
 void print_theta_opt(
-    const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
+    const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_fo_params,
     std::optional<double> user_defined_overrule,
     double average_ss);
 

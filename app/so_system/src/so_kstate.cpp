@@ -8,27 +8,27 @@
 // ## classical_gs_kstate, classical_es_kstate                          ##
 // #######################################################################
 
-//namespace so_system {
+namespace so_system {
 
-//SoKstate classical_gs_kstate(const unsigned n_sites) {
-//    std::vector<SoSiteState> generator_array(n_sites, so_system::gg);//TODO remove namespace?
-//    return SoKstateTrait::from_range(generator_array);
-//}
+SoKstate classical_gs_kstate(const unsigned n_sites) {
+    std::vector<SoSiteState> generator_array(n_sites, gg);
+    return SoKstateTrait::from_range(generator_array);
+}
 
-//SoKstate classical_es_kstate(const unsigned n_sites) {
-//    assert(n_sites > 0);
-//    std::vector<SoSiteState> generator_array(n_sites, so_system::gg);//TODO remove namespace?
-//    generator_array[0] = so_system::eg;//TODO remove namespace?
-//    const auto generator = SoKstateTrait::from_range(generator_array);
-//    const auto generator_view = SoKstateTrait::to_view(generator);
-//    const size_t generator_n_unique_shift = SoKstateTrait::view_n_unique_shift(generator_view);
-//    const auto rotation_spec = kstate_view_amend_spec::rotated(generator_n_unique_shift);
-//    const auto generator_view_unique_shifted = SoKstateTrait::rotated_view(generator_view, rotation_spec);
-//    const auto uniquely_shifted_generator = SoKstateTrait::from_view(generator_view_unique_shifted);
-//    return uniquely_shifted_generator;
-//}
+SoKstate classical_es_kstate(const unsigned n_sites) {
+    assert(n_sites > 0);
+    std::vector<SoSiteState> generator_array(n_sites, gg);
+    generator_array[0] = eg;
+    const auto generator = SoKstateTrait::from_range(generator_array);
+    const auto generator_view = SoKstateTrait::to_view(generator);
+    const size_t generator_n_unique_shift = SoKstateTrait::view_n_unique_shift(generator_view);
+    const auto rotation_spec = kstate_view_amend_spec::rotated(generator_n_unique_shift);
+    const auto generator_view_unique_shifted = SoKstateTrait::rotated_view(generator_view, rotation_spec);
+    const auto uniquely_shifted_generator = SoKstateTrait::from_view(generator_view_unique_shifted);
+    return uniquely_shifted_generator;
+}
 
-//}  // namespace so_system
+}  // namespace so_system
 
 // #######################################################################
 // ## SoKstate - printing                                               ##

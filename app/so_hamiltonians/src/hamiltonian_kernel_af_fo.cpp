@@ -3,13 +3,13 @@
 #include <cmath>
 
 // #######################################################################
-// ## prepare_hamiltonian_kernel_{1,12}_fo                              ##
+// ## prepare_hamiltonian_kernel_{1,12}_af_fo                           ##
 // #######################################################################
 
 namespace so_hamiltonians {
 
 chainkernel::OperatorKernel12<so_system::SoSiteStateTrait>
-prepare_hamiltonian_kernel_12_fo(
+prepare_hamiltonian_kernel_12_af_fo(
     double ss_coef,
     double Pzz_coef, double Pxz_coef, double Pxx_coef,
     double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef,
@@ -122,9 +122,9 @@ prepare_hamiltonian_kernel_12_fo(
 }
 
 chainkernel::OperatorKernel12<so_system::SoSiteStateTrait>
-prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsAfFo& params, double orbital_theta) {
+prepare_hamiltonian_kernel_12_af_fo(const HamiltonianParamsAfFo& params, double orbital_theta) {
     using namespace so_system;
-    return prepare_hamiltonian_kernel_12_fo(
+    return prepare_hamiltonian_kernel_12_af_fo(
         params.get_ss_coef(),
         params.get_Pzz_coef(),
         params.get_Pxz_coef(),
@@ -136,7 +136,7 @@ prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsAfFo& params, double orb
 }
 
 chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>
-prepare_hamiltonian_kernel_1_fo(
+prepare_hamiltonian_kernel_1_af_fo(
     double s_coef,
     double tau_z_coef, double tau_minus_coef,
     double orbital_theta) {
@@ -167,9 +167,9 @@ prepare_hamiltonian_kernel_1_fo(
 }
 
 chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>
-prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsAfFo& params, double orbital_theta) {
+prepare_hamiltonian_kernel_1_af_fo(const HamiltonianParamsAfFo& params, double orbital_theta) {
     using namespace so_system;
-    return prepare_hamiltonian_kernel_1_fo(
+    return prepare_hamiltonian_kernel_1_af_fo(
         params.get_s_coef(),
         params.get_tau_z_coef(),
         params.get_tau_minus_coef(),

@@ -6,23 +6,23 @@
 #include <kbasis/basis.hpp>
 
 // #######################################################################
-// ## DynamicMonostarKstateBasis                                        ##
+// ## MonostarKstateBasis                                               ##
 // #######################################################################
 
 namespace monostar_system {
 
-using DynamicMonostarKstateBasis = kbasis::Basis<kstate_trait::TraitKstate<MonostarKstate>>;
+using MonostarKstateBasis = kbasis::Basis<MonostarKstateTrait>;
 
 }  // namespace monostar_system
 
 // #######################################################################
-// ## DynamicMonostarKstateBasis - printing                             ##
+// ## MonostarKstateBasis - printing                                    ##
 // #######################################################################
 
 namespace monostar_system {
 
 inline std::ostream&
-operator<<(std::ostream& stream, const DynamicMonostarKstateBasis& basis) {
+operator<<(std::ostream& stream, const MonostarKstateBasis& basis) {
     using extension::boost::stream_pragma::RSS;
     using kbasis::pramga::operator&&;
     using kbasis::pramga::operator<<;

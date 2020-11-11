@@ -6,23 +6,23 @@
 #include <kbasis/basis.hpp>
 
 // #######################################################################
-// ## DynamicSoKstateBasis                                              ##
+// ## SoKstateBasis                                                     ##
 // #######################################################################
 
 namespace so_system {
 
-using DynamicSoKstateBasis = kbasis::Basis<kstate_trait::TraitKstate<SoKstate>>;
+using SoKstateBasis = kbasis::Basis<SoKstateTrait>;
 
 }  // namespace so_system
 
 // #######################################################################
-// ## DynamicSoKstateBasis - printing                                   ##
+// ## SoKstateBasis - printing                                          ##
 // #######################################################################
 
 namespace so_system {
 
 inline std::ostream&
-operator<<(std::ostream& stream, const DynamicSoKstateBasis& basis) {
+operator<<(std::ostream& stream, const SoKstateBasis& basis) {
     using extension::boost::stream_pragma::RSS;
     using kbasis::pramga::operator&&;
     using kbasis::pramga::operator<<;

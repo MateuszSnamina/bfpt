@@ -46,12 +46,12 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
     using KoperatorT = koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
     using KoperatorTraitT = koperator_trait::TraitKoperator<KoperatorT>;
-    using BasisT = monostar_system::DynamicMonostarKstateBasis;
+    using BasisT = monostar_system::MonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
+    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
                0,
@@ -77,12 +77,12 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
     using KoperatorT = koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
     using KoperatorTraitT = koperator_trait::TraitKoperator<KoperatorT>;
-    using BasisT = monostar_system::DynamicMonostarKstateBasis;
+    using BasisT = monostar_system::MonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
+    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
                k_n,
