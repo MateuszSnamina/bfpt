@@ -60,36 +60,36 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
         .unwrap();
 }
 
-//bfpt_common::CommonRecipeReceipt bfpt_kn_es(
-//        const chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>& hamiltonian_kernel_1,
-//        const chainkernel::OperatorKernel12<so_system::SoSiteStateTrait>& hamiltonian_kernel_12,
-//        const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
-//        const bfpt_common::CommonRecipePrintFlags& print_flags,
-//        const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
-//        const std::vector<utility::Named<arma::cx_mat44>>& two_sites_metrices_for_average_calculation,
-//        unsigned n_threads) {
-//    using KstateT = so_system::SoKstate;
-//    using KstateTraitT = so_system::SoKstateTrait;
-//    using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
-//    using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
-//    using KoperatorT = koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
-//    using KoperatorTraitT = koperator_trait::TraitKoperator<KoperatorT>;
-//    using BasisT = so_system::SoKstateBasis;
-//    BasisT basis{n_sites};
-//    basis.add_element(std::make_shared<KstateT>(so_system::classical_es_kstate(n_sites)));
-//    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-//    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-//    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT>(
-//                kstate_populator, kstate_hamiltonian,
-//                basis, max_pt_order,
-//                k_n,
-//                print_flags,
-//                one_site_metrices_for_average_calculation,
-//                two_sites_metrices_for_average_calculation,
-//                "[es (" + std::to_string(k_n) + ")] ",
-//                n_threads)
-//            .unwrap();
-//}
+bfpt_common::CommonRecipeReceipt bfpt_kn_es(
+    const chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>& hamiltonian_kernel_1,
+    const chainkernel::OperatorKernel12<so_system::SoSiteStateTrait>& hamiltonian_kernel_12,
+    const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
+    const bfpt_common::CommonRecipePrintFlags& print_flags,
+    const std::vector<utility::Named<arma::cx_mat44>>& one_site_metrices_for_average_calculation,
+    const std::vector<utility::Named<arma::extension::cx_mat1616>>& two_sites_metrices_for_average_calculation,
+    unsigned n_threads) {
+    using KstateT = so_system::SoKstate;
+    using KstateTraitT = so_system::SoKstateTrait;
+    using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
+    using KpopulatorTraitT = kpopulator_trait::TraitKpopulator<KpopulatorT>;
+    using KoperatorT = koperator_impl::KernelDrivenKstateOperatorMatrix<KstateTraitT>;
+    using KoperatorTraitT = koperator_trait::TraitKoperator<KoperatorT>;
+    using BasisT = so_system::SoKstateBasis;
+    BasisT basis{n_sites};
+    basis.add_element(std::make_shared<KstateT>(so_system::classical_es_kstate(n_sites)));
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 4u>(
+               kstate_populator, kstate_hamiltonian,
+               basis, max_pt_order,
+               k_n,
+               print_flags,
+               one_site_metrices_for_average_calculation,
+               two_sites_metrices_for_average_calculation,
+               "[es (" + std::to_string(k_n) + ")] ",
+               n_threads)
+        .unwrap();
+}
 
 // #######################################################################
 // ## main                                                              ##
@@ -197,33 +197,33 @@ int main(int argc, char** argv) {
             }
             return std::nullopt;
         }();
-        //        // ******************************************************************
-        //        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> es_receipts =
-        //            [&]() -> std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> {
-        //            std::cout << "------------------------------------------" << std::endl;
-        //            if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-        //                const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
-        //                    interpreted_program_options.es_momentum_domain,
-        //                    interpreted_program_options.n_sites);
-        //                std::vector<bfpt_common::CommonRecipeReceipt> es_receipts_builder;
-        //                for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
-        //                    std::cout << "[PROGRESS] "
-        //                              << "solving n_k: " << k_n << std::endl;
-        //                    const auto es_energy = bfpt_kn_es(
-        //                        hamiltonian_kernel_1,
-        //                        hamiltonian_kernel_12,
-        //                        interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
-        //                        interpreted_program_options.print_flags,
-        //                        one_site_metrices_for_average_calculation,
-        //                        two_sites_metrices_for_average_calculation,
-        //                        interpreted_program_options.n_threads);
-        //                    es_receipts_builder.push_back(es_energy);
-        //                    std::cout << "------------------------------------------" << std::endl;
-        //                }
-        //                return es_receipts_builder;
-        //            }
-        //            return std::nullopt;
-        //        }();
+        // ******************************************************************
+        const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> es_receipts =
+            [&]() -> std::optional<std::vector<bfpt_common::CommonRecipeReceipt>> {
+            std::cout << "------------------------------------------" << std::endl;
+            if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+                const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+                    interpreted_program_options.es_momentum_domain,
+                    interpreted_program_options.n_sites);
+                std::vector<bfpt_common::CommonRecipeReceipt> es_receipts_builder;
+                for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
+                    std::cout << "[PROGRESS] "
+                              << "solving n_k: " << k_n << std::endl;
+                    const auto es_energy = bfpt_kn_es(
+                        hamiltonian_kernel_1,
+                        hamiltonian_kernel_12,
+                        interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
+                        interpreted_program_options.print_flags,
+                        one_site_metrices_for_average_calculation,
+                        two_sites_metrices_for_average_calculation,
+                        interpreted_program_options.n_threads);
+                    es_receipts_builder.push_back(es_energy);
+                    std::cout << "------------------------------------------" << std::endl;
+                }
+                return es_receipts_builder;
+            }
+            return std::nullopt;
+        }();
         //        // ******************************************************************
         //        print_results_tree(
         //            interpreted_program_options,
