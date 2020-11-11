@@ -68,128 +68,128 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_threads                          = " << interpreted_program_options.n_threads << std::endl;
 }
 
-//void print_results_tree(
-//    const InterpretedProgramOptions& interpreted_program_options,
-//    const std::shared_ptr<monostar_hamiltonians::HamiltonianReferenceEnergies> reference_energies,
-//    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
-//    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional,
-//    const unsigned n_sites) {
-//    // Helpers:
-//    const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
-//        interpreted_program_options.es_momentum_domain,
-//        interpreted_program_options.n_sites);
-//    // [[expect]]:
-//    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-//        assert(gs_receipt_optional);
-//    }
-//    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-//        assert(es_receipts_optional);
-//        assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
-//    }
-//    // Print:
-//    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-//    std::cout << std::showpos << std::setprecision(10) << std::left;
-//    // Print gs:
-//    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-//        const auto gs_receipt = gs_receipt_optional.value();
-//        std::cout << " ├state: gs " << std::endl;
-//        std::cout << " ││enery             = "
-//                  << std::setw(16) << gs_receipt.energy << " = "
-//                  << std::setw(16) << gs_receipt.energy / n_sites << " * n_sites"
-//                  << std::endl;
-//        if (reference_energies) {
-//            if (const auto& gs_energy = reference_energies->get_gs_energy()) {
-//                std::cout << " ││enery (reference) = "
-//                          << std::setw(16) << *gs_energy << " = "
-//                          << std::setw(16) << *gs_energy / n_sites << " * n_sites"
-//                          << std::endl;
-//            }
-//        }
-//    }
-//    // Print es:
-//    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-//        const auto es_receipts = es_receipts_optional.value();
-//        for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
-//            const auto es_result = es_receipts[k_n];
-//            std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
-//            std::cout << " ││abs. enery        = "
-//                      << std::setw(16) << es_result.energy << " = "
-//                      << std::setw(16) << es_result.energy / n_sites << " * n_sites"
-//                      << std::endl;
-//            if (interpreted_program_options.run_type == RunType::EG) {
-//                const auto gs_receipt = gs_receipt_optional.value();
-//                std::cout << " ││exc. enery        = "
-//                          << std::setw(16) << es_result.energy - gs_receipt.energy << " = "
-//                          << std::setw(16) << (es_result.energy - gs_receipt.energy) / n_sites << " * n_sites"
-//                          << std::endl;
-//            }
-//            if (reference_energies) {
-//                if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
-//                    std::cout << " ││abs. enery (ref.) = "
-//                              << std::setw(16) << *get_es_absolute_enery << " = "
-//                              << std::setw(16) << (*get_es_absolute_enery) / n_sites << " * n_sites"
-//                              << std::endl;
-//                }
-//                if (const auto& es_exciation_enery = reference_energies->get_es_exciation_enery(k_n)) {
-//                    std::cout << " ││exc. enery (ref.) = "
-//                              << std::setw(16) << *es_exciation_enery << " = "
-//                              << std::setw(16) << (*es_exciation_enery) / n_sites << " * n_sites"
-//                              << std::endl;
-//                }
-//            }
-//        }
-//    }
-//}
+void print_results_tree(
+    const InterpretedProgramOptions& interpreted_program_options,
+    const std::shared_ptr<monostar_hamiltonians::HamiltonianReferenceEnergies> reference_energies,
+    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional,
+    const unsigned n_sites) {
+    // Helpers:
+    const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+        interpreted_program_options.es_momentum_domain,
+        interpreted_program_options.n_sites);
+    // [[expect]]:
+    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+        assert(gs_receipt_optional);
+    }
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        assert(es_receipts_optional);
+        assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+    }
+    // Print:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    std::cout << std::showpos << std::setprecision(10) << std::left;
+    // Print gs:
+    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+        const auto gs_receipt = gs_receipt_optional.value();
+        std::cout << " ├state: gs " << std::endl;
+        std::cout << " ││enery             = "
+                  << std::setw(16) << gs_receipt.energy << " = "
+                  << std::setw(16) << gs_receipt.energy / n_sites << " * n_sites"
+                  << std::endl;
+        if (reference_energies) {
+            if (const auto& gs_energy = reference_energies->get_gs_energy()) {
+                std::cout << " ││enery (reference) = "
+                          << std::setw(16) << *gs_energy << " = "
+                          << std::setw(16) << *gs_energy / n_sites << " * n_sites"
+                          << std::endl;
+            }
+        }
+    }
+    // Print es:
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        const auto es_receipts = es_receipts_optional.value();
+        for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
+            const auto es_result = es_receipts[k_n];
+            std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
+            std::cout << " ││abs. enery        = "
+                      << std::setw(16) << es_result.energy << " = "
+                      << std::setw(16) << es_result.energy / n_sites << " * n_sites"
+                      << std::endl;
+            if (interpreted_program_options.run_type == RunType::EG) {
+                const auto gs_receipt = gs_receipt_optional.value();
+                std::cout << " ││exc. enery        = "
+                          << std::setw(16) << es_result.energy - gs_receipt.energy << " = "
+                          << std::setw(16) << (es_result.energy - gs_receipt.energy) / n_sites << " * n_sites"
+                          << std::endl;
+            }
+            if (reference_energies) {
+                if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
+                    std::cout << " ││abs. enery (ref.) = "
+                              << std::setw(16) << *get_es_absolute_enery << " = "
+                              << std::setw(16) << (*get_es_absolute_enery) / n_sites << " * n_sites"
+                              << std::endl;
+                }
+                if (const auto& es_exciation_enery = reference_energies->get_es_exciation_enery(k_n)) {
+                    std::cout << " ││exc. enery (ref.) = "
+                              << std::setw(16) << *es_exciation_enery << " = "
+                              << std::setw(16) << (*es_exciation_enery) / n_sites << " * n_sites"
+                              << std::endl;
+                }
+            }
+        }
+    }
+}
 
-//void print_post_data(
-//    const InterpretedProgramOptions& interpreted_program_options,
-//    /*const std::unique_ptr<monostar_app::ReferenceEnergies> reference_energies,*/
-//    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
-//    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional) {
-//    // Helpers:
-//    const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
-//        interpreted_program_options.es_momentum_domain,
-//        interpreted_program_options.n_sites);
-//    // [[expect]]:
-//    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-//        assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
-//    }
-//    // Stream RAII:
-//    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-//    // Helpers:
-//    using extension::boost::stream_pragma::RSS;
-//    using extension::boost::stream_pragma::operator|;
-//    using extension::boost::stream_pragma::operator<<;
-//    using namespace boost::adaptors;
-//    // Print gs:
-//    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
-//        const auto gs_receipt = gs_receipt_optional.value();
-//        std::cout << "[RESULT] [POST] gs_energy: " << gs_receipt.energy << std::endl;
-//    }
-//    // Print es -- domain:
-//    if (interpreted_program_options.run_type == RunType::EG) {
-//        const auto& n_sites = interpreted_program_options.n_sites;
-//        const auto nk_to_k = [n_sites](int n_k) -> double { return (2 * arma::datum::pi * n_k) / n_sites; };
-//        const auto domain = boost::irange(es_momentum_range_sapn.first, es_momentum_range_sapn.second) | transformed(nk_to_k);
-//        std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
-//    }
-//    // Print es -- helpers:
-//    const auto receipt_to_energy = [](bfpt_common::CommonRecipeReceipt result) -> double { return result.energy; };
-//    // Print es -- absolute energies:
-//    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
-//        const auto es_receipt = es_receipts_optional.value();
-//        std::cout << "[RESULT] [POST] es_absolute_energies: " << (es_receipt | transformed(receipt_to_energy) | RSS<double>().like_python_list()) << std::endl;
-//    }
-//    // Print es -- excitation energies:
-//    if (interpreted_program_options.run_type == RunType::EG) {
-//        const auto gs_receipt = gs_receipt_optional.value();
-//        const auto es_receipts = es_receipts_optional.value();
-//        const auto gs_energy = gs_receipt.energy;
-//        const auto absolute_energy_into_excitation_energy = [gs_energy](double es_energy) -> double { return es_energy - gs_energy; };
-//        const auto exciation_energies = es_receipts | transformed(receipt_to_energy) | transformed(absolute_energy_into_excitation_energy);
-//        std::cout << "[RESULT] [POST] es_excitation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
-//    }
-//}
+void print_post_data(
+    const InterpretedProgramOptions& interpreted_program_options,
+    /*const std::unique_ptr<monostar_app::ReferenceEnergies> reference_energies,*/
+    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional) {
+    // Helpers:
+    const auto es_momentum_range_sapn = es_momentum_domain_variant_to_momentum_range_sapn(
+        interpreted_program_options.es_momentum_domain,
+        interpreted_program_options.n_sites);
+    // [[expect]]:
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        assert(es_receipts_optional->size() == es_momentum_range_sapn.second - es_momentum_range_sapn.first);
+    }
+    // Stream RAII:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
+    // Helpers:
+    using extension::boost::stream_pragma::RSS;
+    using extension::boost::stream_pragma::operator|;
+    using extension::boost::stream_pragma::operator<<;
+    using namespace boost::adaptors;
+    // Print gs:
+    if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
+        const auto gs_receipt = gs_receipt_optional.value();
+        std::cout << "[RESULT] [POST] gs_energy: " << gs_receipt.energy << std::endl;
+    }
+    // Print es -- domain:
+    if (interpreted_program_options.run_type == RunType::EG) {
+        const auto& n_sites = interpreted_program_options.n_sites;
+        const auto nk_to_k = [n_sites](int n_k) -> double { return (2 * arma::datum::pi * n_k) / n_sites; };
+        const auto domain = boost::irange(es_momentum_range_sapn.first, es_momentum_range_sapn.second) | transformed(nk_to_k);
+        std::cout << "[RESULT] [POST] domain: " << (domain | RSS<double>().like_python_list()) << std::endl;
+    }
+    // Print es -- helpers:
+    const auto receipt_to_energy = [](bfpt_common::CommonRecipeReceipt result) -> double { return result.energy; };
+    // Print es -- absolute energies:
+    if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
+        const auto es_receipt = es_receipts_optional.value();
+        std::cout << "[RESULT] [POST] es_absolute_energies: " << (es_receipt | transformed(receipt_to_energy) | RSS<double>().like_python_list()) << std::endl;
+    }
+    // Print es -- excitation energies:
+    if (interpreted_program_options.run_type == RunType::EG) {
+        const auto gs_receipt = gs_receipt_optional.value();
+        const auto es_receipts = es_receipts_optional.value();
+        const auto gs_energy = gs_receipt.energy;
+        const auto absolute_energy_into_excitation_energy = [gs_energy](double es_energy) -> double { return es_energy - gs_energy; };
+        const auto exciation_energies = es_receipts | transformed(receipt_to_energy) | transformed(absolute_energy_into_excitation_energy);
+        std::cout << "[RESULT] [POST] es_excitation_energies: " << (exciation_energies | RSS<double>().like_python_list()) << std::endl;
+    }
+}
 
 void print_theta_opt(
     const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_af_fo_params,

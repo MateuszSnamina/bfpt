@@ -224,19 +224,19 @@ int main(int argc, char** argv) {
             }
             return std::nullopt;
         }();
-        //        // ******************************************************************
-        //        print_results_tree(
-        //            interpreted_program_options,
-        //            reference_energies,
-        //            gs_receipt,
-        //            es_receipts,
-        //            interpreted_program_options.n_sites);
-        //        print_post_data(
-        //            interpreted_program_options,
-        //            /*reference_energies,*/
-        //            gs_receipt,
-        //            es_receipts);
-        //        // ******************************************************************
+        // ******************************************************************
+        print_results_tree(
+            interpreted_program_options,
+            reference_energies,
+            gs_receipt,
+            es_receipts,
+            interpreted_program_options.n_sites);
+        print_post_data(
+            interpreted_program_options,
+            /*reference_energies,*/
+            gs_receipt,
+            es_receipts);
+        // ******************************************************************
     } catch (std::exception& e) {
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
         std::cerr << e.what() << std::endl;
