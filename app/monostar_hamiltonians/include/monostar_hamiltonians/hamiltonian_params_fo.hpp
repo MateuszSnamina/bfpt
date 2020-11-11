@@ -90,7 +90,7 @@
  * H₁₂ˣˣ = Σ_<ij> Pxx_coef * (Pˣ(i) Pˣ(j))
  * H₁ = H₁ᶻ + H₁⁻
  * H₁₂ = H₁₂ᶻᶻ + H₁₂ˣᶻ + H₁₂ˣˣ
- * H = H₁ + H₁₂
+ * H = H₁ + H₁₂ + free_coef * n_sites
  *
  */
 
@@ -102,6 +102,7 @@ namespace monostar_hamiltonians {
 
 class HamiltonianParamsFo {
    public:
+    // Builder:
     class Builder {
        public:
         Builder set_tau_z_coef(double);
@@ -109,6 +110,7 @@ class HamiltonianParamsFo {
         Builder set_Pzz_coef(double);
         Builder set_Pxz_coef(double);
         Builder set_Pxx_coef(double);
+        Builder set_free_coef(double);
         HamiltonianParamsFo build() const;
 
        private:
@@ -117,14 +119,17 @@ class HamiltonianParamsFo {
         double _Pzz_coef = 0.0;
         double _Pxz_coef = 0.0;
         double _Pxx_coef = 0.0;
+        double _free_coef = 0.0;
     };
+    // Construction/destruction:
     friend HamiltonianParamsFo Builder::build() const;
-    HamiltonianParamsFo() = default;
+    // Getters:
     double get_tau_z_coef() const;
     double get_tau_minus_coef() const;
     double get_Pzz_coef() const;
     double get_Pxz_coef() const;
     double get_Pxx_coef() const;
+    double get_free_coef() const;
     double get_site_energy(double theta) const;
     double get_site_energy_derivative(double theta) const;
     double get_site_energy_derivative2(double theta) const;
@@ -135,14 +140,14 @@ class HamiltonianParamsFo {
     utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_theta_opt_analytical() const;
     std::string string_repr_in_orbital_operators() const;
     std::string string_repr_in_trigonometric_functions() const;
-
    private:
-    HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef);
+    HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef, double free_coef);
     double _tau_z_coef;
     double _tau_minus_coef;
     double _Pzz_coef;
     double _Pxz_coef;
     double _Pxx_coef;
+    double _free_coef = 0.0;
 };
 
 }  // end of namespace monostar_hamiltonians

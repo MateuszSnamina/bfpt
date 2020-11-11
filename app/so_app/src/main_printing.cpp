@@ -1,6 +1,6 @@
 #include <so_app/main_printing.hpp>
 
-#include <monostar_hamiltonians/get_orbital_theta.hpp>
+#include <so_hamiltonians/get_orbital_theta.hpp>
 
 #include <extensions/range_streamer.hpp>
 #include <extensions/stream_fromat_stacker.hpp>
@@ -29,6 +29,7 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_pt                               = " << interpreted_program_options.n_pt << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
     if (interpreted_program_options.model_type == ModelType::AFFO) {
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_s_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_s_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_ss_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_z_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_minus_coef() << std::endl;
@@ -44,6 +45,7 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
             std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = "
                       << "<auto: let the program choose the optimal value>" << std::endl;
         }
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::average_ss         = " << interpreted_program_options.average_ss << std::endl;
     }
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
@@ -189,7 +191,10 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
 //    }
 //}
 
-void print_theta_opt(const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_af_fo_params, std::optional<double> user_defined_overrule) {
+void print_theta_opt(
+        const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_af_fo_params,
+        std::optional<double> user_defined_overrule,
+        double average_ss) {
     // Using:
     using namespace extension::boost::stream_pragma;
     using extension::boost::stream_pragma::RSS;
@@ -200,49 +205,50 @@ void print_theta_opt(const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_a
     std::cout << std::showpos;
     std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_af_fo_params.string_repr_in_orbital_operators() << std::endl;
     std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_af_fo_params.string_repr_in_trigonometric_functions() << std::endl;
-    if (const auto& _ = hamiltonian_af_fo_params.get_theta_opt_analytical()) {
+    if (const auto& _ = hamiltonian_af_fo_params.get_theta_opt_analytical(average_ss)) {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
     } else {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = "
                   << "<no known analicycal solution solver>" << std::endl;
     }
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (numerical)        = "
-              << (hamiltonian_af_fo_params.get_theta_opt_numerical() | RSS<double>().like_python_set()) << std::endl;
+              << (hamiltonian_af_fo_params.get_theta_opt_numerical(average_ss) | RSS<double>().like_python_set()) << std::endl;
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta                    = "
-              << (hamiltonian_af_fo_params.get_theta_opt() | RSS<double>().like_python_set()) << std::endl;
-//    const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(hamiltonian_af_fo_params, user_defined_overrule);  //may thorw!
-//    std::cout << "[INFO   ] [THETA_OPT] used orbital theta                       = "
-//              << orbital_theta_to_use << " = "
-//              << orbital_theta_to_use / M_PI << " π" << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] cos, sin [used orbital theta]            = "
-//              << std::cos(orbital_theta_to_use) << ", "
-//              << std::sin(orbital_theta_to_use) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] cos², sin² [used orbital theta]          = "
-//              << std::pow(std::cos(orbital_theta_to_use), 2) << ", "
-//              << std::pow(std::sin(orbital_theta_to_use), 2) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] τᶻ, τˣ, τ⁻, τ⁺ [used orbital theta]      = "
-//              << +std::cos(orbital_theta_to_use) << ", "
-//              << -std::cos(orbital_theta_to_use) << ", "
-//              << -std::sin(orbital_theta_to_use) << ", "
-//              << +std::sin(orbital_theta_to_use)
-//              << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] Pᶻ, Pˣ [used orbital theta]              = "
-//              << (0.5 + 0.5 * std::cos(orbital_theta_to_use)) << ", "
-//              << (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] Pᶻᶻ, Pᶻˣ+Pˣᶻ, Pˣˣ [used orbital theta]   = "
-//              << std::pow(0.5 + 0.5 * std::cos(orbital_theta_to_use), 2) << ", "
-//              << 2 * (0.5 + 0.5 * std::cos(orbital_theta_to_use)) * (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << ", "
-//              << std::pow(0.5 - 0.5 * std::cos(orbital_theta_to_use), 2) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] H [used orbital theta]                   = "
-//              << hamiltonian_fo_params.get_site_energy(orbital_theta_to_use) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] dH/dθ [used orbital theta]               = "
-//              << hamiltonian_fo_params.get_site_energy_derivative(orbital_theta_to_use) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] d²H/dθ² [used orbital theta]             = "
-//              << hamiltonian_fo_params.get_site_energy_derivative2(orbital_theta_to_use) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] d³H/dθ³ [used orbital theta]             = "
-//              << hamiltonian_fo_params.get_site_energy_derivative3(orbital_theta_to_use) << std::endl;
-//    std::cout << "[INFO   ] [THETA_OPT] d⁴H/dθ⁴ [used orbital theta]             = "
-//              << hamiltonian_fo_params.get_site_energy_derivative4(orbital_theta_to_use) << std::endl;
+              << (hamiltonian_af_fo_params.get_theta_opt(average_ss) | RSS<double>().like_python_set()) << std::endl;
+    const double orbital_theta_to_use = so_hamiltonians::get_orbital_theta(
+                hamiltonian_af_fo_params, user_defined_overrule, average_ss);  //may thorw!
+    std::cout << "[INFO   ] [THETA_OPT] used orbital theta                       = "
+              << orbital_theta_to_use << " = "
+              << orbital_theta_to_use / M_PI << " π" << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] cos, sin [used orbital theta]            = "
+              << std::cos(orbital_theta_to_use) << ", "
+              << std::sin(orbital_theta_to_use) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] cos², sin² [used orbital theta]          = "
+              << std::pow(std::cos(orbital_theta_to_use), 2) << ", "
+              << std::pow(std::sin(orbital_theta_to_use), 2) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] τᶻ, τˣ, τ⁻, τ⁺ [used orbital theta]      = "
+              << +std::cos(orbital_theta_to_use) << ", "
+              << -std::cos(orbital_theta_to_use) << ", "
+              << -std::sin(orbital_theta_to_use) << ", "
+              << +std::sin(orbital_theta_to_use)
+              << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] Pᶻ, Pˣ [used orbital theta]              = "
+              << (0.5 + 0.5 * std::cos(orbital_theta_to_use)) << ", "
+              << (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] Pᶻᶻ, Pᶻˣ+Pˣᶻ, Pˣˣ [used orbital theta]   = "
+              << std::pow(0.5 + 0.5 * std::cos(orbital_theta_to_use), 2) << ", "
+              << 2 * (0.5 + 0.5 * std::cos(orbital_theta_to_use)) * (0.5 - 0.5 * std::cos(orbital_theta_to_use)) << ", "
+              << std::pow(0.5 - 0.5 * std::cos(orbital_theta_to_use), 2) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] H [used orbital theta]                   = "
+              << hamiltonian_af_fo_params.get_site_energy(orbital_theta_to_use, average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] dH/dθ [used orbital theta]               = "
+              << hamiltonian_af_fo_params.get_site_energy_derivative(orbital_theta_to_use, average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] d²H/dθ² [used orbital theta]             = "
+              << hamiltonian_af_fo_params.get_site_energy_derivative2(orbital_theta_to_use, average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] d³H/dθ³ [used orbital theta]             = "
+              << hamiltonian_af_fo_params.get_site_energy_derivative3(orbital_theta_to_use, average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] d⁴H/dθ⁴ [used orbital theta]             = "
+              << hamiltonian_af_fo_params.get_site_energy_derivative4(orbital_theta_to_use, average_ss) << std::endl;
 }
 
 }  // end of namespace so_app

@@ -19,8 +19,8 @@ struct InterpretedProgramOptions {
     unsigned n_sites;
     unsigned n_pt;
     ModelType model_type;
-    monostar_hamiltonians::HamiltonianParamsAfFm hamiltonian_params_af_fm;
-    monostar_hamiltonians::HamiltonianParamsFo hamiltonian_params_fo;
+    monostar_hamiltonians::HamiltonianParamsAfFm hamiltonian_params_af_fm = monostar_hamiltonians::HamiltonianParamsAfFm::Builder().build();
+    monostar_hamiltonians::HamiltonianParamsFo hamiltonian_params_fo = monostar_hamiltonians::HamiltonianParamsFo::Builder().build();
     std::optional<double> orbital_theta;
     RunType run_type;
     EsMomentumDomainVariant es_momentum_domain;

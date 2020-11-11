@@ -104,8 +104,11 @@ int main(int argc, char** argv) {
         // ******************************************************************
         print_input_data(interpreted_program_options);
 //        // ******************************************************************
-//        if (interpreted_program_options.model_type == ModelType::FO) {
-//            print_theta_opt(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+//        if (interpreted_program_options.model_type == ModelType::AFFO) {
+//            print_theta_opt(
+//                interpreted_program_options.hamiltonian_params_fo,
+//                interpreted_program_options.orbital_theta,
+//                        interpreted_program_options.average_ss);
 //        }
 //        // ******************************************************************
 //        const auto hamiltonian_kernel_1 = [&interpreted_program_options]() {

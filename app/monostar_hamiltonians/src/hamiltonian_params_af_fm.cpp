@@ -21,14 +21,20 @@ HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_B(double B) {
     return *this;
 }
 
-HamiltonianParamsAfFm HamiltonianParamsAfFm::Builder::build() const {
-    return HamiltonianParamsAfFm(_J_classicall, _J_quantum, _B);
+HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_free(double free) {
+    _free = free;
+    return *this;
 }
 
-HamiltonianParamsAfFm::HamiltonianParamsAfFm(double J_classicall, double J_quantum, double B)
+HamiltonianParamsAfFm HamiltonianParamsAfFm::Builder::build() const {
+    return HamiltonianParamsAfFm(_J_classicall, _J_quantum, _B, _free);
+}
+
+HamiltonianParamsAfFm::HamiltonianParamsAfFm(double J_classicall, double J_quantum, double B, double free)
     : _J_classicall(J_classicall),
       _J_quantum(J_quantum),
-      _B(B) {
+      _B(B),
+      _free(free) {
 }
 
 double HamiltonianParamsAfFm::get_J_classical() const {
@@ -41,6 +47,10 @@ double HamiltonianParamsAfFm::get_J_quantum() const {
 
 double HamiltonianParamsAfFm::get_B() const {
     return _B;
+}
+
+double HamiltonianParamsAfFm::get_free() const {
+    return _free;
 }
 
 }  //end of namespace monostar_hamiltonians

@@ -29,7 +29,7 @@ chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_12_fm(const HamiltonianParamsAfFm&);
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_1_af_fm(double B = 0.0);
+prepare_hamiltonian_kernel_1_af_fm(double B, double free_coef);
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_af_fm(const HamiltonianParamsAfFm&);

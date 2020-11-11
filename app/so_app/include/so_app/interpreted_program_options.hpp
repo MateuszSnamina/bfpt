@@ -19,8 +19,9 @@ struct InterpretedProgramOptions {
     unsigned n_sites;
     unsigned n_pt;
     ModelType model_type;
-    so_hamiltonians::HamiltonianParamsAfFo hamiltonian_params_af_fo;
+    so_hamiltonians::HamiltonianParamsAfFo hamiltonian_params_af_fo = so_hamiltonians::HamiltonianParamsAfFo::Builder().build();
     std::optional<double> orbital_theta;
+    double average_ss;
     RunType run_type;
     EsMomentumDomainVariant es_momentum_domain;
     bfpt_common::CommonRecipePrintFlags print_flags;

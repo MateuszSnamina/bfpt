@@ -14,37 +14,37 @@ namespace so_hamiltonians {
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_af_latticeA(),
+                monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA(),
                 arma::eye(2,2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_af_latticeB(),
+                monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB(),
                 arma::eye(2,2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_af_latticeA(),
+                monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA(),
                 arma::eye(2,2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_af_latticeB(),
+                monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB(),
                 arma::eye(2,2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_af_latticeA(),
+                monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA(),
                 arma::eye(2,2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_af_latticeB(),
+                monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB(),
                 arma::eye(2,2));
 }
 
@@ -285,8 +285,6 @@ arma::extension::cx_mat1616 TwoSitesSpinOrbitalMatrices::get_S_S_offdiag_af() {
 arma::extension::cx_mat1616 TwoSitesSpinOrbitalMatrices::get_S_S_af() {
     return get_S_S_ondiag_af() + get_S_S_offdiag_af();
 }
-
-/////////// TODO remove the comment line.
 
 arma::extension::cx_mat1616 TwoSitesSpinOrbitalMatrices::get_P_zz_in_zx_basis() {
     const auto& P_z_in_zx_basis = OneSiteSpinOrbitalMatrices::get_P_z_in_zx_basis();

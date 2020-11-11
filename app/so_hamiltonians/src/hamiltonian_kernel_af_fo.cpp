@@ -139,6 +139,7 @@ prepare_hamiltonian_kernel_12_fo(const HamiltonianParamsAfFo& params, double orb
 
 chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>
 prepare_hamiltonian_kernel_1_fo(
+        double s_coef,
         double tau_z_coef, double tau_minus_coef,
         double orbital_theta) {
     using namespace so_system;
@@ -153,11 +154,13 @@ prepare_hamiltonian_kernel_1_fo(
     const double tau_minus_ee = +s1;
     const double orbit_g_g = tau_z_coef * tau_z_gg + tau_minus_coef * tau_minus_gg;
     const double orbit_e_e = tau_z_coef * tau_z_ee + tau_minus_coef * tau_minus_ee;
+    const double spin_g_g = -0.5 * s_coef;
+    const double spin_e_e = +0.5 * s_coef;
     OnDiagInfoType on_diag_info{
-        {{gg}, orbit_g_g},
-        {{ge}, orbit_e_e},
-        {{eg}, orbit_g_g},
-        {{ee}, orbit_e_e}
+        {{gg}, spin_g_g + orbit_g_g},
+        {{ge}, spin_g_g + orbit_e_e},
+        {{eg}, spin_e_e + orbit_g_g},
+        {{ee}, spin_e_e + orbit_e_e}
     };
     const double orbit_g_e = tau_z_coef * tau_z_ge + tau_minus_coef * tau_minus_ge;
     OffDiagInfoType half_off_diag_info{
@@ -171,6 +174,7 @@ chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>
 prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsAfFo& params, double orbital_theta) {
     using namespace so_system;
     return prepare_hamiltonian_kernel_1_fo(
+        params.get_s_coef(),
         params.get_tau_z_coef(),
         params.get_tau_minus_coef(),
         orbital_theta);

@@ -74,15 +74,15 @@ prepare_hamiltonian_kernel_12_fm(const HamiltonianParamsAfFm& params) {
 }
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_1_af_fm(double B) {
+prepare_hamiltonian_kernel_1_af_fm(double B, double free_coef) {
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel1<MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<
         chainkernel::StateKernel1<MonostarSiteStateTrait>,
         chainkernel::CoupleInfoKernel1<MonostarSiteStateTrait>>;
     OnDiagInfoType on_diag_info{
-        {{gs}, -B * 0.5},
-        {{es}, +B * 0.5},
+        {{gs}, -B * 0.5 + free_coef},
+        {{es}, +B * 0.5 + free_coef},
     };
     OffDiagInfoType half_off_diag_info{};
     return chainkernel::OperatorKernel1<MonostarSiteStateTrait>{on_diag_info, half_off_diag_info};
@@ -90,7 +90,7 @@ prepare_hamiltonian_kernel_1_af_fm(double B) {
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_af_fm(const HamiltonianParamsAfFm& params) {
-    return prepare_hamiltonian_kernel_1_af_fm(params.get_B());
+    return prepare_hamiltonian_kernel_1_af_fm(params.get_B(), params.get_free());
 }
 
 }  // end of namespace monostar_hamiltonians

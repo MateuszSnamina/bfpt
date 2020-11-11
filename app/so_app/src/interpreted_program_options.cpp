@@ -22,8 +22,8 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         throw std::runtime_error(message);
     }
     interpreted_program_options.hamiltonian_params_af_fo = so_hamiltonians::HamiltonianParamsAfFo::Builder()
+            .set_s_coef(raw_program_options.hamiltonian_s_coef)
             .set_ss_coef(raw_program_options.hamiltonian_ss_coef)
-            //.set_B(raw_program_options.hamiltonian_B)
             .set_tau_z_coef(raw_program_options.hamiltonian_tau_z_coef)
             .set_tau_minus_coef(raw_program_options.hamiltonian_tau_minus_coef)
             .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
@@ -40,6 +40,7 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         const std::string message = message1 + "\n" + _.unwrap_err().what();
         throw std::runtime_error(message);
     }
+    interpreted_program_options.average_ss = raw_program_options.average_ss;
     if (const auto _ = interpret_run_type_string(raw_program_options.run_type_string)) {
         interpreted_program_options.run_type = _.unwrap();
     } else {

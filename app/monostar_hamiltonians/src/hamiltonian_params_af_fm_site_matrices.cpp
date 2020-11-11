@@ -43,39 +43,39 @@ arma::cx_mat22 PaluliMatrices::get_sigma_minus() {
 
 namespace monostar_hamiltonians {
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_z_fm() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_z_in_ge_fm() {
     return 0.5 * PaluliMatrices::get_sigma_z();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_z_af_latticeA() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA() {
     return +0.5 * PaluliMatrices::get_sigma_z();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_z_af_latticeB() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB() {
     return -0.5 * PaluliMatrices::get_sigma_z();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_plus_fm() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_plus_in_ge_fm() {
     return 0.5 * PaluliMatrices::get_sigma_plus();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_plus_af_latticeA() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA() {
     return 0.5 * PaluliMatrices::get_sigma_plus();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_plus_af_latticeB() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB() {
     return 0.5 * PaluliMatrices::get_sigma_minus();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_fm() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_in_ge_fm() {
     return 0.5 * PaluliMatrices::get_sigma_minus();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_af_latticeA() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA() {
     return 0.5 * PaluliMatrices::get_sigma_minus();
 }
 
-arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_af_latticeB() {
+arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB() {
     return 0.5 * PaluliMatrices::get_sigma_plus();
 }
 
@@ -87,40 +87,40 @@ arma::cx_mat22 OneSiteSpinMatrices::get_S_minus_af_latticeB() {
 
 namespace monostar_hamiltonians {
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_z_fm() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_z_fm(), "Sᶻ");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_z_in_ge_fm() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_z_in_ge_fm(), "Sᶻ");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_z_af_latticeA() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_z_af_latticeA(), "Sᶻ@A");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_z_in_ge_af_latticeA() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA(), "Sᶻ@A");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_z_af_latticeB() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_z_af_latticeB(), "Sᶻ@B");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_z_in_ge_af_latticeB() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB(), "Sᶻ@B");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_plus_fm() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_plus_fm(), "S⁺");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_plus_in_ge_fm() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_plus_in_ge_fm(), "S⁺");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_plus_af_latticeA() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_plus_af_latticeA(), "S⁺@A");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_plus_in_ge_af_latticeA() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA(), "S⁺@A");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_plus_af_latticeB() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_plus_af_latticeB(), "S⁺@B");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_plus_in_ge_af_latticeB() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB(), "S⁺@B");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_minus_fm() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_minus_fm(), "S⁻");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_minus_in_ge_fm() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_minus_in_ge_fm(), "S⁻");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_minus_af_latticeA() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_minus_af_latticeA(), "S⁻@A");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_minus_in_ge_af_latticeA() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA(), "S⁻@A");
 }
 
-utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_minus_af_latticeB() {
-    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_minus_af_latticeB(), "S⁻@B");
+utility::Named<arma::cx_mat22> OneSiteSpinNamedMatrices::get_S_minus_in_ge_af_latticeB() {
+    return utility::Named<arma::cx_mat22>(OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB(), "S⁻@B");
 }
 
 std::vector<utility::Named<arma::cx_mat22>> OneSiteSpinNamedMatrices::site_matrices_for_average_calculations_af_fm() {
@@ -135,47 +135,47 @@ std::vector<utility::Named<arma::cx_mat22>> OneSiteSpinNamedMatrices::site_matri
 
 namespace monostar_hamiltonians {
 
-arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_ondiag_fm() {
-    return arma::kron(OneSiteSpinMatrices::get_S_z_fm(), OneSiteSpinMatrices::get_S_z_fm());
+arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_ondiag_in_ge_fm() {
+    return arma::kron(OneSiteSpinMatrices::get_S_z_in_ge_fm(), OneSiteSpinMatrices::get_S_z_in_ge_fm());
 }
 
-arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_ondiag_af() {
+arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_ondiag_in_ge_af() {
     const arma::cx_mat44 S_S_ondiag_af_latticeAB =
-            arma::kron(OneSiteSpinMatrices::get_S_z_af_latticeA(), OneSiteSpinMatrices::get_S_z_af_latticeB());
+            arma::kron(OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA(), OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB());
 #ifndef NDEBUG
     const arma::cx_mat44 S_S_ondiag_af_latticeBA =
-            arma::kron(OneSiteSpinMatrices::get_S_z_af_latticeB(), OneSiteSpinMatrices::get_S_z_af_latticeA());
+            arma::kron(OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB(), OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA());
     assert(arma::norm(S_S_ondiag_af_latticeAB - S_S_ondiag_af_latticeBA) < 1e-8);
 #endif
     return S_S_ondiag_af_latticeAB;
 }
 
-arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_offdiag_fm() {
+arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_offdiag_in_ge_fm() {
     const arma::cx_mat44 S_S_ondiag_fm = 0.5 * (
-                arma::kron(OneSiteSpinMatrices::get_S_plus_fm(), OneSiteSpinMatrices::get_S_minus_fm()) +
-                arma::kron(OneSiteSpinMatrices::get_S_minus_fm(), OneSiteSpinMatrices::get_S_plus_fm()));
+                arma::kron(OneSiteSpinMatrices::get_S_plus_in_ge_fm(), OneSiteSpinMatrices::get_S_minus_in_ge_fm()) +
+                arma::kron(OneSiteSpinMatrices::get_S_minus_in_ge_fm(), OneSiteSpinMatrices::get_S_plus_in_ge_fm()));
     return S_S_ondiag_fm;
 }
 
-arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_offdiag_af() {
+arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_offdiag_in_ge_af() {
     const arma::cx_mat44 S_S_offdiagaf_latticeAB = 0.5 * (
-                arma::kron(OneSiteSpinMatrices::get_S_plus_af_latticeA(), OneSiteSpinMatrices::get_S_minus_af_latticeB()) +
-                arma::kron(OneSiteSpinMatrices::get_S_minus_af_latticeA(), OneSiteSpinMatrices::get_S_plus_af_latticeB()));
+                arma::kron(OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA(), OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB()) +
+                arma::kron(OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA(), OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB()));
 #ifndef NDEBUG
     const arma::cx_mat44 S_S_offdiag_af_latticeBA = 0.5 * (
-                arma::kron(OneSiteSpinMatrices::get_S_plus_af_latticeB(), OneSiteSpinMatrices::get_S_minus_af_latticeA()) +
-                arma::kron(OneSiteSpinMatrices::get_S_minus_af_latticeB(), OneSiteSpinMatrices::get_S_plus_af_latticeA()));
+                arma::kron(OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB(), OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA()) +
+                arma::kron(OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB(), OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA()));
     assert(arma::norm(S_S_offdiagaf_latticeAB - S_S_offdiag_af_latticeBA) < 1e-8);
 #endif
     return S_S_offdiagaf_latticeAB;
 }
 
-arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_fm() {
-    return get_S_S_ondiag_fm() + get_S_S_offdiag_fm();
+arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_in_ge_fm() {
+    return get_S_S_ondiag_in_ge_fm() + get_S_S_offdiag_in_ge_fm();
 }
 
-arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_af() {
-    return get_S_S_ondiag_af() + get_S_S_offdiag_af();
+arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_in_ge_af() {
+    return get_S_S_ondiag_in_ge_af() + get_S_S_offdiag_in_ge_af();
 }
 
 }  // end of namespace monostar_hamiltonians
@@ -186,40 +186,40 @@ arma::cx_mat44 TwoSitesSpinMatrices::get_S_S_af() {
 
 namespace monostar_hamiltonians {
 
-utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_ondiag_fm() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_ondiag_fm(), "SᶻSᶻ");
+utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_ondiag_in_ge_fm() {
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_ondiag_in_ge_fm(), "SᶻSᶻ");
 }
 
-utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_ondiag_af() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_ondiag_af(), "SᶻSᶻ");
+utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_ondiag_in_ge_af() {
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_ondiag_in_ge_af(), "SᶻSᶻ");
 }
 
-utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_offdiag_fm() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_offdiag_fm(), "½(S⁺S⁻+S⁻S⁺)");
+utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_offdiag_in_ge_fm() {
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_offdiag_in_ge_fm(), "½(S⁺S⁻+S⁻S⁺)");
 }
 
-utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_offdiag_af() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_offdiag_af(), "½(S⁺S⁻+S⁻S⁺)");
+utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_offdiag_in_ge_af() {
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_offdiag_in_ge_af(), "½(S⁺S⁻+S⁻S⁺)");
 }
 
-utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_fm() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_fm(), "S⋅S");
+utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_in_ge_fm() {
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_in_ge_fm(), "S⋅S");
 }
 
-utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_af() {
-    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_af(), "S⋅S");
+utility::Named<arma::cx_mat44> TwoSitesSpinNamedMatrices::get_S_S_in_ge_af() {
+    return utility::Named<arma::cx_mat44>(TwoSitesSpinMatrices::get_S_S_in_ge_af(), "S⋅S");
 }
 
 std::vector<utility::Named<arma::cx_mat44>> TwoSitesSpinNamedMatrices::matrices_for_average_calculations_fm() {
-    return {TwoSitesSpinNamedMatrices::get_S_S_ondiag_fm(),
-            TwoSitesSpinNamedMatrices::get_S_S_offdiag_fm(),
-            TwoSitesSpinNamedMatrices::get_S_S_fm()};
+    return {TwoSitesSpinNamedMatrices::get_S_S_ondiag_in_ge_fm(),
+            TwoSitesSpinNamedMatrices::get_S_S_offdiag_in_ge_fm(),
+            TwoSitesSpinNamedMatrices::get_S_S_in_ge_fm()};
 }
 
 std::vector<utility::Named<arma::cx_mat44>> TwoSitesSpinNamedMatrices::matrices_for_average_calculations_af() {
-    return {TwoSitesSpinNamedMatrices::get_S_S_ondiag_af(),
-            TwoSitesSpinNamedMatrices::get_S_S_offdiag_af(),
-            TwoSitesSpinNamedMatrices::get_S_S_af()};
+    return {TwoSitesSpinNamedMatrices::get_S_S_ondiag_in_ge_af(),
+            TwoSitesSpinNamedMatrices::get_S_S_offdiag_in_ge_af(),
+            TwoSitesSpinNamedMatrices::get_S_S_in_ge_af()};
 }
 
 }  // end of namespace monostar_hamiltonians

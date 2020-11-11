@@ -48,12 +48,12 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --model_type_string,-m:
         ("model_type_string,m",
          boost::program_options::value<std::string>(&program_options.model_type_string)->default_value("affo"))
+        // --hamiltonian_s:
+        ("hamiltonian_s",
+        boost::program_options::value<double>(&program_options.hamiltonian_s_coef)->default_value(0.0))
         // --hamiltonian_ss:
         ("hamiltonian_ss",
          boost::program_options::value<double>(&program_options.hamiltonian_ss_coef)->default_value(1.0))
-//        // --hamiltonian_B:
-//        ("hamiltonian_B",
-//         boost::program_options::value<double>(&program_options.hamiltonian_B)->default_value(0.0))
         // --hamiltonian_tau_z:
         ("hamiltonian_tau_z",
          boost::program_options::value<double>(&program_options.hamiltonian_tau_z_coef)->default_value(0.0))
@@ -81,6 +81,9 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --orbital_theta,o:
         ("orbital_theta,o",
          boost::program_options::value<std::string>(&program_options.orbital_theta_string)->default_value("auto"))
+        // --average_ss:
+        ("average_ss",
+        boost::program_options::value<double>(&program_options.average_ss)->default_value(-1.0/4.0))
         // --run_type,-r:
         ("run_type,r",
          boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))

@@ -36,18 +36,24 @@ HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_Pxx_coef(double P
     return *this;
 }
 
+HamiltonianParamsFo::Builder HamiltonianParamsFo::Builder::set_free_coef(double free_coef) {
+    _free_coef = free_coef;
+    return *this;
+}
+
 HamiltonianParamsFo HamiltonianParamsFo::Builder::build() const {
-    return HamiltonianParamsFo(_tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef);
+    return HamiltonianParamsFo(_tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef, _free_coef);
 }
 
 // #######################################################################
 
-HamiltonianParamsFo::HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef)
+HamiltonianParamsFo::HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef, double free_coef)
     : _tau_z_coef(tau_z_coef),
       _tau_minus_coef(tau_minus_coef),
       _Pzz_coef(Pzz_coef),
       _Pxz_coef(Pxz_coef),
-      _Pxx_coef(Pxx_coef) {
+      _Pxx_coef(Pxx_coef),
+      _free_coef(free_coef){
 }
 
 double HamiltonianParamsFo::get_tau_z_coef() const {
@@ -68,6 +74,10 @@ double HamiltonianParamsFo::get_Pxz_coef() const {
 
 double HamiltonianParamsFo::get_Pxx_coef() const {
     return _Pxx_coef;
+}
+
+double HamiltonianParamsFo::get_free_coef() const {
+    return _free_coef;
 }
 
 double HamiltonianParamsFo::get_site_energy(double theta) const {
@@ -120,7 +130,10 @@ std::string HamiltonianParamsFo::string_repr_in_orbital_operators() const {
     if (_Pxx_coef != 0) {
         ss << _Pxx_coef << "·Σᵢⱼ[PˣᵢPˣⱼ]";
     }
-    if (_tau_z_coef == 0 && _tau_minus_coef == 0 && _Pzz_coef == 0 && _Pxz_coef == 0 && _Pxx_coef == 0) {
+    if (_free_coef != 0) {
+        ss << _free_coef;
+    }
+    if (_tau_z_coef == 0 && _tau_minus_coef == 0 && _Pzz_coef == 0 && _Pxz_coef == 0 && _Pxx_coef == 0 && _free_coef == 0) {
         ss << 0.0;
     }
     return ss.str();

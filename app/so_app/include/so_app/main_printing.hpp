@@ -30,6 +30,7 @@ void print_input_data(
 
 void print_theta_opt(
     const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
-    std::optional<double> user_defined_overrule);
+    std::optional<double> user_defined_overrule,
+    double average_ss);
 
 }  // end of namespace so_app
