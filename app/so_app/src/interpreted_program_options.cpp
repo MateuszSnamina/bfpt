@@ -22,17 +22,17 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         throw std::runtime_error(message);
     }
     interpreted_program_options.hamiltonian_params_af_fo = so_hamiltonians::HamiltonianParamsAfFo::Builder()
-            .set_s_coef(raw_program_options.hamiltonian_s_coef)
-            .set_ss_coef(raw_program_options.hamiltonian_ss_coef)
-            .set_tau_z_coef(raw_program_options.hamiltonian_tau_z_coef)
-            .set_tau_minus_coef(raw_program_options.hamiltonian_tau_minus_coef)
-            .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
-            .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
-            .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
-            .set_ss_Pzz_coef(raw_program_options.hamiltonian_ss_Pzz_coef)
-            .set_ss_Pxz_coef(raw_program_options.hamiltonian_ss_Pxz_coef)
-            .set_ss_Pxx_coef(raw_program_options.hamiltonian_ss_Pxx_coef)
-            .build();
+                                                               .set_s_coef(raw_program_options.hamiltonian_s_coef)
+                                                               .set_ss_coef(raw_program_options.hamiltonian_ss_coef)
+                                                               .set_tau_z_coef(raw_program_options.hamiltonian_tau_z_coef)
+                                                               .set_tau_minus_coef(raw_program_options.hamiltonian_tau_minus_coef)
+                                                               .set_Pzz_coef(raw_program_options.hamiltonian_Pzz_coef)
+                                                               .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
+                                                               .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
+                                                               .set_ss_Pzz_coef(raw_program_options.hamiltonian_ss_Pzz_coef)
+                                                               .set_ss_Pxz_coef(raw_program_options.hamiltonian_ss_Pxz_coef)
+                                                               .set_ss_Pxx_coef(raw_program_options.hamiltonian_ss_Pxx_coef)
+                                                               .build();
     if (const auto _ = interpret_orbital_theta_string(raw_program_options.orbital_theta_string)) {
         interpreted_program_options.orbital_theta = _.unwrap();
     } else {

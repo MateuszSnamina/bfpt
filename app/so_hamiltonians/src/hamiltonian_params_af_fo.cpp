@@ -67,34 +67,34 @@ HamiltonianParamsAfFo::Builder HamiltonianParamsAfFo::Builder::set_ss_Pxx_coef(d
 
 HamiltonianParamsAfFo HamiltonianParamsAfFo::Builder::build() const {
     return HamiltonianParamsAfFo(
-                _s_coef, _ss_coef,
-                _tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef,
-                _ss_Pzz_coef, _ss_Pxz_coef, _ss_Pxx_coef);
+        _s_coef, _ss_coef,
+        _tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef,
+        _ss_Pzz_coef, _ss_Pxz_coef, _ss_Pxx_coef);
 }
 
 // #######################################################################
 
 HamiltonianParamsAfFo::HamiltonianParamsAfFo(
-        double s_coef, double ss_coef,
-        double tau_z_coef, double tau_minus_coef,
-        double Pzz_coef, double Pxz_coef, double Pxx_coef,
-        double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef)
+    double s_coef, double ss_coef,
+    double tau_z_coef, double tau_minus_coef,
+    double Pzz_coef, double Pxz_coef, double Pxx_coef,
+    double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef)
     : _s_coef(s_coef),
       _ss_coef(ss_coef),
       _hamiltonian_params_fo(monostar_hamiltonians::HamiltonianParamsFo::Builder()
-                            .set_tau_z_coef(tau_z_coef)
-                            .set_tau_minus_coef(tau_minus_coef)
-                            .set_Pzz_coef(Pzz_coef)
-                            .set_Pxz_coef(Pxz_coef)
-                            .set_Pxx_coef(Pxx_coef)
-                            .build()),
+                                 .set_tau_z_coef(tau_z_coef)
+                                 .set_tau_minus_coef(tau_minus_coef)
+                                 .set_Pzz_coef(Pzz_coef)
+                                 .set_Pxz_coef(Pxz_coef)
+                                 .set_Pxx_coef(Pxx_coef)
+                                 .build()),
       _hamiltonian_params_ss_fo(monostar_hamiltonians::HamiltonianParamsFo::Builder()
-                               .set_tau_z_coef(0.0)
-                               .set_tau_minus_coef(0.0)
-                               .set_Pzz_coef(ss_Pzz_coef)
-                               .set_Pxz_coef(ss_Pxz_coef)
-                               .set_Pxx_coef(ss_Pxx_coef)
-                               .build()) {
+                                    .set_tau_z_coef(0.0)
+                                    .set_tau_minus_coef(0.0)
+                                    .set_Pzz_coef(ss_Pzz_coef)
+                                    .set_Pxz_coef(ss_Pxz_coef)
+                                    .set_Pxx_coef(ss_Pxx_coef)
+                                    .build()) {
 }
 
 double HamiltonianParamsAfFo::get_s_coef() const {
@@ -139,22 +139,21 @@ double HamiltonianParamsAfFo::get_ss_Pxx_coef() const {
 
 monostar_hamiltonians::HamiltonianParamsFo
 HamiltonianParamsAfFo::average_out_spins_1(double average_s) const {
-    return average_out_spins_12(average_s, - average_s * average_s);
+    return average_out_spins_12(average_s, -average_s * average_s);
 }
 
 monostar_hamiltonians::HamiltonianParamsFo
-HamiltonianParamsAfFo::average_out_spins_12(double average_s, double average_ss) const{
+HamiltonianParamsAfFo::average_out_spins_12(double average_s, double average_ss) const {
     const double free =
-            + get_s_coef() * average_s
-            + get_ss_coef() * average_ss;
+        +get_s_coef() * average_s + get_ss_coef() * average_ss;
     return monostar_hamiltonians::HamiltonianParamsFo::Builder()
-            .set_tau_z_coef(get_tau_z_coef())
-            .set_tau_minus_coef(get_tau_minus_coef())
-            .set_Pzz_coef(get_Pzz_coef() + average_ss * get_ss_Pzz_coef())
-            .set_Pxz_coef(get_Pxz_coef() + average_ss * get_ss_Pxz_coef())
-            .set_Pxx_coef(get_Pxx_coef() + average_ss * get_ss_Pxx_coef())
-            .set_free_coef(free)
-            .build();
+        .set_tau_z_coef(get_tau_z_coef())
+        .set_tau_minus_coef(get_tau_minus_coef())
+        .set_Pzz_coef(get_Pzz_coef() + average_ss * get_ss_Pzz_coef())
+        .set_Pxz_coef(get_Pxz_coef() + average_ss * get_ss_Pxz_coef())
+        .set_Pxx_coef(get_Pxx_coef() + average_ss * get_ss_Pxx_coef())
+        .set_free_coef(free)
+        .build();
 }
 
 monostar_hamiltonians::HamiltonianParamsAfFm
@@ -165,40 +164,33 @@ HamiltonianParamsAfFo::average_out_orbitals_1(double theta) const {
     const double average_Pzx_sum_P_xz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(theta)(0, 0));
     const double average_Pxx = std::real(TwoSitesSpinOrbitalMatrices::get_P_xx_in_ge_basis(theta)(0, 0));
     return average_out_orbitals_12(
-                average_tau_minus, average_tau_z,
-                average_Pzz, average_Pzx_sum_P_xz, average_Pxx);
+        average_tau_minus, average_tau_z,
+        average_Pzz, average_Pzx_sum_P_xz, average_Pxx);
 }
 
 monostar_hamiltonians::HamiltonianParamsAfFm
-HamiltonianParamsAfFo::average_out_orbitals_12 (
-        double average_tau_minus, double average_tau_z,
-        double average_Pzz, double average_Pzx_sum_P_xz, double average_Pxx) const{
+HamiltonianParamsAfFo::average_out_orbitals_12(
+    double average_tau_minus, double average_tau_z,
+    double average_Pzz, double average_Pzx_sum_P_xz, double average_Pxx) const {
     const double free =
-            + get_tau_minus_coef() * average_tau_minus
-            + get_tau_z_coef() * average_tau_z
-            + get_Pzz_coef() * average_Pzz
-            + get_Pxz_coef() * average_Pzx_sum_P_xz
-            + get_Pxx_coef() * average_Pxx;
+        +get_tau_minus_coef() * average_tau_minus + get_tau_z_coef() * average_tau_z + get_Pzz_coef() * average_Pzz + get_Pxz_coef() * average_Pzx_sum_P_xz + get_Pxx_coef() * average_Pxx;
     const double B =
-            + get_s_coef();
+        +get_s_coef();
     const double J =
-            + get_ss_coef()
-            + get_ss_Pzz_coef() * average_Pzz
-            + get_ss_Pxz_coef() * average_Pzx_sum_P_xz
-            + get_ss_Pxx_coef() * average_Pxx;
+        +get_ss_coef() + get_ss_Pzz_coef() * average_Pzz + get_ss_Pxz_coef() * average_Pzx_sum_P_xz + get_ss_Pxx_coef() * average_Pxx;
     return monostar_hamiltonians::HamiltonianParamsAfFm::Builder()
-            .set_B(B)
-            .set_J_classical(J)
-            .set_J_quantum(J)
-            .set_free(free)
-            .build();
+        .set_B(B)
+        .set_J_classical(J)
+        .set_J_quantum(J)
+        .set_free(free)
+        .build();
 }
 
-monostar_hamiltonians::HamiltonianParamsFo HamiltonianParamsAfFo::get_hamiltonian_params_fo() const{
+monostar_hamiltonians::HamiltonianParamsFo HamiltonianParamsAfFo::get_hamiltonian_params_fo() const {
     return _hamiltonian_params_fo;
 }
 
-monostar_hamiltonians::HamiltonianParamsFo HamiltonianParamsAfFo::get_hamiltonian_params_ss_fo() const{
+monostar_hamiltonians::HamiltonianParamsFo HamiltonianParamsAfFo::get_hamiltonian_params_ss_fo() const {
     return _hamiltonian_params_ss_fo;
 }
 
@@ -277,7 +269,7 @@ std::string HamiltonianParamsAfFo::string_repr_in_orbital_operators() const {
 }
 
 std::string HamiltonianParamsAfFo::string_repr_in_trigonometric_functions() const {
-    double average_ss = -4.0; //TODO: make average_ss an arg.
+    double average_ss = -4.0;  //TODO: make average_ss an arg.
     std::ostringstream ss;
     ss << std::showpos;
     ss << _hamiltonian_params_fo.string_repr_in_trigonometric_functions();

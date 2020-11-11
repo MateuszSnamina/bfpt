@@ -14,136 +14,140 @@ namespace so_hamiltonians {
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA(),
-                arma::eye(2,2));
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB(),
-                arma::eye(2,2));
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA(),
-                arma::eye(2,2));
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB(),
-                arma::eye(2,2));
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA(),
-                arma::eye(2,2));
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB() {
     return arma::kron(
-                monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB(),
-                arma::eye(2,2));
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_z_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_zx_basis());
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_zx_basis());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_x_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_zx_basis());
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_zx_basis());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_plus_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_zx_basis());
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_zx_basis());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_minus_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_zx_basis());
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_zx_basis());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_z_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_zx_basis());}
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_zx_basis());
+}
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_x_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_zx_basis());}
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_zx_basis());
+}
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_plus_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_zx_basis());}
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_zx_basis());
+}
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_minus_in_zx_basis() {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_zx_basis());}
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_zx_basis());
+}
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_beta_from_zx_to_ge(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_beta_from_zx_to_ge(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_beta_from_zx_to_ge(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_z_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_x_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_plus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_minus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_z_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_x_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_plus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_ge_basis(orbital_theta));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_minus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-                arma::eye(2,2),
-                monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta));
 }
 
 }  // end of namespace so_hamiltonians
@@ -153,7 +157,6 @@ arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_minus_in_ge_basis(double orbi
 // #######################################################################
 
 namespace so_hamiltonians {
-
 
 utility::Named<arma::cx_mat44> OneSiteSpinOrbitalNamedMatrices::get_S_z_af_latticeA() {
     return utility::Named<arma::cx_mat44>(OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA(), "Sᶻ@A");
@@ -260,23 +263,21 @@ namespace so_hamiltonians {
 
 arma::extension::cx_mat1616 TwoSitesSpinOrbitalMatrices::get_S_S_ondiag_af() {
     const arma::extension::cx_mat1616 S_S_ondiag_af_latticeAB =
-            arma::kron(OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA(), OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB());
+        arma::kron(OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA(), OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB());
 #ifndef NDEBUG
     const arma::extension::cx_mat1616 S_S_ondiag_af_latticeBA =
-            arma::kron(OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB(), OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA());
+        arma::kron(OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB(), OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA());
     assert(arma::norm(S_S_ondiag_af_latticeAB - S_S_ondiag_af_latticeBA) < 1e-8);
 #endif
     return S_S_ondiag_af_latticeAB;
 }
 
 arma::extension::cx_mat1616 TwoSitesSpinOrbitalMatrices::get_S_S_offdiag_af() {
-    const arma::extension::cx_mat1616 S_S_offdiagaf_latticeAB = 0.5 * (
-                arma::kron(OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA(), OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB()) +
-                arma::kron(OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA(), OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB()));
+    const arma::extension::cx_mat1616 S_S_offdiagaf_latticeAB = 0.5 * (arma::kron(OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA(), OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB()) +
+                                                                       arma::kron(OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA(), OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB()));
 #ifndef NDEBUG
-    const arma::extension::cx_mat1616 S_S_offdiag_af_latticeBA = 0.5 * (
-                arma::kron(OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB(), OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA()) +
-                arma::kron(OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB(), OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA()));
+    const arma::extension::cx_mat1616 S_S_offdiag_af_latticeBA = 0.5 * (arma::kron(OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB(), OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA()) +
+                                                                        arma::kron(OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB(), OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA()));
     assert(arma::norm(S_S_offdiagaf_latticeAB - S_S_offdiag_af_latticeBA) < 1e-8);
 #endif
     return S_S_offdiagaf_latticeAB;

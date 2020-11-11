@@ -1,6 +1,6 @@
 #include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
-#include<monostar_hamiltonians/hamiltonian_params_fo_to_classic_energy_function.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_fo_to_classic_energy_function.hpp>
 
 #include <sstream>
 #include <iomanip>
@@ -53,7 +53,7 @@ HamiltonianParamsFo::HamiltonianParamsFo(double tau_z_coef, double tau_minus_coe
       _Pzz_coef(Pzz_coef),
       _Pxz_coef(Pxz_coef),
       _Pxx_coef(Pxx_coef),
-      _free_coef(free_coef){
+      _free_coef(free_coef) {
 }
 
 double HamiltonianParamsFo::get_tau_z_coef() const {

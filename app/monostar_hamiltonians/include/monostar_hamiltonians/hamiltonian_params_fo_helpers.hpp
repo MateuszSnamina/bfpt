@@ -85,5 +85,4 @@ AcosPlusBsinPlusCsqcosPlusZ operator+(const AcosPlusBsinPlusCsqcosPlusZ&, const 
 
 AcosPlusBsinPlusCsqcosPlusZ operator*(double, const AcosPlusBsinPlusCsqcosPlusZ&);
 
-
 }  // end of namespace monostar_hamiltonians

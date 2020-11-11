@@ -37,7 +37,6 @@ make_kstate_streamer(
     KstateT&&,
     const extension::boost::RangeStreamerSettings<typename utility::remove_cvref_t<KstateT>::SiteStateT>);
 
-
 // ***********************************************************************
 
 template <typename _KstateT>
@@ -99,7 +98,7 @@ KstateStreamer<_KstateT>::stream(std::ostream& os) const {
     // Defaults:
     const typename RangeStreamerSettingsT::StreamPreparerFunT default_stream_preparer = [](std::ostream& s) { s << "𝕂𝕤𝕥𝕒𝕥𝕖⦃"; };
     const typename RangeStreamerSettingsT::StreamSustainerFunT default_stream_sustainer = [](std::ostream&, size_t) {};
-    const typename RangeStreamerSettingsT::StreamValuePutterFunT default_stream_value_putter = [](std::ostream& s, SiteStateT t) { s << t; };//TODO restore
+    const typename RangeStreamerSettingsT::StreamValuePutterFunT default_stream_value_putter = [](std::ostream& s, SiteStateT t) { s << t; };  //TODO restore
     const typename RangeStreamerSettingsT::StreamSeparerFunT default_stream_separer = [](std::ostream& s) { s << "∙"; };
     const typename RangeStreamerSettingsT::StreamFinisherFunT default_stream_finisher = [](std::ostream& s) { s << "⦄"; };
     const bool default_format_independence_flag = true;

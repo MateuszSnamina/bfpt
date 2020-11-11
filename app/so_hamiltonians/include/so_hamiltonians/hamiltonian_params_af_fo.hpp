@@ -3,7 +3,6 @@
 #include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
 
-
 #include <set>
 #include <string>
 
@@ -71,10 +70,10 @@ class HamiltonianParamsAfFo {
 
    private:
     HamiltonianParamsAfFo(
-            double s_coef, double ss_coef,
-            double tau_z_coef, double tau_minus_coef,
-            double Pzz_coef, double Pxz_coef, double Pxx_coef,
-            double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef);
+        double s_coef, double ss_coef,
+        double tau_z_coef, double tau_minus_coef,
+        double Pzz_coef, double Pxz_coef, double Pxx_coef,
+        double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef);
     double _s_coef = 0.0;
     double _ss_coef = 0.0;
     monostar_hamiltonians::HamiltonianParamsFo _hamiltonian_params_fo;

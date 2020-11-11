@@ -53,4 +53,4 @@ std::ostream& operator<<(std::ostream& stream, const SoKstate& state) {
     return stream;
 }
 
-}  // namespace so_systmaeem
+}  // namespace so_system

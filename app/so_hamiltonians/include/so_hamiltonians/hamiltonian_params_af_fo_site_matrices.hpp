@@ -83,11 +83,9 @@ struct OneSiteSpinOrbitalNamedMatrices {
 // ## TwoSitesSpinOrbitalMatrices                                       ##
 // #######################################################################
 
-
 namespace arma::extension {
-    using cx_mat1616 = ::arma::cx_mat::fixed<16, 16>;
+using cx_mat1616 = ::arma::cx_mat::fixed<16, 16>;
 }
-
 
 namespace so_hamiltonians {
 

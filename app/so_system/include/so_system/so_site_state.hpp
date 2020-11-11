@@ -24,6 +24,7 @@ class SoSiteState : boost::totally_ordered<SoSiteState> {
     constexpr unsigned char get_index() const;
     constexpr bool is_spin_excited() const;
     constexpr bool is_orbit_excited() const;
+
    private:
     constexpr static unsigned char spin_bit_mask = 1u;
     constexpr static unsigned char orbit_bit_mask = 2u;
@@ -34,7 +35,7 @@ class SoSiteState : boost::totally_ordered<SoSiteState> {
 // ***********************************************************************
 
 inline constexpr SoSiteState::SoSiteState(bool spin_excitation, bool orbit_excitation)
-    : SoSiteState(excitation_bools_to_idx(spin_excitation, orbit_excitation) ){
+    : SoSiteState(excitation_bools_to_idx(spin_excitation, orbit_excitation)) {
 }
 
 inline constexpr SoSiteState::SoSiteState(unsigned char idx)
@@ -46,7 +47,7 @@ inline constexpr unsigned char SoSiteState::excitation_bools_to_idx(bool spin_ex
     return (spin_excitation ? spin_bit_mask : 0u) | (orbit_excitation ? orbit_bit_mask : 0u);
 }
 
-constexpr unsigned char SoSiteState::get_index() const{
+constexpr unsigned char SoSiteState::get_index() const {
     return _idx;
 }
 
@@ -70,7 +71,7 @@ inline std::ostream&
 operator<<(std::ostream& stream, const SoSiteState& state) {
     if (!state.is_spin_excited() && !state.is_orbit_excited()) {
         stream << '_';
-    }  else if (!state.is_spin_excited() && state.is_orbit_excited()) {
+    } else if (!state.is_spin_excited() && state.is_orbit_excited()) {
         stream << '.';
     } else if (state.is_spin_excited() && !state.is_orbit_excited()) {
         stream << '*';

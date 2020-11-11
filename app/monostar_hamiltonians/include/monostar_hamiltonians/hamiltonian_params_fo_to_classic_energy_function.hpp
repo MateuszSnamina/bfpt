@@ -1,7 +1,7 @@
 #pragma once
 
-#include<monostar_hamiltonians/hamiltonian_params_fo.hpp>
-#include<monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
 
 // #######################################################################
 // ## hamiltonian_params_fo_to_classic_energy_function                  ##

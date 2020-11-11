@@ -140,6 +140,7 @@ class HamiltonianParamsFo {
     utility::Result<std::set<double>, NoKnownAnalyticalSolutionError> get_theta_opt_analytical() const;
     std::string string_repr_in_orbital_operators() const;
     std::string string_repr_in_trigonometric_functions() const;
+
    private:
     HamiltonianParamsFo(double tau_z_coef, double tau_minus_coef, double Pzz_coef, double Pxz_coef, double Pxx_coef, double free_coef);
     double _tau_z_coef;

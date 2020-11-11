@@ -12,15 +12,15 @@ namespace {
 using namespace so_hamiltonians;
 
 monostar_hamiltonians::HamiltonianReferenceEnergiesAf get_spin_reference_energies(
-        HamiltonianParamsAfFo params,
-        unsigned n_sites,
-        double orbital_theta) {
+    HamiltonianParamsAfFo params,
+    unsigned n_sites,
+    double orbital_theta) {
     const monostar_hamiltonians::HamiltonianParamsAfFm spin_hamiltonian_params = params.average_out_orbitals_1(orbital_theta);
     monostar_hamiltonians::HamiltonianReferenceEnergiesAf spin_hamiltonian_reference_enrgies{n_sites, spin_hamiltonian_params};
     return spin_hamiltonian_reference_enrgies;
 }
 
-} // end of namespace
+}  // end of namespace
 
 // #######################################################################
 // ## HamiltonianReferenceEnergiesFo                                    ##

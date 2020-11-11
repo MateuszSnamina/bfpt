@@ -192,9 +192,9 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
 //}
 
 void print_theta_opt(
-        const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_af_fo_params,
-        std::optional<double> user_defined_overrule,
-        double average_ss) {
+    const so_hamiltonians::HamiltonianParamsAfFo& hamiltonian_af_fo_params,
+    std::optional<double> user_defined_overrule,
+    double average_ss) {
     // Using:
     using namespace extension::boost::stream_pragma;
     using extension::boost::stream_pragma::RSS;
@@ -216,7 +216,7 @@ void print_theta_opt(
     std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta                    = "
               << (hamiltonian_af_fo_params.get_theta_opt(average_ss) | RSS<double>().like_python_set()) << std::endl;
     const double orbital_theta_to_use = so_hamiltonians::get_orbital_theta(
-                hamiltonian_af_fo_params, user_defined_overrule, average_ss);  //may thorw!
+        hamiltonian_af_fo_params, user_defined_overrule, average_ss);  //may thorw!
     std::cout << "[INFO   ] [THETA_OPT] used orbital theta                       = "
               << orbital_theta_to_use << " = "
               << orbital_theta_to_use / M_PI << " π" << std::endl;

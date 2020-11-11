@@ -33,6 +33,7 @@ class HamiltonianParamsAfFm {
         Builder set_B(double);
         Builder set_free(double);
         HamiltonianParamsAfFm build() const;
+
        private:
         double _J_classicall = 1.0;
         double _J_quantum = 1.0;
@@ -46,6 +47,7 @@ class HamiltonianParamsAfFm {
     double get_J_quantum() const;
     double get_B() const;
     double get_free() const;
+
    private:
     HamiltonianParamsAfFm(double J_classicall, double J_quantum, double B, double free);
     double _J_classicall;
