@@ -17,7 +17,7 @@ void emit_help(std::ostream& s,
                const boost::program_options::options_description& desc) {
     using namespace extension::boost::stream_pragma;
     using namespace so_app;
-    s << "Program: `monostar app`" << std::endl;
+    s << "Program: `so_app`" << std::endl;
     s << desc << std::endl;
     const auto range_stream_settings = RSS<std::string>().set_null_sustainer().set_string_separer(", ");
     const std::string possible_values_model_type_string = (interpret_model_type_string_map | boost::adaptors::map_keys | range_stream_settings).str();
@@ -45,6 +45,12 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --n_pt,-p:
         ("n_pt,p",
          boost::program_options::value<unsigned>(&program_options.n_pt)->default_value(2))
+        // --n_max_site_spin_excitations,-G:
+        ("n_max_site_spin_excitations,G",
+        boost::program_options::value<std::string>(&program_options.n_max_site_spin_excitations_string)->default_value("nolimit"))
+        // --n_max_site_orbit_excitations,-F:
+        ("n_max_site_orbit_excitations,F",
+        boost::program_options::value<std::string>(&program_options.n_max_site_orbit_excitations_string)->default_value("nolimit"))
         // --model_type_string,-m:
         ("model_type_string,m",
          boost::program_options::value<std::string>(&program_options.model_type_string)->default_value("affo"))

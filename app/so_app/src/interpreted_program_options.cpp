@@ -5,6 +5,7 @@
 #include <so_app/interpret_run_type_string.hpp>
 #include <so_app/interpret_es_momentum_domain.hpp>
 #include <so_app/interpret_orbital_theta_string.hpp>
+#include <so_app/interpret_n_max_site_excitations_string.hpp>
 
 #include <stdexcept>
 
@@ -14,6 +15,21 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
     InterpretedProgramOptions interpreted_program_options;
     interpreted_program_options.n_sites = raw_program_options.n_sites;
     interpreted_program_options.n_pt = raw_program_options.n_pt;
+
+    if (const auto _ = interpret_n_max_site_excitations_string(raw_program_options.n_max_site_spin_excitations_string)) {
+        interpreted_program_options.n_max_site_spin_excitations = _.unwrap();
+    } else {
+        const std::string message1 = "Problem with interpreting 'n_max_site_spin_excitations_string' program option.";
+        const std::string message = message1 + "\n" + _.unwrap_err().what();
+        throw std::runtime_error(message);
+    }
+    if (const auto _ = interpret_n_max_site_excitations_string(raw_program_options.n_max_site_orbit_excitations_string)) {
+        interpreted_program_options.n_max_site_orbit_excitations = _.unwrap();
+    } else {
+        const std::string message1 = "Problem with interpreting 'n_max_site_orbit_excitations_string' program option.";
+        const std::string message = message1 + "\n" + _.unwrap_err().what();
+        throw std::runtime_error(message);
+    }
     if (const auto _ = interpret_model_type_string(raw_program_options.model_type_string)) {
         interpreted_program_options.model_type = _.unwrap();
     } else {

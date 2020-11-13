@@ -18,6 +18,8 @@ namespace so_app {
 struct InterpretedProgramOptions {
     unsigned n_sites;
     unsigned n_pt;
+    std::optional<unsigned> n_max_site_spin_excitations;
+    std::optional<unsigned> n_max_site_orbit_excitations;
     ModelType model_type;
     so_hamiltonians::HamiltonianParamsAfFo hamiltonian_params_af_fo = so_hamiltonians::HamiltonianParamsAfFo::Builder().build();
     std::optional<double> orbital_theta;

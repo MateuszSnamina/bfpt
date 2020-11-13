@@ -7,6 +7,8 @@ namespace so_app {
 struct RawProgramOptions {
     unsigned n_sites;
     unsigned n_pt;
+    std::string n_max_site_spin_excitations_string;
+    std::string n_max_site_orbit_excitations_string;
     std::string model_type_string;
     double hamiltonian_s_coef;
     double hamiltonian_ss_coef;
