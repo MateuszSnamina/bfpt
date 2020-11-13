@@ -1,6 +1,5 @@
 #include <monostar_hamiltonians/hamiltonian_kernel_fo.hpp>
-
-#include <cmath>
+#include <monostar_hamiltonians/hamiltonian_params_fo_site_matrices.hpp>
 
 // #######################################################################
 // ## prepare_hamiltonian_kernel_{1,12}_fo                              ##
@@ -13,16 +12,14 @@ prepare_hamiltonian_kernel_12_fo(double Pzz_coef, double Pxz_coef, double Pxx_co
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel12<monostar_system::MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<chainkernel::StateKernel12<monostar_system::MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
-    const double s2 = std::sin(orbital_theta / 2);
-    const double c2 = std::cos(orbital_theta / 2);
-    const double Pz_gg = +c2 * c2;
-    const double Pz_ge = -s2 * c2;
-    const double Pz_eg = -s2 * c2;
-    const double Pz_ee = +s2 * s2;
-    const double Px_gg = +s2 * s2;
-    const double Px_ge = +s2 * c2;
-    const double Px_eg = +s2 * c2;
-    const double Px_ee = +c2 * c2;
+    const double Pz_gg = std::real(OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta)(0, 0));
+    const double Pz_ge = std::real(OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta)(0, 1));
+    const double Pz_eg = std::real(OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta)(1, 0));
+    const double Pz_ee = std::real(OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta)(1, 1));
+    const double Px_gg = std::real(OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta)(0, 0));
+    const double Px_ge = std::real(OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta)(0, 1));
+    const double Px_eg = std::real(OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta)(1, 0));
+    const double Px_ee = std::real(OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta)(1, 1));
     OnDiagInfoType on_diag_info{
         {{gs, gs}, +Pzz_coef * Pz_gg * Pz_gg + Pxz_coef * Px_gg * Pz_gg + Pxz_coef * Pz_gg * Px_gg + Pxx_coef * Px_gg * Px_gg},
         {{gs, es}, +Pzz_coef * Pz_gg * Pz_ee + Pxz_coef * Px_gg * Pz_ee + Pxz_coef * Pz_gg * Px_ee + Pxx_coef * Px_gg * Px_ee},
@@ -54,13 +51,12 @@ prepare_hamiltonian_kernel_1_fo(double tau_z_coef, double tau_minus_coef, double
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel1<MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<chainkernel::StateKernel1<MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel1<MonostarSiteStateTrait>>;
-    const double s1 = std::sin(orbital_theta), c1 = std::cos(orbital_theta);
-    const double tau_z_gg = +c1;
-    const double tau_z_ge = -s1;
-    const double tau_z_ee = -c1;
-    const double tau_minus_gg = -s1;
-    const double tau_minus_ge = -c1;
-    const double tau_minus_ee = +s1;
+    const double tau_z_gg = std::real(OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta)(0, 0));
+    const double tau_z_ge = std::real(OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta)(0, 1));
+    const double tau_z_ee = std::real(OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta)(1, 1));
+    const double tau_minus_gg = std::real(OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta)(0, 0));
+    const double tau_minus_ge = std::real(OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta)(0, 1));
+    const double tau_minus_ee = std::real(OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta)(1, 1));
     OnDiagInfoType on_diag_info{
         {{gs}, tau_z_coef * tau_z_gg + tau_minus_coef * tau_minus_gg},
         {{es}, tau_z_coef * tau_z_ee + tau_minus_coef * tau_minus_ee},
@@ -81,3 +77,4 @@ prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsFo& params, double orbita
 }
 
 }  // end of namespace monostar_hamiltonians
+
