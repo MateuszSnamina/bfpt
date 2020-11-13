@@ -8,6 +8,6 @@
 
 namespace monostar_app {
 
-utility::Result<std::optional<double>, std::domain_error> interpret_orbital_theta_string(const std::string& s);
+utility::Result<std::optional<double>, std::domain_error> interpret_orbital_theta_string(const std::string&);
 
 }  // end of namespace monostar_app
