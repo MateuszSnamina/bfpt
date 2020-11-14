@@ -261,6 +261,15 @@ void print_theta_opt(
               << hamiltonian_af_fo_params.get_site_energy_derivative3(orbital_theta_to_use, average_ss) << std::endl;
     std::cout << "[INFO   ] [THETA_OPT] d⁴H/dθ⁴ [used orbital theta]             = "
               << hamiltonian_af_fo_params.get_site_energy_derivative4(orbital_theta_to_use, average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] ((integrate out orbitals)H)::B           = "
+              << hamiltonian_af_fo_params.average_out_orbitals_1(orbital_theta_to_use).get_B()<< std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] ((integrate out orbitals)H)::J_classical = "
+              << hamiltonian_af_fo_params.average_out_orbitals_1(orbital_theta_to_use).get_J_classical()<< std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] ((integrate out orbitals)H)::J_quantum   = "
+              << hamiltonian_af_fo_params.average_out_orbitals_1(orbital_theta_to_use).get_J_quantum()<< std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] ((integrate out orbitals)H)::free        = "
+              << hamiltonian_af_fo_params.average_out_orbitals_1(orbital_theta_to_use).get_free() << std::endl;
+
 }
 
 }  // end of namespace so_app

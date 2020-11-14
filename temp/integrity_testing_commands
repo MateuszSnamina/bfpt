@@ -5,4 +5,5 @@ These commands should give the same results:
 ./bin/so_app 10 2 -r g -i --hamiltonian_ss 0.0 --hamiltonian_P_zz -1 --hamiltonian_P_xx -1 
 
 
-
+./bin/so_app 10 1 -r g -i    --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +1 --hamiltonian_ss_P_xx +0 -F 0 --print_pretty_probability_treshold 0.001  --hamiltonian_tau_minus 0.0 
+./bin/monostar_app 10 1 -r g --model_type af -i

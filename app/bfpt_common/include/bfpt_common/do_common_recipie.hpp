@@ -245,11 +245,11 @@ do_common_recipe(
         std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix.fill_quotient: " << fill_quotient * 100 << "%" << std::endl;
     }
     if (print_flags.print_sp_hamiltonian_flag) {
-        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:" << std::endl;
         std::cout << kn_hamiltonian_matrix;
     }
     if (print_flags.print_hamiltonian_flag) {
-        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:";
+        std::cout << print_outer_prefix << message_prefix << data_tag << "kn_hamiltonian_matrix:" << std::endl;
         std::cout << arma::cx_mat(kn_hamiltonian_matrix);
     }
     // --------------------------------------------------

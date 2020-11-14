@@ -68,12 +68,18 @@ prepare_hamiltonian_kernel_12_af_fo(
     const double spinorbit_ge_eg = +ss_Pzz_coef * Pz_ge * Pz_eg + ss_Pxz_coef * Px_ge * Pz_eg + ss_Pxz_coef * Pz_ge * Px_eg + ss_Pxx_coef * Px_ge * Px_eg;
     const double spinorbit_ge_ee = +ss_Pzz_coef * Pz_ge * Pz_ee + ss_Pxz_coef * Px_ge * Pz_ee + ss_Pxz_coef * Pz_ge * Px_ee + ss_Pxx_coef * Px_ge * Px_ee;
     const double spinorbit_eg_ee = +ss_Pzz_coef * Pz_ee * Pz_ge + ss_Pxz_coef * Px_ee * Pz_ge + ss_Pxz_coef * Pz_ee * Px_ge + ss_Pxx_coef * Px_ee * Px_ge;
+    std::cout << "spinorbit_gg_ge: " << spinorbit_gg_ge << std::endl;//TODO remove
+    std::cout << "spinorbit_gg_eg: " << spinorbit_gg_eg << std::endl;//TODO remove
+    std::cout << "spinorbit_gg_ee: " << spinorbit_gg_ee << std::endl;//TODO remove
+    std::cout << "spinorbit_ge_eg: " << spinorbit_ge_eg << std::endl;//TODO remove
+    std::cout << "spinorbit_ge_ee: " << spinorbit_ge_ee << std::endl;//TODO remove
+    std::cout << "spinorbit_eg_ee: " << spinorbit_eg_ee << std::endl;//TODO remove
     OffDiagInfoType half_off_diag_info{
         // purespin. spins: gg<->ee, orbitals: fixed.
-        {{gg, gg}, {{eg, eg}, 0.5 * ss_coef}},  // with orbitals: gg
-        {{gg, ge}, {{eg, ee}, 0.5 * ss_coef}},  // with orbitals: ge
-        {{ge, gg}, {{ee, eg}, 0.5 * ss_coef}},  // with orbitals: eg
-        {{ge, ge}, {{ee, ee}, 0.5 * ss_coef}},  // with orbitals: gg
+        {{gg, gg}, {{eg, eg}, 0.5 * ss_coef + 0.5 * spinorbit_gg_gg}},  // with orbitals: gg
+        {{gg, ge}, {{eg, ee}, 0.5 * ss_coef + 0.5 * spinorbit_ge_ge}},  // with orbitals: ge
+        {{ge, gg}, {{ee, eg}, 0.5 * ss_coef + 0.5 * spinorbit_eg_eg}},  // with orbitals: eg
+        {{ge, ge}, {{ee, ee}, 0.5 * ss_coef + 0.5 * spinorbit_ee_ee}},  // with orbitals: ee
         // pureorbit + spinorbit. orbitals: gg<->ge, spins: fixed.
         {{gg, gg}, {{gg, ge}, pureorbit_gg_ge - 0.25 * spinorbit_gg_ge}},  // with spins: gg
         {{gg, eg}, {{gg, ee}, pureorbit_gg_ge + 0.25 * spinorbit_gg_ge}},  // with spins: ge
