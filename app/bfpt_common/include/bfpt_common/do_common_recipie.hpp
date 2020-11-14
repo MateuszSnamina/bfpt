@@ -46,9 +46,9 @@ namespace bfpt_common {
 
 template <arma::uword N>
 void print_averages(
-    const arma::cx_mat& density_matrix,
-    const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
-    const std::string& print_outer_prefix) {
+        const arma::cx_mat& density_matrix,
+        const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
+        const std::string& print_outer_prefix) {
     assert(density_matrix.n_rows == N);
     assert(density_matrix.n_cols == N);
     for (const auto& matrix_for_average_calculation : metrices_for_average_calculation) {
@@ -74,12 +74,12 @@ namespace bfpt_common {
 
 template <typename KstateT>
 void pretty_print(
-    kbasis::Basis<KstateT>& basis,
-    const arma::vec& eigen_values,
-    const arma::cx_mat& eigen_vectors,
-    std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
-    double print_pretty_probability_treshold,
-    std::string print_outer_prefix = "") {
+        kbasis::Basis<KstateT>& basis,
+        const arma::vec& eigen_values,
+        const arma::cx_mat& eigen_vectors,
+        std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
+        double print_pretty_probability_treshold,
+        std::string print_outer_prefix = "") {
     // [[expect]]:
     assert(eigen_vectors.n_cols == eigen_values.n_rows);
     assert(basis.size() == eigen_vectors.n_rows);
@@ -103,15 +103,15 @@ void pretty_print(
                   << "eigen energy: " << eigen_value
                   << "." << std::endl;
         const std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector =
-            [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
-                std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
-                kstateIdx_and_probability_vector_builder.resize(basis_size);
-                for (unsigned idx = 0; idx < basis_size; idx++) {
-                    kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
-                }
-                std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
-                return kstateIdx_and_probability_vector_builder;
-            }();
+                [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
+            std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
+            kstateIdx_and_probability_vector_builder.resize(basis_size);
+            for (unsigned idx = 0; idx < basis_size; idx++) {
+                kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
+            }
+            std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
+            return kstateIdx_and_probability_vector_builder;
+        }();
         const std::complex<double> presentation_layer_amplitude_factor = [&kstateIdx_and_probability_vector, &eigien_vector]() {
             const unsigned print_idx = 0;
             const unsigned idx = kstateIdx_and_probability_vector[print_idx].idx;
@@ -169,25 +169,26 @@ struct CommonRecipeReceipt {
 template <typename KstateTraitT, typename KpopulatorTraitT, typename KoperatorTraitT, unsigned N>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
 do_common_recipe(
-    const typename KpopulatorTraitT::KpopulatorT& bais_populator,
-    const typename KoperatorTraitT::KoperatorT& hamiltonian,
-    kbasis::Basis<KstateTraitT>& basis,
-    const unsigned max_pt_order,
-    const unsigned n_k,
-    const CommonRecipePrintFlags& print_flags,
-    const std::vector<utility::Named<::arma::cx_mat::fixed<N, N>>>& one_site_metrices_for_average_calculation,
-    const std::vector<utility::Named<::arma::cx_mat::fixed<N * N, N * N>>>& two_sites_metrices_for_average_calculation,
-    std::string print_outer_prefix = "",
-    unsigned n_threads = 1) {
+        const typename KpopulatorTraitT::KpopulatorT& bais_populator,
+        const typename KoperatorTraitT::KoperatorT& hamiltonian,
+        kbasis::Basis<KstateTraitT>& basis,
+        const unsigned max_pt_order,
+        const unsigned n_k,
+        const CommonRecipePrintFlags& print_flags,
+        const std::vector<utility::Named<::arma::cx_mat::fixed<N, N>>>& one_site_metrices_for_average_calculation,
+        const std::vector<utility::Named<::arma::cx_mat::fixed<N * N, N * N>>>& two_sites_metrices_for_average_calculation,
+        std::string print_outer_prefix = "",
+        unsigned n_threads = 1) {
     // --------------------------------------------------
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);
     static_assert(kpopulator_trait::IsTraitKpopulator<KpopulatorTraitT>::value);
     static_assert(KpopulatorTraitT::is_kpopulator_trait);
+    static_assert(std::is_same_v<typename KpopulatorTraitT::KstateTraitT, KstateTraitT>);
     static_assert(koperator_trait::IsTraitKoperator<KoperatorTraitT>::value);
     static_assert(KoperatorTraitT::is_koperator_trait);
-    static_assert(std::is_same_v<typename KpopulatorTraitT::KstateTraitT, KstateTraitT>);
     static_assert(std::is_same_v<typename KoperatorTraitT::KstateTraitT, KstateTraitT>);
+    static_assert(KstateTraitT::KstateT::SiteStateTraitT::site_basis_dim() == N);
     // --------------------------------------------------
     //using KstateT = typename KstateTraitT::KstateT;
     //using SiteStateTraitT = typename KstateT::SiteStateTraitT;
@@ -285,38 +286,37 @@ do_common_recipe(
                          print_outer_prefix);
         }
         // --------------------------------------------------
-        //        if (print_flags.print_density_operator_flag) {
-        //            {
-        //                std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate one-site density matrix." << std::endl;
-        //                timer.tic();
-        //                const arma::cx_mat density_operator_1 = calculate_reduced_density_operator_1<KstateTraitT>(basis, eigen_vectors.col(0), n_threads);
-        //                const double time_generating_kn_hamiltonian_matrix = timer.toc();
-        //                std::cout << print_outer_prefix << message_prefix << time_tag << "Calculating one-site density matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
-        //                std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated one-site density matrix." << std::endl;
-        //                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix:" << std::endl;
-        //                std::cout << density_operator_1;
-        //                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix tr: "
-        //                          << arma::trace(density_operator_1)
-        //                          << std::endl;
-        //                print_averages(density_operator_1, one_site_metrices_for_average_calculation, print_outer_prefix);
-        //            }
-        //            {
-        //                std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate two-site density matrix." << std::endl;
-        //                timer.tic();
-        //                const arma::cx_mat density_operator_12 = calculate_reduced_density_operator_12<KstateTraitT>(basis, eigen_vectors.col(0), n_threads);
-        //                const double time_generating_kn_hamiltonian_matrix = timer.toc();
-        //                std::cout << print_outer_prefix << message_prefix << time_tag << "Calculating two-site density matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
-        //                std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated two-site density matrix." << std::endl;
-        //                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix:" << std::endl;
-        //                std::cout << density_operator_12;
-        //                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix tr: "
-        //                          << arma::trace(density_operator_12)
-        //                          << std::endl;
-        //                print_averages(density_operator_12, two_sites_metrices_for_average_calculation, print_outer_prefix);
-        //            }
-        //        }
-        //        // --------------------------------------------------
-        // TODO: restore ^^^^^^^^^^^^^^^^^^^^
+        if (print_flags.print_density_operator_flag) {
+            {
+                std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate one-site density matrix." << std::endl;
+                timer.tic();
+                const arma::cx_mat density_operator_1 = calculate_reduced_density_operator_1<KstateTraitT>(basis, eigen_vectors.col(0), n_threads);
+                const double time_generating_kn_hamiltonian_matrix = timer.toc();
+                std::cout << print_outer_prefix << message_prefix << time_tag << "Calculating one-site density matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
+                std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated one-site density matrix." << std::endl;
+                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix:" << std::endl;
+                std::cout << density_operator_1;
+                std::cout << print_outer_prefix << message_prefix << data_tag << "one-site density matrix tr: "
+                          << arma::trace(density_operator_1)
+                          << std::endl;
+                print_averages(density_operator_1, one_site_metrices_for_average_calculation, print_outer_prefix);
+            }
+            {
+                std::cout << print_outer_prefix << message_prefix << progress_tag << "About to calculate two-site density matrix." << std::endl;
+                timer.tic();
+                const arma::cx_mat density_operator_12 = calculate_reduced_density_operator_12<KstateTraitT>(basis, eigen_vectors.col(0), n_threads);
+                const double time_generating_kn_hamiltonian_matrix = timer.toc();
+                std::cout << print_outer_prefix << message_prefix << time_tag << "Calculating two-site density matrix took " << time_generating_kn_hamiltonian_matrix << "s." << std::endl;
+                std::cout << print_outer_prefix << message_prefix << progress_tag << "Has calculated two-site density matrix." << std::endl;
+                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix:" << std::endl;
+                std::cout << density_operator_12;
+                std::cout << print_outer_prefix << message_prefix << data_tag << "two-site density matrix tr: "
+                          << arma::trace(density_operator_12)
+                          << std::endl;
+                print_averages(density_operator_12, two_sites_metrices_for_average_calculation, print_outer_prefix);
+            }
+        }
+        // --------------------------------------------------
         return ResultT::Ok({eigen_values(0), eigen_vectors.col(0)});
     } else {
         std::cout << print_outer_prefix << message_prefix << progress_tag << "About to solve eigen problem (eigenvalues only)." << std::endl;
