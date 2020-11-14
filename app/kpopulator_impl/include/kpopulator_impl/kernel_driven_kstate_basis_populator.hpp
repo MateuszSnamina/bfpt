@@ -12,6 +12,7 @@
 #include <chainkernel/operator_kernel.hpp>
 
 #include <type_traits>
+#include <functional>
 #include <cassert>
 
 //#include<chrono> // performance debug sake
@@ -39,6 +40,12 @@ class KernelDrivenKstateBasisPopulator {
         const size_t n_sites,
         chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
         chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
+    KernelDrivenKstateBasisPopulator(
+        const size_t n_sites,
+        chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
+        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+        std::function<bool(KstateT)> acceptance_predicate);
+
     kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
         const KstateT& generator,
         const unsigned n_k) const;
@@ -47,6 +54,7 @@ class KernelDrivenKstateBasisPopulator {
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
+    const std::function<bool(KstateT)> _acceptance_predicate;
 };
 
 }  // namespace kpopulator_impl
@@ -61,10 +69,23 @@ template <typename _KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulator(
     const size_t n_sites,
     chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
+    chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+    std::function<bool(KstateT)> acceptance_predicate)
+    : _n_sites(n_sites),
+      _operator_kernel_1(operator_kernel_1),
+      _operator_kernel_12(operator_kernel_12),
+      _acceptance_predicate(acceptance_predicate) {
+}
+
+template <typename _KstateTraitT>
+KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulator(
+    const size_t n_sites,
+    chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
     chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12)
     : _n_sites(n_sites),
       _operator_kernel_1(operator_kernel_1),
-      _operator_kernel_12(operator_kernel_12) {
+      _operator_kernel_12(operator_kernel_12),
+      _acceptance_predicate([](const KstateT&) -> bool { return true; }) {
 }
 
 template <typename _KstateTraitT>
@@ -73,7 +94,7 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
     const KstateT& generator,
     const unsigned n_k) const {
     kstate_trait::KstateSet<KstateTraitT> result;
-    assert(generator.n_sites() == _n_sites);
+    assert(KstateTraitT::n_sites(generator) == _n_sites);
     // ********** OFF-DIAG, KERNEL12 ********************************************
     const auto generator_view = KstateTraitT::to_view(generator);
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
@@ -102,7 +123,9 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
                 const auto rotation_spec = kstate_view_amend_spec::rotated(conjugated_view_n_unique_shift);              // Must outlive conjugated_view_unique_shifted.
                 const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(conjugated_view)`
                 const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
-                result.insert(conjugated_kstate_ptr);
+                if (_acceptance_predicate(*conjugated_kstate_ptr)) {
+                    result.insert(conjugated_kstate_ptr);
+                }
             }
         }  // end of `_full_off_diag_info` equal_range loop
     }      // end of `Delta` loop
