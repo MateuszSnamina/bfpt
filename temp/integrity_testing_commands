@@ -1,0 +1,8 @@
+These commands should give the same results:
+
+./bin/monostar_app 10 2 -r g --model_type fo --hamiltonian_P_zz -1 --hamiltonian_P_xx -1 -i
+./bin/so_app 10 2 -r g -i --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +4 --hamiltonian_ss_P_xx +4 -G 1 # todo -G 0 after G fixing!
+./bin/so_app 10 2 -r g -i --hamiltonian_ss 0.0 --hamiltonian_P_zz -1 --hamiltonian_P_xx -1 
+
+
+
