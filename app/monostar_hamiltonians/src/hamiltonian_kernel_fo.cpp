@@ -77,4 +77,3 @@ prepare_hamiltonian_kernel_1_fo(const HamiltonianParamsFo& params, double orbita
 }
 
 }  // end of namespace monostar_hamiltonians
-

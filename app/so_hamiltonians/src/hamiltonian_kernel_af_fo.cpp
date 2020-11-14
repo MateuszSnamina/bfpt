@@ -68,42 +68,42 @@ prepare_hamiltonian_kernel_12_af_fo(
     const double spinorbit_ge_eg = +ss_Pzz_coef * Pz_ge * Pz_eg + ss_Pxz_coef * Px_ge * Pz_eg + ss_Pxz_coef * Pz_ge * Px_eg + ss_Pxx_coef * Px_ge * Px_eg;
     const double spinorbit_ge_ee = +ss_Pzz_coef * Pz_ge * Pz_ee + ss_Pxz_coef * Px_ge * Pz_ee + ss_Pxz_coef * Pz_ge * Px_ee + ss_Pxx_coef * Px_ge * Px_ee;
     const double spinorbit_eg_ee = +ss_Pzz_coef * Pz_ee * Pz_ge + ss_Pxz_coef * Px_ee * Pz_ge + ss_Pxz_coef * Pz_ee * Px_ge + ss_Pxx_coef * Px_ee * Px_ge;
-    OffDiagInfoType half_off_diag_info {
+    OffDiagInfoType half_off_diag_info{
         // purespin. spins: gg<->ee, orbitals: fixed.
-        {{gg, gg}, {{eg, eg}, 0.5 * ss_coef}}, // with orbitals: gg
-        {{gg, ge}, {{eg, ee}, 0.5 * ss_coef}}, // with orbitals: ge
-        {{ge, gg}, {{ee, eg}, 0.5 * ss_coef}}, // with orbitals: eg
-        {{ge, ge}, {{ee, ee}, 0.5 * ss_coef}}, // with orbitals: gg
+        {{gg, gg}, {{eg, eg}, 0.5 * ss_coef}},  // with orbitals: gg
+        {{gg, ge}, {{eg, ee}, 0.5 * ss_coef}},  // with orbitals: ge
+        {{ge, gg}, {{ee, eg}, 0.5 * ss_coef}},  // with orbitals: eg
+        {{ge, ge}, {{ee, ee}, 0.5 * ss_coef}},  // with orbitals: gg
         // pureorbit + spinorbit. orbitals: gg<->ge, spins: fixed.
-        {{gg, gg}, {{gg, ge}, pureorbit_gg_ge - 0.25 * spinorbit_gg_ge}}, // with spins: gg
-        {{gg, eg}, {{gg, ee}, pureorbit_gg_ge + 0.25 * spinorbit_gg_ge}}, // with spins: ge
-        {{eg, gg}, {{eg, ge}, pureorbit_gg_ge + 0.25 * spinorbit_gg_ge}}, // with spins: eg
-        {{eg, eg}, {{eg, ee}, pureorbit_gg_ge - 0.25 * spinorbit_gg_ge}}, // with spins: ee
+        {{gg, gg}, {{gg, ge}, pureorbit_gg_ge - 0.25 * spinorbit_gg_ge}},  // with spins: gg
+        {{gg, eg}, {{gg, ee}, pureorbit_gg_ge + 0.25 * spinorbit_gg_ge}},  // with spins: ge
+        {{eg, gg}, {{eg, ge}, pureorbit_gg_ge + 0.25 * spinorbit_gg_ge}},  // with spins: eg
+        {{eg, eg}, {{eg, ee}, pureorbit_gg_ge - 0.25 * spinorbit_gg_ge}},  // with spins: ee
         // pureorbit + spinorbit. orbitals: gg<->eg, spins: fixed.
-        {{gg, gg}, {{ge, gg}, pureorbit_gg_eg - 0.25 * spinorbit_gg_eg}}, // with spins: gg
-        {{gg, eg}, {{ge, eg}, pureorbit_gg_eg + 0.25 * spinorbit_gg_eg}}, // with spins: ge
-        {{eg, gg}, {{ee, gg}, pureorbit_gg_eg + 0.25 * spinorbit_gg_eg}}, // with spins: eg
-        {{eg, eg}, {{ee, eg}, pureorbit_gg_eg - 0.25 * spinorbit_gg_eg}}, // with spins: ee
+        {{gg, gg}, {{ge, gg}, pureorbit_gg_eg - 0.25 * spinorbit_gg_eg}},  // with spins: gg
+        {{gg, eg}, {{ge, eg}, pureorbit_gg_eg + 0.25 * spinorbit_gg_eg}},  // with spins: ge
+        {{eg, gg}, {{ee, gg}, pureorbit_gg_eg + 0.25 * spinorbit_gg_eg}},  // with spins: eg
+        {{eg, eg}, {{ee, eg}, pureorbit_gg_eg - 0.25 * spinorbit_gg_eg}},  // with spins: ee
         // pureorbit + spinorbit. orbitals: gg<->ee, spins: fixed.
-        {{gg, gg}, {{ge, ge}, pureorbit_gg_ee - 0.25 * spinorbit_gg_ee}}, // with spins: gg
-        {{gg, eg}, {{ge, ee}, pureorbit_gg_ee + 0.25 * spinorbit_gg_ee}}, // with spins: ge
-        {{eg, gg}, {{ee, ge}, pureorbit_gg_ee + 0.25 * spinorbit_gg_ee}}, // with spins: eg
-        {{eg, eg}, {{ee, ee}, pureorbit_gg_ee - 0.25 * spinorbit_gg_ee}}, // with spins: ee
+        {{gg, gg}, {{ge, ge}, pureorbit_gg_ee - 0.25 * spinorbit_gg_ee}},  // with spins: gg
+        {{gg, eg}, {{ge, ee}, pureorbit_gg_ee + 0.25 * spinorbit_gg_ee}},  // with spins: ge
+        {{eg, gg}, {{ee, ge}, pureorbit_gg_ee + 0.25 * spinorbit_gg_ee}},  // with spins: eg
+        {{eg, eg}, {{ee, ee}, pureorbit_gg_ee - 0.25 * spinorbit_gg_ee}},  // with spins: ee
         // pureorbit + spinorbit. orbitals: ge<->eg, spins: fixed.
-        {{gg, ge}, {{ge, gg}, pureorbit_ge_eg - 0.25 * spinorbit_ge_eg}}, // with spins: gg
-        {{gg, ee}, {{ge, eg}, pureorbit_ge_eg + 0.25 * spinorbit_ge_eg}}, // with spins: ge
-        {{eg, ge}, {{ee, gg}, pureorbit_ge_eg + 0.25 * spinorbit_ge_eg}}, // with spins: eg
-        {{eg, ee}, {{ee, eg}, pureorbit_ge_eg - 0.25 * spinorbit_ge_eg}}, // with spins: ee
+        {{gg, ge}, {{ge, gg}, pureorbit_ge_eg - 0.25 * spinorbit_ge_eg}},  // with spins: gg
+        {{gg, ee}, {{ge, eg}, pureorbit_ge_eg + 0.25 * spinorbit_ge_eg}},  // with spins: ge
+        {{eg, ge}, {{ee, gg}, pureorbit_ge_eg + 0.25 * spinorbit_ge_eg}},  // with spins: eg
+        {{eg, ee}, {{ee, eg}, pureorbit_ge_eg - 0.25 * spinorbit_ge_eg}},  // with spins: ee
         // pureorbit + spinorbit. orbitals: ge<->ee, spins: fixed.
-        {{gg, ge}, {{ge, ge}, pureorbit_ge_ee - 0.25 * spinorbit_ge_ee}}, // with spins: gg
-        {{gg, ee}, {{ge, ee}, pureorbit_ge_ee + 0.25 * spinorbit_ge_ee}}, // with spins: ge
-        {{eg, ge}, {{ee, ge}, pureorbit_ge_ee + 0.25 * spinorbit_ge_ee}}, // with spins: eg
-        {{eg, ee}, {{ee, ee}, pureorbit_ge_ee - 0.25 * spinorbit_ge_ee}}, // with spins: ee
+        {{gg, ge}, {{ge, ge}, pureorbit_ge_ee - 0.25 * spinorbit_ge_ee}},  // with spins: gg
+        {{gg, ee}, {{ge, ee}, pureorbit_ge_ee + 0.25 * spinorbit_ge_ee}},  // with spins: ge
+        {{eg, ge}, {{ee, ge}, pureorbit_ge_ee + 0.25 * spinorbit_ge_ee}},  // with spins: eg
+        {{eg, ee}, {{ee, ee}, pureorbit_ge_ee - 0.25 * spinorbit_ge_ee}},  // with spins: ee
         // pureorbit + spinorbit. orbitals: eg<->ee, spins: fixed.
-        {{ge, gg}, {{ge, ge}, pureorbit_eg_ee - 0.25 * spinorbit_eg_ee}}, // with spins: gg
-        {{ge, eg}, {{ge, ee}, pureorbit_eg_ee + 0.25 * spinorbit_eg_ee}}, // with spins: ge
-        {{ee, gg}, {{ee, ge}, pureorbit_eg_ee + 0.25 * spinorbit_eg_ee}}, // with spins: eg
-        {{ee, eg}, {{ee, ee}, pureorbit_eg_ee - 0.25 * spinorbit_eg_ee}}, // with spins: ee
+        {{ge, gg}, {{ge, ge}, pureorbit_eg_ee - 0.25 * spinorbit_eg_ee}},  // with spins: gg
+        {{ge, eg}, {{ge, ee}, pureorbit_eg_ee + 0.25 * spinorbit_eg_ee}},  // with spins: ge
+        {{ee, gg}, {{ee, ge}, pureorbit_eg_ee + 0.25 * spinorbit_eg_ee}},  // with spins: eg
+        {{ee, eg}, {{ee, ee}, pureorbit_eg_ee - 0.25 * spinorbit_eg_ee}},  // with spins: ee
         // spinorbit. spins: ee<->gg, orbit: changing.
         {{eg, eg}, {{gg, ge}, 0.5 * spinorbit_gg_ge}},
         {{eg, eg}, {{ge, gg}, 0.5 * spinorbit_gg_eg}},

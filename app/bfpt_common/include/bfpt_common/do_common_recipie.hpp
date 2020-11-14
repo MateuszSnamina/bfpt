@@ -46,9 +46,9 @@ namespace bfpt_common {
 
 template <arma::uword N>
 void print_averages(
-        const arma::cx_mat& density_matrix,
-        const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
-        const std::string& print_outer_prefix) {
+    const arma::cx_mat& density_matrix,
+    const std::vector<utility::Named<arma::cx_mat::fixed<N, N>>>& metrices_for_average_calculation,
+    const std::string& print_outer_prefix) {
     assert(density_matrix.n_rows == N);
     assert(density_matrix.n_cols == N);
     for (const auto& matrix_for_average_calculation : metrices_for_average_calculation) {
@@ -74,12 +74,12 @@ namespace bfpt_common {
 
 template <typename KstateT>
 void pretty_print(
-        kbasis::Basis<KstateT>& basis,
-        const arma::vec& eigen_values,
-        const arma::cx_mat& eigen_vectors,
-        std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
-        double print_pretty_probability_treshold,
-        std::string print_outer_prefix = "") {
+    kbasis::Basis<KstateT>& basis,
+    const arma::vec& eigen_values,
+    const arma::cx_mat& eigen_vectors,
+    std::pair<unsigned, unsigned> print_pretty_min_max_n_kstates,
+    double print_pretty_probability_treshold,
+    std::string print_outer_prefix = "") {
     // [[expect]]:
     assert(eigen_vectors.n_cols == eigen_values.n_rows);
     assert(basis.size() == eigen_vectors.n_rows);
@@ -103,15 +103,15 @@ void pretty_print(
                   << "eigen energy: " << eigen_value
                   << "." << std::endl;
         const std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector =
-                [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
-            std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
-            kstateIdx_and_probability_vector_builder.resize(basis_size);
-            for (unsigned idx = 0; idx < basis_size; idx++) {
-                kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
-            }
-            std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
-            return kstateIdx_and_probability_vector_builder;
-        }();
+            [&basis_size, &eigien_vector, &order_kstateIdx_and_probability]() {
+                std::vector<KstateIdxAndProbability> kstateIdx_and_probability_vector_builder;
+                kstateIdx_and_probability_vector_builder.resize(basis_size);
+                for (unsigned idx = 0; idx < basis_size; idx++) {
+                    kstateIdx_and_probability_vector_builder[idx] = {idx, std::norm(eigien_vector(idx))};
+                }
+                std::stable_sort(std::begin(kstateIdx_and_probability_vector_builder), std::end(kstateIdx_and_probability_vector_builder), order_kstateIdx_and_probability);
+                return kstateIdx_and_probability_vector_builder;
+            }();
         const std::complex<double> presentation_layer_amplitude_factor = [&kstateIdx_and_probability_vector, &eigien_vector]() {
             const unsigned print_idx = 0;
             const unsigned idx = kstateIdx_and_probability_vector[print_idx].idx;
@@ -169,16 +169,16 @@ struct CommonRecipeReceipt {
 template <typename KstateTraitT, typename KpopulatorTraitT, typename KoperatorTraitT, unsigned N>
 utility::Result<CommonRecipeReceipt, std::runtime_error>
 do_common_recipe(
-        const typename KpopulatorTraitT::KpopulatorT& bais_populator,
-        const typename KoperatorTraitT::KoperatorT& hamiltonian,
-        kbasis::Basis<KstateTraitT>& basis,
-        const unsigned max_pt_order,
-        const unsigned n_k,
-        const CommonRecipePrintFlags& print_flags,
-        const std::vector<utility::Named<::arma::cx_mat::fixed<N, N>>>& one_site_metrices_for_average_calculation,
-        const std::vector<utility::Named<::arma::cx_mat::fixed<N * N, N * N>>>& two_sites_metrices_for_average_calculation,
-        std::string print_outer_prefix = "",
-        unsigned n_threads = 1) {
+    const typename KpopulatorTraitT::KpopulatorT& bais_populator,
+    const typename KoperatorTraitT::KoperatorT& hamiltonian,
+    kbasis::Basis<KstateTraitT>& basis,
+    const unsigned max_pt_order,
+    const unsigned n_k,
+    const CommonRecipePrintFlags& print_flags,
+    const std::vector<utility::Named<::arma::cx_mat::fixed<N, N>>>& one_site_metrices_for_average_calculation,
+    const std::vector<utility::Named<::arma::cx_mat::fixed<N * N, N * N>>>& two_sites_metrices_for_average_calculation,
+    std::string print_outer_prefix = "",
+    unsigned n_threads = 1) {
     // --------------------------------------------------
     static_assert(kstate_trait::IsTraitKstate<KstateTraitT>::value);
     static_assert(KstateTraitT::is_kstate_trait);

@@ -47,10 +47,10 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
          boost::program_options::value<unsigned>(&program_options.n_pt)->default_value(2))
         // --n_max_site_spin_excitations,-G:
         ("n_max_site_spin_excitations,G",
-        boost::program_options::value<std::string>(&program_options.n_max_site_spin_excitations_string)->default_value("nolimit"))
+         boost::program_options::value<std::string>(&program_options.n_max_site_spin_excitations_string)->default_value("nolimit"))
         // --n_max_site_orbit_excitations,-F:
         ("n_max_site_orbit_excitations,F",
-        boost::program_options::value<std::string>(&program_options.n_max_site_orbit_excitations_string)->default_value("nolimit"))
+         boost::program_options::value<std::string>(&program_options.n_max_site_orbit_excitations_string)->default_value("nolimit"))
         // --model_type_string,-m:
         ("model_type_string,m",
          boost::program_options::value<std::string>(&program_options.model_type_string)->default_value("affo"))
