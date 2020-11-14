@@ -17,6 +17,7 @@
 #include <chainkernel/operator_kernel.hpp>
 #include <koperator_impl/kernel_driven_kstate_operator_matrix.hpp>
 #include <kpopulator_impl/kernel_driven_kstate_basis_populator.hpp>
+//#include <kpopulator_trait/take_all_acceptance_predicate.hpp>//TODO remove
 
 #include <bfpt_common/do_common_recipie.hpp>
 
@@ -51,6 +52,7 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    //kpopulator_trait::TakeAllAcceptancePredicate<KstateTraitT> acceptance_predicate;//TODO remove
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
@@ -80,6 +82,7 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = monostar_system::MonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
+    //kpopulator_trait::TakeAllAcceptancePredicate<KstateTraitT> acceptance_predicate;//TODO remove
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <cassert>
 
 namespace kpopulator_trait {
 
@@ -18,10 +19,10 @@ template <typename T>
 struct IsTraitKpopulator<TraitKpopulator<T>> : std::true_type {
 };
 
+}  // namespace kpopulator_trait
+
 // #######################################################################
-// ## Instruction: registering a type as Kpopulator                      ##
+// ## Instruction: registering a type as Kpopulator                     ##
 // #######################################################################
 
 //[TODO]
-
-}  // namespace kpopulator_trait

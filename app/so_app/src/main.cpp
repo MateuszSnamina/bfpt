@@ -10,6 +10,7 @@
 #include <so_system/so_basis.hpp>
 #include <so_system/so_kstate.hpp>
 #include <so_system/so_site_state.hpp>
+#include <so_system/so_kstate_acceptance_predicate.hpp>
 
 #include <chainkernel/operator_kernel.hpp>
 #include <koperator_impl/kernel_driven_kstate_operator_matrix.hpp>
@@ -36,7 +37,9 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     const bfpt_common::CommonRecipePrintFlags& print_flags,
     const std::vector<utility::Named<arma::cx_mat44>>& one_site_metrices_for_average_calculation,
     const std::vector<utility::Named<arma::extension::cx_mat1616>>& two_sites_metrices_for_average_calculation,
-    unsigned n_threads) {
+    const std::optional<unsigned> n_max_site_spin_excitations,
+    const std::optional<unsigned> n_max_site_orbit_excitations,
+    const unsigned n_threads) {
     using KstateT = so_system::SoKstate;
     using KstateTraitT = so_system::SoKstateTrait;
     using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
@@ -46,7 +49,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using BasisT = so_system::SoKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(so_system::classical_gs_kstate(n_sites)));
-    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations};
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, acceptance_predicate};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 4u>(
                kstate_populator, kstate_hamiltonian,
@@ -67,7 +71,9 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     const bfpt_common::CommonRecipePrintFlags& print_flags,
     const std::vector<utility::Named<arma::cx_mat44>>& one_site_metrices_for_average_calculation,
     const std::vector<utility::Named<arma::extension::cx_mat1616>>& two_sites_metrices_for_average_calculation,
-    unsigned n_threads) {
+    const std::optional<unsigned> n_max_site_spin_excitations,
+    const std::optional<unsigned> n_max_site_orbit_excitations,
+    const unsigned n_threads) {
     using KstateT = so_system::SoKstate;
     using KstateTraitT = so_system::SoKstateTrait;
     using KpopulatorT = kpopulator_impl::KernelDrivenKstateBasisPopulator<KstateTraitT>;
@@ -77,7 +83,8 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = so_system::SoKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(so_system::classical_es_kstate(n_sites)));
-    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations};
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, acceptance_predicate};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 4u>(
                kstate_populator, kstate_hamiltonian,
@@ -192,6 +199,8 @@ int main(int argc, char** argv) {
                     interpreted_program_options.print_flags,
                     one_site_metrices_for_average_calculation,
                     two_sites_metrices_for_average_calculation,
+                    interpreted_program_options.n_max_site_spin_excitations,
+                    interpreted_program_options.n_max_site_orbit_excitations,
                     interpreted_program_options.n_threads);
                 std::cout << "------------------------------------------" << std::endl;
             }
@@ -216,6 +225,8 @@ int main(int argc, char** argv) {
                         interpreted_program_options.print_flags,
                         one_site_metrices_for_average_calculation,
                         two_sites_metrices_for_average_calculation,
+                        interpreted_program_options.n_max_site_spin_excitations,
+                        interpreted_program_options.n_max_site_orbit_excitations,
                         interpreted_program_options.n_threads);
                     es_receipts_builder.push_back(es_energy);
                     std::cout << "------------------------------------------" << std::endl;
