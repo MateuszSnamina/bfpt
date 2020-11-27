@@ -3,9 +3,9 @@
 Simple resut plotter for bfpt-app
 
 Usage:
-  plot_results.py [-4] [-2] [-p] [-s] af [-n <n_sites>] [-J <coupling-value>] <log_file>...
-  plot_results.py [-4] [-2] [-p] [-s] fm [-n <n_sites>] [-J <coupling-value>] <log_file>...
-  plot_results.py [-4] [-2] [-p] [-s] <log_file>...
+  plot_results.py [-f] [-4] [-2] [-p] [-s] af [-n <n_sites>] [-J <coupling-value>] <log_file>...
+  plot_results.py [-f] [-4] [-2] [-p] [-s] fm [-n <n_sites>] [-J <coupling-value>] <log_file>...
+  plot_results.py [-f] [-4] [-2] [-p] [-s] <log_file>...
 
 Options:
   -s, --save                             Save the figures as png files in cwd
@@ -14,6 +14,7 @@ Options:
   -4, --reconstruct4                     Uses data from [0, Pi/2] to infer data for (Pi/2, Pi]
   -2, --reconstruct2                     Uses data from [0, Pi] to infer data for (Pi, 2Pi]
   -p, --patch_two_pi                     Fill value for 2Pi as it is for 0
+  -f, --with_fit                         Try to find a fit
 '''
 
 import yaml
@@ -21,8 +22,35 @@ import math
 
 from docopt import docopt
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 from utility.get_value_if_prefix_matches import get_value_if_prefix_matches
 from utility.multiple_formatter import multiple_formatter
+import numpy as np
+
+###############################################
+## Find the best fit                         ##
+###############################################
+
+def add_the_fit(data):
+    prototype = lambda k, F, A, B, K:  F +  K * np.cos(k) + A * np.cos(2 * k) + B * np.cos(4 * k)
+    xdata = data["domain"]
+    ydata = data["es_absolute_energies"]
+    popt, pcov = curve_fit(prototype, xdata, ydata)
+    print(f"{popt=}")
+    F = popt[0]
+    A = popt[1]
+    B = popt[2]
+    K = popt[3]
+    print(f"{F=}")
+    print(f"{A=}")
+    print(f"{B=}")
+    print(f"{K=}")
+    prototype_closure = lambda k: prototype(k, F, A, B, K)
+    domain = data["domain"]
+    es_absolute_energies_fit = [prototype_closure(k) for k in domain]
+    data["es_absolute_energies_fit"] = es_absolute_energies_fit
+    data["fit_params"] = (F, A, B, K)
+    return data["fit_params"]
 
 ###############################################
 ## reconstruct data functions                ##
@@ -88,8 +116,10 @@ def grep_log_data(log_file_path):
     data = {
         'gs_energy': gs_energy,
         'domain': domain,
-        'es_excitation_energies' : es_excitation_energies,
-        'es_absolute_energies' : es_absolute_energies}
+        'es_excitation_energies': es_excitation_energies,
+        'es_absolute_energies': es_absolute_energies}
+    if po['--with_fit']:
+        add_the_fit(data)
     return data
 
 def prepare_af_reference_data(n_sites, J):
@@ -110,6 +140,7 @@ def prepare_fm_reference_data(n_sites, J):
     assert(False) # TODO implement
     return None
 
+
 ###############################################
 ## put on plot functions                     ##
 ###############################################
@@ -124,6 +155,11 @@ def put_data_on_excitation_energy_plot(ax, data, scatter=False, **style):
   ax.plot(data['domain'], data['es_excitation_energies'], **style)
   if scatter:
       ax.scatter(data['domain'], data['es_excitation_energies'], marker='*', **style)
+
+def put_fit_data_on_excitation_energy_plot(ax, data, scatter=False, **style):
+  ax.plot(data['domain'], data['es_absolute_energies_fit'], **style)
+  if scatter:
+      ax.scatter(data['domain'], data['es_absolute_energies_fit'], marker='o', **style)
 
 def index_to_color(idx, length):
     if length > 1:
@@ -168,6 +204,9 @@ if reference_data:
 for (index , data) in enumerate(data_list):
     color = index_to_color(index, len(data_list))  
     put_data_on_absolute_energy_plot(ax1, data, scatter=True, color=color, linewidth=2)
+    if "es_absolute_energies_fit" in data:
+        put_fit_data_on_excitation_energy_plot(ax1, data, scatter=True, color=color, linewidth=1)
+
 ax1.grid()
 ax1.set_xlim(0, 2 * math.pi)
 ax1.xaxis.set_major_locator(plt.MultipleLocator(math.pi / 2))

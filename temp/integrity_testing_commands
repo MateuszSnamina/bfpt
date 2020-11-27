@@ -1,9 +1,25 @@
 These commands should give the same results:
 
-./bin/monostar_app 10 2 -r g --model_type fo --hamiltonian_P_zz -1 --hamiltonian_P_xx -1 -i
-./bin/so_app 10 2 -r g -i --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +4 --hamiltonian_ss_P_xx +4 -G 1 # todo -G 0 after G fixing!
-./bin/so_app 10 2 -r g -i --hamiltonian_ss 0.0 --hamiltonian_P_zz -1 --hamiltonian_P_xx -1 
+
+** make so_app like monostar_app with --model_type fo **
+./bin/monostar_app 10 2 -r g -i --model_type fo --hamiltonian_P_zz -1 --hamiltonian_P_xx -1
+./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_P_zz -1 --hamiltonian_P_xx -1
+./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +4 --hamiltonian_ss_P_xx +4
 
 
-./bin/so_app 10 1 -r g -i    --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +1 --hamiltonian_ss_P_xx +0 -F 0 --print_pretty_probability_treshold 0.001  --hamiltonian_tau_minus 0.0 
-./bin/monostar_app 10 1 -r g --model_type af -i
+** make so_app like monostar_app with --model_type af **
+
+./bin/monostar_app 10 2 -r g -i --model_type af --hamiltonian_J_classical 3 --hamiltonian_J_quantum 3 --hamiltonian_B 1
+./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 3 --hamiltonian_s 1 --hamiltonian_tau_minus 0 -o 0.0  
+./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 3 --hamiltonian_s 1 --hamiltonian_tau_minus 1 # the same but with extra 0.5 in site energy. 
+./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss_P_zz 3 --hamiltonian_s 1 --hamiltonian_tau_minus 0 -1 -o 0.0
+
+
+** hamiltonian OrbitP4 **
+
+./bin/monostar_app 10 1 -r g -i --model_type fo --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5
+./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5  
+
+** hamiltonian OrbitP4SS **
+./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2
+
