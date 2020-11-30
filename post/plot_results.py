@@ -36,7 +36,6 @@ def add_the_fit(data):
     xdata = data["domain"]
     ydata = data["es_absolute_energies"]
     popt, pcov = curve_fit(prototype, xdata, ydata)
-    print(f"{popt=}")
     F = popt[0]
     A = popt[1]
     B = popt[2]
