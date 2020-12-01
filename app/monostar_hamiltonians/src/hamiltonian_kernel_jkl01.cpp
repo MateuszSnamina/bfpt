@@ -9,10 +9,7 @@
 namespace monostar_hamiltonians {
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_1_jkl01(
-        [[maybe_unused]] double J, [[maybe_unused]] double K, [[maybe_unused]] double L,
-[[maybe_unused]] double J_0, [[maybe_unused]] double K_0, [[maybe_unused]] double L_0,
-[[maybe_unused]] double J_1, [[maybe_unused]] double K_1, [[maybe_unused]] double L_1) {
+prepare_hamiltonian_kernel_1_jkl01() {
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel1<monostar_system::MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<chainkernel::StateKernel1<monostar_system::MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel1<MonostarSiteStateTrait>>;
@@ -22,18 +19,12 @@ prepare_hamiltonian_kernel_1_jkl01(
 }
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_1_jkl01(const HamiltonianParamsJkl01& params){
-    return prepare_hamiltonian_kernel_1_jkl01(
-                params.get_J(), params.get_K(), params.get_L(),
-                params.get_J_0(), params.get_K_0(), params.get_L_0(),
-                params.get_J_1(), params.get_K_1(), params.get_L_1());
+prepare_hamiltonian_kernel_1_jkl01([[maybe_unused]] const HamiltonianParamsJkl01& params){
+    return prepare_hamiltonian_kernel_1_jkl01();
 }
 
 chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_12_jkl01(
-        [[maybe_unused]] double J, [[maybe_unused]] double K, [[maybe_unused]] double L,
-[[maybe_unused]] double J_0, [[maybe_unused]] double K_0, [[maybe_unused]] double L_0,
-[[maybe_unused]] double J_1, [[maybe_unused]] double K_1, [[maybe_unused]] double L_1) {
+prepare_hamiltonian_kernel_12_jkl01() {
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel12<monostar_system::MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<chainkernel::StateKernel12<monostar_system::MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
@@ -43,31 +34,22 @@ prepare_hamiltonian_kernel_12_jkl01(
 }
 
 chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_12_jkl01(const HamiltonianParamsJkl01& params){
-    return prepare_hamiltonian_kernel_12_jkl01(
-                params.get_J(), params.get_K(), params.get_L(),
-                params.get_J_0(), params.get_K_0(), params.get_L_0(),
-                params.get_J_1(), params.get_K_1(), params.get_L_1());
+prepare_hamiltonian_kernel_12_jkl01([[maybe_unused]] const HamiltonianParamsJkl01& params){
+    return prepare_hamiltonian_kernel_12_jkl01();
 }
 
 chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_123_jkl01(
-        [[maybe_unused]] double J, [[maybe_unused]] double K, [[maybe_unused]] double L,
-[[maybe_unused]] double J_0, [[maybe_unused]] double K_0, [[maybe_unused]] double L_0,
-[[maybe_unused]] double J_1, [[maybe_unused]] double K_1, [[maybe_unused]] double L_1) {
+prepare_hamiltonian_kernel_123_jkl01(double L, double L_1) {
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel123<monostar_system::MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<chainkernel::StateKernel123<monostar_system::MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel123<MonostarSiteStateTrait>>;
     OnDiagInfoType on_diag_info{
         {{gs, gs, gs}, L},
         {{es, es, es}, L},
-
         {{gs, es, gs}, L+2*L_1},
         {{es, gs, es}, L+2*L_1},
-
         {{gs, gs, es}, L+L_1},
         {{es, es, gs}, L+L_1},
-
         {{gs, es, es}, L+L_1},
         {{es, gs, gs}, L+L_1}
     };
@@ -77,17 +59,13 @@ prepare_hamiltonian_kernel_123_jkl01(
 
 chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_123_jkl01(const HamiltonianParamsJkl01& params) {
-    return prepare_hamiltonian_kernel_123_jkl01(
-                params.get_J(), params.get_K(), params.get_L(),
-                params.get_J_0(), params.get_K_0(), params.get_L_0(),
-                params.get_J_1(), params.get_K_1(), params.get_L_1());
+    return prepare_hamiltonian_kernel_123_jkl01(params.get_L(), params.get_L_1());
 }
 
 chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1234_jkl01(
-        [[maybe_unused]] double J, [[maybe_unused]] double K, [[maybe_unused]] double L,
-[[maybe_unused]] double J_0, [[maybe_unused]] double K_0, [[maybe_unused]] double L_0,
-[[maybe_unused]] double J_1, [[maybe_unused]] double K_1, [[maybe_unused]] double L_1){
+        double J, double J_0, double J_1,
+        double K, double K_0, double K_1){
     using namespace monostar_system;
     using OnDiagInfoType = std::map<chainkernel::StateKernel1234<monostar_system::MonostarSiteStateTrait>, double>;
     using OffDiagInfoType = std::multimap<chainkernel::StateKernel1234<monostar_system::MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel1234<MonostarSiteStateTrait>>;
@@ -121,9 +99,8 @@ prepare_hamiltonian_kernel_1234_jkl01(
 chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1234_jkl01(const HamiltonianParamsJkl01& params){
     return prepare_hamiltonian_kernel_1234_jkl01(
-                params.get_J(), params.get_K(), params.get_L(),
-                params.get_J_0(), params.get_K_0(), params.get_L_0(),
-                params.get_J_1(), params.get_K_1(), params.get_L_1());
+                params.get_J(), params.get_J_0(), params.get_J_1(),
+                params.get_K(), params.get_K_0(), params.get_K_1());
 }
 
 }  // end of namespace monostar_hamiltonians

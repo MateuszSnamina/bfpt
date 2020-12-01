@@ -17,25 +17,25 @@
 namespace monostar_hamiltonians {
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_1_jkl01(double J, double K, double L, double J_0, double K_0, double L_0, double J_1, double K_1, double L_1);
+prepare_hamiltonian_kernel_1_jkl01();
 
 chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1_jkl01(const HamiltonianParamsJkl01&);
 
 chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_12_jkl01(double J, double K, double L, double J_0, double K_0, double L_0, double J_1, double K_1, double L_1);
+prepare_hamiltonian_kernel_12_jkl01();
 
 chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_12_jkl01(const HamiltonianParamsJkl01&);
 
 chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_123_jkl01(double J, double K, double L, double J_0, double K_0, double L_0, double J_1, double K_1, double L_1);
+prepare_hamiltonian_kernel_123_jkl01(double L, double L_1);
 
 chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_123_jkl01(const HamiltonianParamsJkl01&);
 
 chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>
-prepare_hamiltonian_kernel_1234_jkl01(double J, double K, double L, double J_0, double K_0, double L_0, double J_1, double K_1, double L_1);
+prepare_hamiltonian_kernel_1234_jkl01(double J, double J_0, double J_1, double K, double K_0, double K_1);
 
 chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_1234_jkl01(const HamiltonianParamsJkl01&);
