@@ -54,6 +54,8 @@ class KernelDrivenKstateBasisPopulator {
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
+    const chainkernel::OperatorKernel123<SiteStateTraitT> _operator_kernel_123;
+    const chainkernel::OperatorKernel1234<SiteStateTraitT> _operator_kernel_1234;
     const std::function<bool(KstateT)> _acceptance_predicate;
 };
 
@@ -95,17 +97,44 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
     const unsigned n_k) const {
     kstate_trait::KstateSet<KstateTraitT> result;
     assert(KstateTraitT::n_sites(generator) == _n_sites);
-    // ********** OFF-DIAG, KERNEL12 ********************************************
     const auto generator_view = KstateTraitT::to_view(generator);
+    // ********** OFF-DIAG, KERNEL1  ********************************************
+    for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
+        const auto generator_site_1 = KstateTraitT::view_n_th_site_state(generator_view, n_delta);
+        const chainkernel::StateKernel1<SiteStateTraitT> ket_kernel{generator_site_1};
+        const auto equal_range = _operator_kernel_1._full_off_diag_info.equal_range(ket_kernel);
+        for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
+            const auto& ket_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_re.state_1;
+            assert(ket_kernel_site_1_re == generator_site_1);
+            const auto& couple_info = off_diag_node_it->second;
+            //[[maybe_unused]] const auto& kernel_coupling_coef = couple_info.coef;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            //TODO: if (kernel_coupling_coef !=0 ){ FILL }
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);             // Must outlive conjugated_view.
+            const auto conjugated_view = KstateTraitT::refined_view(generator_view, refined_holder_1);
+            if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
+                const size_t conjugated_view_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
+                const auto rotation_spec = kstate_view_amend_spec::rotated(conjugated_view_n_unique_shift);              // Must outlive conjugated_view_unique_shifted.
+                const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(conjugated_view)`
+                const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
+                if (_acceptance_predicate(*conjugated_kstate_ptr)) {
+                    result.insert(conjugated_kstate_ptr);
+                }
+            }
+        }  // end of `_full_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
+    // ********** OFF-DIAG, KERNEL12 ********************************************
     for (size_t n_delta = 0, n_delta_p1 = 1; n_delta < _n_sites; n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites) {
         const auto generator_site_1 = KstateTraitT::view_n_th_site_state(generator_view, n_delta);
         const auto generator_site_2 = KstateTraitT::view_n_th_site_state(generator_view, n_delta_p1);
         const chainkernel::StateKernel12<SiteStateTraitT> ket_kernel{generator_site_1, generator_site_2};
         const auto equal_range = _operator_kernel_12._full_off_diag_info.equal_range(ket_kernel);
         for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
-            const auto& ket_12_re = off_diag_node_it->first;
-            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_12_re.state_1;
-            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_12_re.state_2;
+            const auto& ket_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_re.state_2;
             assert(ket_kernel_site_1_re == generator_site_1);
             assert(ket_kernel_site_2_re == generator_site_2);
             const auto& couple_info = off_diag_node_it->second;
@@ -129,8 +158,94 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             }
         }  // end of `_full_off_diag_info` equal_range loop
     }      // end of `Delta` loop
-    // ********** OFF-DIAG, KERNEL1  ********************************************
-    //TODO kernel 1!
+    // ********** OFF-DIAG, KERNEL123  ******************************************
+    for (size_t n_delta = 0, n_delta_p1 = 1, n_delta_p2 = 2;
+         n_delta < _n_sites;
+         n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites, n_delta_p2 = (n_delta + 2) % _n_sites) {
+        const auto generator_site_1 = KstateTraitT::view_n_th_site_state(generator_view, n_delta);
+        const auto generator_site_2 = KstateTraitT::view_n_th_site_state(generator_view, n_delta_p1);
+        const auto generator_site_3 = KstateTraitT::view_n_th_site_state(generator_view, n_delta_p2);
+        const chainkernel::StateKernel123<SiteStateTraitT> ket_kernel{generator_site_1, generator_site_2, generator_site_3};
+        const auto equal_range = _operator_kernel_123._full_off_diag_info.equal_range(ket_kernel);
+        for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
+            const auto& ket_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_re.state_2;
+            [[maybe_unused]] const auto& ket_kernel_site_3_re = ket_re.state_3;
+            assert(ket_kernel_site_1_re == generator_site_1);
+            assert(ket_kernel_site_2_re == generator_site_2);
+            assert(ket_kernel_site_3_re == generator_site_3);
+            const auto& couple_info = off_diag_node_it->second;
+            //[[maybe_unused]] const auto& kernel_coupling_coef = couple_info.coef;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            const auto& bra_kernel_site_2 = bra_kernel.state_2;
+            const auto& bra_kernel_site_3 = bra_kernel.state_3;
+            //TODO: if (kernel_coupling_coef !=0 ){ FILL }
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);             // Must outlive conjugated_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);          // Must outlive conjugated_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);          // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);  // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_1 = KstateTraitT::refined_view(conjugated_view_preproduct_0, refined_holder_2);  // Must outlive conjugated_view.
+            const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct_1, refined_holder_3);
+            if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
+                const size_t conjugated_view_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
+                const auto rotation_spec = kstate_view_amend_spec::rotated(conjugated_view_n_unique_shift);              // Must outlive conjugated_view_unique_shifted.
+                const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(conjugated_view)`
+                const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
+                if (_acceptance_predicate(*conjugated_kstate_ptr)) {
+                    result.insert(conjugated_kstate_ptr);
+                }
+            }
+        }  // end of `_full_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
+    // ********** OFF-DIAG, KERNEL1234  *****************************************
+    for (size_t n_delta = 0, n_delta_p1 = 1, n_delta_p2 = 2, n_delta_p3 = 3;
+         n_delta < _n_sites;
+         n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites, n_delta_p2 = (n_delta + 2) % _n_sites, n_delta_p3 = (n_delta + 3) % _n_sites) {
+        const auto generator_site_1 = KstateTraitT::view_n_th_site_state(generator_view, n_delta);
+        const auto generator_site_2 = KstateTraitT::view_n_th_site_state(generator_view, n_delta_p1);
+        const auto generator_site_3 = KstateTraitT::view_n_th_site_state(generator_view, n_delta_p2);
+        const auto generator_site_4 = KstateTraitT::view_n_th_site_state(generator_view, n_delta_p3);
+        const chainkernel::StateKernel1234<SiteStateTraitT> ket_kernel{generator_site_1, generator_site_2, generator_site_3, generator_site_4};
+        const auto equal_range = _operator_kernel_1234._full_off_diag_info.equal_range(ket_kernel);
+        for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
+            const auto& ket_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_re.state_2;
+            [[maybe_unused]] const auto& ket_kernel_site_3_re = ket_re.state_3;
+            [[maybe_unused]] const auto& ket_kernel_site_4_re = ket_re.state_4;
+            assert(ket_kernel_site_1_re == generator_site_1);
+            assert(ket_kernel_site_2_re == generator_site_2);
+            assert(ket_kernel_site_3_re == generator_site_3);
+            assert(ket_kernel_site_4_re == generator_site_4);
+            const auto& couple_info = off_diag_node_it->second;
+            //[[maybe_unused]] const auto& kernel_coupling_coef = couple_info.coef;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            const auto& bra_kernel_site_2 = bra_kernel.state_2;
+            const auto& bra_kernel_site_3 = bra_kernel.state_3;
+            const auto& bra_kernel_site_4 = bra_kernel.state_4;
+            //TODO: if (kernel_coupling_coef !=0 ){ FILL }
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);             // Must outlive conjugated_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);          // Must outlive conjugated_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);          // Must outlive conjugated_view.
+            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_4);          // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);  // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_1 = KstateTraitT::refined_view(conjugated_view_preproduct_0, refined_holder_2);  // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_2 = KstateTraitT::refined_view(conjugated_view_preproduct_1, refined_holder_3);  // Must outlive conjugated_view.
+            const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct_2, refined_holder_4);
+            if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
+                const size_t conjugated_view_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
+                const auto rotation_spec = kstate_view_amend_spec::rotated(conjugated_view_n_unique_shift);              // Must outlive conjugated_view_unique_shifted.
+                const auto conjugated_view_unique_shifted = KstateTraitT::rotated_view(conjugated_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(conjugated_view)`
+                const auto conjugated_kstate_ptr = KstateTraitT::shared_from_view(conjugated_view_unique_shifted);
+                if (_acceptance_predicate(*conjugated_kstate_ptr)) {
+                    result.insert(conjugated_kstate_ptr);
+                }
+            }
+        }  // end of `_full_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
     // **************************************************************************
     return result;
 }

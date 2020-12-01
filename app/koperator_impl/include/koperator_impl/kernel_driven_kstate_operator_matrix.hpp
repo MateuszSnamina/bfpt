@@ -51,6 +51,9 @@ class KernelDrivenKstateOperatorMatrix {
     const size_t _n_sites;
     const chainkernel::OperatorKernel1<SiteStateTraitT> _operator_kernel_1;
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
+    const chainkernel::OperatorKernel123<SiteStateTraitT> _operator_kernel_123;
+    const chainkernel::OperatorKernel1234<SiteStateTraitT> _operator_kernel_1234;
+
 };
 
 }  // namespace koperator_impl
@@ -176,6 +179,104 @@ void KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_m
     //std::cout << "[OFF-DIAG] [TIMING]: offdiag_time          : " << offdiag_time << std::endl; // performance debug sake
     //std::cout << "[OFF-DIAG] [TIMING]: unique_shift_time     : " << unique_shift_time << std::endl; // performance debug sake
     //std::cout << "[OFF-DIAG] [TIMING]: not_unique_shift_time : " << not_unique_shift_time << std::endl; // performance debug sake
+    // ********** OFF-DIAG, KERNEL123 *******************************************
+    for (size_t n_delta = 0, n_delta_p1 = 1, n_delta_p2 = 2;
+         n_delta < _n_sites;
+         n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites, n_delta_p2 = (n_delta + 2) % _n_sites) {
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
+        const auto ket_kernel_site_3 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p2);
+        const chainkernel::StateKernel123<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2, ket_kernel_site_3};
+        const auto equal_range = _operator_kernel_123._half_off_diag_info.equal_range(ket_kernel);
+        for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
+            const auto& ket_kernel_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_kernel_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_kernel_re.state_2;
+            [[maybe_unused]] const auto& ket_kernel_site_3_re = ket_kernel_re.state_3;
+            assert(ket_kernel_site_1_re == ket_kernel_site_1);
+            assert(ket_kernel_site_2_re == ket_kernel_site_2);
+            assert(ket_kernel_site_3_re == ket_kernel_site_3);
+            const auto& couple_info = off_diag_node_it->second;
+            const auto& kernel_coupling_coef = couple_info.coef;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            const auto& bra_kernel_site_2 = bra_kernel.state_2;
+            const auto& bra_kernel_site_3 = bra_kernel.state_3;
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);              // Must outlive bra_kstate_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);           // Must outlive bra_kstate_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);           // Must outlive bra_kstate_view.
+            const auto bra_kstate_view_preproduct_1 = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
+            const auto bra_kstate_view_preproduct_2 = KstateTraitT::refined_view(bra_kstate_view_preproduct_1, refined_holder_2);  // Must outlive bra_kstate_view
+            const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct_2, refined_holder_3);
+            const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
+            const auto rotation_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
+            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
+                const auto bra_kstate_idx = *bra_kstate_optional_idx;
+                double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
+                const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
+                const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
+                const int exponent_n = (int)bra_kstate_n_unique_shift;
+                const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
+                assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
+                const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
+                const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
+                kn_operator_builder_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
+            }
+        }  // end of `_half_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
+    // ********** OFF-DIAG, KERNEL1234 ******************************************
+    for (size_t n_delta = 0, n_delta_p1 = 1, n_delta_p2 = 2, n_delta_p3 = 3;
+         n_delta < _n_sites;
+         n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites, n_delta_p2 = (n_delta + 2) % _n_sites, n_delta_p3 = (n_delta + 3) % _n_sites) {
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
+        const auto ket_kernel_site_3 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p2);
+        const auto ket_kernel_site_4 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p3);
+        const chainkernel::StateKernel1234<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2, ket_kernel_site_3, ket_kernel_site_4};
+        const auto equal_range = _operator_kernel_1234._half_off_diag_info.equal_range(ket_kernel);
+        for (auto off_diag_node_it = equal_range.first; off_diag_node_it != equal_range.second; ++off_diag_node_it) {
+            const auto& ket_kernel_re = off_diag_node_it->first;
+            [[maybe_unused]] const auto& ket_kernel_site_1_re = ket_kernel_re.state_1;
+            [[maybe_unused]] const auto& ket_kernel_site_2_re = ket_kernel_re.state_2;
+            [[maybe_unused]] const auto& ket_kernel_site_3_re = ket_kernel_re.state_3;
+            [[maybe_unused]] const auto& ket_kernel_site_4_re = ket_kernel_re.state_4;
+            assert(ket_kernel_site_1_re == ket_kernel_site_1);
+            assert(ket_kernel_site_2_re == ket_kernel_site_2);
+            assert(ket_kernel_site_3_re == ket_kernel_site_3);
+            assert(ket_kernel_site_4_re == ket_kernel_site_4);
+            const auto& couple_info = off_diag_node_it->second;
+            const auto& kernel_coupling_coef = couple_info.coef;
+            const auto& bra_kernel = couple_info.kernel_state;
+            const auto& bra_kernel_site_1 = bra_kernel.state_1;
+            const auto& bra_kernel_site_2 = bra_kernel.state_2;
+            const auto& bra_kernel_site_3 = bra_kernel.state_3;
+            const auto& bra_kernel_site_4 = bra_kernel.state_4;
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);              // Must outlive bra_kstate_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);           // Must outlive bra_kstate_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);           // Must outlive bra_kstate_view.
+            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p3, bra_kernel_site_4);           // Must outlive bra_kstate_view.
+            const auto bra_kstate_view_preproduct_1 = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
+            const auto bra_kstate_view_preproduct_2 = KstateTraitT::refined_view(bra_kstate_view_preproduct_1, refined_holder_2);  // Must outlive bra_kstate_view
+            const auto bra_kstate_view_preproduct_3 = KstateTraitT::refined_view(bra_kstate_view_preproduct_2, refined_holder_3);  // Must outlive bra_kstate_view
+            const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct_3, refined_holder_4);
+            const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
+            const auto rotation_spec = kstate_view_amend_spec::rotated(bra_kstate_n_unique_shift);
+            const auto bra_kstate_view_unique_shifted = KstateTraitT::rotated_view(bra_kstate_view, rotation_spec);  // equivalent to `kstate::make_unique_shift(bra_kstate)`
+            if (const auto& bra_kstate_optional_idx = basis.find_element_and_get_its_ra_index(bra_kstate_view_unique_shifted)) {
+                const auto bra_kstate_idx = *bra_kstate_optional_idx;
+                double pre_norm_1 = _n_sites * KstateTraitT::norm_factor(*basis.vec_index()[bra_kstate_idx]) * KstateTraitT::norm_factor(*basis.vec_index()[ket_kstate_idx]);
+                const size_t bra_n_least_replication_shift = KstateTraitT::n_least_replication_shift(*basis.vec_index()[bra_kstate_idx]);
+                const size_t bra_n_replicas = _n_sites / bra_n_least_replication_shift;
+                const int exponent_n = (int)bra_kstate_n_unique_shift;
+                const double exponent_r = 2 * arma::datum::pi * k_n / _n_sites * exponent_n;
+                assert(k_n * bra_n_least_replication_shift % _n_sites == 0);
+                const std::complex<double> neo_sum_phase_factors = std::exp(1.0i * exponent_r) * (double)bra_n_replicas;
+                const std::complex<double> pre_norm_2 = pre_norm_1 * neo_sum_phase_factors;
+                kn_operator_builder_matrix(bra_kstate_idx, ket_kstate_idx) += pre_norm_2 * kernel_coupling_coef;
+            }
+        }  // end of `_half_off_diag_info` equal_range loop
+    }      // end of `Delta` loop
     // ********** ON-DIAG, KERNEL1 **********************************************
     for (size_t n_delta = 0; n_delta < _n_sites; n_delta++) {
         const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
@@ -192,6 +293,33 @@ void KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_m
         const chainkernel::StateKernel12<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2};
         if (_operator_kernel_12._diag_info.count(ket_kernel)) {
             const auto kernel_diag_coef = _operator_kernel_12._diag_info.at(ket_kernel);
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2;  // factor '/2' is as we build matrix M such as H = M + M^T.
+        }
+    }  // end of `Delta` loop
+    // ********** ON-DIAG, KERNEL123 ********************************************
+    for (size_t n_delta = 0, n_delta_p1 = 1, n_delta_p2 = 2;
+         n_delta < _n_sites;
+         n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites, n_delta_p2 = (n_delta + 2) % _n_sites) {
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
+        const auto ket_kernel_site_3 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p2);
+        const chainkernel::StateKernel123<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2, ket_kernel_site_3};
+        if (_operator_kernel_123._diag_info.count(ket_kernel)) {
+            const auto kernel_diag_coef = _operator_kernel_123._diag_info.at(ket_kernel);
+            kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2;  // factor '/2' is as we build matrix M such as H = M + M^T.
+        }
+    }  // end of `Delta` loop
+    // ********** ON-DIAG, KERNEL1234 *******************************************
+    for (size_t n_delta = 0, n_delta_p1 = 1, n_delta_p2 = 2, n_delta_p3 = 3;
+         n_delta < _n_sites;
+         n_delta++, n_delta_p1 = (n_delta + 1) % _n_sites, n_delta_p2 = (n_delta + 2) % _n_sites, n_delta_p3 = (n_delta + 3) % _n_sites) {
+        const auto ket_kernel_site_1 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta);
+        const auto ket_kernel_site_2 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p1);
+        const auto ket_kernel_site_3 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p2);
+        const auto ket_kernel_site_4 = KstateTraitT::view_n_th_site_state(ket_kstate_view, n_delta_p3);
+        const chainkernel::StateKernel1234<SiteStateTraitT> ket_kernel{ket_kernel_site_1, ket_kernel_site_2, ket_kernel_site_3, ket_kernel_site_4};
+        if (_operator_kernel_1234._diag_info.count(ket_kernel)) {
+            const auto kernel_diag_coef = _operator_kernel_1234._diag_info.at(ket_kernel);
             kn_operator_builder_matrix(ket_kstate_idx, ket_kstate_idx) += kernel_diag_coef / 2;  // factor '/2' is as we build matrix M such as H = M + M^T.
         }
     }  // end of `Delta` loop
