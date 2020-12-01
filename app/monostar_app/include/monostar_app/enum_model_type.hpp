@@ -10,7 +10,8 @@ namespace monostar_app {
 enum class ModelType {
     FM,
     AF,
-    FO
+    FO,
+    JKL01
 };
 
 inline std::ostream& operator<<(std::ostream& s, const ModelType& m) {
@@ -20,6 +21,8 @@ inline std::ostream& operator<<(std::ostream& s, const ModelType& m) {
         s << "ModelType::AF";
     } else if (m == ModelType::FO) {
         s << "ModelType::FO";
+    } else if (m == ModelType::JKL01) {
+        s << "ModelType::JKL01";
     } else {
         throw std::logic_error("Invalid model enum value!");
     }

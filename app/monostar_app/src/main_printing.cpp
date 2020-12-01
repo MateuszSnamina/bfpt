@@ -33,6 +33,16 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_quantum       = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_quantum() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_params_af_fm.get_B() << std::endl;
     }
+    if (interpreted_program_options.model_type == ModelType::JKL01) {
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J               = " << interpreted_program_options.hamiltonian_params_jkl01.get_J() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_0             = " << interpreted_program_options.hamiltonian_params_jkl01.get_J_0() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_J_1() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::K               = " << interpreted_program_options.hamiltonian_params_jkl01.get_K() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::K_0             = " << interpreted_program_options.hamiltonian_params_jkl01.get_K_0() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::K_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_K_1() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::L               = " << interpreted_program_options.hamiltonian_params_jkl01.get_L() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::L_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_L_1() << std::endl;
+    }
     if (interpreted_program_options.model_type == ModelType::FO) {
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_fo.get_tau_z_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_fo.get_tau_minus_coef() << std::endl;

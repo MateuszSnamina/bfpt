@@ -16,6 +16,14 @@ struct RawProgramOptions {
     double hamiltonian_Pzz_coef;
     double hamiltonian_Pxz_coef;
     double hamiltonian_Pxx_coef;
+    double hamiltonian_J;
+    double hamiltonian_J_0;
+    double hamiltonian_J_1;
+    double hamiltonian_K;
+    double hamiltonian_K_0;
+    double hamiltonian_K_1;
+    double hamiltonian_L;
+    double hamiltonian_L_1;
     std::string orbital_theta_string;
     std::string run_type_string;
     bool print_unpopulated_basis_flag;

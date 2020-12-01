@@ -33,6 +33,17 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
                                                             .set_Pxz_coef(raw_program_options.hamiltonian_Pxz_coef)
                                                             .set_Pxx_coef(raw_program_options.hamiltonian_Pxx_coef)
                                                             .build();
+    interpreted_program_options.hamiltonian_params_jkl01 = monostar_hamiltonians::HamiltonianParamsJkl01::Builder()
+                                                               .set_J(raw_program_options.hamiltonian_J)
+                                                               .set_J_0(raw_program_options.hamiltonian_J_0)
+                                                               .set_J_1(raw_program_options.hamiltonian_J_1)
+                                                               .set_K(raw_program_options.hamiltonian_K)
+                                                               .set_K_0(raw_program_options.hamiltonian_K_0)
+                                                               .set_K_1(raw_program_options.hamiltonian_K_1)
+                                                               .set_L(raw_program_options.hamiltonian_L)
+                                                               .set_L_1(raw_program_options.hamiltonian_L_1)
+                                                               .build();
+
     if (const auto _ = interpret_orbital_theta_string(raw_program_options.orbital_theta_string)) {
         interpreted_program_options.orbital_theta = _.unwrap();
     } else {
