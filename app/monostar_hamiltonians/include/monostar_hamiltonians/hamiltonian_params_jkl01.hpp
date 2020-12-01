@@ -46,9 +46,9 @@ class HamiltonianParamsJkl01 {
 
    private:
     HamiltonianParamsJkl01(
-            double J, double J_0, double J_1,
-            double K, double K_0, double K_1,
-            double L, double L_1);
+        double J, double J_0, double J_1,
+        double K, double K_0, double K_1,
+        double L, double L_1);
     double _J;
     double _J_0;
     double _J_1;

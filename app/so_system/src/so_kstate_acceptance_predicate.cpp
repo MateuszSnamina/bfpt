@@ -41,38 +41,37 @@ unsigned get_n_orbit_site_excitations(const SoKstate& kstate) {
 namespace so_system {
 
 SpinSiteExcitationsAcceptancePredicate::SpinSiteExcitationsAcceptancePredicate(
-        std::optional<unsigned> n_max_site_spin_excitations)
+    std::optional<unsigned> n_max_site_spin_excitations)
     : _n_max_site_spin_excitations(n_max_site_spin_excitations) {
 }
 
 bool SpinSiteExcitationsAcceptancePredicate::operator()(const SoKstate& kstate) const {
     return (_n_max_site_spin_excitations
-            ? get_n_spin_site_excitations(kstate) <= *_n_max_site_spin_excitations
-            : true);
+                ? get_n_spin_site_excitations(kstate) <= *_n_max_site_spin_excitations
+                : true);
 }
 
-
 OrbitSiteExcitationsAcceptancePredicate::OrbitSiteExcitationsAcceptancePredicate(
-        std::optional<unsigned> n_max_site_orbit_excitations)
+    std::optional<unsigned> n_max_site_orbit_excitations)
     : _n_max_site_orbit_excitations(n_max_site_orbit_excitations) {
 }
 
 bool OrbitSiteExcitationsAcceptancePredicate::operator()(const SoKstate& kstate) const {
     return (_n_max_site_orbit_excitations
-            ? get_n_orbit_site_excitations(kstate) <= *_n_max_site_orbit_excitations
-            : true);
+                ? get_n_orbit_site_excitations(kstate) <= *_n_max_site_orbit_excitations
+                : true);
 }
 
 AcceptancePredicate::AcceptancePredicate(
-        std::optional<unsigned> n_max_site_spin_excitations,
-        std::optional<unsigned> n_max_site_orbit_excitations)
+    std::optional<unsigned> n_max_site_spin_excitations,
+    std::optional<unsigned> n_max_site_orbit_excitations)
     : _spin_site_excitations_acceptance_predicate(n_max_site_spin_excitations),
       _orbit_site_excitations_acceptance_predicate(n_max_site_orbit_excitations) {
 }
 
 bool AcceptancePredicate::operator()(const SoKstate& kstate) const {
     return _spin_site_excitations_acceptance_predicate(kstate) &&
-            _orbit_site_excitations_acceptance_predicate(kstate);
+           _orbit_site_excitations_acceptance_predicate(kstate);
 }
 
 }  // namespace so_system

@@ -21,7 +21,6 @@ HamiltonianParamsJkl01::Builder HamiltonianParamsJkl01::Builder::set_J_1(double 
     return *this;
 }
 
-
 HamiltonianParamsJkl01::Builder HamiltonianParamsJkl01::Builder::set_K(double K) {
     _K = K;
     return *this;
@@ -54,12 +53,10 @@ HamiltonianParamsJkl01 HamiltonianParamsJkl01::Builder::build() const {
 }
 
 HamiltonianParamsJkl01::HamiltonianParamsJkl01(
-        double J, double J_0, double J_1,
-        double K, double K_0, double K_1,
-        double L, double L_1)
-    : _J(J), _J_0(J_0), _J_1(J_1),
-      _K(K), _K_0(K_0), _K_1(K_1),
-      _L(L), _L_1(L_1) {
+    double J, double J_0, double J_1,
+    double K, double K_0, double K_1,
+    double L, double L_1)
+    : _J(J), _J_0(J_0), _J_1(J_1), _K(K), _K_0(K_0), _K_1(K_1), _L(L), _L_1(L_1) {
 }
 
 double HamiltonianParamsJkl01::get_J() const {

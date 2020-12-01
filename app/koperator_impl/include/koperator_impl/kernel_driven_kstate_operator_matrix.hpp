@@ -53,7 +53,6 @@ class KernelDrivenKstateOperatorMatrix {
     const chainkernel::OperatorKernel12<SiteStateTraitT> _operator_kernel_12;
     const chainkernel::OperatorKernel123<SiteStateTraitT> _operator_kernel_123;
     const chainkernel::OperatorKernel1234<SiteStateTraitT> _operator_kernel_1234;
-
 };
 
 }  // namespace koperator_impl
@@ -202,10 +201,10 @@ void KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_m
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
             const auto& bra_kernel_site_3 = bra_kernel.state_3;
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);              // Must outlive bra_kstate_view.
-            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);           // Must outlive bra_kstate_view.
-            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);           // Must outlive bra_kstate_view.
-            const auto bra_kstate_view_preproduct_1 = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);                             // Must outlive bra_kstate_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);                          // Must outlive bra_kstate_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);                          // Must outlive bra_kstate_view.
+            const auto bra_kstate_view_preproduct_1 = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);               // Must outlive bra_kstate_view
             const auto bra_kstate_view_preproduct_2 = KstateTraitT::refined_view(bra_kstate_view_preproduct_1, refined_holder_2);  // Must outlive bra_kstate_view
             const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct_2, refined_holder_3);
             const size_t bra_kstate_n_unique_shift = KstateTraitT::view_n_unique_shift(bra_kstate_view);
@@ -252,11 +251,11 @@ void KernelDrivenKstateOperatorMatrix<_KstateTraitT>::fill_kn_operator_builder_m
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
             const auto& bra_kernel_site_3 = bra_kernel.state_3;
             const auto& bra_kernel_site_4 = bra_kernel.state_4;
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);              // Must outlive bra_kstate_view.
-            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);           // Must outlive bra_kstate_view.
-            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);           // Must outlive bra_kstate_view.
-            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p3, bra_kernel_site_4);           // Must outlive bra_kstate_view.
-            const auto bra_kstate_view_preproduct_1 = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);// Must outlive bra_kstate_view
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);                             // Must outlive bra_kstate_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);                          // Must outlive bra_kstate_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);                          // Must outlive bra_kstate_view.
+            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p3, bra_kernel_site_4);                          // Must outlive bra_kstate_view.
+            const auto bra_kstate_view_preproduct_1 = KstateTraitT::refined_view(ket_kstate_view, refined_holder_1);               // Must outlive bra_kstate_view
             const auto bra_kstate_view_preproduct_2 = KstateTraitT::refined_view(bra_kstate_view_preproduct_1, refined_holder_2);  // Must outlive bra_kstate_view
             const auto bra_kstate_view_preproduct_3 = KstateTraitT::refined_view(bra_kstate_view_preproduct_2, refined_holder_3);  // Must outlive bra_kstate_view
             const auto bra_kstate_view = KstateTraitT::refined_view(bra_kstate_view_preproduct_3, refined_holder_4);

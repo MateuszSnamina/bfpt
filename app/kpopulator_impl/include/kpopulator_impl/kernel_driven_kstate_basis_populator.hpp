@@ -112,7 +112,7 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             const auto& bra_kernel = couple_info.kernel_state;
             const auto& bra_kernel_site_1 = bra_kernel.state_1;
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);             // Must outlive conjugated_view.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);  // Must outlive conjugated_view.
             const auto conjugated_view = KstateTraitT::refined_view(generator_view, refined_holder_1);
             if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
                 const size_t conjugated_view_n_unique_shift = KstateTraitT::view_n_unique_shift(conjugated_view);
@@ -182,10 +182,10 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             const auto& bra_kernel_site_2 = bra_kernel.state_2;
             const auto& bra_kernel_site_3 = bra_kernel.state_3;
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);             // Must outlive conjugated_view.
-            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);          // Must outlive conjugated_view.
-            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);          // Must outlive conjugated_view.
-            const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);  // Must outlive conjugated_view.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);                             // Must outlive conjugated_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);                          // Must outlive conjugated_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);                          // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);                // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_1 = KstateTraitT::refined_view(conjugated_view_preproduct_0, refined_holder_2);  // Must outlive conjugated_view.
             const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct_1, refined_holder_3);
             if (KstateTraitT::is_prolific(conjugated_view, n_k)) {
@@ -227,11 +227,11 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             const auto& bra_kernel_site_3 = bra_kernel.state_3;
             const auto& bra_kernel_site_4 = bra_kernel.state_4;
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
-            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);             // Must outlive conjugated_view.
-            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);          // Must outlive conjugated_view.
-            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);          // Must outlive conjugated_view.
-            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_4);          // Must outlive conjugated_view.
-            const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);  // Must outlive conjugated_view.
+            const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);                             // Must outlive conjugated_view.
+            const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);                          // Must outlive conjugated_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);                          // Must outlive conjugated_view.
+            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_4);                          // Must outlive conjugated_view.
+            const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);                // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_1 = KstateTraitT::refined_view(conjugated_view_preproduct_0, refined_holder_2);  // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_2 = KstateTraitT::refined_view(conjugated_view_preproduct_1, refined_holder_3);  // Must outlive conjugated_view.
             const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct_2, refined_holder_4);

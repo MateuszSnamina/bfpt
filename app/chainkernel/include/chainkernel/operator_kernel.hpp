@@ -255,7 +255,6 @@ struct StateKernel1234 {
     SiteStateT state_2;
     SiteStateT state_3;
     SiteStateT state_4;
-
 };
 
 template <typename SiteStateTraitT>
