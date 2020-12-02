@@ -50,8 +50,10 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(so_system::classical_gs_kstate(n_sites)));
     const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations};
-    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, acceptance_predicate};
-    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const chainkernel::OperatorKernel123<so_system::SoSiteStateTrait> hamiltonian_kernel_123;
+    const chainkernel::OperatorKernel1234<so_system::SoSiteStateTrait> hamiltonian_kernel_1234;
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234, acceptance_predicate};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 4u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
@@ -84,8 +86,10 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(so_system::classical_es_kstate(n_sites)));
     const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations};
-    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, acceptance_predicate};
-    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const chainkernel::OperatorKernel123<so_system::SoSiteStateTrait> hamiltonian_kernel_123;
+    const chainkernel::OperatorKernel1234<so_system::SoSiteStateTrait> hamiltonian_kernel_1234;
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234, acceptance_predicate};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 4u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,

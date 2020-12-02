@@ -39,11 +39,15 @@ class KernelDrivenKstateBasisPopulator {
     KernelDrivenKstateBasisPopulator(
         const size_t n_sites,
         chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
-        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
+        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+        chainkernel::OperatorKernel123<SiteStateTraitT> operator_kernel_123,
+        chainkernel::OperatorKernel1234<SiteStateTraitT> operator_kernel_1234);
     KernelDrivenKstateBasisPopulator(
         const size_t n_sites,
         chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
         chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+        chainkernel::OperatorKernel123<SiteStateTraitT> operator_kernel_123,
+        chainkernel::OperatorKernel1234<SiteStateTraitT> operator_kernel_1234,
         std::function<bool(KstateT)> acceptance_predicate);
 
     kstate_trait::KstateSet<KstateTraitT> get_coupled_states(
@@ -72,10 +76,14 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulato
     const size_t n_sites,
     chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
     chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+    chainkernel::OperatorKernel123<SiteStateTraitT> operator_kernel_123,
+    chainkernel::OperatorKernel1234<SiteStateTraitT> operator_kernel_1234,
     std::function<bool(KstateT)> acceptance_predicate)
     : _n_sites(n_sites),
       _operator_kernel_1(operator_kernel_1),
       _operator_kernel_12(operator_kernel_12),
+      _operator_kernel_123(operator_kernel_123),
+      _operator_kernel_1234(operator_kernel_1234),
       _acceptance_predicate(acceptance_predicate) {
 }
 
@@ -83,10 +91,14 @@ template <typename _KstateTraitT>
 KernelDrivenKstateBasisPopulator<_KstateTraitT>::KernelDrivenKstateBasisPopulator(
     const size_t n_sites,
     chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
-    chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12)
+    chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+    chainkernel::OperatorKernel123<SiteStateTraitT> operator_kernel_123,
+    chainkernel::OperatorKernel1234<SiteStateTraitT> operator_kernel_1234)
     : _n_sites(n_sites),
       _operator_kernel_1(operator_kernel_1),
       _operator_kernel_12(operator_kernel_12),
+      _operator_kernel_123(operator_kernel_123),
+      _operator_kernel_1234(operator_kernel_1234),
       _acceptance_predicate([](const KstateT&) -> bool { return true; }) {
 }
 
@@ -184,7 +196,7 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
             const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);                             // Must outlive conjugated_view.
             const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);                          // Must outlive conjugated_view.
-            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);                          // Must outlive conjugated_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);                          // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);                // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_1 = KstateTraitT::refined_view(conjugated_view_preproduct_0, refined_holder_2);  // Must outlive conjugated_view.
             const auto conjugated_view = KstateTraitT::refined_view(conjugated_view_preproduct_1, refined_holder_3);
@@ -229,8 +241,8 @@ KernelDrivenKstateBasisPopulator<_KstateTraitT>::get_coupled_states(
             //TODO: if (kernel_coupling_coef !=0 ){ FILL }
             const auto refined_holder_1 = kstate_view_amend_spec::refined(n_delta, bra_kernel_site_1);                             // Must outlive conjugated_view.
             const auto refined_holder_2 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_2);                          // Must outlive conjugated_view.
-            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_3);                          // Must outlive conjugated_view.
-            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p1, bra_kernel_site_4);                          // Must outlive conjugated_view.
+            const auto refined_holder_3 = kstate_view_amend_spec::refined(n_delta_p2, bra_kernel_site_3);                          // Must outlive conjugated_view.
+            const auto refined_holder_4 = kstate_view_amend_spec::refined(n_delta_p3, bra_kernel_site_4);                          // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_0 = KstateTraitT::refined_view(generator_view, refined_holder_1);                // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_1 = KstateTraitT::refined_view(conjugated_view_preproduct_0, refined_holder_2);  // Must outlive conjugated_view.
             const auto conjugated_view_preproduct_2 = KstateTraitT::refined_view(conjugated_view_preproduct_1, refined_holder_3);  // Must outlive conjugated_view.

@@ -40,7 +40,9 @@ class KernelDrivenKstateOperatorMatrix {
     KernelDrivenKstateOperatorMatrix(
         const size_t n_sites,
         chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
-        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12);
+        chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+        chainkernel::OperatorKernel123<SiteStateTraitT> operator_kernel_123,
+        chainkernel::OperatorKernel1234<SiteStateTraitT> operator_kernel_1234);
     void fill_kn_operator_builder_matrix_coll(
         const BasisT& basis,
         size_t n_col,
@@ -67,10 +69,14 @@ template <typename _KstateTraitT>
 KernelDrivenKstateOperatorMatrix<_KstateTraitT>::KernelDrivenKstateOperatorMatrix(
     const size_t n_sites,
     chainkernel::OperatorKernel1<SiteStateTraitT> operator_kernel_1,
-    chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12)
+    chainkernel::OperatorKernel12<SiteStateTraitT> operator_kernel_12,
+    chainkernel::OperatorKernel123<SiteStateTraitT> operator_kernel_123,
+    chainkernel::OperatorKernel1234<SiteStateTraitT> operator_kernel_1234)
     : _n_sites(n_sites),
       _operator_kernel_1(operator_kernel_1),
-      _operator_kernel_12(operator_kernel_12) {
+      _operator_kernel_12(operator_kernel_12),
+      _operator_kernel_123(operator_kernel_123),
+      _operator_kernel_1234(operator_kernel_1234) {
 }
 
 /*

@@ -37,6 +37,8 @@
 bfpt_common::CommonRecipeReceipt bfpt_gs(
     const chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1,
     const chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_12,
+    const chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_123,
+    const chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1234,
     const size_t n_sites, const unsigned max_pt_order,
     const bfpt_common::CommonRecipePrintFlags& print_flags,
     const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
@@ -51,8 +53,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using BasisT = monostar_system::MonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
-    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
@@ -68,6 +70,8 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
 bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     const chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1,
     const chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_12,
+    const chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_123,
+    const chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>& hamiltonian_kernel_1234,
     const size_t n_sites, const unsigned max_pt_order, const unsigned k_n,
     const bfpt_common::CommonRecipePrintFlags& print_flags,
     const std::vector<utility::Named<arma::cx_mat22>>& one_site_metrices_for_average_calculation,
@@ -82,8 +86,8 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = monostar_system::MonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
-    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
+    const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234};
+    const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
@@ -236,6 +240,8 @@ int main(int argc, char** argv) {
                 return bfpt_gs(
                     hamiltonian_kernel_1,
                     hamiltonian_kernel_12,
+                    hamiltonian_kernel_123,
+                    hamiltonian_kernel_1234,
                     interpreted_program_options.n_sites, interpreted_program_options.n_pt,
                     interpreted_program_options.print_flags,
                     one_site_metrices_for_average_calculation,
@@ -260,6 +266,8 @@ int main(int argc, char** argv) {
                     const auto es_energy = bfpt_kn_es(
                         hamiltonian_kernel_1,
                         hamiltonian_kernel_12,
+                        hamiltonian_kernel_123,
+                        hamiltonian_kernel_1234,
                         interpreted_program_options.n_sites, interpreted_program_options.n_pt, k_n,
                         interpreted_program_options.print_flags,
                         one_site_metrices_for_average_calculation,
