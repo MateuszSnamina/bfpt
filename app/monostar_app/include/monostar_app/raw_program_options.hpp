@@ -24,6 +24,8 @@ struct RawProgramOptions {
     double hamiltonian_K_1;
     double hamiltonian_L;
     double hamiltonian_L_1;
+    double hamiltonian_agile_eps;
+    double hamiltonian_agile_phi;
     std::string orbital_theta_string;
     std::string run_type_string;
     bool print_unpopulated_basis_flag;

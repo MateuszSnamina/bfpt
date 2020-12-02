@@ -83,7 +83,7 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
          boost::program_options::value<double>(&program_options.hamiltonian_J_1)->default_value(0.0))
         // --hamiltonian_K:
         ("hamiltonian_K",
-         boost::program_options::value<double>(&program_options.hamiltonian_K)->default_value(1.0))
+         boost::program_options::value<double>(&program_options.hamiltonian_K)->default_value(0.0))
         // --hamiltonian_K_0:
         ("hamiltonian_K_0",
          boost::program_options::value<double>(&program_options.hamiltonian_K_0)->default_value(0.0))
@@ -96,6 +96,12 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --hamiltonian_L_1:
         ("hamiltonian_L_1",
          boost::program_options::value<double>(&program_options.hamiltonian_L_1)->default_value(0.0))
+        // --hamiltonian_eps:
+        ("hamiltonian_eps",
+         boost::program_options::value<double>(&program_options.hamiltonian_agile_eps)->default_value(0.0))
+        // --hamiltonian_phi:
+        ("hamiltonian_phi",
+         boost::program_options::value<double>(&program_options.hamiltonian_agile_phi)->default_value(0.0))
         // --orbital_theta,o:
         ("orbital_theta,o",
          boost::program_options::value<std::string>(&program_options.orbital_theta_string)->default_value("auto"))
