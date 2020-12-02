@@ -8,6 +8,8 @@
 #include <monostar_hamiltonians/hamiltonian_kernel_fo.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_fo_site_matrices.hpp>
 #include <monostar_hamiltonians/hamiltonian_reference_energies_fo.hpp>
+#include <monostar_hamiltonians/hamiltonian_kernel_jkl01.hpp>
+#include <monostar_hamiltonians/hamiltonian_reference_energies_jkl01.hpp>
 #include <monostar_hamiltonians/get_orbital_theta.hpp>
 
 #include <monostar_system/monostar_basis.hpp>
@@ -17,7 +19,6 @@
 #include <chainkernel/operator_kernel.hpp>
 #include <koperator_impl/kernel_driven_kstate_operator_matrix.hpp>
 #include <kpopulator_impl/kernel_driven_kstate_basis_populator.hpp>
-//#include <kpopulator_trait/take_all_acceptance_predicate.hpp>//TODO remove
 
 #include <bfpt_common/do_common_recipie.hpp>
 
@@ -52,7 +53,6 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_gs_kstate(n_sites)));
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
-    //kpopulator_trait::TakeAllAcceptancePredicate<KstateTraitT> acceptance_predicate;//TODO remove
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
                kstate_populator, kstate_hamiltonian,
                basis, max_pt_order,
@@ -82,7 +82,6 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = monostar_system::MonostarKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(monostar_system::classical_es_kstate(n_sites)));
-    //kpopulator_trait::TakeAllAcceptancePredicate<KstateTraitT> acceptance_predicate;//TODO remove
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     const KoperatorT kstate_hamiltonian{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12};
     return bfpt_common::do_common_recipe<KstateTraitT, KpopulatorTraitT, KoperatorTraitT, 2u>(
@@ -103,28 +102,6 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
 
 int main(int argc, char** argv) {
     using namespace monostar_app;
-    //    {
-    //        arma::cx_mat22 P_z_in_zx_basis = OrbitalSiteMatrices::get_P_z_in_zx_basis();
-    //        arma::cx_mat22 P_x_in_zx_basis = OrbitalSiteMatrices::get_P_x_in_zx_basis();
-    //        arma::cx_mat22 P_plus_in_zx_basis = OrbitalSiteMatrices::get_P_plus_in_zx_basis();
-    //        arma::cx_mat22 P_minus_in_zx_basis = OrbitalSiteMatrices::get_P_minus_in_zx_basis();
-    //        arma::cx_mat22 tau_z_in_zx_basis = OrbitalSiteMatrices::get_tau_z_in_zx_basis();
-    //        arma::cx_mat22 tau_x_in_zx_basis = OrbitalSiteMatrices::get_tau_x_in_zx_basis();
-    //        arma::cx_mat22 tau_plus_in_zx_basis = OrbitalSiteMatrices::get_tau_plus_in_zx_basis();
-    //        arma::cx_mat22 tau_minus_in_zx_basis = OrbitalSiteMatrices::get_tau_minus_in_zx_basis();
-
-    //        arma::cx_mat22 beta_from_zx_to_ge = OrbitalSiteMatrices::get_beta_from_zx_to_ge(0.253585);
-
-    //        arma::cx_mat22 P_z_in_ge_basis = OrbitalSiteMatrices::get_P_z_in_ge_basis(0.253585);
-    //        arma::cx_mat22 P_x_in_ge_basis = OrbitalSiteMatrices::get_P_x_in_ge_basis(0.253585);
-    //        arma::cx_mat22 P_plus_in_ge_basis = OrbitalSiteMatrices::get_P_plus_in_ge_basis(0.253585);
-    //        arma::cx_mat22 P_minus_in_ge_basis = OrbitalSiteMatrices::get_P_minus_in_ge_basis(0.253585);
-    //        arma::cx_mat22 tau_z_in_ge_basis = OrbitalSiteMatrices::get_tau_z_in_ge_basis(0.253585);
-    //        arma::cx_mat22 tau_x_in_ge_basis = OrbitalSiteMatrices::get_tau_x_in_ge_basis(0.253585);
-    //        arma::cx_mat22 tau_plus_in_ge_basis = OrbitalSiteMatrices::get_tau_plus_in_ge_basis(0.253585);
-    //        arma::cx_mat22 tau_minus_in_ge_basis = OrbitalSiteMatrices::get_tau_minus_in_ge_basis(0.253585);
-    //    }
-
     try {
         // ******************************************************************
         const RawProgramOptions raw_program_options = grep_program_options(argc, argv);
@@ -145,6 +122,8 @@ int main(int argc, char** argv) {
                     const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
                     return monostar_hamiltonians::prepare_hamiltonian_kernel_1_fo(interpreted_program_options.hamiltonian_params_fo, orbital_theta_to_use);
                 }
+                case ModelType::JKL01:
+                    return chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait>{};
                 default:
                     throw std::domain_error("Invalid model_type enum value.");
             }
@@ -159,6 +138,36 @@ int main(int argc, char** argv) {
                     const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
                     return monostar_hamiltonians::prepare_hamiltonian_kernel_12_fo(interpreted_program_options.hamiltonian_params_fo, orbital_theta_to_use);
                 }
+                case ModelType::JKL01:
+                    return chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>{};
+                default:
+                    throw std::domain_error("Invalid model_type enum value.");
+            };
+        }();
+        const auto hamiltonian_kernel_123 = [&interpreted_program_options]() {
+            switch (interpreted_program_options.model_type) {
+                case ModelType::AF:
+                    return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{};
+                case ModelType::FM:
+                    return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{};
+                case ModelType::FO:
+                    return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{};
+                case ModelType::JKL01:
+                    return monostar_hamiltonians::prepare_hamiltonian_kernel_123_jkl01(interpreted_program_options.hamiltonian_params_jkl01);
+                default:
+                    throw std::domain_error("Invalid model_type enum value.");
+            };
+        }();
+        const auto hamiltonian_kernel_1234 = [&interpreted_program_options]() {
+            switch (interpreted_program_options.model_type) {
+                case ModelType::AF:
+                    return chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>{};
+                case ModelType::FM:
+                    return chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>{};
+                case ModelType::FO:
+                    return chainkernel::OperatorKernel1234<monostar_system::MonostarSiteStateTrait>{};
+                case ModelType::JKL01:
+                    return monostar_hamiltonians::prepare_hamiltonian_kernel_1234_jkl01(interpreted_program_options.hamiltonian_params_jkl01);
                 default:
                     throw std::domain_error("Invalid model_type enum value.");
             };
@@ -167,6 +176,7 @@ int main(int argc, char** argv) {
             switch (interpreted_program_options.model_type) {
                 case ModelType::AF:
                 case ModelType::FM:
+                case ModelType::JKL01:
                     return monostar_hamiltonians::OneSiteSpinNamedMatrices::site_matrices_for_average_calculations_af_fm();
                 case ModelType::FO: {
                     const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
@@ -179,6 +189,7 @@ int main(int argc, char** argv) {
         const auto two_sites_metrices_for_average_calculation = [&interpreted_program_options]() {
             switch (interpreted_program_options.model_type) {
                 case ModelType::AF:
+                case ModelType::JKL01:
                     return monostar_hamiltonians::TwoSitesSpinNamedMatrices::matrices_for_average_calculations_af();
                 case ModelType::FM:
                     return monostar_hamiltonians::TwoSitesSpinNamedMatrices::matrices_for_average_calculations_fm();
@@ -207,6 +218,11 @@ int main(int argc, char** argv) {
                         return std::dynamic_pointer_cast<monostar_hamiltonians::HamiltonianReferenceEnergies>(
                             std::make_shared<monostar_hamiltonians::HamiltonianReferenceEnergiesFo>(
                                 interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_fo, orbital_theta_to_use));
+                    }
+                    case ModelType::JKL01: {
+                        return std::dynamic_pointer_cast<monostar_hamiltonians::HamiltonianReferenceEnergies>(
+                            std::make_shared<monostar_hamiltonians::HamiltonianReferenceEnergiesJkl01>(
+                                interpreted_program_options.n_sites, interpreted_program_options.hamiltonian_params_jkl01));
                     }
                     default:
                         throw std::domain_error("Invalid model_type enum value.");
