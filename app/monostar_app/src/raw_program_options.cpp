@@ -72,6 +72,21 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --hamiltonian_P_xx:
         ("hamiltonian_P_xx",
          boost::program_options::value<double>(&program_options.hamiltonian_Pxx_coef)->default_value(-1.0))
+        // --hamiltonian_ss_P_zz:
+        ("hamiltonian_ss_P_zz",
+         boost::program_options::value<double>(&program_options.hamiltonian_ss_Pzz_coef)->default_value(0.0))
+        // --hamiltonian_ss_P_xz:
+        ("hamiltonian_ss_P_xz",
+         boost::program_options::value<double>(&program_options.hamiltonian_ss_Pxz_coef)->default_value(0.0))
+        // --hamiltonian_ss_P_xx:
+        ("hamiltonian_ss_P_xx",
+         boost::program_options::value<double>(&program_options.hamiltonian_ss_Pxx_coef)->default_value(0.0))
+        //        // --hamiltonian_s:
+        //        ("hamiltonian_s",
+        //        boost::program_options::value<double>(&program_options.hamiltonian_s_coef)->default_value(0.0))
+        // --hamiltonian_ss:
+        ("hamiltonian_ss",
+         boost::program_options::value<double>(&program_options.hamiltonian_ss_coef)->default_value(1.0))
         // --hamiltonian_J:
         ("hamiltonian_J",
          boost::program_options::value<double>(&program_options.hamiltonian_J)->default_value(1.0))
@@ -105,6 +120,9 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --orbital_theta,o:
         ("orbital_theta,o",
          boost::program_options::value<std::string>(&program_options.orbital_theta_string)->default_value("auto"))
+        // --average_ss:
+        ("average_ss",
+         boost::program_options::value<double>(&program_options.average_ss)->default_value(-1.0 / 4.0))
         // --run_type,-r:
         ("run_type,r",
          boost::program_options::value<std::string>(&program_options.run_type_string)->default_value("eg"))

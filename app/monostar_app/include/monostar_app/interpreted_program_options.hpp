@@ -8,6 +8,7 @@
 #include <monostar_hamiltonians/hamiltonian_params_af_fm.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_jkl01.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_agile_affo.hpp>
 
 #include <bfpt_common/common_recipe_print_flags.hpp>
 
@@ -23,7 +24,9 @@ struct InterpretedProgramOptions {
     monostar_hamiltonians::HamiltonianParamsAfFm hamiltonian_params_af_fm = monostar_hamiltonians::HamiltonianParamsAfFm::Builder().build();
     monostar_hamiltonians::HamiltonianParamsFo hamiltonian_params_fo = monostar_hamiltonians::HamiltonianParamsFo::Builder().build();
     monostar_hamiltonians::HamiltonianParamsJkl01 hamiltonian_params_jkl01 = monostar_hamiltonians::HamiltonianParamsJkl01::Builder().build();
+    monostar_hamiltonians::HamiltonianParamsAgileAffo hamiltonian_params_agile_affo = monostar_hamiltonians::HamiltonianParamsAgileAffo::Builder().build();
     std::optional<double> orbital_theta;
+    double average_ss;
     RunType run_type;
     EsMomentumDomainVariant es_momentum_domain;
     bfpt_common::CommonRecipePrintFlags print_flags;

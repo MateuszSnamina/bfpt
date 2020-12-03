@@ -4,6 +4,9 @@
 
 #include <monostar_hamiltonians/hamiltonian_reference_energies.hpp>
 
+#include <monostar_hamiltonians/hamiltonian_params_fo.hpp>
+#include <monostar_hamiltonians/hamiltonian_params_affo.hpp>
+
 #include <bfpt_common/do_common_recipie.hpp>
 
 // #######################################################################
@@ -30,6 +33,10 @@ void print_post_data(
 
 void print_theta_opt(
     const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
+    std::optional<double> user_defined_overrule);
+
+void print_theta_opt(
+    const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_affo_params,
     std::optional<double> user_defined_overrule);
 
 }  // end of namespace monostar_app

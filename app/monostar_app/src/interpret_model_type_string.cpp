@@ -12,7 +12,7 @@ const extern std::map<std::string, ModelType> interpret_model_type_string_map{
     {"fm", ModelType::FM},
     {"fo", ModelType::FO},
     {"jkl01", ModelType::JKL01},
-};
+    {"agileAfFo", ModelType::AgileAFFO}};
 
 utility::Result<ModelType, std::domain_error> interpret_model_type_string(const std::string& model_type_string) {
     using extension::boost::stream_pragma::RSS;
