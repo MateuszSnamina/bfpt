@@ -61,8 +61,6 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::ss_Pzz_coef     = " << interpreted_program_options.hamiltonian_params_agile_affo.get_so_hamiltonian().get_ss_Pzz_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::ss_Pxz_coef     = " << interpreted_program_options.hamiltonian_params_agile_affo.get_so_hamiltonian().get_ss_Pxz_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::ss_Pxx_coef     = " << interpreted_program_options.hamiltonian_params_agile_affo.get_so_hamiltonian().get_ss_Pxx_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::ss_Pxz_coef     = " << interpreted_program_options.hamiltonian_params_agile_affo.get_so_hamiltonian().get_ss_Pxz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::ss_Pxx_coef     = " << interpreted_program_options.hamiltonian_params_agile_affo.get_so_hamiltonian().get_ss_Pxx_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::eps             = " << interpreted_program_options.hamiltonian_params_agile_affo.get_aglie_params().get_eps() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_agile::phi             = " << interpreted_program_options.hamiltonian_params_agile_affo.get_aglie_params().get_phi() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_affo::average_ss       = " << interpreted_program_options.average_ss << std::endl;
