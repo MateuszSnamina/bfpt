@@ -16,7 +16,7 @@ class HamiltonianParamsAffo {
    public:
     class Builder {
        public:
-        //        Builder set_s_coef(double);
+        // Builder set_s_coef(double);
         Builder set_ss_coef(double);
         Builder set_tau_z_coef(double);
         Builder set_tau_minus_coef(double);
@@ -29,7 +29,7 @@ class HamiltonianParamsAffo {
         HamiltonianParamsAffo build() const;
 
        private:
-        //        double _s_coef = 0.0;
+        // double _s_coef = 0.0;
         double _ss_coef = 0.0;
         double _tau_z_coef = 0.0;
         double _tau_munis_coef = 0.0;
@@ -41,7 +41,7 @@ class HamiltonianParamsAffo {
         double _ss_Pxx_coef = 0.0;
     };
     friend HamiltonianParamsAffo Builder::build() const;
-    //    double get_s_coef() const;
+    // double get_s_coef() const;
     double get_ss_coef() const;
     double get_tau_z_coef() const;
     double get_tau_minus_coef() const;
@@ -74,7 +74,7 @@ class HamiltonianParamsAffo {
         double tau_z_coef, double tau_minus_coef,
         double Pzz_coef, double Pxz_coef, double Pxx_coef,
         double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef);
-    //    double _s_coef = 0.0; // _s_coef is not used right now, prefer to keep commented out and not removed.
+    // double _s_coef = 0.0; // _s_coef is not used right now, prefer to keep commented out and not removed.
     double _ss_coef = 0.0;
     HamiltonianParamsFo _hamiltonian_params_fo;
     HamiltonianParamsFo _hamiltonian_params_ss_fo;
