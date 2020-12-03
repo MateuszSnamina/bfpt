@@ -14,10 +14,10 @@
 
 namespace monostar_hamiltonians {
 
-HamiltonianParamsAffo::Builder HamiltonianParamsAffo::Builder::set_s_coef(double s_coef) {
-    _s_coef = s_coef;
-    return *this;
-}
+//HamiltonianParamsAffo::Builder HamiltonianParamsAffo::Builder::set_s_coef(double s_coef) {
+//    _s_coef = s_coef;
+//    return *this;
+//}
 
 HamiltonianParamsAffo::Builder HamiltonianParamsAffo::Builder::set_ss_coef(double ss_coef) {
     _ss_coef = ss_coef;
@@ -66,7 +66,7 @@ HamiltonianParamsAffo::Builder HamiltonianParamsAffo::Builder::set_ss_Pxx_coef(d
 
 HamiltonianParamsAffo HamiltonianParamsAffo::Builder::build() const {
     return HamiltonianParamsAffo(
-        _s_coef, _ss_coef,
+        /*_s_coef,*/ _ss_coef,
         _tau_z_coef, _tau_munis_coef, _Pzz_coef, _Pxz_coef, _Pxx_coef,
         _ss_Pzz_coef, _ss_Pxz_coef, _ss_Pxx_coef);
 }
@@ -74,11 +74,11 @@ HamiltonianParamsAffo HamiltonianParamsAffo::Builder::build() const {
 // #######################################################################
 
 HamiltonianParamsAffo::HamiltonianParamsAffo(
-    double s_coef, double ss_coef,
+    /*double s_coef,*/ double ss_coef,
     double tau_z_coef, double tau_minus_coef,
     double Pzz_coef, double Pxz_coef, double Pxx_coef,
     double ss_Pzz_coef, double ss_Pxz_coef, double ss_Pxx_coef)
-    : _s_coef(s_coef),
+    : /*_s_coef(s_coef),*/
       _ss_coef(ss_coef),
       _hamiltonian_params_fo(HamiltonianParamsFo::Builder()
                                  .set_tau_z_coef(tau_z_coef)
@@ -96,9 +96,9 @@ HamiltonianParamsAffo::HamiltonianParamsAffo(
                                     .build()) {
 }
 
-double HamiltonianParamsAffo::get_s_coef() const {
-    return _s_coef;
-}
+//double HamiltonianParamsAffo::get_s_coef() const {
+//    return _s_coef;
+//}
 
 double HamiltonianParamsAffo::get_ss_coef() const {
     return _ss_coef;
@@ -142,9 +142,9 @@ HamiltonianParamsAffo::average_out_spins_1(double average_s) const {
 }
 
 HamiltonianParamsFo
-HamiltonianParamsAffo::average_out_spins_12(double average_s, double average_ss) const {
+HamiltonianParamsAffo::average_out_spins_12([[maybe_unused]] double average_s, double average_ss) const {
     const double free =
-        +get_s_coef() * average_s + get_ss_coef() * average_ss;
+        /*+get_s_coef() * average_s*/ +get_ss_coef() * average_ss;
     return HamiltonianParamsFo::Builder()
         .set_tau_z_coef(get_tau_z_coef())
         .set_tau_minus_coef(get_tau_minus_coef())
