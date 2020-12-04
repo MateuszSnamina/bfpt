@@ -1,6 +1,5 @@
 #include <so_hamiltonians/hamiltonian_params_af_fo.hpp>
 #include <so_hamiltonians/hamiltonian_params_af_fo_to_classic_energy_function.hpp>
-#include <so_hamiltonians/hamiltonian_params_af_fo_site_matrices.hpp>
 
 #include <monostar_hamiltonians/hamiltonian_params_fo_helpers.hpp>
 #include <monostar_hamiltonians/hamiltonian_params_fo_site_matrices.hpp>
@@ -158,11 +157,11 @@ HamiltonianParamsAfFo::average_out_spins_12(double average_s, double average_ss)
 
 monostar_hamiltonians::HamiltonianParamsAfFm
 HamiltonianParamsAfFo::average_out_orbitals_1(double theta) const {
-    const double average_tau_minus = std::real(OneSiteSpinOrbitalMatrices::get_tau_minus_in_ge_basis(theta)(0, 0));
-    const double average_tau_z = std::real(OneSiteSpinOrbitalMatrices::get_tau_z_in_ge_basis(theta)(0, 0));
-    const double average_Pzz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zz_in_ge_basis(theta)(0, 0));
-    const double average_Pzx_sum_P_xz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(theta)(0, 0));
-    const double average_Pxx = std::real(TwoSitesSpinOrbitalMatrices::get_P_xx_in_ge_basis(theta)(0, 0));
+    const double average_tau_minus = std::real(monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(theta)(0, 0));
+    const double average_tau_z = std::real(monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(theta)(0, 0));
+    const double average_Pzz = std::real(monostar_hamiltonians::TwoSitesOrbitalMatrices::get_P_zz_in_ge_basis(theta)(0, 0));
+    const double average_Pzx_sum_P_xz = std::real(monostar_hamiltonians::TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(theta)(0, 0));
+    const double average_Pxx = std::real(monostar_hamiltonians::TwoSitesOrbitalMatrices::get_P_xx_in_ge_basis(theta)(0, 0));
     return average_out_orbitals_12(
         average_tau_minus, average_tau_z,
         average_Pzz, average_Pzx_sum_P_xz, average_Pxx);

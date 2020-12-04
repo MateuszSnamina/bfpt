@@ -157,36 +157,32 @@ HamiltonianParamsAffo::average_out_spins_12([[maybe_unused]] double average_s, d
 
 HamiltonianParamsAfFm
 HamiltonianParamsAffo::average_out_orbitals_1(double theta) const {
-    //    const double average_tau_minus = std::real(OneSiteSpinOrbitalMatrices::get_tau_minus_in_ge_basis(theta)(0, 0));
-    //    const double average_tau_z = std::real(OneSiteSpinOrbitalMatrices::get_tau_z_in_ge_basis(theta)(0, 0));
-    //    const double average_Pzz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zz_in_ge_basis(theta)(0, 0));
-    //    const double average_Pzx_sum_P_xz = std::real(TwoSitesSpinOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(theta)(0, 0));
-    //    const double average_Pxx = std::real(TwoSitesSpinOrbitalMatrices::get_P_xx_in_ge_basis(theta)(0, 0));
-    //    return average_out_orbitals_12(
-    //        average_tau_minus, average_tau_z,
-    //        average_Pzz, average_Pzx_sum_P_xz, average_Pxx);
-
-    //TODO think
+        const double average_tau_minus = std::real(OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(theta)(0, 0));
+        const double average_tau_z = std::real(OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(theta)(0, 0));
+        const double average_Pzz = std::real(TwoSitesOrbitalMatrices::get_P_zz_in_ge_basis(theta)(0, 0));
+        const double average_Pzx_sum_P_xz = std::real(TwoSitesOrbitalMatrices::get_P_zx_sum_P_xz_in_ge_basis(theta)(0, 0));
+        const double average_Pxx = std::real(TwoSitesOrbitalMatrices::get_P_xx_in_ge_basis(theta)(0, 0));
+        return average_out_orbitals_12(
+            average_tau_minus, average_tau_z,
+            average_Pzz, average_Pzx_sum_P_xz, average_Pxx);
 }
 
 HamiltonianParamsAfFm
 HamiltonianParamsAffo::average_out_orbitals_12(
     double average_tau_minus, double average_tau_z,
     double average_Pzz, double average_Pzx_sum_P_xz, double average_Pxx) const {
-    //    const double free =
-    //        +get_tau_minus_coef() * average_tau_minus + get_tau_z_coef() * average_tau_z + get_Pzz_coef() * average_Pzz + get_Pxz_coef() * average_Pzx_sum_P_xz + get_Pxx_coef() * average_Pxx;
-    //    const double B =
-    //        +get_s_coef();
-    //    const double J =
-    //        +get_ss_coef() + get_ss_Pzz_coef() * average_Pzz + get_ss_Pxz_coef() * average_Pzx_sum_P_xz + get_ss_Pxx_coef() * average_Pxx;
-    //    return HamiltonianParamsAfFm::Builder()
-    //        .set_B(B)
-    //        .set_J_classical(J)
-    //        .set_J_quantum(J)
-    //        .set_free(free)
-    //        .build();
-
-    //TODO think
+        const double free =
+            +get_tau_minus_coef() * average_tau_minus + get_tau_z_coef() * average_tau_z + get_Pzz_coef() * average_Pzz + get_Pxz_coef() * average_Pzx_sum_P_xz + get_Pxx_coef() * average_Pxx;
+        const double B =
+            /*+get_s_coef()*/ 0.0;
+        const double J =
+            +get_ss_coef() + get_ss_Pzz_coef() * average_Pzz + get_ss_Pxz_coef() * average_Pzx_sum_P_xz + get_ss_Pxx_coef() * average_Pxx;
+        return HamiltonianParamsAfFm::Builder()
+            .set_B(B)
+            .set_J_classical(J)
+            .set_J_quantum(J)
+            .set_free(free)
+            .build();
 }
 
 HamiltonianParamsFo HamiltonianParamsAffo::get_hamiltonian_params_fo() const {
