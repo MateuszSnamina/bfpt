@@ -267,8 +267,7 @@ std::string HamiltonianParamsAfFo::string_repr_in_orbital_operators() const {
     return ss.str();
 }
 
-std::string HamiltonianParamsAfFo::string_repr_in_trigonometric_functions() const {
-    double average_ss = -4.0;  //TODO: make average_ss an arg.
+std::string HamiltonianParamsAfFo::string_repr_in_trigonometric_functions(double average_ss) const {
     std::ostringstream ss;
     ss << std::showpos;
     ss << _hamiltonian_params_fo.string_repr_in_trigonometric_functions();

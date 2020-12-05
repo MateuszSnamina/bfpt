@@ -66,7 +66,7 @@ class HamiltonianParamsAfFo {
     std::set<double> get_theta_opt_numerical(double average_ss) const;
     utility::Result<std::set<double>, monostar_hamiltonians::NoKnownAnalyticalSolutionError> get_theta_opt_analytical(double average_ss) const;
     std::string string_repr_in_orbital_operators() const;
-    std::string string_repr_in_trigonometric_functions() const;
+    std::string string_repr_in_trigonometric_functions(double average_ss) const;
 
    private:
     HamiltonianParamsAfFo(
