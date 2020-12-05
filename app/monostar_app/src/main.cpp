@@ -105,8 +105,23 @@ int main(int argc, char** argv) {
         print_input_data(interpreted_program_options);
         // ******************************************************************
         if (interpreted_program_options.model_type == ModelType::FO) {
-            print_theta_opt(interpreted_program_options.hamiltonian_params_fo, interpreted_program_options.orbital_theta);
+            print_theta_opt(interpreted_program_options.hamiltonian_params_fo,
+                            interpreted_program_options.orbital_theta);
         }
+        if (interpreted_program_options.model_type == ModelType::AgileAFFO) {
+            print_theta_opt(interpreted_program_options.hamiltonian_params_agile_affo.get_so_hamiltonian(),
+                            interpreted_program_options.orbital_theta,
+                            interpreted_program_options.average_ss);
+        }
+        if (interpreted_program_options.model_type == ModelType::AgileAFFO) {
+            print_decayed_agile_affo_hamiltonian_params(
+                interpreted_program_options.hamiltonian_params_agile_affo,
+                interpreted_program_options.orbital_theta,
+                interpreted_program_options.average_ss);
+        }
+        if (interpreted_program_options.model_type == ModelType::AgileAFFO) {
+            throw std::domain_error("Agile-to-jkl01 logic not implemented!");
+        } //TODO REMOVE WHEN DONE!
         // ******************************************************************
         const chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait> hamiltonian_kernel_1 =
             get_prepare_hamiltonian_kernel_1(interpreted_program_options);

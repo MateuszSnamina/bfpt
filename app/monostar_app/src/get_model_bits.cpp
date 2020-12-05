@@ -171,7 +171,7 @@ get_hamiltonian_reference_energies(const InterpretedProgramOptions& interpreted_
                 monostar_hamiltonians::dacay_hamiltonian_params_agile_affo(
                     interpreted_program_options.hamiltonian_params_agile_affo,
                     orbital_theta_to_use);
-            std::make_shared<monostar_hamiltonians::HamiltonianReferenceEnergiesJkl01>(
+            return std::make_shared<monostar_hamiltonians::HamiltonianReferenceEnergiesJkl01>(
                 interpreted_program_options.n_sites, decayed_hamiltonian);
         }
         default:

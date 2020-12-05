@@ -1,5 +1,6 @@
 #include <monostar_app/main_printing.hpp>
 
+#include <monostar_hamiltonians/hamiltonian_params_agile_affo_dacay.hpp>
 #include <monostar_hamiltonians/get_orbital_theta.hpp>
 
 #include <extensions/range_streamer.hpp>
@@ -34,14 +35,14 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_params_af_fm.get_B() << std::endl;
     }
     if (interpreted_program_options.model_type == ModelType::JKL01) {
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J               = " << interpreted_program_options.hamiltonian_params_jkl01.get_J() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_0             = " << interpreted_program_options.hamiltonian_params_jkl01.get_J_0() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_J_1() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::K               = " << interpreted_program_options.hamiltonian_params_jkl01.get_K() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::K_0             = " << interpreted_program_options.hamiltonian_params_jkl01.get_K_0() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::K_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_K_1() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::L               = " << interpreted_program_options.hamiltonian_params_jkl01.get_L() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::L_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_L_1() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::J               = " << interpreted_program_options.hamiltonian_params_jkl01.get_J() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::J_0             = " << interpreted_program_options.hamiltonian_params_jkl01.get_J_0() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::J_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_J_1() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::K               = " << interpreted_program_options.hamiltonian_params_jkl01.get_K() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::K_0             = " << interpreted_program_options.hamiltonian_params_jkl01.get_K_0() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::K_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_K_1() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::L               = " << interpreted_program_options.hamiltonian_params_jkl01.get_L() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_jkl01::L_1             = " << interpreted_program_options.hamiltonian_params_jkl01.get_L_1() << std::endl;
     }
     if (interpreted_program_options.model_type == ModelType::FO) {
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_fo.get_tau_z_coef() << std::endl;
@@ -219,7 +220,9 @@ void print_post_data(
     }
 }
 
-void print_theta_opt(const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params, std::optional<double> user_defined_overrule) {
+void print_theta_opt(
+        const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
+        const std::optional<double> user_defined_overrule) {
     // Using:
     using namespace extension::boost::stream_pragma;
     using extension::boost::stream_pragma::RSS;
@@ -277,8 +280,8 @@ void print_theta_opt(const monostar_hamiltonians::HamiltonianParamsFo& hamiltoni
 
 void print_theta_opt(
     const monostar_hamiltonians::HamiltonianParamsAffo& hamiltonian_affo_params,
-    std::optional<double> user_defined_overrule,
-    double average_ss) {
+    const std::optional<double> user_defined_overrule,
+    const double average_ss) {
     // Using:
     using namespace extension::boost::stream_pragma;
     using extension::boost::stream_pragma::RSS;
@@ -340,6 +343,28 @@ void print_theta_opt(
               << hamiltonian_affo_params.average_out_orbitals_1(orbital_theta_to_use).get_J_quantum() << std::endl;
     std::cout << "[INFO   ] [THETA_OPT] ((integrate out orbitals)H)::free        = "
               << hamiltonian_affo_params.average_out_orbitals_1(orbital_theta_to_use).get_free() << std::endl;
+}
+
+void print_decayed_agile_affo_hamiltonian_params(
+    const monostar_hamiltonians::HamiltonianParamsAgileAffo& hamiltonian_params_agile_affo,
+    const std::optional<double> user_defined_overrule_for_theta_opt,
+    const double average_ss) {
+    const double orbital_theta_to_use = monostar_hamiltonians::get_orbital_theta(
+        hamiltonian_params_agile_affo.get_so_hamiltonian(),
+        user_defined_overrule_for_theta_opt,
+        average_ss);
+    const monostar_hamiltonians::HamiltonianParamsJkl01 decayed_hamiltonian =
+        monostar_hamiltonians::dacay_hamiltonian_params_agile_affo(
+            hamiltonian_params_agile_affo,
+            orbital_theta_to_use);
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::J        = " << decayed_hamiltonian.get_J() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::J_0      = " << decayed_hamiltonian.get_J_0() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::J_1      = " << decayed_hamiltonian.get_J_1() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::K        = " << decayed_hamiltonian.get_K() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::K_0      = " << decayed_hamiltonian.get_K_0() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::K_1      = " << decayed_hamiltonian.get_K_1() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::L        = " << decayed_hamiltonian.get_L() << std::endl;
+    std::cout << "[INFO   ] [AGILE-TO-JKL01] (decay)hamiltonian_agile::L_1      = " << decayed_hamiltonian.get_L_1() << std::endl;
 }
 
 }  // end of namespace monostar_app

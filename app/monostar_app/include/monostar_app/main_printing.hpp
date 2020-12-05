@@ -33,10 +33,16 @@ void print_post_data(
 
 void print_theta_opt(
     const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
-    std::optional<double> user_defined_overrule);
+    const std::optional<double> user_defined_overrule);
 
 void print_theta_opt(
-    const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_affo_params,
-    std::optional<double> user_defined_overrule);
+    const monostar_hamiltonians::HamiltonianParamsAffo& hamiltonian_affo_params,
+    const std::optional<double> user_defined_overrule,
+    const double average_ss);
+
+void print_decayed_agile_affo_hamiltonian_params(
+    const monostar_hamiltonians::HamiltonianParamsAgileAffo& hamiltonian_params_agile_affo,
+    const std::optional<double> user_defined_overrule_for_theta_opt,
+    const double average_ss);
 
 }  // end of namespace monostar_app

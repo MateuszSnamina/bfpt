@@ -40,5 +40,3 @@ std::shared_ptr<monostar_hamiltonians::HamiltonianReferenceEnergies>
 get_hamiltonian_reference_energies(const InterpretedProgramOptions& interpreted_program_options);
 
 }  // end of namespace monostar_app
-
-// #include <monostar_system/monostar_site_state.hpp> //TOODO remove?
