@@ -30,12 +30,14 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     if (interpreted_program_options.n_max_site_spin_excitations) {
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_max_site_spin_excitations        = " << *interpreted_program_options.n_max_site_spin_excitations << std::endl;
     } else {
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_max_site_spin_excitations        = " << "<nolimit>" << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_max_site_spin_excitations        = "
+                  << "<nolimit>" << std::endl;
     }
     if (interpreted_program_options.n_max_site_orbit_excitations) {
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_max_site_orbit_excitations       = " << *interpreted_program_options.n_max_site_orbit_excitations << std::endl;
     } else {
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_max_site_orbit_excitations       = " << "<nolimit>" << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] n_max_site_orbit_excitations       = "
+                  << "<nolimit>" << std::endl;
     }
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
     if (interpreted_program_options.model_type == ModelType::AFFO) {
@@ -52,7 +54,8 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
         if (interpreted_program_options.orbital_theta) {
             std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << *interpreted_program_options.orbital_theta << std::endl;
         } else {
-            std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << "<auto: let the program choose the optimal value>" << std::endl;
+            std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = "
+                      << "<auto: let the program choose the optimal value>" << std::endl;
         }
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::average_ss         = " << interpreted_program_options.average_ss << std::endl;
     }

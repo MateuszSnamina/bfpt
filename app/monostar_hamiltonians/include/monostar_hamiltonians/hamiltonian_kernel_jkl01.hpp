@@ -6,7 +6,7 @@
 
 #include <chainkernel/operator_kernel.hpp>
 
-#include <kstate_trait/trait_site_state.hpp>
+#include <kstate_trait/trait_site_state.hpp>  //TODO remove?
 
 #include <map>
 

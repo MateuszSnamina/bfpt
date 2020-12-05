@@ -50,7 +50,8 @@ class OperatorKernel1 {
     using DiagInfoT = std::map<StateKernel1<SiteStateTraitT>, double>;
 
    public:
-    OperatorKernel1() = default;
+    //OperatorKernel1() = default;
+    OperatorKernel1();
     OperatorKernel1(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
     const OffDiagInfoT _half_off_diag_info;
@@ -73,6 +74,13 @@ half_off_diag_info_to_full_off_diag_info_1(
         full_off_diag_info.insert({complementaty_ket_1, {complementaty_bra_1, kernel_coupling_coef}});
     }
     return full_off_diag_info;
+}
+
+template <typename _SiteStateTraitT>
+OperatorKernel1<_SiteStateTraitT>::OperatorKernel1()
+    : _diag_info{},
+      _half_off_diag_info{},
+      _full_off_diag_info{} {
 }
 
 template <typename _SiteStateTraitT>
@@ -127,7 +135,8 @@ class OperatorKernel12 {
     using DiagInfoT = std::map<StateKernel12<SiteStateTraitT>, double>;
 
    public:
-    OperatorKernel12() = default;
+    // OperatorKernel12() = default;
+    OperatorKernel12();
     OperatorKernel12(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
     const OffDiagInfoT _half_off_diag_info;
@@ -150,6 +159,13 @@ half_off_diag_info_to_full_off_diag_info_12(
         full_off_diag_info.insert({complementaty_ket_12, {complementaty_bra_12, kernel_coupling_coef}});
     }
     return full_off_diag_info;
+}
+
+template <typename _SiteStateTraitT>
+OperatorKernel12<_SiteStateTraitT>::OperatorKernel12()
+    : _diag_info{},
+      _half_off_diag_info{},
+      _full_off_diag_info{} {
 }
 
 template <typename _SiteStateTraitT>
@@ -205,7 +221,8 @@ class OperatorKernel123 {
     using DiagInfoT = std::map<StateKernel123<SiteStateTraitT>, double>;
 
    public:
-    OperatorKernel123() = default;
+    // OperatorKernel123() = default;
+    OperatorKernel123();
     OperatorKernel123(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
     const OffDiagInfoT _half_off_diag_info;
@@ -228,6 +245,13 @@ half_off_diag_info_to_full_off_diag_info_123(
         full_off_diag_info.insert({complementaty_ket_123, {complementaty_bra_123, kernel_coupling_coef}});
     }
     return full_off_diag_info;
+}
+
+template <typename _SiteStateTraitT>
+OperatorKernel123<_SiteStateTraitT>::OperatorKernel123()
+    : _diag_info{},
+      _half_off_diag_info{},
+      _full_off_diag_info{} {
 }
 
 template <typename _SiteStateTraitT>
@@ -284,7 +308,8 @@ class OperatorKernel1234 {
     using DiagInfoT = std::map<StateKernel1234<SiteStateTraitT>, double>;
 
    public:
-    OperatorKernel1234() = default;
+    //OperatorKernel1234() = default;
+    OperatorKernel1234();
     OperatorKernel1234(DiagInfoT diag_info, OffDiagInfoT half_off_diag_info);
     const DiagInfoT _diag_info;
     const OffDiagInfoT _half_off_diag_info;
@@ -307,6 +332,13 @@ half_off_diag_info_to_full_off_diag_info_1234(
         full_off_diag_info.insert({complementaty_ket_1234, {complementaty_bra_1234, kernel_coupling_coef}});
     }
     return full_off_diag_info;
+}
+
+template <typename _SiteStateTraitT>
+OperatorKernel1234<_SiteStateTraitT>::OperatorKernel1234()
+    : _diag_info{},
+      _half_off_diag_info{},
+      _full_off_diag_info{} {
 }
 
 template <typename _SiteStateTraitT>
