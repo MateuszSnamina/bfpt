@@ -28,7 +28,7 @@ HamiltonianParamsAfFm hamiltonian_params_jkl01_to_Hamiltonian_params_af(Hamilton
 
 namespace monostar_hamiltonians {
 
-HamiltonianReferenceEnergiesJkl01::HamiltonianReferenceEnergiesJkl01(unsigned n_sites, const HamiltonianParamsJkl01& params)
+HamiltonianReferenceEnergiesJkl01::HamiltonianReferenceEnergiesJkl01(unsigned n_sites, const HamiltonianParamsJkl01 params)
     : HamiltonianReferenceEnergies(n_sites),
       _params(params) {
 }

@@ -172,7 +172,7 @@ get_hamiltonian_reference_energies(const InterpretedProgramOptions& interpreted_
                     interpreted_program_options.hamiltonian_params_agile_affo,
                     orbital_theta_to_use);
             std::make_shared<monostar_hamiltonians::HamiltonianReferenceEnergiesJkl01>(
-                interpreted_program_options.n_sites, decayed_hamiltonian);  //TODO check whether decayed_hamiltonian os passed by ref and the ref dangles!
+                interpreted_program_options.n_sites, decayed_hamiltonian);
         }
         default:
             throw std::domain_error("Invalid model_type enum value.");

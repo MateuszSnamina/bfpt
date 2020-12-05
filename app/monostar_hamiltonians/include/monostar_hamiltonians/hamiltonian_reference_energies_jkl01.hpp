@@ -11,12 +11,12 @@ namespace monostar_hamiltonians {
 
 class HamiltonianReferenceEnergiesJkl01 final : public HamiltonianReferenceEnergies {
    public:
-    HamiltonianReferenceEnergiesJkl01(unsigned n_sites, const HamiltonianParamsJkl01& params);
+    HamiltonianReferenceEnergiesJkl01(unsigned n_sites, const HamiltonianParamsJkl01 params);
     std::optional<double> get_gs_energy() const override;
     std::optional<double> get_es_exciation_enery(unsigned n_k) const override;
 
    private:
-    const HamiltonianParamsJkl01& _params;
+    const HamiltonianParamsJkl01 _params;
 };
 
 }  // end of namespace monostar_hamiltonians
