@@ -41,8 +41,8 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     }
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
     if (interpreted_program_options.model_type == ModelType::AFFO) {
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_s_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_s_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_ss_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::s_coef             = " << interpreted_program_options.hamiltonian_params_af_fo.get_s_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_coef            = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_z_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_minus_coef() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pzz_coef() << std::endl;
