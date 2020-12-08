@@ -20,8 +20,8 @@ arma::cx_vec4 get_2e_psi(double phi) {
     return arma::cx_vec4{
         0.0,
         std::cos(phi) / std::sqrt(2),
-        std::cos(phi) / std::sqrt(2),
-        std::sin(phi)};
+                std::cos(phi) / std::sqrt(2),
+                std::sin(phi)};
 }
 
 arma::cx_vec8 get_state_gs_x_gs_x_gs() {
@@ -97,12 +97,28 @@ double get_J(const arma::cx_mat44& orbital_operator_2e_prefactored_ss) {
 
 double get_J_0(const arma::cx_mat44& orbital_operator_2e_prefactored_ss,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_psi_x_gs(phi));
+    return + 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                                get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss),
+                                get_state_gs_x_psi_x_gs(phi))
+            + eps * eps * mean<16>(get_state_gs_x_psi_x_gs(phi),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss),
+                                   get_state_gs_x_psi_x_gs(phi))
+            - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss),
+                                   get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_J_1(const arma::cx_mat44& orbital_operator_2e_prefactored_ss,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_psi(phi));
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                              get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss),
+                              get_state_gs_x_gs_x_psi(phi))
+            + eps * eps * mean<16>(get_state_gs_x_gs_x_psi(phi),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss),
+                                   get_state_gs_x_gs_x_psi(phi))
+            - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss),
+                                   get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_K(const arma::cx_mat44& orbital_operator_2e_pure) {
@@ -113,12 +129,28 @@ double get_K(const arma::cx_mat44& orbital_operator_2e_pure) {
 
 double get_K_0(const arma::cx_mat44& orbital_operator_2e_pure,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_psi_x_gs(phi));
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                              get_id_x_op_x_id<4>(orbital_operator_2e_pure),
+                              get_state_gs_x_psi_x_gs(phi))
+            + eps * eps * mean<16>(get_state_gs_x_psi_x_gs(phi),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_pure),
+                                   get_state_gs_x_psi_x_gs(phi))
+            - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_pure),
+                                   get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_K_1(const arma::cx_mat44& orbital_operator_2e_pure,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_psi(phi));
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                              get_id_x_op_x_id<4>(orbital_operator_2e_pure),
+                              get_state_gs_x_gs_x_psi(phi))
+            + eps * eps * mean<16>(get_state_gs_x_gs_x_psi(phi),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_pure),
+                                   get_state_gs_x_gs_x_psi(phi))
+            - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(),
+                                   get_id_x_op_x_id<4>(orbital_operator_2e_pure),
+                                   get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_L(const arma::cx_mat22& orbital_operator_1e_pure) {
@@ -129,7 +161,15 @@ double get_L(const arma::cx_mat22& orbital_operator_1e_pure) {
 
 double get_L_1(const arma::cx_mat22& orbital_operator_1e_pure,
                const double eps, const double phi) {
-    return 2 * eps * mean<8>(get_state_gs_x_gs_x_gs(), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_psi(phi));
+    return 2 * eps * mean<8>(get_state_gs_x_gs_x_gs(),
+                             get_id_x_op_x_id<2>(orbital_operator_1e_pure),
+                             get_state_gs_x_psi(phi))
+            + eps * eps * mean<8>(get_state_gs_x_psi(phi),
+                                  get_id_x_op_x_id<2>(orbital_operator_1e_pure),
+                                  get_state_gs_x_psi(phi))
+            - eps * eps * mean<8>(get_state_gs_x_gs_x_gs(),
+                                  get_id_x_op_x_id<2>(orbital_operator_1e_pure),
+                                  get_state_gs_x_gs_x_gs());
 }
 
 }  // end of namespace
@@ -141,8 +181,8 @@ double get_L_1(const arma::cx_mat22& orbital_operator_1e_pure,
 namespace monostar_hamiltonians {
 
 HamiltonianParamsJkl01 dacay_hamiltonian_params_agile_affo(
-    HamiltonianParamsAgileAffo hamiltonian_params_agile_affo,
-    double orbital_theta) {
+        HamiltonianParamsAgileAffo hamiltonian_params_agile_affo,
+        double orbital_theta) {
     // Helper matrices:
     const arma::cx_mat22& tau_minus = OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta);
     const arma::cx_mat22& tau_z = OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta);
@@ -156,16 +196,16 @@ HamiltonianParamsJkl01 dacay_hamiltonian_params_agile_affo(
     const auto& phi = hamiltonian_params_agile_affo.get_aglie_params().get_phi();
     // Helper orbital operators:
     const arma::cx_mat44 orbital_operator_2e_prefactored_ss =
-        so_hamiltonian_prefactored_ss.get_Pzz_coef() * P_zz +
-        so_hamiltonian_prefactored_ss.get_Pxz_coef() * P_zx_sum_P_xz +
-        so_hamiltonian_prefactored_ss.get_Pxx_coef() * P_xx;
+            so_hamiltonian_prefactored_ss.get_Pzz_coef() * P_zz +
+            so_hamiltonian_prefactored_ss.get_Pxz_coef() * P_zx_sum_P_xz +
+            so_hamiltonian_prefactored_ss.get_Pxx_coef() * P_xx;
     const arma::cx_mat44 orbital_operator_2e_pure =
-        so_hamiltonian_pure.get_Pzz_coef() * P_zz +
-        so_hamiltonian_pure.get_Pxz_coef() * P_zx_sum_P_xz +
-        so_hamiltonian_pure.get_Pxx_coef() * P_xx;
+            so_hamiltonian_pure.get_Pzz_coef() * P_zz +
+            so_hamiltonian_pure.get_Pxz_coef() * P_zx_sum_P_xz +
+            so_hamiltonian_pure.get_Pxx_coef() * P_xx;
     const arma::cx_mat22 orbital_operator_1e_pure =
-        so_hamiltonian_pure.get_tau_minus_coef() * tau_minus +
-        so_hamiltonian_pure.get_tau_z_coef() * tau_z;
+            so_hamiltonian_pure.get_tau_minus_coef() * tau_minus +
+            so_hamiltonian_pure.get_tau_z_coef() * tau_z;
     // Jkl01 Hamiltonian params:
     const double J = get_J(orbital_operator_2e_prefactored_ss) + hamiltonian_params_agile_affo.get_so_hamiltonian().get_ss_coef();
     const double J_0 = get_J_0(orbital_operator_2e_prefactored_ss, eps, phi);
@@ -177,15 +217,15 @@ HamiltonianParamsJkl01 dacay_hamiltonian_params_agile_affo(
     const double L_1 = get_L_1(orbital_operator_1e_pure, eps, phi);
     // Retutn:
     return monostar_hamiltonians::HamiltonianParamsJkl01::Builder()
-        .set_J(J)
-        .set_J_0(J_0)
-        .set_J_1(J_1)
-        .set_K(K)
-        .set_K_0(K_0)
-        .set_K_1(K_1)
-        .set_L(L)
-        .set_L_1(L_1)
-        .build();
+            .set_J(J)
+            .set_J_0(J_0)
+            .set_J_1(J_1)
+            .set_K(K)
+            .set_K_0(K_0)
+            .set_K_1(K_1)
+            .set_L(L)
+            .set_L_1(L_1)
+            .build();
 }
 
 }  // end of namespace monostar_hamiltonians

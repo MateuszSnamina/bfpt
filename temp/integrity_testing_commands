@@ -1,25 +1,50 @@
 These commands should give the same results:
 
-
 ** make so_app like monostar_app with --model_type fo **
-./bin/monostar_app 10 2 -r g -i --model_type fo --hamiltonian_P_zz -1 --hamiltonian_P_xx -1
-./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_P_zz -1 --hamiltonian_P_xx -1
-./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +4 --hamiltonian_ss_P_xx +4
-
+> ./bin/monostar_app 10 2 -r g -i --model_type fo --hamiltonian_P_zz -1 --hamiltonian_P_xx -1
+> ./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_P_zz -1 --hamiltonian_P_xx -1
+> ./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_ss_P_zz +4 --hamiltonian_ss_P_xx +4
 
 ** make so_app like monostar_app with --model_type af **
+> ./bin/monostar_app 10 2 -r g -i --model_type af --hamiltonian_J_classical 3 --hamiltonian_J_quantum 3 --hamiltonian_B 1
+> ./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 3 --hamiltonian_s 1 --hamiltonian_tau_minus 0 -o 0.0  
+> ./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 3 --hamiltonian_s 1 --hamiltonian_tau_minus 1 # the same but with extra 0.5 in site energy. 
+> ./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss_P_zz 3 --hamiltonian_s 1 --hamiltonian_tau_minus 0 -1 -o 0.0
 
-./bin/monostar_app 10 2 -r g -i --model_type af --hamiltonian_J_classical 3 --hamiltonian_J_quantum 3 --hamiltonian_B 1
-./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 3 --hamiltonian_s 1 --hamiltonian_tau_minus 0 -o 0.0  
-./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 3 --hamiltonian_s 1 --hamiltonian_tau_minus 1 # the same but with extra 0.5 in site energy. 
-./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss_P_zz 3 --hamiltonian_s 1 --hamiltonian_tau_minus 0 -1 -o 0.0
+** hamiltonian OrbitP4 --model_type fo **
+> ./bin/monostar_app 10 2 -r g -i --model_type fo --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5
+> ./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5  
+
+** hamiltonian OrbitP4SS --model_type fo **
+> ./bin/monostar_app 10 2 -r g -i --model_type fo --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5
+> ./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2
+
+** hamiltonian OrbitP4SS --model_type fa **
+> ./bin/monostar_app 10 2 -r g -i --model_type af
+> ./bin/so_app 10 2 -F 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 # the same but with extra 0.5 in site energy. 
 
 
-** hamiltonian OrbitP4 **
 
-./bin/monostar_app 10 1 -r g -i --model_type fo --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5
-./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_P_zz -0.5 --hamiltonian_P_xx -0.5  
+** Hamiltonian for experiments with agileAfFo **
 
-** hamiltonian OrbitP4SS **
-./bin/so_app 10 2 -G 0 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +0.5 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2
+- With orbital frozen:
+> ./bin/monostar_app 10 4 -r g -i --model_type agileAfFo --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0
+vs.
+> ./bin/so_app       10 4 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0 -F 0
+
+- With orbital not frozen:
+> ./bin/monostar_app 10 4 -r g -i --model_type agileAfFo --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0 --hamiltonian_phi XXX --hamiltonian_eps YYY
+vs.
+> ./bin/so_app       10 4 -r g -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0
+
+
+Ciekawe:
+./bin/monostar_app 10 2 -r g -i --model_type agileAfFo --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0 --hamiltonian_eps -1.0 --hamiltonian_phi 1.57 -B -H
+
+
+
+==> ./bin/so_app       10 2 -r eg -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0  -b --print_pretty_probability_treshold 0.0  --print_pretty_max_n_kstates 100 --es_n_k 2 -d one -F 2
+ BUG!!!
+Non deterministic:
+ ││abs. enery        = +4.668950105e-310 = +4.668950105e-311 * n_sites
 
