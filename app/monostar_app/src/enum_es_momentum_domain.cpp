@@ -103,7 +103,6 @@ class EsMomentumDomainVariantToEnumVisitor {
     EsMomentumDomain operator()(const EsMomentumDomainOne&) const {
         return EsMomentumDomain::one;
     }
-
 };
 
 }  // namespace
@@ -155,13 +154,9 @@ es_momentum_domain_variant_to_momentum_range_sapn(EsMomentumDomainVariant md, un
 }
 
 EsMomentumDomain
-es_momentum_domain_variant_to_enum(EsMomentumDomainVariant md){
+es_momentum_domain_variant_to_enum(EsMomentumDomainVariant md) {
     const EsMomentumDomainVariantToEnumVisitor visitor;
     return std::visit(visitor, md);
 }
 
 }  // end of namespace monostar_app
-
-
-
-

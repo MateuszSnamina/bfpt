@@ -224,7 +224,7 @@ void print_post_data(
 void print_optimization_data(
     const InterpretedProgramOptions& interpreted_program_options,
     const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
-    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional){
+    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional) {
     // Expects:
     if (interpreted_program_options.run_type == RunType::G) {
         assert(gs_receipt_optional);
@@ -240,14 +240,14 @@ void print_optimization_data(
     if (interpreted_program_options.run_type == RunType::G) {
         const auto gs_receipt = gs_receipt_optional.value();
         std::cout << "[OPTIMIZATION] [OK] " << std::setprecision(15) << gs_receipt.energy << std::endl;
-    } else if (interpreted_program_options.run_type == RunType::E
-               && es_momentum_domain_variant_to_enum(interpreted_program_options.es_momentum_domain) ==EsMomentumDomain::one) {
+    } else if (interpreted_program_options.run_type == RunType::E && es_momentum_domain_variant_to_enum(interpreted_program_options.es_momentum_domain) == EsMomentumDomain::one) {
         assert(es_receipts_optional);
         const auto es_receipts = es_receipts_optional.value();
         const auto es_result = es_receipts[0];
         std::cout << "[OPTIMIZATION] [OK] " << std::setprecision(15) << es_result.energy << std::endl;
     } else {
-        std::cout << "[OPTIMIZATION] [ERROR] " << "Not in any of optimization setups." << std::endl;
+        std::cout << "[OPTIMIZATION] [ERROR] "
+                  << "Not in any of optimization setups." << std::endl;
     }
 }
 

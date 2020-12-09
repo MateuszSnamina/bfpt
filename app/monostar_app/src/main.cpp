@@ -121,9 +121,9 @@ int main(int argc, char** argv) {
                 interpreted_program_options.orbital_theta,
                 interpreted_program_options.average_ss);
         }
-//        if (interpreted_program_options.model_type == ModelType::AgileAFFO) {
-//            throw std::domain_error("Agile-to-jkl01 logic not implemented!");
-//        }  //TODO REMOVE WHEN DONE!
+        //        if (interpreted_program_options.model_type == ModelType::AgileAFFO) {
+        //            throw std::domain_error("Agile-to-jkl01 logic not implemented!");
+        //        }  //TODO REMOVE WHEN DONE!
         // ******************************************************************
         const chainkernel::OperatorKernel1<monostar_system::MonostarSiteStateTrait> hamiltonian_kernel_1 =
             get_prepare_hamiltonian_kernel_1(interpreted_program_options);
@@ -208,7 +208,8 @@ int main(int argc, char** argv) {
         // ******************************************************************
     } catch (std::exception& e) {
         if (is_optimization_iteration) {
-            std::cout << "[OPTIMIZATION] [ERROR] " << "Abnormal termination." << std::endl;
+            std::cout << "[OPTIMIZATION] [ERROR] "
+                      << "Abnormal termination." << std::endl;
         }
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
         std::cerr << e.what() << std::endl;
