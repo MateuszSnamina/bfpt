@@ -140,7 +140,7 @@ void print_results_tree(
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
         const auto es_receipts = es_receipts_optional.value();
         for (unsigned k_n = es_momentum_range_sapn.first; k_n < es_momentum_range_sapn.second; k_n++) {
-            const auto es_result = es_receipts[k_n];
+            const auto es_result = es_receipts[k_n - es_momentum_range_sapn.first];
             std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
             std::cout << " ││abs. enery        = "
                       << std::setw(16) << es_result.energy << " = "
@@ -234,16 +234,18 @@ void print_optimization_data(
         const auto es_receipts = es_receipts_optional.value();
         assert(es_receipts.size() == 1);
     }
+    // Stream RAII:
+    const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     // Printing:
     if (interpreted_program_options.run_type == RunType::G) {
         const auto gs_receipt = gs_receipt_optional.value();
-        std::cout << "[OPTIMIZATION] [OK] " << gs_receipt.energy << std::endl;
+        std::cout << "[OPTIMIZATION] [OK] " << std::setprecision(15) << gs_receipt.energy << std::endl;
     } else if (interpreted_program_options.run_type == RunType::E
                && es_momentum_domain_variant_to_enum(interpreted_program_options.es_momentum_domain) ==EsMomentumDomain::one) {
         assert(es_receipts_optional);
         const auto es_receipts = es_receipts_optional.value();
         const auto es_result = es_receipts[0];
-        std::cout << "[OPTIMIZATION] [OK] " << es_result.energy << std::endl;
+        std::cout << "[OPTIMIZATION] [OK] " << std::setprecision(15) << es_result.energy << std::endl;
     } else {
         std::cout << "[OPTIMIZATION] [ERROR] " << "Not in any of optimization setups." << std::endl;
     }

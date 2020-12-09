@@ -19,15 +19,31 @@ extra_args = po['<extra_args>']
 print(f"[PO] {path_to_f=}")
 print(f"[PO] {extra_args=}")
 
+f_global_id_counter = 0
 def f(eps, phi):
-    print(f"[FUNCTION-CALL] function args: {eps=:+14.8f}, {phi=:+14.8f}")
+    global f_global_id_counter
+    f_global_id_counter = f_global_id_counter + 1
+    print(f"[FUNCTION-CALL] couter={f_global_id_counter:05d}, function args: {eps=:+14.8f}, {phi=:+14.8f}")
     #args = [f"-x {eps}", f"-y {phi}"]
     args = ["--hamiltonian_eps", f"{eps}", "--hamiltonian_phi", f"{phi}"]
+    cli_list = [path_to_f, *args, *extra_args]
+    print(f"[FUNCTION-CALL] [CLI] {' '.join(cli_list)}")
     completed_process = subprocess.run(
         #['python3', 'x2y2.py', *args, *extra_args],
-        [path_to_f, *args, *extra_args],
+        #[path_to_f, *args, *extra_args],
+        cli_list,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
+
+    #print('[FUNCTION-CALL] [ERROR] as RC != 0')
+    #print(f"[FUNCTION-CALL] [NOTE] {completed_process.returncode=}")
+    #stdout_lines = completed_process.stdout.decode("utf-8").split('\n')
+    #stderr_lines = completed_process.stderr.decode("utf-8").split('\n')
+    #stdout_lines = ["[FUNCTION-CALL] [NOTE] [STDOUT] " + line for line in stdout_lines]
+    #stderr_lines = ["[FUNCTION-CALL] [NOTE] [STDERR] " + line for line in stderr_lines]
+    #print('\n'.join(stdout_lines))
+    #print('\n'.join(stderr_lines))
+
     if completed_process.returncode != 0:
         print('[FUNCTION-CALL] [ERROR] as RC != 0')
         print(f"[FUNCTION-CALL] [NOTE] {completed_process.returncode=}")

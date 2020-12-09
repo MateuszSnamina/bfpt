@@ -5,4 +5,5 @@ python optimizer.py /home/mateusz/bfpt/build_debug/bin/monostar_app -- --is_opti
 
 
 # EXCITED STATE:
-r e --es_n_k 2 -d one
+python optimizer.py /home/mateusz/bfpt/build_debug/bin/monostar_app -- --is_optimization_iteration -r e -d one --es_n_k 2  --model_type agileAfFo --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0 
+
