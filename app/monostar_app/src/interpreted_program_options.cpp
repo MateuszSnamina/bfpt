@@ -107,6 +107,7 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         const std::string message = "Problem with 'n_threads' -- the value must not be equal to 0 and must not be grater than 256.";
         throw std::runtime_error(message);
     }
+    interpreted_program_options.is_optimization_iteration = raw_program_options.is_optimization_iteration;
     return interpreted_program_options;
 }
 

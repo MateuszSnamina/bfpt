@@ -51,6 +51,7 @@ struct RawProgramOptions {
     std::string es_momentum_domain_string;
     unsigned es_n_k;
     unsigned n_threads;
+    bool is_optimization_iteration;
 };
 
 RawProgramOptions grep_program_options(int argc, char** argv);

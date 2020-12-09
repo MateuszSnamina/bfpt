@@ -96,6 +96,7 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
 // #######################################################################
 
 int main(int argc, char** argv) {
+    bool is_optimization_iteration;
     using namespace monostar_app;
     try {
         // ******************************************************************
@@ -103,6 +104,7 @@ int main(int argc, char** argv) {
         const InterpretedProgramOptions interpreted_program_options = interpret_program_options(raw_program_options);
         // ******************************************************************
         print_input_data(interpreted_program_options);
+        is_optimization_iteration = interpreted_program_options.is_optimization_iteration;
         // ******************************************************************
         if (interpreted_program_options.model_type == ModelType::FO) {
             print_theta_opt(interpreted_program_options.hamiltonian_params_fo,
@@ -197,8 +199,17 @@ int main(int argc, char** argv) {
             /*reference_energies,*/
             gs_receipt,
             es_receipts);
+        if (is_optimization_iteration) {
+            print_optimization_data(
+                interpreted_program_options,
+                gs_receipt,
+                es_receipts);
+        }
         // ******************************************************************
     } catch (std::exception& e) {
+        if (is_optimization_iteration) {
+            std::cout << "[OPTIMIZATION] [ERROR] " << "Abnormal termination." << std::endl;
+        }
         std::cerr << "[ERROR  ] Abnormal termination!" << std::endl;
         std::cerr << e.what() << std::endl;
         return EXIT_FAILURE;

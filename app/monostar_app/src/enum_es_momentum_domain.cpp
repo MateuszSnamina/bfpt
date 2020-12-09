@@ -78,6 +78,34 @@ class EsMomentumDomainVariantToMomentumRangeSapnVisitor {
     unsigned _n_sites;
 };
 
+class EsMomentumDomainVariantToEnumVisitor {
+   public:
+    EsMomentumDomain operator()(const EsMomentumDomainHalfPiWithout&) const {
+        return EsMomentumDomain::half_pi_without;
+    }
+
+    EsMomentumDomain operator()(const EsMomentumDomainHalfPiWith&) const {
+        return EsMomentumDomain::half_pi_with;
+    }
+
+    EsMomentumDomain operator()(const EsMomentumDomainPiWithout&) const {
+        return EsMomentumDomain::half_pi_without;
+    }
+
+    EsMomentumDomain operator()(const EsMomentumDomainPiWith&) const {
+        return EsMomentumDomain::half_pi_with;
+    }
+
+    EsMomentumDomain operator()(const EsMomentumDomainAll&) const {
+        return EsMomentumDomain::all;
+    }
+
+    EsMomentumDomain operator()(const EsMomentumDomainOne&) const {
+        return EsMomentumDomain::one;
+    }
+
+};
+
 }  // namespace
 
 // -----------------------------------------------------
@@ -126,4 +154,14 @@ es_momentum_domain_variant_to_momentum_range_sapn(EsMomentumDomainVariant md, un
     return std::visit(visitor, md);
 }
 
+EsMomentumDomain
+es_momentum_domain_variant_to_enum(EsMomentumDomainVariant md){
+    const EsMomentumDomainVariantToEnumVisitor visitor;
+    return std::visit(visitor, md);
+}
+
 }  // end of namespace monostar_app
+
+
+
+

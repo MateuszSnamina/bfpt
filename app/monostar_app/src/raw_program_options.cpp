@@ -176,7 +176,10 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
          boost::program_options::value<double>(&program_options.print_pretty_probability_treshold)->default_value(0.1))
         // --n_threads,j:
         ("n_threads,j",
-         boost::program_options::value<unsigned>(&program_options.n_threads)->default_value(4));
+         boost::program_options::value<unsigned>(&program_options.n_threads)->default_value(4))
+        // --is_optimization_iteration:
+        ("is_optimization_iteration",
+         boost::program_options::bool_switch(&program_options.is_optimization_iteration)->default_value(false));
 
     boost::program_options::positional_options_description p;
     // positional arguments:

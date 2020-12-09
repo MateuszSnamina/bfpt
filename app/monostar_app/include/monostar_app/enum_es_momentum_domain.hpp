@@ -59,4 +59,7 @@ operator<<(std::ostream&, const EsMomentumDomainVariant&);
 std::pair<unsigned, unsigned>
 es_momentum_domain_variant_to_momentum_range_sapn(EsMomentumDomainVariant md, unsigned n_sites);
 
+EsMomentumDomain
+es_momentum_domain_variant_to_enum(EsMomentumDomainVariant md);
+
 }  // end of namespace monostar_app

@@ -20,39 +20,57 @@ print(f"[PO] {path_to_f=}")
 print(f"[PO] {extra_args=}")
 
 def f(eps, phi):
-    print(f"f: {eps=:+14.8f}, {phi=:+14.8f} | ", end="")
-    args = [f"-x {eps}", f"-y {phi}"]
+    print(f"[FUNCTION-CALL] function args: {eps=:+14.8f}, {phi=:+14.8f}")
+    #args = [f"-x {eps}", f"-y {phi}"]
+    args = ["--hamiltonian_eps", f"{eps}", "--hamiltonian_phi", f"{phi}"]
     completed_process = subprocess.run(
         #['python3', 'x2y2.py', *args, *extra_args],
-        ['path_to_f', *args, *extra_args],
+        [path_to_f, *args, *extra_args],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
     if completed_process.returncode != 0:
-        print('ERROR as RC != 0|')
-        return math.nan
+        print('[FUNCTION-CALL] [ERROR] as RC != 0')
+        print(f"[FUNCTION-CALL] [NOTE] {completed_process.returncode=}")
+        stdout_lines = completed_process.stdout.decode("utf-8").split('\n')
+        stderr_lines = completed_process.stderr.decode("utf-8").split('\n')
+        stdout_lines = ["[FUNCTION-CALL] [NOTE] [STDOUT] " + line for line in stdout_lines]
+        stderr_lines = ["[FUNCTION-CALL] [NOTE] [STDERR] " + line for line in stderr_lines]
+        print('\n'.join(stdout_lines))
+        print('\n'.join(stderr_lines))
+        raise RuntimeError("Error as RC != 0.")
+        #return math.nan
     stdout_lines = completed_process.stdout.decode("utf-8").split('\n')
     optimizatoin_lines = [line for line in stdout_lines if line.startswith('[OPTIMIZATION]')]
     if len(optimizatoin_lines) != 1:
-        print('ERROR as len(optimizatoin_lines) != 1|')
-        return math.nan
+        print('[FUNCTION-CALL] [ERROR] as len(optimizatoin_lines) != 1')
+        print(f"[FUNCTION-CALL] [NOTE] {len(optimizatoin_lines)=}")
+        raise RuntimeError("Error as len(optimizatoin_lines) != 1.")
+        #return math.nan
     optimizatoin_line = optimizatoin_lines[0]
     optimizatoin_line_tokens = optimizatoin_line.split()
     if len(optimizatoin_line_tokens) < 2:
-        print('ERROR as len(optimizatoin_line_tokens) < 2|')
-        return math.nan
+        print('[FUNCTION-CALL] [ERROR] as len(optimizatoin_line_tokens) < 2')
+        print(f"[FUNCTION-CALL] [NOTE] {len(optimizatoin_line_tokens)=}")
+        raise RuntimeError("Error as len(optimizatoin_line_tokens) < 2.")
+        #return math.nan
     if optimizatoin_line_tokens[1] != '[OK]':
-        print('ERROR as optimizatoin_line_tokens[1] != [OK]|')
-        return math.nan
+        print('[FUNCTION-CALL] [ERROR] as optimizatoin_line_tokens[1] != [OK]')
+        print(f'[NOTE] {optimizatoin_line_tokens[1]=}')
+        raise RuntimeError("Error as optimizatoin_line_tokens[1] != [OK].")
+        #return math.nan
     if len(optimizatoin_line_tokens) != 3:
-        print('ERROR as len(optimizatoin_line_tokens) != 3|')
-        return math.nan
-    optimizatoin_line_value_token = optimizatoin_line_tokens[2]
+        print('[FUNCTION-CALL] [ERROR] as len(optimizatoin_line_tokens) != 3')
+        print(f"[FUNCTION-CALL] [NOTE] {len(optimizatoin_line_tokens)=}")
+        raise RuntimeError("Error as len(optimizatoin_line_tokens) != 3.")
+        #return math.nan
     try:
-        value = float(optimizatoin_line_value_token)
+        value = float(optimizatoin_line_tokens[2])
     except:
-        print('ERROR value is not the float|')
-        return math.nan
-    print(f"OK {value=:+14.8f} |")
+        print('[FUNCTION-CALL] [ERROR] value string does not represent a float number')
+        print(f'[FUNCTION-CALL] [NOTE] {optimizatoin_line_tokens[2]=}')
+        raise RuntimeError("Value string does not represent a float number.")
+        #return math.nan
+    print(f"[FUNCTION-CALL] OK {value=:+14.8f}")
     return value
 
 def f1(x):

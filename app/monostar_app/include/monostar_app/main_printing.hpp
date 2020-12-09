@@ -31,6 +31,11 @@ void print_post_data(
     const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
     const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional);
 
+void print_optimization_data(
+    const InterpretedProgramOptions& interpreted_program_options,
+    const std::optional<bfpt_common::CommonRecipeReceipt>& gs_receipt_optional,
+    const std::optional<std::vector<bfpt_common::CommonRecipeReceipt>>& es_receipts_optional);
+
 void print_theta_opt(
     const monostar_hamiltonians::HamiltonianParamsFo& hamiltonian_fo_params,
     const std::optional<double> user_defined_overrule);

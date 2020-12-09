@@ -31,6 +31,7 @@ struct InterpretedProgramOptions {
     EsMomentumDomainVariant es_momentum_domain;
     bfpt_common::CommonRecipePrintFlags print_flags;
     unsigned n_threads;
+    bool is_optimization_iteration;
 };
 
 InterpretedProgramOptions interpret_program_options(const RawProgramOptions&);
