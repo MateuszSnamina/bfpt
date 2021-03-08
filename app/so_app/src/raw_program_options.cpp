@@ -51,6 +51,9 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --n_max_site_orbit_excitations,-F:
         ("n_max_site_orbit_excitations,F",
          boost::program_options::value<std::string>(&program_options.n_max_site_orbit_excitations_string)->default_value("nolimit"))
+        // --accept_orbit_site_excitations_only_if_near_domain_wall,-w:
+        ("accept_orbit_site_excitations_only_if_near_domain_wall,w",
+         boost::program_options::bool_switch(&program_options.accept_orbit_site_excitations_only_if_near_domain_wall)->default_value(false))
         // --model_type_string,-m:
         ("model_type_string,m",
          boost::program_options::value<std::string>(&program_options.model_type_string)->default_value("affo"))

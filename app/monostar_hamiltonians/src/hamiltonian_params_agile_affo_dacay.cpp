@@ -97,12 +97,16 @@ double get_J(const arma::cx_mat44& orbital_operator_2e_prefactored_ss) {
 
 double get_J_0(const arma::cx_mat44& orbital_operator_2e_prefactored_ss,
                const double eps, const double phi) {
-    return +2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_psi_x_gs(phi)) + eps * eps * mean<16>(get_state_gs_x_psi_x_gs(phi), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_psi_x_gs(phi)) - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_gs_x_gs());
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_psi_x_gs(phi)) +
+           eps * eps * mean<16>(get_state_gs_x_psi_x_gs(phi), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_psi_x_gs(phi)) -
+           eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_J_1(const arma::cx_mat44& orbital_operator_2e_prefactored_ss,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_psi(phi)) + eps * eps * mean<16>(get_state_gs_x_gs_x_psi(phi), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_psi(phi)) - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_gs_x_gs());
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_psi(phi)) +
+           eps * eps * mean<16>(get_state_gs_x_gs_x_psi(phi), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_psi(phi)) -
+           eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_prefactored_ss), get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_K(const arma::cx_mat44& orbital_operator_2e_pure) {
@@ -113,12 +117,16 @@ double get_K(const arma::cx_mat44& orbital_operator_2e_pure) {
 
 double get_K_0(const arma::cx_mat44& orbital_operator_2e_pure,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_psi_x_gs(phi)) + eps * eps * mean<16>(get_state_gs_x_psi_x_gs(phi), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_psi_x_gs(phi)) - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_gs_x_gs());
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_psi_x_gs(phi)) +
+           eps * eps * mean<16>(get_state_gs_x_psi_x_gs(phi), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_psi_x_gs(phi)) -
+           eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_K_1(const arma::cx_mat44& orbital_operator_2e_pure,
                const double eps, const double phi) {
-    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_psi(phi)) + eps * eps * mean<16>(get_state_gs_x_gs_x_psi(phi), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_psi(phi)) - eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_gs_x_gs());
+    return 2 * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_psi(phi)) +
+           eps * eps * mean<16>(get_state_gs_x_gs_x_psi(phi), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_psi(phi)) -
+           eps * eps * mean<16>(get_state_gs_x_gs_x_gs_x_gs(), get_id_x_op_x_id<4>(orbital_operator_2e_pure), get_state_gs_x_gs_x_gs_x_gs());
 }
 
 double get_L(const arma::cx_mat22& orbital_operator_1e_pure) {
@@ -129,7 +137,9 @@ double get_L(const arma::cx_mat22& orbital_operator_1e_pure) {
 
 double get_L_1(const arma::cx_mat22& orbital_operator_1e_pure,
                const double eps, const double phi) {
-    return 2 * eps * mean<8>(get_state_gs_x_gs_x_gs(), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_psi(phi)) + eps * eps * mean<8>(get_state_gs_x_psi(phi), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_psi(phi)) - eps * eps * mean<8>(get_state_gs_x_gs_x_gs(), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_gs_x_gs());
+    return 2 * eps * mean<8>(get_state_gs_x_gs_x_gs(), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_psi(phi)) +
+           eps * eps * mean<8>(get_state_gs_x_psi(phi), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_psi(phi)) -
+           eps * eps * mean<8>(get_state_gs_x_gs_x_gs(), get_id_x_op_x_id<2>(orbital_operator_1e_pure), get_state_gs_x_gs_x_gs());
 }
 
 }  // end of namespace

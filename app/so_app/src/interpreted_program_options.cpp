@@ -30,6 +30,7 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
         const std::string message = message1 + "\n" + _.unwrap_err().what();
         throw std::runtime_error(message);
     }
+    interpreted_program_options.accept_orbit_site_excitations_only_if_near_domain_wall = raw_program_options.accept_orbit_site_excitations_only_if_near_domain_wall;
     if (const auto _ = interpret_model_type_string(raw_program_options.model_type_string)) {
         interpreted_program_options.model_type = _.unwrap();
     } else {

@@ -44,7 +44,4 @@ Ciekawe:
 
 
 ==> ./bin/so_app       10 2 -r eg -i --hamiltonian_ss 0.0 --hamiltonian_tau_minus +20 --hamiltonian_ss_P_zz +2 --hamiltonian_ss_P_xx +2 --hamiltonian_P_zz 0 --hamiltonian_P_xx 0  -b --print_pretty_probability_treshold 0.0  --print_pretty_max_n_kstates 100 --es_n_k 2 -d one -F 2
- BUG!!!
-Non deterministic:
- ││abs. enery        = +4.668950105e-310 = +4.668950105e-311 * n_sites
 

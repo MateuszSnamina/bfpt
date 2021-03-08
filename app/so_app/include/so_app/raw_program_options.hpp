@@ -9,6 +9,7 @@ struct RawProgramOptions {
     unsigned n_pt;
     std::string n_max_site_spin_excitations_string;
     std::string n_max_site_orbit_excitations_string;
+    bool accept_orbit_site_excitations_only_if_near_domain_wall;
     std::string model_type_string;
     double hamiltonian_s_coef;
     double hamiltonian_ss_coef;

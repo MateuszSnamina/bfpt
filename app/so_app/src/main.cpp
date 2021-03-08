@@ -39,6 +39,7 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     const std::vector<utility::Named<arma::extension::cx_mat1616>>& two_sites_metrices_for_average_calculation,
     const std::optional<unsigned> n_max_site_spin_excitations,
     const std::optional<unsigned> n_max_site_orbit_excitations,
+    const bool accept_orbit_site_excitations_only_if_near_domain_wall,
     const unsigned n_threads) {
     using KstateT = so_system::SoKstate;
     using KstateTraitT = so_system::SoKstateTrait;
@@ -49,7 +50,7 @@ bfpt_common::CommonRecipeReceipt bfpt_gs(
     using BasisT = so_system::SoKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(so_system::classical_gs_kstate(n_sites)));
-    const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations};
+    const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations, accept_orbit_site_excitations_only_if_near_domain_wall};
     const chainkernel::OperatorKernel123<so_system::SoSiteStateTrait> hamiltonian_kernel_123;
     const chainkernel::OperatorKernel1234<so_system::SoSiteStateTrait> hamiltonian_kernel_1234;
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234, acceptance_predicate};
@@ -75,6 +76,7 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     const std::vector<utility::Named<arma::extension::cx_mat1616>>& two_sites_metrices_for_average_calculation,
     const std::optional<unsigned> n_max_site_spin_excitations,
     const std::optional<unsigned> n_max_site_orbit_excitations,
+    const bool accept_orbit_site_excitations_only_if_near_domain_wall,
     const unsigned n_threads) {
     using KstateT = so_system::SoKstate;
     using KstateTraitT = so_system::SoKstateTrait;
@@ -85,7 +87,7 @@ bfpt_common::CommonRecipeReceipt bfpt_kn_es(
     using BasisT = so_system::SoKstateBasis;
     BasisT basis{n_sites};
     basis.add_element(std::make_shared<KstateT>(so_system::classical_es_kstate(n_sites)));
-    const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations};
+    const so_system::AcceptancePredicate acceptance_predicate{n_max_site_spin_excitations, n_max_site_orbit_excitations, accept_orbit_site_excitations_only_if_near_domain_wall};
     const chainkernel::OperatorKernel123<so_system::SoSiteStateTrait> hamiltonian_kernel_123;
     const chainkernel::OperatorKernel1234<so_system::SoSiteStateTrait> hamiltonian_kernel_1234;
     const KpopulatorT kstate_populator{n_sites, hamiltonian_kernel_1, hamiltonian_kernel_12, hamiltonian_kernel_123, hamiltonian_kernel_1234, acceptance_predicate};
@@ -205,6 +207,7 @@ int main(int argc, char** argv) {
                     two_sites_metrices_for_average_calculation,
                     interpreted_program_options.n_max_site_spin_excitations,
                     interpreted_program_options.n_max_site_orbit_excitations,
+                    interpreted_program_options.accept_orbit_site_excitations_only_if_near_domain_wall,
                     interpreted_program_options.n_threads);
                 std::cout << "------------------------------------------" << std::endl;
             }
@@ -231,6 +234,7 @@ int main(int argc, char** argv) {
                         two_sites_metrices_for_average_calculation,
                         interpreted_program_options.n_max_site_spin_excitations,
                         interpreted_program_options.n_max_site_orbit_excitations,
+                        interpreted_program_options.accept_orbit_site_excitations_only_if_near_domain_wall,
                         interpreted_program_options.n_threads);
                     es_receipts_builder.push_back(es_energy);
                     std::cout << "------------------------------------------" << std::endl;
