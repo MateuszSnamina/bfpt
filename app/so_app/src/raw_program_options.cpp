@@ -26,6 +26,8 @@ void emit_help(std::ostream& s,
     s << "Possible values of model_type string: " << possible_values_model_type_string << "." << std::endl;
     s << "Possible values of run_type string: " << possible_values_run_type_string << "." << std::endl;
     s << "Possible values of es_momentum_domain string: " << possible_values_es_momentum_domain << "." << std::endl;
+    s << "Possible values of n_max_site_spin_excitations string: 'nolimit' or an unsigned number." << std::endl;
+    s << "Possible values of n_max_site_orbit_excitations string: 'nolimit' or an unsigned number." << std::endl;
 }
 
 }  // namespace

@@ -8,6 +8,6 @@
 
 namespace so_app {
 
-utility::Result<std::optional<double>, std::domain_error> interpret_n_max_site_excitations_string(const std::string&);
+utility::Result<std::optional<unsigned>, std::domain_error> interpret_n_max_site_excitations_string(const std::string&);
 
 }  // end of namespace so_app
