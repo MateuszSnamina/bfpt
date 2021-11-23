@@ -16,6 +16,16 @@ HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_J_quantum(dou
     return *this;
 }
 
+HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_J_nnn_classical(double J_nnn_classicall) {
+    _J_nnn_classicall = J_nnn_classicall;
+    return *this;
+}
+
+HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_J_nnn_quantum(double J_nnn_quantum) {
+    _J_nnn_quantum = J_nnn_quantum;
+    return *this;
+}
+
 HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_B(double B) {
     _B = B;
     return *this;
@@ -27,12 +37,19 @@ HamiltonianParamsAfFm::Builder HamiltonianParamsAfFm::Builder::set_free(double f
 }
 
 HamiltonianParamsAfFm HamiltonianParamsAfFm::Builder::build() const {
-    return HamiltonianParamsAfFm(_J_classicall, _J_quantum, _B, _free);
+    return HamiltonianParamsAfFm(_J_classicall, _J_quantum,
+                                 _J_nnn_classicall, _J_nnn_quantum,
+                                 _B, _free);
 }
 
-HamiltonianParamsAfFm::HamiltonianParamsAfFm(double J_classicall, double J_quantum, double B, double free)
+HamiltonianParamsAfFm::HamiltonianParamsAfFm(
+        double J_classicall, double J_quantum,
+        double J_nnn_classicall, double J_nnn_quantum,
+        double B, double free)
     : _J_classicall(J_classicall),
       _J_quantum(J_quantum),
+      _J_nnn_classicall(J_nnn_classicall),
+      _J_nnn_quantum(J_nnn_quantum),
       _B(B),
       _free(free) {
 }
@@ -43,6 +60,14 @@ double HamiltonianParamsAfFm::get_J_classical() const {
 
 double HamiltonianParamsAfFm::get_J_quantum() const {
     return _J_quantum;
+}
+
+double HamiltonianParamsAfFm::get_J_nnn_classical() const {
+    return _J_nnn_classicall;
+}
+
+double HamiltonianParamsAfFm::get_J_nnn_quantum() const {
+    return _J_nnn_quantum;
 }
 
 double HamiltonianParamsAfFm::get_B() const {

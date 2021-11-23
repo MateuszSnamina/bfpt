@@ -10,6 +10,8 @@ struct RawProgramOptions {
     std::string model_type_string;
     double hamiltonian_J_classical;
     double hamiltonian_J_quantum;
+    double hamiltonian_J_nnn_classical;
+    double hamiltonian_J_nnn_quantum;
     double hamiltonian_B;
     double hamiltonian_tau_z_coef;
     double hamiltonian_tau_minus_coef;

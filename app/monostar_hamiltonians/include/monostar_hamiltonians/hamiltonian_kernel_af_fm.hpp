@@ -16,6 +16,12 @@
 
 namespace monostar_hamiltonians {
 
+chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
+prepare_hamiltonian_kernel_123_af_fm(double J_nnn_classical = 0.0, double J_nnn_quantum = 0.0);
+
+chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
+prepare_hamiltonian_kernel_123_af_fm(const HamiltonianParamsAfFm&);
+
 chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_12_af(double J_classical = 1.0, double J_quantum = 1.0);
 

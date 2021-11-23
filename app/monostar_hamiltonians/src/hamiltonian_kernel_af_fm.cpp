@@ -10,9 +10,51 @@ namespace {
 
 using namespace monostar_system;
 
+std::map<chainkernel::StateKernel123<MonostarSiteStateTrait>, double>
+prepare_diag_nnn_info(double J) {
+    // Sign convention: H = + J S_i S_j
+    using RsultT = std::map<
+        chainkernel::StateKernel123<MonostarSiteStateTrait>,
+        double>;
+    RsultT diag_info{
+        {{gs, gs, gs}, +J * 0.25},
+        {{gs, es, gs}, +J * 0.25},
+        {{gs, gs, es}, -J * 0.25},
+        {{gs, es, es}, -J * 0.25},
+        {{es, gs, gs}, -J * 0.25},
+        {{es, es, gs}, -J * 0.25},
+        {{es, gs, es}, +J * 0.25},
+        {{es, es, es}, +J * 0.25}
+    };
+    return diag_info;
+}
+
+std::multimap<
+    chainkernel::StateKernel123<MonostarSiteStateTrait>,
+    chainkernel::CoupleInfoKernel123<MonostarSiteStateTrait>>
+prepare_half_off_diag_nnn_info(double J) {
+    // Sign convention: H = + J S_i S_j
+    using RsultT = std::multimap<
+        chainkernel::StateKernel123<MonostarSiteStateTrait>,
+        chainkernel::CoupleInfoKernel123<MonostarSiteStateTrait>>;
+    RsultT half_off_diag_info{
+        {{gs, gs, es}, {{es, gs, gs}, 0.5 * J}},
+        {{gs, es, es}, {{es, es, gs}, 0.5 * J}}
+    };
+    return half_off_diag_info;
+}
+
+
 std::map<chainkernel::StateKernel12<MonostarSiteStateTrait>, double>
 prepare_diag_info(double J) {
-    using RsultT = std::map<chainkernel::StateKernel12<MonostarSiteStateTrait>, double>;
+    // Sign convention:
+    // H = - J S_i S_j for FM
+    // H = + J S_i S_j for AM
+    // Note: the meaning of es and gs are different in the both cases,
+    //       it is why the two cases produces the same result.
+    using RsultT = std::map<
+        chainkernel::StateKernel12<MonostarSiteStateTrait>,
+        double>;
     RsultT diag_info{
         {{gs, gs}, -J * 0.25},
         {{gs, es}, +J * 0.25},
@@ -25,6 +67,8 @@ std::multimap<
     chainkernel::StateKernel12<MonostarSiteStateTrait>,
     chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>
 prepare_half_off_diag_info_for_af(double J) {
+    // Sign convention:
+    // H = + J S_i S_j for AM
     using RsultT = std::multimap<
         chainkernel::StateKernel12<MonostarSiteStateTrait>,
         chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
@@ -33,9 +77,15 @@ prepare_half_off_diag_info_for_af(double J) {
     return half_off_diag_info;
 }
 
-std::multimap<chainkernel::StateKernel12<MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>
+std::multimap<
+    chainkernel::StateKernel12<MonostarSiteStateTrait>,
+    chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>
 prepare_half_off_diag_info_for_fm(double J) {
-    using RsultT = std::multimap<chainkernel::StateKernel12<MonostarSiteStateTrait>, chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
+    // Sign convention:
+    // H = - J S_i S_j for FM
+    using RsultT = std::multimap<
+        chainkernel::StateKernel12<MonostarSiteStateTrait>,
+        chainkernel::CoupleInfoKernel12<MonostarSiteStateTrait>>;
     RsultT half_off_diag_info{
         {{gs, es}, {{es, gs}, -0.5 * J}}};
     return half_off_diag_info;
@@ -48,6 +98,18 @@ prepare_half_off_diag_info_for_fm(double J) {
 // #######################################################################
 
 namespace monostar_hamiltonians {
+
+chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
+prepare_hamiltonian_kernel_123_af_fm(double J_nnn_classical, double J_nnn_quantum) {
+    const auto diag_info = prepare_diag_nnn_info(J_nnn_classical);
+    const auto half_off_diag_info = prepare_half_off_diag_nnn_info(J_nnn_quantum);
+    return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{diag_info, half_off_diag_info};
+}
+
+chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
+prepare_hamiltonian_kernel_123_af_fm(const HamiltonianParamsAfFm& params) {
+    return prepare_hamiltonian_kernel_123_af_fm(params.get_J_nnn_classical(), params.get_J_nnn_quantum());
+}
 
 chainkernel::OperatorKernel12<monostar_system::MonostarSiteStateTrait>
 prepare_hamiltonian_kernel_12_af(double J_classical, double J_quantum) {

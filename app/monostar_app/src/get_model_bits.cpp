@@ -55,9 +55,9 @@ chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>
 get_prepare_hamiltonian_kernel_123(const InterpretedProgramOptions& interpreted_program_options) {
     switch (interpreted_program_options.model_type) {
         case ModelType::AF:
-            return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{};
+            return monostar_hamiltonians::prepare_hamiltonian_kernel_123_af_fm(interpreted_program_options.hamiltonian_params_af_fm);
         case ModelType::FM:
-            return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{};
+            return monostar_hamiltonians::prepare_hamiltonian_kernel_123_af_fm(interpreted_program_options.hamiltonian_params_af_fm);
         case ModelType::FO:
             return chainkernel::OperatorKernel123<monostar_system::MonostarSiteStateTrait>{};
         case ModelType::JKL01:

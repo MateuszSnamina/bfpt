@@ -26,6 +26,8 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
     interpreted_program_options.hamiltonian_params_af_fm = monostar_hamiltonians::HamiltonianParamsAfFm::Builder()
                                                                .set_J_classical(raw_program_options.hamiltonian_J_classical)
                                                                .set_J_quantum(raw_program_options.hamiltonian_J_quantum)
+                                                               .set_J_nnn_classical(raw_program_options.hamiltonian_J_nnn_classical)
+                                                               .set_J_nnn_quantum(raw_program_options.hamiltonian_J_nnn_quantum)
                                                                .set_B(raw_program_options.hamiltonian_B)
                                                                .build();
     interpreted_program_options.hamiltonian_params_fo = monostar_hamiltonians::HamiltonianParamsFo::Builder()

@@ -54,6 +54,12 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
         // --hamiltonian_J_quantum:
         ("hamiltonian_J_quantum",
          boost::program_options::value<double>(&program_options.hamiltonian_J_quantum)->default_value(1.0))
+        // --hamiltonian_J_nnn_classical:
+        ("hamiltonian_J_nnn_classical",
+         boost::program_options::value<double>(&program_options.hamiltonian_J_nnn_classical)->default_value(0.0))
+        // --hamiltonian_J_nnn_quantum:
+        ("hamiltonian_J_nnn_quantum",
+         boost::program_options::value<double>(&program_options.hamiltonian_J_nnn_quantum)->default_value(0.0))
         // --hamiltonian_B:
         ("hamiltonian_B",
          boost::program_options::value<double>(&program_options.hamiltonian_B)->default_value(0.0))

@@ -15,7 +15,10 @@ namespace monostar_hamiltonians {
 
 class HamiltonianReferenceEnergiesFm final : public HamiltonianReferenceEnergies {
    public:
-    HamiltonianReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B, double free);
+    HamiltonianReferenceEnergiesFm(unsigned n_sites,
+                                   double J_classical, double J_quantum,
+                                   double J_nnn_classical, double J_nnn_quantum,
+                                   double B, double free);
     HamiltonianReferenceEnergiesFm(unsigned n_sites, const HamiltonianParamsAfFm& params);
     std::optional<double> get_gs_energy() const override;
     std::optional<double> get_es_exciation_enery(unsigned n_k) const override;
@@ -23,6 +26,8 @@ class HamiltonianReferenceEnergiesFm final : public HamiltonianReferenceEnergies
    private:
     const double _J_classical;
     const double _J_quantum;
+    const double _J_nnn_classical;
+    const double _J_nnn_quantum;
     const double _B;
     const double _free;
 };

@@ -32,6 +32,8 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     if (interpreted_program_options.model_type == ModelType::AF || interpreted_program_options.model_type == ModelType::FM) {
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_classical     = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_classical() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_quantum       = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_quantum() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_nnn_classical = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_nnn_classical() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::J_nnn_quantum   = " << interpreted_program_options.hamiltonian_params_af_fm.get_J_nnn_quantum() << std::endl;
         std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fm::B               = " << interpreted_program_options.hamiltonian_params_af_fm.get_B() << std::endl;
     }
     if (interpreted_program_options.model_type == ModelType::JKL01) {

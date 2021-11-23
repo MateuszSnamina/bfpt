@@ -12,10 +12,15 @@
 
 namespace monostar_hamiltonians {
 
-HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites, double J_classical, double J_quantum, double B, double free)
+HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites,
+                                                               double J_classical, double J_quantum,
+                                                               double J_nnn_classical, double J_nnn_quantum,
+                                                               double B, double free)
     : HamiltonianReferenceEnergies(n_sites),
       _J_classical(J_classical),
       _J_quantum(J_quantum),
+      _J_nnn_classical(J_nnn_classical),
+      _J_nnn_quantum(J_nnn_quantum),
       _B(B),
       _free(free) {
     assert(_J_classical > 0);
@@ -25,16 +30,25 @@ HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites,
     : HamiltonianReferenceEnergies(n_sites),
       _J_classical(params.get_J_classical()),
       _J_quantum(params.get_J_quantum()),
+      _J_nnn_classical(params.get_J_nnn_classical()),
+      _J_nnn_quantum(params.get_J_nnn_quantum()),
       _B(params.get_B()),
       _free(params.get_free()) {
 }
 
 std::optional<double> HamiltonianReferenceEnergiesFm::get_gs_energy() const {
-    return _n_sites * ((-0.25) * _J_classical + (-0.5) * _B + _free);
+    // TODO check: |_J_classical| > |_J_nnn_classical| condition!
+    return _n_sites * (+ (-0.25) * _J_classical
+                       + (+0.25) * _J_nnn_classical
+                       + (-0.5) * _B + _free);
 }
 
 std::optional<double> HamiltonianReferenceEnergiesFm::get_es_exciation_enery(unsigned n_k) const {
-    return _J_classical + _B - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites);
+    return + _J_classical
+           - _J_nnn_classical
+           + _B
+           - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites)
+           + _J_nnn_quantum * std::cos(2 * 2 * arma::datum::pi * n_k / _n_sites);
 }
 
 }  // end of namespace monostar_hamiltonians
