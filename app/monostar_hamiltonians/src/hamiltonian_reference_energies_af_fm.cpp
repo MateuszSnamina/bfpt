@@ -70,7 +70,10 @@ HamiltonianReferenceEnergiesAf::HamiltonianReferenceEnergiesAf(unsigned n_sites,
     : HamiltonianReferenceEnergies(n_sites),
       _J(params.get_J_classical()),
       _free(params.get_free()),
-      _is_applicable(params.get_J_classical() == params.get_J_quantum() && params.get_B() == 0) {
+      _is_applicable(params.get_J_classical() == params.get_J_quantum() &&
+                     params.get_B() == 0 &&
+                     params.get_J_nnn_classical() == 0 &&
+                     params.get_J_nnn_quantum() == 0) {
 }
 
 std::optional<double> HamiltonianReferenceEnergiesAf::get_gs_energy() const {

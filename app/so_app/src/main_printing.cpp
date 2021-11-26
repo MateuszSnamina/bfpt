@@ -101,20 +101,22 @@ void print_results_tree(
     }
     // Print:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
-    std::cout << std::showpos << std::setprecision(10) << std::left;
+    const unsigned width = 22;
+    const unsigned precision = 14;
+    std::cout << std::showpos << std::setprecision(precision) << std::left;
     // Print gs:
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         const auto gs_receipt = gs_receipt_optional.value();
         std::cout << " ├state: gs " << std::endl;
         std::cout << " ││enery             = "
-                  << std::setw(16) << gs_receipt.energy << " = "
-                  << std::setw(16) << gs_receipt.energy / n_sites << " * n_sites"
+                  << std::setw(width) << gs_receipt.energy << " = "
+                  << std::setw(width) << gs_receipt.energy / n_sites << " * n_sites"
                   << std::endl;
         if (reference_energies) {
             if (const auto& gs_energy = reference_energies->get_gs_energy()) {
                 std::cout << " ││enery (reference) = "
-                          << std::setw(16) << *gs_energy << " = "
-                          << std::setw(16) << *gs_energy / n_sites << " * n_sites"
+                          << std::setw(width) << *gs_energy << " = "
+                          << std::setw(width) << *gs_energy / n_sites << " * n_sites"
                           << std::endl;
             }
         }
@@ -126,27 +128,27 @@ void print_results_tree(
             const auto es_result = es_receipts[k_n];
             std::cout << " ├state: es [k_n = " << k_n << "]" << std::endl;
             std::cout << " ││abs. enery        = "
-                      << std::setw(16) << es_result.energy << " = "
-                      << std::setw(16) << es_result.energy / n_sites << " * n_sites"
+                      << std::setw(width) << es_result.energy << " = "
+                      << std::setw(width) << es_result.energy / n_sites << " * n_sites"
                       << std::endl;
             if (interpreted_program_options.run_type == RunType::EG) {
                 const auto gs_receipt = gs_receipt_optional.value();
                 std::cout << " ││exc. enery        = "
-                          << std::setw(16) << es_result.energy - gs_receipt.energy << " = "
-                          << std::setw(16) << (es_result.energy - gs_receipt.energy) / n_sites << " * n_sites"
+                          << std::setw(width) << es_result.energy - gs_receipt.energy << " = "
+                          << std::setw(width) << (es_result.energy - gs_receipt.energy) / n_sites << " * n_sites"
                           << std::endl;
             }
             if (reference_energies) {
                 if (const auto& get_es_absolute_enery = reference_energies->get_es_absolute_enery(k_n)) {
                     std::cout << " ││abs. enery (ref.) = "
-                              << std::setw(16) << *get_es_absolute_enery << " = "
-                              << std::setw(16) << (*get_es_absolute_enery) / n_sites << " * n_sites"
+                              << std::setw(width) << *get_es_absolute_enery << " = "
+                              << std::setw(width) << (*get_es_absolute_enery) / n_sites << " * n_sites"
                               << std::endl;
                 }
                 if (const auto& es_exciation_enery = reference_energies->get_es_exciation_enery(k_n)) {
                     std::cout << " ││exc. enery (ref.) = "
-                              << std::setw(16) << *es_exciation_enery << " = "
-                              << std::setw(16) << (*es_exciation_enery) / n_sites << " * n_sites"
+                              << std::setw(width) << *es_exciation_enery << " = "
+                              << std::setw(width) << (*es_exciation_enery) / n_sites << " * n_sites"
                               << std::endl;
                 }
             }
