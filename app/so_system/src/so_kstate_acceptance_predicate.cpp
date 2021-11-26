@@ -51,7 +51,6 @@ bool are_all_orbit_site_excitations_near_domain_wall(const SoKstate& kstate) {
     return true;
 }
 
-
 }  // namespace so_system
 
 // #######################################################################

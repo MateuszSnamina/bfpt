@@ -14,140 +14,140 @@ namespace so_hamiltonians {
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_z_af_latticeA() {
     return arma::kron(
-        monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA(),
-        arma::eye(2, 2));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeA());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_z_af_latticeB() {
     return arma::kron(
-        monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB(),
-        arma::eye(2, 2));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_z_in_ge_af_latticeB());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeA() {
     return arma::kron(
-        monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA(),
-        arma::eye(2, 2));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeA());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_plus_af_latticeB() {
     return arma::kron(
-        monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB(),
-        arma::eye(2, 2));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_plus_in_ge_af_latticeB());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeA() {
     return arma::kron(
-        monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA(),
-        arma::eye(2, 2));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeA());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_S_minus_af_latticeB() {
     return arma::kron(
-        monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB(),
-        arma::eye(2, 2));
+        arma::eye(2, 2),
+        monostar_hamiltonians::OneSiteSpinMatrices::get_S_minus_in_ge_af_latticeB());
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_z_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_x_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_plus_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_minus_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_z_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_x_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_plus_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_minus_in_zx_basis() {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_zx_basis());
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_zx_basis(),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_beta_from_zx_to_ge(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_beta_from_zx_to_ge(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_beta_from_zx_to_ge(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_z_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_z_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_x_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_x_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_plus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_plus_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_P_minus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_P_minus_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_z_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_z_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_x_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_x_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_plus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_plus_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 arma::cx_mat44 OneSiteSpinOrbitalMatrices::get_tau_minus_in_ge_basis(double orbital_theta) {
     return arma::kron(
-        arma::eye(2, 2),
-        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta));
+        monostar_hamiltonians::OneSiteOrbitalMatrices::get_tau_minus_in_ge_basis(orbital_theta),
+        arma::eye(2, 2));
 }
 
 }  // end of namespace so_hamiltonians

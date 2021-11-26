@@ -38,17 +38,11 @@ HamiltonianReferenceEnergiesFm::HamiltonianReferenceEnergiesFm(unsigned n_sites,
 
 std::optional<double> HamiltonianReferenceEnergiesFm::get_gs_energy() const {
     // TODO check: |_J_classical| > |_J_nnn_classical| condition!
-    return _n_sites * (+ (-0.25) * _J_classical
-                       + (+0.25) * _J_nnn_classical
-                       + (-0.5) * _B + _free);
+    return _n_sites * (+(-0.25) * _J_classical + (+0.25) * _J_nnn_classical + (-0.5) * _B + _free);
 }
 
 std::optional<double> HamiltonianReferenceEnergiesFm::get_es_exciation_enery(unsigned n_k) const {
-    return + _J_classical
-           - _J_nnn_classical
-           + _B
-           - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites)
-           + _J_nnn_quantum * std::cos(2 * 2 * arma::datum::pi * n_k / _n_sites);
+    return +_J_classical - _J_nnn_classical + _B - _J_quantum * std::cos(2 * arma::datum::pi * n_k / _n_sites) + _J_nnn_quantum * std::cos(2 * 2 * arma::datum::pi * n_k / _n_sites);
 }
 
 }  // end of namespace monostar_hamiltonians

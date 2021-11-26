@@ -24,8 +24,7 @@ prepare_diag_nnn_info(double J) {
         {{es, gs, gs}, -J * 0.25},
         {{es, es, gs}, -J * 0.25},
         {{es, gs, es}, +J * 0.25},
-        {{es, es, es}, +J * 0.25}
-    };
+        {{es, es, es}, +J * 0.25}};
     return diag_info;
 }
 
@@ -39,11 +38,9 @@ prepare_half_off_diag_nnn_info(double J) {
         chainkernel::CoupleInfoKernel123<MonostarSiteStateTrait>>;
     RsultT half_off_diag_info{
         {{gs, gs, es}, {{es, gs, gs}, 0.5 * J}},
-        {{gs, es, es}, {{es, es, gs}, 0.5 * J}}
-    };
+        {{gs, es, es}, {{es, es, gs}, 0.5 * J}}};
     return half_off_diag_info;
 }
-
 
 std::map<chainkernel::StateKernel12<MonostarSiteStateTrait>, double>
 prepare_diag_info(double J) {

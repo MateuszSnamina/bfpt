@@ -43,9 +43,9 @@ HamiltonianParamsAfFm HamiltonianParamsAfFm::Builder::build() const {
 }
 
 HamiltonianParamsAfFm::HamiltonianParamsAfFm(
-        double J_classicall, double J_quantum,
-        double J_nnn_classicall, double J_nnn_quantum,
-        double B, double free)
+    double J_classicall, double J_quantum,
+    double J_nnn_classicall, double J_nnn_quantum,
+    double B, double free)
     : _J_classicall(J_classicall),
       _J_quantum(J_quantum),
       _J_nnn_classicall(J_nnn_classicall),
