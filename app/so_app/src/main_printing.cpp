@@ -104,7 +104,7 @@ void print_results_tree(
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     const unsigned width = 22;
     const unsigned precision = 14;
-    std::cout << std::showpos << std::setprecision(precision) << std::left;
+    std::cout << std::showpos << std::fixed << std::setprecision(precision) << std::left;
     // Print gs:
     if (interpreted_program_options.run_type == RunType::G || interpreted_program_options.run_type == RunType::EG) {
         const auto gs_receipt = gs_receipt_optional.value();
