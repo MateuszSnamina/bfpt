@@ -27,6 +27,7 @@ prepare_hamiltonian_kernel_12_af_fo(const HamiltonianParamsAfFo&, double orbital
 chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>
 prepare_hamiltonian_kernel_1_af_fo(
     double tau_z_coef, double tau_minus_coef,
+    double free_coef,
     double orbital_theta);
 
 chainkernel::OperatorKernel1<so_system::SoSiteStateTrait>

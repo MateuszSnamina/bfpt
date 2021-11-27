@@ -21,6 +21,7 @@ struct RawProgramOptions {
     double hamiltonian_ss_Pzz_coef;
     double hamiltonian_ss_Pxz_coef;
     double hamiltonian_ss_Pxx_coef;
+    double hamiltonian_free_coef;
     std::string orbital_theta_string;
     double average_ss;  // value used for `auto`-type calculation of thera_opt
     std::string run_type_string;

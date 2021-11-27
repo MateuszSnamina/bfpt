@@ -18,7 +18,7 @@ monostar_hamiltonians::AcosPlusBsinPlusCsqcosPlusZ hamiltonian_params_af_fo_to_c
         monostar_hamiltonians::hamiltonian_params_fo_to_classic_energy_function(params.get_hamiltonian_params_fo());
     const monostar_hamiltonians::AcosPlusBsinPlusCsqcosPlusZ fun2 =
         monostar_hamiltonians::hamiltonian_params_fo_to_classic_energy_function(params.get_hamiltonian_params_ss_fo());
-    return fun1 + (SS_average * fun2);  //TODO finish
+    return fun1 + (SS_average * fun2);  //it does not include free_coef and S_coef<S> + SS_coef<SS> terms.
 }
 
 }  // end of namespace so_hamiltonians

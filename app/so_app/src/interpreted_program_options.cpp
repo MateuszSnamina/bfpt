@@ -49,6 +49,7 @@ InterpretedProgramOptions interpret_program_options(const RawProgramOptions& raw
                                                                .set_ss_Pzz_coef(raw_program_options.hamiltonian_ss_Pzz_coef)
                                                                .set_ss_Pxz_coef(raw_program_options.hamiltonian_ss_Pxz_coef)
                                                                .set_ss_Pxx_coef(raw_program_options.hamiltonian_ss_Pxx_coef)
+                                                               .set_free_coef(raw_program_options.hamiltonian_free_coef)
                                                                .build();
     if (const auto _ = interpret_orbital_theta_string(raw_program_options.orbital_theta_string)) {
         interpreted_program_options.orbital_theta = _.unwrap();

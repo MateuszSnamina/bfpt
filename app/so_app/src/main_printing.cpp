@@ -42,23 +42,24 @@ void print_input_data(const InterpretedProgramOptions& interpreted_program_optio
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] orbit excit. only near domain wall = " << interpreted_program_options.accept_orbit_site_excitations_only_if_near_domain_wall << std::endl;
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] model_type                         = " << interpreted_program_options.model_type << std::endl;
     if (interpreted_program_options.model_type == ModelType::AFFO) {
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::s_coef             = " << interpreted_program_options.hamiltonian_params_af_fo.get_s_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_coef            = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_z_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_z_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::tau_minus_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_minus_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pzz_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pzz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxz_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pxz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::Pxx_coef           = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pxx_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_Pzz_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pzz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_Pxz_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pxz_coef() << std::endl;
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::ss_Pxx_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pxx_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::s_coef          = " << interpreted_program_options.hamiltonian_params_af_fo.get_s_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::ss_coef         = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::tau_z_coef      = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_z_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::tau_minus_coef  = " << interpreted_program_options.hamiltonian_params_af_fo.get_tau_minus_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::Pzz_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::Pxz_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::Pxx_coef        = " << interpreted_program_options.hamiltonian_params_af_fo.get_Pxx_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::ss_Pzz_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pzz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::ss_Pxz_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pxz_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::ss_Pxx_coef     = " << interpreted_program_options.hamiltonian_params_af_fo.get_ss_Pxx_coef() << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_af_fo::get_free_coef   = " << interpreted_program_options.hamiltonian_params_af_fo.get_free_coef() << std::endl;
         if (interpreted_program_options.orbital_theta) {
             std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = " << *interpreted_program_options.orbital_theta << std::endl;
         } else {
             std::cout << "[INFO   ] [PROGRAM_OPTIONS] reference orbital theta            = "
                       << "<auto: let the program choose the optimal value>" << std::endl;
         }
-        std::cout << "[INFO   ] [PROGRAM_OPTIONS] hamiltonian_fo::average_ss         = " << interpreted_program_options.average_ss << std::endl;
+        std::cout << "[INFO   ] [PROGRAM_OPTIONS] average_ss (used for opt. θ calc)  = " << interpreted_program_options.average_ss << std::endl;
     }
     std::cout << "[INFO   ] [PROGRAM_OPTIONS] run_type                           = " << interpreted_program_options.run_type << std::endl;
     if (interpreted_program_options.run_type == RunType::E || interpreted_program_options.run_type == RunType::EG) {
@@ -218,8 +219,9 @@ void print_theta_opt(
     // Print:
     const extension::std::StreamFromatStacker stream_format_stacker(std::cout);
     std::cout << std::showpos;
-    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_af_fo_params.string_repr_in_orbital_operators() << std::endl;
-    std::cout << "[INFO   ] [THETA_OPT] (integrate out spins)H                   = " << hamiltonian_af_fo_params.string_repr_in_trigonometric_functions(average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] H                                        = " << hamiltonian_af_fo_params.string_repr_in_spin_orbital_operators() << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] (integrate out spins)H                   = " << hamiltonian_af_fo_params.string_repr_averaged_out_spins_in_orbital_operators(average_ss) << std::endl;
+    std::cout << "[INFO   ] [THETA_OPT] (integrate out spins)H                   = " << hamiltonian_af_fo_params.string_repr_averaged_out_spins_in_trigonometric_functions(average_ss) << std::endl;
     if (const auto& _ = hamiltonian_af_fo_params.get_theta_opt_analytical(average_ss)) {
         std::cout << "[INFO   ] [THETA_OPT] optimal orbital theta (analytical)       = " << (_.unwrap() | RSS<double>().like_python_set()) << std::endl;
     } else {

@@ -88,7 +88,10 @@ RawProgramOptions grep_program_options(int argc, char** argv) {
          boost::program_options::value<double>(&program_options.hamiltonian_ss_Pxz_coef)->default_value(0.0))
         // --hamiltonian_ss_P_xx:
         ("hamiltonian_ss_P_xx",
-         boost::program_options::value<double>(&program_options.hamiltonian_ss_Pxx_coef)->default_value(0.0))
+         boost::program_options::value<double>(&program_options.hamiltonian_ss_Pxx_coef)->default_value(0.0))            
+        // --hamiltonian_free:
+        ("hamiltonian_free",
+         boost::program_options::value<double>(&program_options.hamiltonian_free_coef)->default_value(0.0))
         // --orbital_theta,o:
         ("orbital_theta,o",
          boost::program_options::value<std::string>(&program_options.orbital_theta_string)->default_value("auto"))

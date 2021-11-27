@@ -131,7 +131,7 @@ std::string HamiltonianParamsFo::string_repr_in_orbital_operators() const {
         ss << _Pxx_coef << "·Σᵢⱼ[PˣᵢPˣⱼ]";
     }
     if (_free_coef != 0) {
-        ss << _free_coef;
+        ss << _free_coef << "·Σᵢ[1]";
     }
     if (_tau_z_coef == 0 && _tau_minus_coef == 0 && _Pzz_coef == 0 && _Pxz_coef == 0 && _Pxx_coef == 0 && _free_coef == 0) {
         ss << 0.0;
